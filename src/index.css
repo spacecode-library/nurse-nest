@@ -122,7 +122,7 @@
   }
   
   .testimonial-card::before {
-    content: """;
+    content: "\201C";
     @apply absolute -top-5 left-4 text-6xl text-nurse-medium opacity-30 font-serif;
   }
   

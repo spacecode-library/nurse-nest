@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function FaqSection() {
@@ -89,7 +89,7 @@ export default function FaqSection() {
             className="inline-flex items-center text-primary-500 font-medium hover:text-primary-600"
           >
             Contact our team for more information
-            <ChevronRight className="ml-1 h-4 w-4" />
+            <ArrowRight className="ml-1 h-4 w-4" />
           </a>
         </div>
       </div>
