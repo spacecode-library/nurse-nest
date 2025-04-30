@@ -32,7 +32,7 @@ export default function WhyChooseUsSection() {
           {/* Image Side */}
           <div className="relative animate-fade-in">
             <img 
-              src="https://images.unsplash.com/photo-1612656693463-4259d1b4f06c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+              src="https://images.unsplash.com/photo-1612656693463-4259d1b4f06c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
               alt="Compassionate nurse with patient" 
               className="rounded-xl shadow-xl w-full max-w-lg mx-auto"
             />
@@ -47,7 +47,7 @@ export default function WhyChooseUsSection() {
                       className="w-10 h-10 rounded-full border-2 border-white overflow-hidden"
                     >
                       <img 
-                        src={`https://randomuser.me/api/portraits/women/${i + 10}.jpg`} 
+                        src={`https://i.pravatar.cc/150?img=${i + 10}`} 
                         alt="Nurse" 
                         className="w-full h-full object-cover"
                       />

@@ -8,19 +8,19 @@ export default function WhoWeHelpSection() {
       title: "New Parents",
       description: "Sleep easy with NICU or L&D-trained night nurses who care for your newborn overnight.",
       icon: <Baby className="h-12 w-12 text-nurse-dark" />,
-      image: "https://images.unsplash.com/photo-1590649880765-91b1956b8276?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+      image: "https://images.unsplash.com/photo-1590649880765-91b1956b8276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     {
       title: "Busy Families with Elderly Loved Ones",
       description: "Weekly check-ins, medication management, and fall prevention from licensed nurses.",
       icon: <Users className="h-12 w-12 text-nurse-dark" />,
-      image: "https://images.unsplash.com/photo-1568658179908-beac99f98845?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+      image: "https://images.unsplash.com/photo-1568658179908-beac99f98845?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     {
       title: "Doctor Offices & Clinics",
       description: "We staff your practice with experienced, credentialed nurses — without the HR hassle.",
       icon: <Stethoscope className="h-12 w-12 text-nurse-dark" />,
-      image: "https://images.unsplash.com/photo-1587367871134-bf3189aa1aba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+      image: "https://images.unsplash.com/photo-1587367871134-bf3189aa1aba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     }
   ];
 
