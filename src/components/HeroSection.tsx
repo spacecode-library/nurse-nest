@@ -1,5 +1,4 @@
 
-import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -37,7 +36,7 @@ export default function HeroSection() {
           <div className="relative animate-fade-in">
             <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
               <img 
-                src="https://images.unsplash.com/photo-1584516150794-3e3d668c2854?w=800&auto=format&fit=crop&q=80"
+                src="https://images.unsplash.com/photo-1584516150794-3e3d668c2854?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
                 alt="Compassionate nurse holding a baby" 
                 className="w-full h-full object-cover"
               />
@@ -55,7 +54,7 @@ export default function HeroSection() {
               {/* Small Family Image */}
               <div className="absolute -bottom-6 -right-6 w-36 h-36 rounded-full border-4 border-white bg-white shadow-xl overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1631019553258-63fad912a3a1?w=200&auto=format&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1631019553258-63fad912a3a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
                   alt="Family enjoying dinner" 
                   className="w-full h-full object-cover"
                 />

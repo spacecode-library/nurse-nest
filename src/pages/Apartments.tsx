@@ -23,7 +23,7 @@ const allApartments: ApartmentProps[] = [
     price: 180,
     capacity: 2,
     size: 45,
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop",
     location: "Beachfront",
     features: ["Wi-Fi", "Kitchen", "Bathroom", "Air Conditioning", "TV", "Balcony"]
   },
@@ -34,7 +34,7 @@ const allApartments: ApartmentProps[] = [
     price: 250,
     capacity: 4,
     size: 75,
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop",
     location: "Second row",
     features: ["Wi-Fi", "Kitchen", "Bathroom", "Air Conditioning", "TV", "Washing Machine"]
   },
@@ -45,7 +45,7 @@ const allApartments: ApartmentProps[] = [
     price: 150,
     capacity: 2,
     size: 35,
-    image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=800&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop",
     location: "Beachfront",
     features: ["Wi-Fi", "Kitchenette", "Bathroom", "Air Conditioning", "TV"]
   },
@@ -56,7 +56,7 @@ const allApartments: ApartmentProps[] = [
     price: 350,
     capacity: 4,
     size: 90,
-    image: "https://images.unsplash.com/photo-1562438668-bcf0ca6578f0?w=800&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1562438668-bcf0ca6578f0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop",
     location: "Beachfront",
     features: ["Wi-Fi", "Full Kitchen", "2 Bathrooms", "Air Conditioning", "TV", "Terrace", "Jacuzzi"]
   },
@@ -67,7 +67,7 @@ const allApartments: ApartmentProps[] = [
     price: 120,
     capacity: 2,
     size: 28,
-    image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop",
     location: "Hotel building",
     features: ["Wi-Fi", "Bathroom", "Air Conditioning", "TV", "Mini Fridge"]
   },
@@ -78,7 +78,7 @@ const allApartments: ApartmentProps[] = [
     price: 160,
     capacity: 3,
     size: 55,
-    image: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=800&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop",
     location: "Garden area",
     features: ["Wi-Fi", "Kitchen", "Bathroom", "Air Conditioning", "TV", "Terrace"]
   },
