@@ -1,106 +1,127 @@
 
-import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from 'react-router-dom';
+import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone } from 'lucide-react';
+import { Button } from './ui/button';
 
 export default function Footer() {
-  const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-card text-card-foreground pt-16 pb-8 border-t">
-      <div className="container">
+    <footer className="bg-gradient-to-br from-nurse-light to-white pt-16 pb-8 border-t">
+      <div className="container-custom">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          <div className="animate-fade-in [animation-delay:100ms]">
-            <h4 className="text-xl font-bold mb-4">MareSereno</h4>
-            <p className="text-muted-foreground mb-4">
-              {t.footer.description}
+          {/* Company Info */}
+          <div>
+            <Link to="/" className="flex items-center mb-6">
+              <span className="text-2xl font-heading font-bold text-nurse-dark">
+                Nurse<span className="text-primary-500">Nest</span>
+              </span>
+            </Link>
+            <p className="text-gray-600 mb-6">
+              We connect families and healthcare providers with licensed, 
+              background-checked nurses for in-home or in-practice support.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook size={20} />
+              <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <Facebook className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram size={20} />
+              <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter size={20} />
+              <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
+              </a>
+              <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <Linkedin className="h-5 w-5" />
+                <span className="sr-only">LinkedIn</span>
               </a>
             </div>
           </div>
           
-          <div className="animate-fade-in [animation-delay:200ms]">
-            <h4 className="text-xl font-bold mb-4">{t.footer.quickLinks}</h4>
-            <ul className="space-y-2">
-              {[
-                { name: t.nav.home, path: "/" },
-                { name: t.nav.apartments, path: "/apartments" },
-                { name: t.nav.amenities, path: "/amenities" },
-                { name: t.nav.gallery, path: "/gallery" },
-                { name: t.nav.contact, path: "/contact" },
-                { name: t.nav.bookNow, path: "/booking" },
-              ].map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    to={link.path} 
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="animate-fade-in [animation-delay:300ms]">
-            <h4 className="text-xl font-bold mb-4">{t.footer.contact}</h4>
+          {/* Company Links */}
+          <div>
+            <h4 className="text-lg font-bold mb-6">Company</h4>
             <ul className="space-y-3">
-              <li className="flex items-start">
-                <MapPin className="w-5 h-5 mr-2 mt-0.5 text-primary" />
-                <span className="text-muted-foreground">
-                  123 Seaside Boulevard<br />
-                  Costa Bella, 12345<br />
-                  Italy
-                </span>
+              <li>
+                <Link to="/about" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  About Us
+                </Link>
               </li>
-              <li className="flex items-center">
-                <Phone className="w-5 h-5 mr-2 text-primary" />
-                <span className="text-muted-foreground">+39 123 4567 890</span>
+              <li>
+                <Link to="/blog" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Blog
+                </Link>
               </li>
-              <li className="flex items-center">
-                <Mail className="w-5 h-5 mr-2 text-primary" />
-                <span className="text-muted-foreground">info@maresereno.com</span>
+              <li>
+                <Link to="/careers" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Careers
+                </Link>
               </li>
             </ul>
           </div>
           
-          <div className="animate-fade-in [animation-delay:400ms]">
-            <h4 className="text-xl font-bold mb-4">{t.footer.newsletter}</h4>
-            <p className="text-muted-foreground mb-4">
-              {t.footer.newsletterDesc}
-            </p>
-            <form className="flex flex-col space-y-2">
-              <input 
-                type="email" 
-                placeholder={t.footer.yourEmail} 
-                className="rounded-md px-4 py-2 bg-muted text-foreground"
-                required 
-              />
-              <button 
-                type="submit" 
-                className="btn-primary mt-2"
-              >
-                {t.footer.subscribe}
-              </button>
-            </form>
+          {/* Services Links */}
+          <div>
+            <h4 className="text-lg font-bold mb-6">Services</h4>
+            <ul className="space-y-3">
+              <li>
+                <Link to="/services/night-nurses" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Night Nurses
+                </Link>
+              </li>
+              <li>
+                <Link to="/services/elder-care" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Elder Care
+                </Link>
+              </li>
+              <li>
+                <Link to="/services/practice-staffing" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Practice Staffing
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Support Links */}
+          <div>
+            <h4 className="text-lg font-bold mb-6">Support</h4>
+            <ul className="space-y-3">
+              <li>
+                <Link to="/contact" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
         
-        <div className="border-t border-border pt-8 mt-8 text-center text-muted-foreground">
-          <p>&copy; {currentYear} MareSereno. {t.footer.allRights}</p>
+        {/* Bottom Area with CTA */}
+        <div className="border-t border-gray-200 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-500 text-sm mb-4 md:mb-0">
+            &copy; {currentYear} NurseNest. All rights reserved.
+          </p>
+          
+          <Button className="bg-primary-500 hover:bg-primary-600">
+            Request a Nurse
+          </Button>
         </div>
       </div>
     </footer>

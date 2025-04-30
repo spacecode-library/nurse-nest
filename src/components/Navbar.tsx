@@ -1,95 +1,121 @@
 
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import ThemeToggle from "./ThemeToggle";
-import LanguageSelector from "./LanguageSelector";
-import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
+
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'How It Works', path: '/how-it-works' },
+  { name: 'Services', path: '/services' },
+  { name: 'For Families', path: '/for-families' },
+  { name: 'For Providers', path: '/for-providers' },
+  { name: 'For Nurses', path: '/for-nurses' },
+  { name: 'About Us', path: '/about' },
+  { name: 'Contact', path: '/contact' },
+];
 
 export default function Navbar() {
-  const { t } = useLanguage();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
-  const navLinks = [
-    { name: t.nav.home, path: "/" },
-    { name: t.nav.apartments, path: "/apartments" },
-    { name: t.nav.amenities, path: "/amenities" },
-    { name: t.nav.gallery, path: "/gallery" },
-    { name: t.nav.contact, path: "/contact" }
-  ];
-
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 20;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrolled]);
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
-  return <header className={cn("fixed top-0 left-0 right-0 z-50 transition-all duration-300", scrolled ? "bg-white/80 dark:bg-card/80 backdrop-blur-lg py-3 shadow-md" : "bg-transparent py-5")}>
-      <nav className="container flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <LanguageSelector />
-        </div>
-
+  return (
+    <header className={cn(
+      'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+      isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
+    )}>
+      <div className="container-custom flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <span className="text-2xl font-heading font-bold text-nurse-dark">
+            Nurse<span className="text-primary-500">Nest</span>
+          </span>
+        </Link>
+        
         {/* Desktop Navigation */}
-        <ul className="hidden md:flex space-x-8">
-          {navLinks.map(link => <li key={link.name} className="relative">
-              <Link to={link.path} className="font-medium transition-colors hover:text-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">
+        <nav className="hidden lg:flex items-center space-x-8">
+          {navLinks.map((link) => (
+            <Link 
+              key={link.name}
+              to={link.path}
+              className="font-medium text-gray-700 hover:text-primary-500 link-underline"
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
+        
+        {/* CTA Button */}
+        <div className="hidden lg:block">
+          <Button className="bg-primary-500 hover:bg-primary-600">
+            Request a Nurse
+          </Button>
+        </div>
+        
+        {/* Mobile Menu Button */}
+        <button 
+          className="lg:hidden text-gray-600 focus:outline-none" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
+      </div>
+      
+      {/* Mobile Menu */}
+      <div
+        className={cn(
+          'lg:hidden fixed inset-0 bg-white z-40 transform transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        )}
+      >
+        <div className="container-custom py-5">
+          <div className="flex items-center justify-between mb-8">
+            <Link to="/" className="flex items-center">
+              <span className="text-2xl font-heading font-bold text-nurse-dark">
+                Nurse<span className="text-primary-500">Nest</span>
+              </span>
+            </Link>
+            
+            <button 
+              className="text-gray-600 focus:outline-none" 
+              onClick={() => setIsOpen(false)}
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          
+          <nav className="flex flex-col space-y-6">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name}
+                to={link.path}
+                className="font-medium text-gray-700 hover:text-primary-500"
+                onClick={() => setIsOpen(false)}
+              >
                 {link.name}
               </Link>
-            </li>)}
-        </ul>
-
-        <div className="hidden md:flex items-center space-x-2">
-          <ThemeToggle />
-          <Button asChild className="btn-primary">
-            <Link to="/booking">{t.nav.bookNow}</Link>
-          </Button>
-        </div>
-
-        {/* Mobile Navigation */}
-        <div className="md:hidden flex items-center space-x-2">
-          <ThemeToggle />
-          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="rounded-full">
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </Button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div className={cn("fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden transition-opacity duration-300", mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none")}>
-        <div className={cn("fixed inset-y-0 right-0 w-3/4 max-w-sm bg-card shadow-xl p-6 transition-transform duration-300 ease-in-out", mobileMenuOpen ? "translate-x-0" : "translate-x-full")}>
-          <div className="flex flex-col h-full justify-between">
-            <div>
-              <div className="flex justify-between mb-8">
-                <LanguageSelector />
-                <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="rounded-full">
-                  <X className="h-6 w-6" />
-                </Button>
-              </div>
-              <ul className="space-y-6">
-                {navLinks.map(link => <li key={link.name}>
-                    <Link to={link.path} className="text-lg font-medium transition-colors hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
-                      {link.name}
-                    </Link>
-                  </li>)}
-              </ul>
-            </div>
+            ))}
             
-            <Button asChild className="w-full btn-primary mt-6">
-              <Link to="/booking" onClick={() => setMobileMenuOpen(false)}>
-                {t.nav.bookNow}
-              </Link>
+            <Button className="bg-primary-500 hover:bg-primary-600 w-full mt-4">
+              Request a Nurse
             </Button>
-          </div>
+          </nav>
         </div>
       </div>
-    </header>;
+    </header>
+  );
 }
