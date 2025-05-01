@@ -13,14 +13,14 @@ export default function HeroSection() {
       {/* Hero Content */}
       <div className="container-custom relative z-10 pt-24 pb-16 md:pt-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="animate-fade-in">
+          <div className="animate-fade-in text-center lg:text-left">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Specialized Nurses, <span className="text-gradient animate-pulse-slow">Delivered</span> to Your Doorstep
+              Specialized Nurses <span className="text-gradient animate-pulse-slow">Delivered</span> to Your Doorstep
             </h1>
-            <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-lg">
+            <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-lg mx-auto lg:mx-0">
               Nationwide nurse-matching for newborns, elderly loved ones, and private practices — all backed by real clinical experience.
             </p>
-            <div className="flex justify-center">
+            <div className="flex justify-center lg:justify-start">
               <Button className="bg-nurse-dark hover:bg-primary-700 text-white">
                 Request a Nurse
               </Button>
