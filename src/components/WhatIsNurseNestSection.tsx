@@ -46,28 +46,6 @@ export default function WhatIsNurseNestSection() {
             </div>
           ))}
         </div>
-        
-        {/* SEO Keywords */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex flex-wrap justify-center gap-3 text-sm">
-            {[
-              "nurse placement service",
-              "in-home nurses",
-              "postpartum night nurse",
-              "elderly care RN",
-              "nurse-owned business",
-              "nationwide nurse staffing"
-            ].map((keyword, index) => (
-              <span 
-                key={index} 
-                className="px-4 py-2 rounded-full bg-nurse-light text-nurse-dark font-medium animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                {keyword}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );
