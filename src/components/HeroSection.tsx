@@ -1,5 +1,4 @@
 
-import { ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 
 export default function HeroSection() {
@@ -16,18 +15,14 @@ export default function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="animate-fade-in">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Specialized Nurses, <span className="text-gradient">Delivered</span> to Your Doorstep
+              Specialized Nurses, <span className="text-gradient animate-pulse-slow">Delivered</span> to Your Doorstep
             </h1>
             <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-lg">
               Nationwide nurse-matching for newborns, elderly loved ones, and private practices — all backed by real clinical experience.
             </p>
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="flex justify-center">
               <Button className="bg-nurse-dark hover:bg-primary-700 text-white">
                 Request a Nurse
-              </Button>
-              <Button variant="outline" className="group">
-                See How It Works
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
           </div>
@@ -41,14 +36,7 @@ export default function HeroSection() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent">
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="p-3 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-3 w-3 rounded-full bg-green-500"></div>
-                      <p className="text-sm font-medium">NICU-trained nurses available now</p>
-                    </div>
-                  </div>
-                </div>
+                {/* Removed NICU-trained nurses badge */}
               </div>
               
               {/* Small Family Image */}
@@ -61,8 +49,8 @@ export default function HeroSection() {
               </div>
             </div>
             
-            {/* Trust Badge */}
-            <div className="absolute -bottom-8 left-8 bg-white px-4 py-2 rounded-full shadow-lg border border-gray-100 flex items-center">
+            {/* Trust Badge - Moved to top of image */}
+            <div className="absolute top-4 right-4 bg-white px-4 py-2 rounded-full shadow-lg border border-gray-100 flex items-center">
               <svg className="w-5 h-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
               </svg>
