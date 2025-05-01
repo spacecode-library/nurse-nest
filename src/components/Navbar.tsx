@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -9,9 +8,6 @@ const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'How It Works', path: '/how-it-works' },
   { name: 'Services', path: '/services' },
-  { name: 'For Families', path: '/for-families' },
-  { name: 'For Providers', path: '/for-providers' },
-  { name: 'For Nurses', path: '/for-nurses' },
   { name: 'About Us', path: '/about' },
   { name: 'Contact', path: '/contact' },
 ];
