@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -11,21 +10,21 @@ export default function TestimonialsSection() {
       quote: "We finally sleep again thanks to our night nurse from Nurse Nest.",
       author: "Emily S.",
       role: "New Mom in Dallas",
-      image: "https://i.pravatar.cc/150?img=32",
+      image: "https://i.pravatar.cc/150?u=emily123",
       stars: 5
     },
     {
       quote: "My mom actually looks forward to her weekly visits — our nurse is amazing.",
       author: "Jonathan L.",
       role: "Family Caregiver",
-      image: "https://i.pravatar.cc/150?img=45",
+      image: "https://i.pravatar.cc/150?u=jonathan456",
       stars: 5
     },
     {
       quote: "I hired a clinic nurse through Nurse Nest and never looked back.",
       author: "Dr. Patel",
       role: "Pediatrician",
-      image: "https://i.pravatar.cc/150?img=57",
+      image: "https://i.pravatar.cc/150?u=drpatel789",
       stars: 5
     }
   ];

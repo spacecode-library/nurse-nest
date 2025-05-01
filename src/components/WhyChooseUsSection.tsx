@@ -32,7 +32,7 @@ export default function WhyChooseUsSection() {
           {/* Image Side */}
           <div className="relative animate-fade-in">
             <img 
-              src="https://images.unsplash.com/photo-1612656693463-4259d1b4f06c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              src="https://picsum.photos/id/433/800/600"
               alt="Compassionate nurse with patient" 
               className="rounded-xl shadow-xl w-full max-w-lg mx-auto"
             />
