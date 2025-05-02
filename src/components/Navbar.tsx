@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -33,7 +34,10 @@ export default function Navbar() {
       <div className="container-custom flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <span className="text-2xl font-heading font-bold text-nurse-dark">
+          <span className={cn(
+            "text-2xl font-heading font-bold",
+            isScrolled ? "text-nurse-dark" : "text-white"
+          )}>
             Nurse<span className="text-primary-500">Nest</span>
           </span>
         </Link>
@@ -44,7 +48,10 @@ export default function Navbar() {
             <Link 
               key={link.name}
               to={link.path}
-              className="font-medium text-gray-700 hover:text-primary-500 link-underline"
+              className={cn(
+                "font-medium link-underline",
+                isScrolled ? "text-gray-700 hover:text-primary-500" : "text-white hover:text-primary-200"
+              )}
             >
               {link.name}
             </Link>
@@ -60,7 +67,10 @@ export default function Navbar() {
         
         {/* Mobile Menu Button */}
         <button 
-          className="lg:hidden text-gray-600 focus:outline-none" 
+          className={cn(
+            "lg:hidden focus:outline-none",
+            isScrolled ? "text-gray-600" : "text-white"
+          )}
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (

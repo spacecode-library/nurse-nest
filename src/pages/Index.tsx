@@ -6,8 +6,7 @@ import WhatIsNurseNestSection from "@/components/WhatIsNurseNestSection";
 import WhoWeHelpSection from "@/components/WhoWeHelpSection";
 import WhyChooseUsSection from "@/components/WhyChooseUsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
-import TestimonialsSection from "@/components/TestimonialsSection";
-import JoinNetworkSection from "@/components/JoinNetworkSection";
+import ClientApplicationSection from "@/components/ClientApplicationSection";
 import FaqSection from "@/components/FaqSection";
 import CtaSection from "@/components/CtaSection";
 
@@ -22,8 +21,7 @@ export default function Index() {
         <WhoWeHelpSection />
         <WhyChooseUsSection />
         <HowItWorksSection />
-        <TestimonialsSection />
-        <JoinNetworkSection />
+        <ClientApplicationSection />
         <FaqSection />
         <CtaSection />
       </main>

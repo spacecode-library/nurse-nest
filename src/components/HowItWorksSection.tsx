@@ -12,13 +12,13 @@ export default function HowItWorksSection() {
     },
     {
       title: "We Source & Screen Nurses",
-      description: "We hand-pick qualified nurses and verify all credentials, licenses, and experience.",
+      description: "We hand-pick qualified nurses and verify resume before sending in matches to you.",
       icon: <SearchCheck className="h-10 w-10 text-white" />,
       bgClass: "bg-nurse-dark"
     },
     {
       title: "Meet Your Match",
-      description: "You receive the best options — and we arrange care within 48 hours.",
+      description: "You receive the best options - and interview them via zoom or phone and pick your favorite nurse.",
       icon: <Users className="h-10 w-10 text-white" />,
       bgClass: "bg-primary-700"
     }

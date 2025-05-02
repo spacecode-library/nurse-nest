@@ -11,13 +11,6 @@ export default function WhyChooseUsSection() {
     "Long-term and short-term contracts available",
     "No agency markups or hidden fees"
   ];
-  
-  const trustBadges = [
-    { name: "RN Verified", color: "bg-blue-500" },
-    { name: "HIPAA Compliant", color: "bg-green-500" },
-    { name: "Insured & Vetted", color: "bg-purple-500" },
-    { name: "Nurse-Owned", color: "bg-red-500" }
-  ];
 
   return (
     <section className="section-padding bg-white relative overflow-hidden">
@@ -32,8 +25,8 @@ export default function WhyChooseUsSection() {
           {/* Image Side */}
           <div className="relative animate-fade-in">
             <img 
-              src="https://picsum.photos/id/433/800/600"
-              alt="Compassionate nurse with patient" 
+              src="/lovable-uploads/49fc5184-fdc8-4f1d-bdb4-99bdb010c7e2.png"
+              alt="Nurse with baby and happy family" 
               className="rounded-xl shadow-xl w-full max-w-lg mx-auto"
             />
             
@@ -79,20 +72,6 @@ export default function WhyChooseUsSection() {
                     <CheckIcon className="h-4 w-4 text-green-600" />
                   </div>
                   <p className="ml-3 text-gray-700">{benefit}</p>
-                </div>
-              ))}
-            </div>
-            
-            {/* Trust Badges */}
-            <div className="flex flex-wrap gap-3 mb-8">
-              {trustBadges.map((badge, index) => (
-                <div 
-                  key={index}
-                  className="flex items-center px-4 py-2 rounded-full bg-gray-100 animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className={`h-2 w-2 rounded-full ${badge.color} mr-2`} />
-                  <span className="text-sm font-medium">{badge.name}</span>
                 </div>
               ))}
             </div>
