@@ -1,8 +1,30 @@
 
 import { Baby, Users, Stethoscope } from 'lucide-react';
 import { Button } from './ui/button';
+import { useEffect } from 'react';
 
 export default function WhoWeHelpSection() {
+  useEffect(() => {
+    // Intersection Observer setup for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    // Select all elements with the animate-on-scroll class
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+      observer.observe(el);
+    });
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const categories = [
     {
       title: "New Parents",
@@ -27,7 +49,7 @@ export default function WhoWeHelpSection() {
   return (
     <section className="section-padding bg-gradient-to-br from-nurse-light to-white" id="services">
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-16 animate-on-scroll opacity-0">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Tailored Care for <span className="text-gradient">Every Situation</span>
           </h2>
@@ -41,10 +63,10 @@ export default function WhoWeHelpSection() {
           {categories.map((category, index) => (
             <div 
               key={index} 
-              className="glass-card overflow-hidden rounded-xl animate-fade-in"
+              className="glass-card overflow-hidden rounded-xl animate-on-scroll opacity-0"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="h-48 overflow-hidden">
+              <div className="h-56 overflow-hidden">
                 <img 
                   src={category.image} 
                   alt={category.title} 
@@ -65,7 +87,7 @@ export default function WhoWeHelpSection() {
           ))}
         </div>
         
-        <div className="mt-12 text-center">
+        <div className="mt-12 text-center animate-on-scroll opacity-0">
           <Button className="bg-nurse-dark hover:bg-primary-700">
             Request a Nurse
           </Button>

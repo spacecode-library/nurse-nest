@@ -20,7 +20,7 @@ export default function ClientApplicationSection() {
   return (
     <section className="section-padding bg-gradient-to-br from-white to-nurse-light" id="apply">
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-16 animate-on-scroll opacity-0">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to <span className="text-gradient">Find Your Nurse</span>?
           </h2>
@@ -29,7 +29,7 @@ export default function ClientApplicationSection() {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8">
+        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8 animate-on-scroll opacity-0">
           <form className="space-y-6">
             {/* Full Name */}
             <div className="grid gap-2">
@@ -112,7 +112,7 @@ export default function ClientApplicationSection() {
                 <Slider 
                   value={payRate} 
                   min={45} 
-                  max={100} 
+                  max={125} 
                   step={1}
                   onValueChange={setPayRate}
                 />
@@ -120,7 +120,7 @@ export default function ClientApplicationSection() {
               <div className="flex justify-between text-sm">
                 <span>$45</span>
                 <span className="font-medium">${payRate[0]}</span>
-                <span>$100</span>
+                <span>$125</span>
               </div>
               <p className="text-sm text-gray-500 mt-1">
                 A higher pay rate may increase the probability of finding more matches.
@@ -156,7 +156,7 @@ export default function ClientApplicationSection() {
             {/* Start Date */}
             <div className="grid gap-2">
               <label htmlFor="startDate" className="text-sm font-medium">
-                Expected Start Date
+                Expected Nurse Start Date
               </label>
               <Popover>
                 <PopoverTrigger asChild>
