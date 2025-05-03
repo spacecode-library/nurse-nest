@@ -13,7 +13,7 @@ const navLinks = [
   { name: 'Contact', path: '/contact' },
 ];
 
-export default function Navbar() {
+export default function Navbar({ showCta = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
@@ -49,7 +49,7 @@ export default function Navbar() {
               key={link.name}
               to={link.path}
               className={cn(
-                "font-medium link-underline",
+                "font-medium link-underline text-white",
                 isScrolled ? "text-gray-700 hover:text-primary-500" : "text-white hover:text-primary-200"
               )}
             >
@@ -58,9 +58,14 @@ export default function Navbar() {
           ))}
         </nav>
         
-        {/* CTA Button */}
+        {/* CTA Button - Only show when scroll past hero */}
         <div className="hidden lg:block">
-          <Button className="bg-primary-500 hover:bg-primary-600">
+          <Button 
+            className={cn(
+              "bg-primary-500 hover:bg-primary-600 transition-opacity duration-1000",
+              showCta ? "opacity-100" : "opacity-0 pointer-events-none"
+            )}
+          >
             Request a Nurse
           </Button>
         </div>

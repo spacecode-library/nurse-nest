@@ -1,30 +1,7 @@
 
 import { Baby, Users, Stethoscope } from 'lucide-react';
-import { Button } from './ui/button';
-import { useEffect } from 'react';
 
 export default function WhoWeHelpSection() {
-  useEffect(() => {
-    // Intersection Observer setup for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    // Select all elements with the animate-on-scroll class
-    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
-      observer.observe(el);
-    });
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
   const categories = [
     {
       title: "New Parents",
@@ -78,19 +55,10 @@ export default function WhoWeHelpSection() {
                   {category.icon}
                   <h3 className="text-xl font-semibold ml-4">{category.title}</h3>
                 </div>
-                <p className="text-gray-600 mb-6">{category.description}</p>
-                <Button variant="outline" className="w-full">
-                  Learn More
-                </Button>
+                <p className="text-gray-600">{category.description}</p>
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="mt-12 text-center animate-on-scroll opacity-0">
-          <Button className="bg-nurse-dark hover:bg-primary-700">
-            Request a Nurse
-          </Button>
         </div>
       </div>
     </section>

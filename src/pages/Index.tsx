@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
@@ -9,11 +9,25 @@ import WhyChooseUsSection from "@/components/WhyChooseUsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import ClientApplicationSection from "@/components/ClientApplicationSection";
 import FaqSection from "@/components/FaqSection";
-import CtaSection from "@/components/CtaSection";
 
 export default function Index() {
+  const [showNavbarCta, setShowNavbarCta] = useState(false);
+
   useEffect(() => {
-    // Global Intersection Observer setup for fade-in animations
+    // Handle navbar CTA visibility
+    const handleScroll = () => {
+      const heroButton = document.querySelector('#hero-cta-button');
+      if (heroButton) {
+        // Check if hero button is out of viewport
+        const rect = heroButton.getBoundingClientRect();
+        setShowNavbarCta(rect.bottom < 0);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
+    
+    // Global Intersection Observer setup for fade-in animations with slower, more exaggerated effect
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -27,21 +41,26 @@ export default function Index() {
       rootMargin: '0px 0px -50px 0px'  // Slightly above the viewport bottom
     });
     
-    // Select all elements with the animate-on-scroll class
-    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+    // Select all elements to animate
+    document.querySelectorAll('.animate-on-scroll, button, img, a, h1, h2, h3, h4, h5, h6, p, li').forEach((el) => {
       // Initially set opacity to 0 to prevent flash
       el.classList.add('opacity-0');
+      // Add the animate-on-scroll class if it doesn't have it
+      if (!el.classList.contains('animate-on-scroll')) {
+        el.classList.add('animate-on-scroll');
+      }
       observer.observe(el);
     });
     
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar showCta={showNavbarCta} />
       
       <main className="flex-1">
         <HeroSection />
@@ -51,7 +70,6 @@ export default function Index() {
         <HowItWorksSection />
         <ClientApplicationSection />
         <FaqSection />
-        <CtaSection />
       </main>
       
       <Footer />
