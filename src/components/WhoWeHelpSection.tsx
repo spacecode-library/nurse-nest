@@ -8,19 +8,19 @@ export default function WhoWeHelpSection() {
       title: "New Parents",
       description: "Sleep easy with NICU or L&D-trained night nurses who care for your newborn overnight.",
       icon: <Baby className="h-12 w-12 text-nurse-dark" />,
-      image: "https://picsum.photos/id/1083/500/300" // Using picsum photos with fixed IDs
+      image: "/lovable-uploads/603cb44a-4534-4899-99e3-924a98540936.png"
     },
     {
       title: "Busy Families with Elderly Loved Ones",
       description: "Weekly check-ins, medication management, and fall prevention from licensed nurses.",
       icon: <Users className="h-12 w-12 text-nurse-dark" />,
-      image: "https://picsum.photos/id/177/500/300" // Using picsum photos with fixed IDs
+      image: "/lovable-uploads/598548b2-a370-469c-86f5-19503d151210.png"
     },
     {
       title: "Doctor Offices & Clinics",
       description: "We staff your practice with experienced, credentialed nurses — without the HR hassle.",
       icon: <Stethoscope className="h-12 w-12 text-nurse-dark" />,
-      image: "https://picsum.photos/id/287/500/300" // Using picsum photos with fixed IDs
+      image: "/lovable-uploads/6ab964b9-97ec-4251-bd6d-8bafe7ce731c.png"
     }
   ];
 

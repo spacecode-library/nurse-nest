@@ -6,14 +6,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Textarea } from './ui/textarea';
+import { Slider } from './ui/slider';
 
 export default function ClientApplicationSection() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [careType, setCareType] = useState<string>("");
   const [otherCareType, setOtherCareType] = useState<string>("");
+  const [payRate, setPayRate] = useState<number[]>([65]);
 
   return (
     <section className="section-padding bg-gradient-to-br from-white to-nurse-light" id="apply">
@@ -99,6 +101,30 @@ export default function ClientApplicationSection() {
                   <SelectItem value="as-needed">As Needed</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            
+            {/* Pay Rate Slider */}
+            <div className="grid gap-2">
+              <label className="text-sm font-medium flex items-center">
+                <DollarSign className="h-4 w-4 mr-1" /> Pay Rate (per hour)
+              </label>
+              <div className="pt-6 pb-2">
+                <Slider 
+                  value={payRate} 
+                  min={45} 
+                  max={100} 
+                  step={1}
+                  onValueChange={setPayRate}
+                />
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>$45</span>
+                <span className="font-medium">${payRate[0]}</span>
+                <span>$100</span>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                A higher pay rate may increase the probability of finding more matches.
+              </p>
             </div>
             
             {/* Location */}

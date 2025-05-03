@@ -7,7 +7,7 @@ export default function WhatIsNurseNestSection() {
       <div className="container-custom">
         <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Nurse Nest is a <span className="text-gradient">Nurse-Owned</span> Matching Service Built on Trust
+            <span className="text-nurse-dark">Nurses</span> Built, <span className="text-gradient">Designed for Peace of Mind</span>
           </h2>
           <p className="text-lg text-gray-700">
             We connect families and healthcare providers with licensed, background-checked nurses for in-home or in-practice support. Whether you need a NICU-trained night nurse, a postpartum caregiver, or an elder care nurse — we find the right match, fast.
@@ -30,7 +30,7 @@ export default function WhatIsNurseNestSection() {
             {
               icon: <Clock className="h-10 w-10 text-nurse-dark" />,
               title: "Quick Response",
-              description: "We understand urgency and can match you with the right nurse within 48 hours."
+              description: "We understand urgency and work to match you with the right nurse as quickly as possible."
             }
           ].map((feature, index) => (
             <div 
