@@ -30,9 +30,6 @@ export default function AboutMeSection() {
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">
                   Jayson Minagawa
                 </h2>
-                <h3 className="text-xl mb-6 text-nurse-dark font-semibold">
-                  Founder of Nurse Nest
-                </h3>
                 
                 <div className="prose prose-lg max-w-none">
                   <p className="mb-4">

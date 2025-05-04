@@ -14,7 +14,7 @@ export default function FaqSection() {
       answer: "Once your application is submitted and the $100 fee is received, we begin the process immediately. Our team promotes your listing through targeted advertising, job boards, and our professional network to maximize visibility. Typically, it takes up to 7 days to start receiving qualified applicants. If time is not a concern, we're happy to keep the listing active for as long as needed."
     },
     {
-      question: "What if no one applies?",
+      question: "What if no nurse applies to the job listing?",
       answer: "You may need to adjust the pay rate. If you prefer not to increase it, this service may not be the right fit for your current needs."
     },
     {
@@ -50,7 +50,7 @@ export default function FaqSection() {
         <div className="max-w-3xl mx-auto">
           <div className="space-y-4">
             {faqs.map((faq, index) => {
-              const animationClass = !isMobile ? "animate-fade-in" : "";
+              const animationClass = !isMobile ? "animate-on-scroll opacity-0" : "";
               return (
                 <div 
                   key={index} 

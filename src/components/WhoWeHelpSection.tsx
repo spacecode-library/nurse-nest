@@ -7,7 +7,7 @@ export default function WhoWeHelpSection() {
       title: "New Parents",
       description: "Sleep easy with NICU or L&D-trained night nurses who care for your newborn overnight.",
       icon: <Baby className="h-12 w-12 text-nurse-dark" />,
-      image: "/lovable-uploads/603cb44a-4534-4899-99e3-924a98540936.png"
+      image: "/lovable-uploads/6c21cb4e-2b16-4459-a27e-ff5d3cb6946f.png"
     },
     {
       title: "Busy Families with Elderly Loved Ones",

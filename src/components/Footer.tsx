@@ -23,11 +23,6 @@ export default function Footer() {
                   Blog
                 </Link>
               </li>
-              <li>
-                <Link to="/careers" className="text-gray-600 hover:text-primary-500 transition-colors">
-                  Careers
-                </Link>
-              </li>
             </ul>
           </div>
           

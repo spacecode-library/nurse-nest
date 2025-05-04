@@ -36,12 +36,11 @@ export default function HeroSection() {
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 1.2, delay: 0.5 }}
-                    className="text-blue-400 inline-block"
                   >
                     Delivered to
                   </motion.span>
                 ) : (
-                  <span className="text-blue-400 inline-block">Delivered to</span>
+                  <span>Delivered to</span>
                 )}
               </div>
               <div>Your Doorstep</div>
