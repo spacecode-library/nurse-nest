@@ -1,29 +1,12 @@
 
 import { ClipboardCheck, SearchCheck, Users } from 'lucide-react';
 import { Button } from './ui/button';
-import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 export default function HowItWorksSection() {
-  useEffect(() => {
-    // Intersection Observer setup for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    // Select all elements with the animate-on-scroll class
-    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
-      observer.observe(el);
-    });
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const isMobile = useIsMobile();
 
   const steps = [
     {
@@ -49,7 +32,7 @@ export default function HowItWorksSection() {
   return (
     <section className="section-padding bg-gradient-to-br from-nurse-light to-white" id="how-it-works">
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16 animate-on-scroll opacity-0">
+        <div className={cn("max-w-3xl mx-auto text-center mb-16", !isMobile && "animate-on-scroll opacity-0")}>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Simple, <span className="text-gradient">Seamless</span> Nurse Matching
           </h2>
@@ -67,7 +50,7 @@ export default function HowItWorksSection() {
             {steps.map((step, index) => (
               <div 
                 key={index} 
-                className="step-card animate-on-scroll opacity-0"
+                className={cn("step-card", !isMobile && "animate-on-scroll opacity-0")}
                 style={{ animationDelay: `${index * 200}ms` }}
               >
                 <div className={`step-number ${step.bgClass} z-10`}>{index + 1}</div>
@@ -81,10 +64,12 @@ export default function HowItWorksSection() {
           </div>
         </div>
         
-        <div className="mt-16 text-center animate-on-scroll opacity-0">
-          <Button className="bg-nurse-dark hover:bg-primary-700 text-white">
-            Get Started Now
-          </Button>
+        <div className={cn("mt-16 text-center", !isMobile && "animate-on-scroll opacity-0")}>
+          <Link to="/apply">
+            <Button className="bg-nurse-dark hover:bg-primary-700 text-white">
+              Get Started Now
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

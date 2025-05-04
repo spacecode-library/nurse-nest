@@ -4,6 +4,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Gallery from "./pages/Gallery";
 import Apartments from "./pages/Apartments";
+import Apply from "./pages/Apply";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/" element={<Index />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/apartments" element={<Apartments />} />
+        <Route path="/apply" element={<Apply />} />
         
         {/* Add all other routes above the catch-all 404 route */}
         <Route path="*" element={<NotFound />} />

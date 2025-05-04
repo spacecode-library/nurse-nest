@@ -1,29 +1,10 @@
 
 import { CheckIcon } from 'lucide-react';
-import { Button } from './ui/button';
-import { useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 export default function WhyChooseUsSection() {
-  useEffect(() => {
-    // Intersection Observer setup for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    // Select all elements with the animate-on-scroll class
-    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
-      observer.observe(el);
-    });
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const isMobile = useIsMobile();
 
   const benefits = [
     "100% nurse-owned and operated",
@@ -45,7 +26,7 @@ export default function WhyChooseUsSection() {
       <div className="container-custom relative z-10">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Image Side */}
-          <div className="relative animate-on-scroll opacity-0">
+          <div className={cn("relative", !isMobile && "animate-on-scroll opacity-0")}>
             <img 
               src="/lovable-uploads/49fc5184-fdc8-4f1d-bdb4-99bdb010c7e2.png"
               alt="Nurse with baby and happy family" 
@@ -78,7 +59,7 @@ export default function WhyChooseUsSection() {
           </div>
           
           {/* Content Side */}
-          <div className="animate-on-scroll opacity-0">
+          <div className={cn(!isMobile && "animate-on-scroll opacity-0")}>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Nurses You Can Trust. <span className="text-gradient">Care You Can Feel.</span>
             </h2>
@@ -87,7 +68,7 @@ export default function WhyChooseUsSection() {
               {benefits.map((benefit, index) => (
                 <div 
                   key={index} 
-                  className="flex items-start animate-on-scroll opacity-0"
+                  className={cn("flex items-start", !isMobile && "animate-on-scroll opacity-0")}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
@@ -97,10 +78,6 @@ export default function WhyChooseUsSection() {
                 </div>
               ))}
             </div>
-            
-            <Button className="bg-nurse-dark hover:bg-primary-700">
-              Request a Nurse
-            </Button>
           </div>
         </div>
       </div>

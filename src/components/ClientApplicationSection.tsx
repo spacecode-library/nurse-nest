@@ -123,7 +123,7 @@ export default function ClientApplicationSection() {
                 <span>$125</span>
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                A higher pay rate may increase the probability of finding more matches.
+                Higher pay rates attract more qualified nurse matches.
               </p>
             </div>
             
@@ -180,6 +180,18 @@ export default function ClientApplicationSection() {
                   />
                 </PopoverContent>
               </Popover>
+            </div>
+            
+            {/* Additional certifications or requirements */}
+            <div className="grid gap-2">
+              <label htmlFor="certifications" className="text-sm font-medium">
+                Additional certifications or requirements?
+              </label>
+              <Textarea 
+                id="certifications"
+                placeholder="E.g., ACLS certification, pediatric experience, etc."
+                rows={3}
+              />
             </div>
             
             <Button

@@ -8,24 +8,24 @@ export default function FaqSection() {
   
   const faqs = [
     {
-      question: "How fast can I get matched with a nurse?",
-      answer: "We pride ourselves on quick matching. In most cases, we can connect you with qualified nurses within 48 hours of your request. For urgent needs, please indicate this in your request and we'll prioritize accordingly."
+      question: "How fast does the whole process usually take?",
+      answer: "Once your application is submitted and the $100 fee is received, we begin the process immediately. Our team promotes your listing through targeted advertising, job boards, and our professional network to maximize visibility. Typically, it takes up to 7 days to start receiving qualified applicants. If time is not a concern, we're happy to keep the listing active for as long as needed."
     },
     {
-      question: "Are all your nurses licensed?",
-      answer: "Yes, absolutely. Every nurse in our network is fully licensed and registered in their respective state(s). We verify credentials, conduct background checks, and ensure all licenses are current before any match is made."
+      question: "What if no one applies?",
+      answer: "You may need to adjust the pay rate. If you prefer not to increase it, this service may not be the right fit for your current needs."
+    },
+    {
+      question: "Why do nurses start at a high rate?",
+      answer: "Nursing rates can vary significantly based on location, specialty, and experience. Listing a position at the lowest rate typically results in limited interest. Offering a more competitive rate increases the likelihood of attracting qualified applicants. Additionally, please note that these are independent contractor roles—nurses are responsible for covering their own health insurance, LLC formation, and malpractice insurance."
+    },
+    {
+      question: "What's a good time frame to request a nurse match?",
+      answer: "Nurses generally like to know at least a month ahead. If nurses are free and looking for work, they can start immediately."
     },
     {
       question: "What areas do you serve?",
       answer: "Nurse Nest offers nationwide coverage across the United States. Our extensive network includes nurses in major metropolitan areas as well as many rural communities. During the matching process, we prioritize nurses who are geographically closest to your location."
-    },
-    {
-      question: "Can I request a specific type of experience (NICU, hospice, etc.)?",
-      answer: "Yes, we specialize in matching nurses with specific clinical backgrounds to your needs. Whether you need a NICU-trained nurse for your newborn, a hospice nurse for end-of-life care, or any other specialization, we can accommodate your request. Just specify your requirements when you apply."
-    },
-    {
-      question: "What is the minimum duration for nurse services?",
-      answer: "We offer flexible arrangements starting from single shifts (8-12 hours) up to long-term contracts. There's no minimum requirement, though many of our clients find the most value in consistent care arrangements."
     }
   ];
   
