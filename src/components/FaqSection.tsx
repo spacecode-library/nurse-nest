@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const isMobile = useIsMobile();
   
   const faqs = [
     {
@@ -36,7 +38,7 @@ export default function FaqSection() {
   return (
     <section className="section-padding bg-white" id="faq">
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-8 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Got <span className="text-gradient">Questions</span>? We've Got Answers.
           </h2>
@@ -47,40 +49,43 @@ export default function FaqSection() {
         
         <div className="max-w-3xl mx-auto">
           <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div 
-                key={index} 
-                className="glass-card animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <button
-                  onClick={() => toggleFaq(index)}
-                  className="flex justify-between items-center w-full p-6 text-left"
+            {faqs.map((faq, index) => {
+              const animationClass = !isMobile ? "animate-fade-in" : "";
+              return (
+                <div 
+                  key={index} 
+                  className={`glass-card ${animationClass}`}
+                  style={!isMobile ? { animationDelay: `${index * 100}ms` } : {}}
                 >
-                  <h3 className="text-lg font-medium">{faq.question}</h3>
-                  {openIndex === index ? (
-                    <ChevronUp className="h-5 w-5 text-primary-500" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-500" />
-                  )}
-                </button>
-                
-                <div
-                  className={cn(
-                    "overflow-hidden transition-all duration-300",
-                    openIndex === index ? "max-h-96" : "max-h-0"
-                  )}
-                >
-                  <p className="p-6 pt-0 text-gray-600">
-                    {faq.answer}
-                  </p>
+                  <button
+                    onClick={() => toggleFaq(index)}
+                    className="flex justify-between items-center w-full p-4 md:p-6 text-left"
+                  >
+                    <h3 className="text-base md:text-lg font-medium pr-4">{faq.question}</h3>
+                    {openIndex === index ? (
+                      <ChevronUp className="h-5 w-5 flex-shrink-0 text-primary-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 flex-shrink-0 text-gray-500" />
+                    )}
+                  </button>
+                  
+                  <div
+                    className={cn(
+                      "overflow-hidden transition-all duration-300",
+                      openIndex === index ? "max-h-[500px]" : "max-h-0"
+                    )}
+                  >
+                    <p className="p-4 md:p-6 pt-0 text-gray-600">
+                      {faq.answer}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         
-        <div className="max-w-xl mx-auto mt-12 text-center">
+        <div className="max-w-xl mx-auto mt-8 md:mt-12 text-center">
           <p className="text-gray-600 mb-4">
             Still have questions? We're here to help!
           </p>

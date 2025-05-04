@@ -9,8 +9,8 @@ export default function Apply() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-1 mt-20">
-        <div className="container mx-auto px-4 py-12">
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-12 mt-20">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
             Request a <span className="text-nurse-dark">Nurse</span>
           </h1>

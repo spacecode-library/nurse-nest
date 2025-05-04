@@ -46,13 +46,9 @@ export default function Index() {
       });
       
       // Select all elements to animate
-      document.querySelectorAll('.animate-on-scroll, button, img, a, h1, h2, h3, h4, h5, h6, p, li').forEach((el) => {
+      document.querySelectorAll('.animate-on-scroll').forEach((el) => {
         // Initially set opacity to 0 to prevent flash
         el.classList.add('opacity-0');
-        // Add the animate-on-scroll class if it doesn't have it
-        if (!el.classList.contains('animate-on-scroll')) {
-          el.classList.add('animate-on-scroll');
-        }
         observer.observe(el);
       });
       
@@ -61,8 +57,9 @@ export default function Index() {
       };
     } else {
       // On mobile, make sure everything is visible without animations
-      document.querySelectorAll('.animate-on-scroll, button, img, a, h1, h2, h3, h4, h5, h6, p, li').forEach((el) => {
+      document.querySelectorAll('.animate-on-scroll').forEach((el) => {
         el.classList.remove('opacity-0');
+        el.classList.remove('animate-on-scroll');
         el.classList.add('opacity-100');
       });
     }

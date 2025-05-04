@@ -1,19 +1,9 @@
 
-import { CheckIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 export default function WhyChooseUsSection() {
   const isMobile = useIsMobile();
-
-  const benefits = [
-    "100% nurse-owned and operated",
-    "Nationwide network of licensed RNs",
-    "Thorough background checks and credential verification",
-    "Quick matching within 48 hours",
-    "Long-term and short-term contracts available",
-    "No agency markups or hidden fees"
-  ];
 
   return (
     <section className="section-padding bg-white relative overflow-hidden">
@@ -24,60 +14,14 @@ export default function WhyChooseUsSection() {
       </div>
       
       <div className="container-custom relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Image Side */}
+        <div className="flex justify-center">
+          {/* Image Only */}
           <div className={cn("relative", !isMobile && "animate-on-scroll opacity-0")}>
             <img 
               src="/lovable-uploads/49fc5184-fdc8-4f1d-bdb4-99bdb010c7e2.png"
               alt="Nurse with baby and happy family" 
-              className="rounded-xl shadow-xl w-full max-w-lg mx-auto object-cover"
+              className="rounded-xl shadow-xl w-full max-w-2xl mx-auto object-cover"
             />
-            
-            {/* Floating Elements */}
-            <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
-              <div className="flex items-center">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3].map((i) => (
-                    <div 
-                      key={i} 
-                      className="w-10 h-10 rounded-full border-2 border-white overflow-hidden"
-                    >
-                      <img 
-                        src={`https://i.pravatar.cc/150?img=${i + 10}`} 
-                        alt="Nurse" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="ml-3">
-                  <p className="text-xs text-gray-500">Matched with</p>
-                  <p className="text-sm font-medium">15+ families this week</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Content Side */}
-          <div className={cn(!isMobile && "animate-on-scroll opacity-0")}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Nurses You Can Trust. <span className="text-gradient">Care You Can Feel.</span>
-            </h2>
-            
-            <div className="space-y-4 mb-8">
-              {benefits.map((benefit, index) => (
-                <div 
-                  key={index} 
-                  className={cn("flex items-start", !isMobile && "animate-on-scroll opacity-0")}
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <CheckIcon className="h-4 w-4 text-green-600" />
-                  </div>
-                  <p className="ml-3 text-gray-700">{benefit}</p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>

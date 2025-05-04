@@ -10,26 +10,19 @@ import { CalendarIcon, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Textarea } from './ui/textarea';
 import { Slider } from './ui/slider';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ClientApplicationSection() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [careType, setCareType] = useState<string>("");
   const [otherCareType, setOtherCareType] = useState<string>("");
   const [payRate, setPayRate] = useState<number[]>([65]);
+  const isMobile = useIsMobile();
 
   return (
     <section className="section-padding bg-gradient-to-br from-white to-nurse-light" id="apply">
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16 animate-on-scroll opacity-0">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to <span className="text-gradient">Find Your Nurse</span>?
-          </h2>
-          <p className="text-lg text-gray-700 mb-8">
-            Fill out this simple form to start the matching process. We'll connect you with qualified nurses that match your specific needs.
-          </p>
-        </div>
-
-        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8 animate-on-scroll opacity-0">
+        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-6 md:p-8">
           <form className="space-y-6">
             {/* Full Name */}
             <div className="grid gap-2">
@@ -171,7 +164,7 @@ export default function ClientApplicationSection() {
                     {date ? format(date, "PPP") : "Select a date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align={isMobile ? "center" : "start"}>
                   <Calendar
                     mode="single"
                     selected={date}
