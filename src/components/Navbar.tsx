@@ -34,6 +34,11 @@ export default function Navbar({ showCta = false }) {
       <div className="container-custom flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
+          <img 
+            src="/lovable-uploads/04b8dbb6-ac67-4547-89ff-f4564c30f2ec.png" 
+            alt="Nurse Nest Logo" 
+            className="h-8 w-8 mr-2"
+          />
           <span className={cn(
             "text-2xl font-heading font-bold",
             isScrolled ? "text-nurse-dark" : "text-white"
@@ -96,6 +101,11 @@ export default function Navbar({ showCta = false }) {
         <div className="container-custom py-5">
           <div className="flex items-center justify-between mb-8">
             <Link to="/" className="flex items-center">
+              <img 
+                src="/lovable-uploads/04b8dbb6-ac67-4547-89ff-f4564c30f2ec.png" 
+                alt="Nurse Nest Logo" 
+                className="h-8 w-8 mr-2"
+              />
               <span className="text-2xl font-heading font-bold text-nurse-dark">
                 Nurse<span className="text-primary-500">Nest</span>
               </span>

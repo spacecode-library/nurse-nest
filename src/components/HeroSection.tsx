@@ -15,10 +15,7 @@ export default function HeroSection() {
         <img 
           src="/lovable-uploads/8f74e0c5-9c2c-45c8-8588-e7b4fa1b1440.png" 
           alt="Nurse in a box delivered to doorstep" 
-          className={cn(
-            "w-full h-full object-cover",
-            !isMobile && "animate-on-scroll opacity-0"
-          )}
+          className="w-full h-full object-cover"
         />
         {/* Dark overlay for better text visibility */}
         <div className="absolute inset-0 bg-black/40"></div>
@@ -26,14 +23,14 @@ export default function HeroSection() {
       
       {/* Hero Content */}
       <div className="container-custom relative z-10 pt-16 md:pt-24">
-        <div className="max-w-xl">
+        <div className="max-w-xl mt-12 md:mt-0">
           <div>
             <h1 className={cn(
-              "text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white drop-shadow-lg",
+              "text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white drop-shadow-lg",
               !isMobile && "animate-on-scroll opacity-0"
             )}>
-              Specialized Nurses{' '}
-              <span className="flex items-center">
+              <div>Specialized Nurses</div>
+              <div>
                 {!isMobile ? (
                   <motion.span
                     initial={{ scale: 0.5, opacity: 0 }}
@@ -41,13 +38,13 @@ export default function HeroSection() {
                     transition={{ duration: 1.2, delay: 0.5 }}
                     className="text-blue-400 inline-block"
                   >
-                    Delivered
+                    Delivered to
                   </motion.span>
                 ) : (
-                  <span className="text-blue-400 inline-block">Delivered</span>
+                  <span className="text-blue-400 inline-block">Delivered to</span>
                 )}
-              </span>
-              to Your Doorstep
+              </div>
+              <div>Your Doorstep</div>
             </h1>
             <p className={cn(
               "text-lg md:text-xl text-white mb-8 max-w-lg drop-shadow-md",

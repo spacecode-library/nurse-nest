@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
@@ -17,21 +16,11 @@ export default function AboutMeSection() {
               <div className={cn("relative", !isMobile && "animate-on-scroll opacity-0")}>
                 <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-nurse-light shadow-xl">
                   <img
-                    src="/lovable-uploads/f3cbf40a-482a-4324-a5a2-46eb796d4775.png"
+                    src="/lovable-uploads/bbad18cd-7649-425c-8c5e-aee532e527a4.png"
                     alt="Jayson Minagawa"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                {!isMobile && (
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 0.5 }}
-                    className="absolute -bottom-4 -right-4 bg-white px-4 py-2 rounded-lg shadow-lg"
-                  >
-                    <p className="text-nurse-dark font-bold">Founder</p>
-                  </motion.div>
-                )}
               </div>
             </div>
             
@@ -50,7 +39,7 @@ export default function AboutMeSection() {
                     Hi, I'm Jayson — thank you so much for being here.
                   </p>
                   <p className="mb-4">
-                    My nursing journey has been anything but linear, and for that, I'm incredibly grateful. I began my nursing path in 2008, but it didn't start off smoothly — I actually failed my very first semester of nursing school. Some friends even suggested I change majors. But I stayed the course, graduated, and began my career in the ICU. After three years of critical care experience, I transitioned into travel nursing in 2016 — a path I continue to this day.
+                    I began my nursing path in 2008, but it didn't start off smoothly — I actually failed my very first semester of nursing school. Some friends even suggested I change majors. But I stayed the course, graduated, and began my career in the ICU. After three years of critical care experience, I transitioned into travel nursing in 2016 — a path I continue to this day.
                   </p>
                   <p className="mb-4">
                     Over the years, I've worked in a wide range of environments: ICU, correctional facilities, psychiatry, telehealth, and independent contracting. I've seen firsthand how different healthcare systems operate — and more importantly, where they often fall short, especially when individuals or families need to hire a nurse for specialized in-home care.

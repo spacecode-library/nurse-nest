@@ -16,11 +16,11 @@ export default function WhyChooseUsSection() {
       <div className="container-custom relative z-10">
         <div className="flex justify-center">
           {/* Image Only */}
-          <div className={cn("relative", !isMobile && "animate-on-scroll opacity-0")}>
+          <div className={cn("relative w-full max-w-3xl", !isMobile && "animate-on-scroll opacity-0")}>
             <img 
-              src="/lovable-uploads/49fc5184-fdc8-4f1d-bdb4-99bdb010c7e2.png"
+              src="/lovable-uploads/598548b2-a370-469c-86f5-19503d151210.png"
               alt="Nurse with baby and happy family" 
-              className="rounded-xl shadow-xl w-full max-w-2xl mx-auto object-cover"
+              className="rounded-xl shadow-xl w-full object-cover"
             />
           </div>
         </div>
