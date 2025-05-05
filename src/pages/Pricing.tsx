@@ -9,14 +9,14 @@ export default function Pricing() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       
-      <main className="flex-1 pt-24">
+      <main className="flex-1 pt-24 mt-6">
         <section className="section-padding bg-white">
-          <div className="container mx-auto px-4 py-12">
+          <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
               Simple, Transparent <span className="text-nurse-dark">Pricing</span>
             </h1>
             
-            <div className="flex justify-center mt-12">
+            <div className="flex justify-center">
               <PricingCard />
             </div>
           </div>

@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-white py-8 border-t">
       <div className="container-custom">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Company Links */}
           <div>
             <h4 className="text-lg font-bold mb-6">Company</h4>
@@ -16,6 +16,11 @@ export default function Footer() {
               <li>
                 <Link to="/about" className="text-gray-600 hover:text-primary-500 transition-colors">
                   About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Pricing
                 </Link>
               </li>
               <li>
@@ -49,6 +54,28 @@ export default function Footer() {
                 <Link to="/privacy" className="text-gray-600 hover:text-primary-500 transition-colors">
                   Privacy Policy
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Information */}
+          <div>
+            <h4 className="text-lg font-bold mb-6">Contact Us</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <Mail className="h-5 w-5 text-primary-500 mr-2 mt-0.5" />
+                <a href="mailto:contact@nursenest.us" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  contact@nursenest.us
+                </a>
+              </li>
+              <li className="flex items-start">
+                <Phone className="h-5 w-5 text-primary-500 mr-2 mt-0.5" />
+                <a href="tel:4259543381" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  (425) 954-3381
+                </a>
+              </li>
+              <li className="mt-4 text-gray-600">
+                <p>We are a small business and will try to get back within 1 business day for all inquiries.</p>
               </li>
             </ul>
           </div>

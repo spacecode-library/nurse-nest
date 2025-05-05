@@ -1,12 +1,81 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ClientApplicationSection() {
+  const navigate = useNavigate();
+  const [formState, setFormState] = React.useState({
+    name: '',
+    email: '',
+    phone: '',
+    specialty: '',
+    startDate: '',
+    duration: '',
+    location: '',
+    hoursPerWeek: '',
+    hourlyRate: 45,
+    description: '',
+    certifications: '',
+    addOns: {
+      drugTest: false,
+      drivingHistory: false
+    }
+  });
+
+  const handleInputChange = (e) => {
+    const { id, value, type, checked } = e.target;
+    
+    if (id.startsWith('addon-')) {
+      const addonName = id.replace('addon-', '');
+      setFormState(prev => ({
+        ...prev,
+        addOns: {
+          ...prev.addOns,
+          [addonName]: checked
+        }
+      }));
+    } else {
+      setFormState(prev => ({
+        ...prev,
+        [id]: value
+      }));
+    }
+  };
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Calculate total price based on base fee and add-ons
+    const basePrice = 1000;
+    let totalPrice = basePrice;
+    
+    if (formState.addOns.drugTest) {
+      totalPrice += 100;
+    }
+    
+    if (formState.addOns.drivingHistory) {
+      totalPrice += 50;
+    }
+    
+    // Store form data and price in session storage for payment page
+    sessionStorage.setItem('applicationData', JSON.stringify({
+      formData: formState,
+      pricing: {
+        basePrice,
+        totalPrice,
+        discountApplied: true
+      }
+    }));
+    
+    // Navigate to payment page
+    navigate('/payment');
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Client Application Form</h2>
       
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
             Name:
@@ -14,8 +83,11 @@ export default function ClientApplicationSection() {
           <input
             type="text"
             id="name"
+            value={formState.name}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Your Name"
+            required
           />
         </div>
         
@@ -26,8 +98,11 @@ export default function ClientApplicationSection() {
           <input
             type="email"
             id="email"
+            value={formState.email}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Your Email"
+            required
           />
         </div>
         
@@ -38,23 +113,12 @@ export default function ClientApplicationSection() {
           <input
             type="tel"
             id="phone"
+            value={formState.phone}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Your Phone Number"
+            required
           />
-        </div>
-        
-        <div className="mb-4">
-          <label htmlFor="nurseType" className="block text-gray-700 text-sm font-bold mb-2">
-            Type of Nurse Needed:
-          </label>
-          <select
-            id="nurseType"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option>Registered Nurse (RN)</option>
-            <option>Licensed Practical Nurse (LPN)</option>
-            <option>Certified Nursing Assistant (CNA)</option>
-          </select>
         </div>
         
         <div className="mb-4">
@@ -64,8 +128,11 @@ export default function ClientApplicationSection() {
           <input
             type="text"
             id="specialty"
+            value={formState.specialty}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="e.g., Geriatric Care, Post-Surgery, etc."
+            placeholder="e.g., Night Nurse for newborn, Post-Surgery, etc."
+            required
           />
         </div>
         
@@ -76,7 +143,10 @@ export default function ClientApplicationSection() {
           <input
             type="date"
             id="startDate"
+            value={formState.startDate}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
           />
         </div>
         
@@ -87,8 +157,11 @@ export default function ClientApplicationSection() {
           <input
             type="text"
             id="duration"
+            value={formState.duration}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="e.g., 2 weeks, 3 months, ongoing"
+            required
           />
         </div>
         
@@ -99,8 +172,11 @@ export default function ClientApplicationSection() {
           <input
             type="text"
             id="location"
+            value={formState.location}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="City, State"
+            required
           />
         </div>
         
@@ -111,21 +187,32 @@ export default function ClientApplicationSection() {
           <input
             type="number"
             id="hoursPerWeek"
+            value={formState.hoursPerWeek}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="e.g., 20, 40"
+            required
           />
         </div>
         
         <div className="mb-4">
           <label htmlFor="hourlyRate" className="block text-gray-700 text-sm font-bold mb-2">
-            Desired Hourly Rate:
+            Desired Hourly Rate: ${formState.hourlyRate}
           </label>
           <input
-            type="number"
+            type="range"
             id="hourlyRate"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="e.g., 45, 60"
+            min="45"
+            max="115"
+            step="5"
+            value={formState.hourlyRate}
+            onChange={handleInputChange}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>$45</span>
+            <span>$115</span>
+          </div>
         </div>
         
         <div className="mb-4">
@@ -134,8 +221,11 @@ export default function ClientApplicationSection() {
           </label>
           <textarea
             id="description"
+            value={formState.description}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Please describe the patient's condition and required care."
+            required
           />
         </div>
         
@@ -146,6 +236,8 @@ export default function ClientApplicationSection() {
           <input
             type="text"
             id="certifications"
+            value={formState.certifications}
+            onChange={handleInputChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="example: NICU experience, covid vaccine"
           />

@@ -13,6 +13,7 @@ export default function PricingCard() {
         scale: 1.05,
         transition: { duration: 0.5 }
       }}
+      style={{ maxHeight: '650px' }} // Make the card smaller to avoid scrolling
     >
       <div className="bg-gradient-to-r from-nurse-dark to-primary-400 p-6 text-white text-center">
         <h3 className="text-xl font-bold">Nurse Matching Service</h3>
@@ -28,8 +29,8 @@ export default function PricingCard() {
       </div>
       
       <div className="p-6">
-        <div className="mb-6">
-          <h4 className="text-lg font-semibold mb-3">What's Included:</h4>
+        <div className="mb-5">
+          <h4 className="text-lg font-semibold mb-2">What's Included:</h4>
           <ul className="space-y-2">
             {[
               "Nationwide background check", 
@@ -44,8 +45,8 @@ export default function PricingCard() {
           </ul>
         </div>
         
-        <div className="mb-6">
-          <h4 className="text-lg font-semibold mb-3">Optional Add-Ons:</h4>
+        <div className="mb-5">
+          <h4 className="text-lg font-semibold mb-2">Optional Add-Ons:</h4>
           <ul className="space-y-2">
             <li className="flex items-start">
               <CircleDollarSign className="h-5 w-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5" />
@@ -61,21 +62,21 @@ export default function PricingCard() {
           </p>
         </div>
         
-        <div className="mb-6">
+        <div className="mb-5">
           <h4 className="text-lg font-semibold mb-2">How It Works:</h4>
           <p className="text-gray-600">
-            Once you've selected a nurse you're interested in, we initiate the screening process — including all verifications and background checks — to ensure they meet your standards.
+            Once you've selected a nurse you would like to proceed with, we initiate the screening process — including all verifications and background checks — to ensure they meet your standards.
           </p>
         </div>
         
-        <div className="mb-6">
+        <div className="mb-5">
           <h4 className="text-lg font-semibold mb-2">Our Guarantee:</h4>
           <p className="text-gray-600">
             If no suitable match is found, you'll receive a refund minus a $100 advertising fee.
           </p>
         </div>
         
-        <div className="mt-8">
+        <div className="mt-4">
           <Link to="/apply">
             <Button className="w-full bg-nurse-dark hover:bg-primary-700 text-white py-3">
               Get Started Now
