@@ -1,12 +1,25 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useInView } from 'framer-motion';
 
 export default function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const isMobile = useIsMobile();
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  
+  useEffect(() => {
+    // Auto-open first FAQ with delay when section comes into view
+    if (isInView) {
+      const timer = setTimeout(() => {
+        setOpenIndex(0);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView]);
   
   const faqs = [
     {
@@ -36,7 +49,7 @@ export default function FaqSection() {
   };
 
   return (
-    <section className="section-padding bg-white" id="faq">
+    <section className="section-padding bg-nurse-light" id="faq" ref={sectionRef}>
       <div className="container-custom">
         <div className="max-w-3xl mx-auto text-center mb-8 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -71,7 +84,7 @@ export default function FaqSection() {
                   
                   <div
                     className={cn(
-                      "overflow-hidden transition-all duration-300",
+                      "overflow-hidden transition-all duration-700",
                       openIndex === index ? "max-h-[500px]" : "max-h-0"
                     )}
                   >

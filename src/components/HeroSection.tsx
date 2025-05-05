@@ -23,10 +23,10 @@ export default function HeroSection() {
       
       {/* Hero Content */}
       <div className="container-custom relative z-10 pt-16 md:pt-24">
-        <div className="max-w-xl mt-12 md:mt-0">
+        <div className="max-w-xl mt-12 md:mt-0 pl-0 md:pl-0 lg:pl-0 ml-0 md:ml-0 lg:ml-0">
           <div>
             <h1 className={cn(
-              "text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white drop-shadow-lg",
+              "text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-6 text-white drop-shadow-lg",
               !isMobile && "animate-on-scroll opacity-0"
             )}>
               <div>Specialized Nurses</div>
@@ -46,7 +46,7 @@ export default function HeroSection() {
               <div>Your Doorstep</div>
             </h1>
             <p className={cn(
-              "text-lg md:text-xl text-white mb-8 max-w-lg drop-shadow-md",
+              "text-base md:text-lg text-white mb-8 max-w-lg drop-shadow-md",
               !isMobile && "animate-on-scroll opacity-0"
             )}>
               Nationwide nurse-matching for newborns, elderly loved ones, and private practices — all backed by real clinical experience.

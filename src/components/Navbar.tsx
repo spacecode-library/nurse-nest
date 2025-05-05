@@ -7,8 +7,7 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { name: 'Home', path: '/' },
-  { name: 'How It Works', path: '/how-it-works' },
-  { name: 'Services', path: '/services' },
+  { name: 'How It Works', path: '/#how-it-works' },
   { name: 'About Us', path: '/about' },
   { name: 'Contact', path: '/contact' },
 ];
@@ -25,18 +24,28 @@ export default function Navbar({ showCta = false }) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleNavClick = (path) => {
+    setIsOpen(false);
+    if (path.includes('#')) {
+      const element = document.getElementById(path.split('#')[1]);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
   
   return (
     <header className={cn(
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-      isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
+      isScrolled ? 'bg-white shadow-md py-3' : 'bg-white py-5'
     )}>
       <div className="container-custom flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <span className={cn(
             "text-2xl font-heading font-bold",
-            isScrolled ? "text-nurse-dark" : "text-white"
+            "text-nurse-dark"
           )}>
             Nurse<span className="text-primary-500">Nest</span>
           </span>
@@ -48,9 +57,10 @@ export default function Navbar({ showCta = false }) {
             <Link 
               key={link.name}
               to={link.path}
+              onClick={() => link.path.includes('#') && handleNavClick(link.path)}
               className={cn(
-                "font-medium link-underline text-white",
-                isScrolled ? "text-gray-700 hover:text-primary-500" : "text-white hover:text-primary-200"
+                "font-medium link-underline",
+                "text-gray-700 hover:text-primary-500"
               )}
             >
               {link.name}
@@ -60,21 +70,23 @@ export default function Navbar({ showCta = false }) {
         
         {/* CTA Button - Only show when scroll past hero */}
         <div className="hidden lg:block">
-          <Button 
-            className={cn(
-              "bg-primary-500 hover:bg-primary-600 transition-opacity duration-1000",
-              showCta ? "opacity-100" : "opacity-0 pointer-events-none"
-            )}
-          >
-            Request a Nurse
-          </Button>
+          <Link to="/apply">
+            <Button 
+              className={cn(
+                "bg-primary-500 hover:bg-primary-600 transition-opacity duration-1000",
+                showCta ? "opacity-100" : "opacity-0 pointer-events-none"
+              )}
+            >
+              Request a Nurse
+            </Button>
+          </Link>
         </div>
         
         {/* Mobile Menu Button */}
         <button 
           className={cn(
             "lg:hidden focus:outline-none",
-            isScrolled ? "text-gray-600" : "text-white"
+            "text-gray-600"
           )}
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -115,15 +127,17 @@ export default function Navbar({ showCta = false }) {
                 key={link.name}
                 to={link.path}
                 className="font-medium text-gray-700 hover:text-primary-500"
-                onClick={() => setIsOpen(false)}
+                onClick={() => handleNavClick(link.path)}
               >
                 {link.name}
               </Link>
             ))}
             
-            <Button className="bg-primary-500 hover:bg-primary-600 w-full mt-4">
-              Request a Nurse
-            </Button>
+            <Link to="/apply" onClick={() => setIsOpen(false)}>
+              <Button className="bg-primary-500 hover:bg-primary-600 w-full mt-4">
+                Request a Nurse
+              </Button>
+            </Link>
           </nav>
         </div>
       </div>

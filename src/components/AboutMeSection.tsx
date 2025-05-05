@@ -27,13 +27,14 @@ export default function AboutMeSection() {
             {/* Content Column */}
             <div className="md:col-span-8 lg:col-span-9">
               <div className={cn(!isMobile && "animate-on-scroll opacity-0")}>
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                <h2 className="text-2xl md:text-3xl font-bold mb-1">
                   Jayson Minagawa
                 </h2>
+                <p className="text-primary-500 text-lg mb-4">Founder of Nurse Nest</p>
                 
                 <div className="prose prose-lg max-w-none">
                   <p className="mb-4">
-                    Hi, I'm Jayson — thank you so much for being here.
+                    Hi, I'm Jayson — Thank you so much for being here.
                   </p>
                   <p className="mb-4">
                     I began my nursing path in 2008, but it didn't start off smoothly — I actually failed my very first semester of nursing school. Some friends even suggested I change majors. But I stayed the course, graduated, and began my career in the ICU. After three years of critical care experience, I transitioned into travel nursing in 2016 — a path I continue to this day.
