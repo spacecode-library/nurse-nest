@@ -6,6 +6,7 @@ import PricingCard from '@/components/PricingCard';
 
 export default function Pricing() {
   useEffect(() => {
+    // Ensure page scrolls to top when navigating to this page
     window.scrollTo(0, 0);
   }, []);
   

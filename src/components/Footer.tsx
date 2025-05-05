@@ -1,9 +1,17 @@
 
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
+  
+  // Helper function to handle navigation with scroll to top
+  const handleNavigation = (path) => {
+    navigate(path);
+    window.scrollTo(0, 0);
+  };
   
   return (
     <footer className="bg-white py-8 border-t">
@@ -14,46 +22,64 @@ export default function Footer() {
             <h4 className="text-lg font-bold mb-6">Company</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/about" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <button 
+                  onClick={() => handleNavigation('/about')} 
+                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                >
                   About Us
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/pricing" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <button 
+                  onClick={() => handleNavigation('/pricing')}
+                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                >
                   Pricing
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/blog" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <button 
+                  onClick={() => handleNavigation('/blog')}
+                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                >
                   Blog
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
           
-          {/* Support Links */}
+          {/* Support Links - removed Contact and FAQ as requested */}
           <div>
             <h4 className="text-lg font-bold mb-6">Support</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/terms" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <button 
+                  onClick={() => handleNavigation('/terms')}
+                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                >
                   Terms of Service
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <button 
+                  onClick={() => handleNavigation('/privacy')}
+                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                >
                   Privacy Policy
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/disclaimer" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <button 
+                  onClick={() => handleNavigation('/disclaimer')}
+                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                >
                   Disclaimer
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
 
-          {/* Contact Information */}
+          {/* Contact Information - updated description as requested */}
           <div>
             <h4 className="text-lg font-bold mb-6">Contact Us</h4>
             <ul className="space-y-3">

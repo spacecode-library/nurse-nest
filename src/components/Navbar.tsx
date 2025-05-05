@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
@@ -18,17 +18,30 @@ export default function Navbar({ showCta = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const scrollToSection = useScrollToSection();
+  const location = useLocation();
+  
+  // Check if we're on the home page
+  const isHomePage = location.pathname === '/';
+  
+  // Text color should be dark on non-home pages or when scrolled
+  const shouldUseDarkText = !isHomePage || isScrolled;
   
   useEffect(() => {
     const handleScroll = () => {
-      // Only consider as scrolled if we're beyond the hero section height (100vh)
-      setIsScrolled(window.scrollY > window.innerHeight * 0.7);
+      // Only consider as scrolled if we're beyond certain height
+      setIsScrolled(window.scrollY > window.innerHeight * 0.1);
     };
     
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial check
+    
+    // Always set isScrolled to true for non-home pages to show dark text on light background
+    if (!isHomePage) {
+      setIsScrolled(true);
+    }
+    
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   const handleNavClick = (path) => {
     setIsOpen(false);
@@ -45,7 +58,7 @@ export default function Navbar({ showCta = false }) {
         <Link to="/" className="flex items-center">
           <span className={cn(
             "text-2xl font-heading font-bold",
-            isScrolled ? "text-nurse-dark" : "text-white"
+            shouldUseDarkText ? "text-nurse-dark" : "text-white"
           )}>
             Nurse<span className="text-primary-500">Nest</span>
           </span>
@@ -63,7 +76,7 @@ export default function Navbar({ showCta = false }) {
               }}
               className={cn(
                 "font-medium link-underline",
-                isScrolled 
+                shouldUseDarkText
                   ? "text-gray-700 hover:text-primary-500" 
                   : "text-white hover:text-primary-100"
               )}
@@ -92,7 +105,7 @@ export default function Navbar({ showCta = false }) {
         <button 
           className={cn(
             "lg:hidden focus:outline-none",
-            isScrolled ? "text-gray-600" : "text-white"
+            shouldUseDarkText ? "text-gray-600" : "text-white"
           )}
           onClick={() => setIsOpen(!isOpen)}
         >
