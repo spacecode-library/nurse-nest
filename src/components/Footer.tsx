@@ -36,16 +36,6 @@ export default function Footer() {
             <h4 className="text-lg font-bold mb-6">Support</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/contact" className="text-gray-600 hover:text-primary-500 transition-colors">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="text-gray-600 hover:text-primary-500 transition-colors">
-                  FAQ
-                </Link>
-              </li>
-              <li>
                 <Link to="/terms" className="text-gray-600 hover:text-primary-500 transition-colors">
                   Terms of Service
                 </Link>
@@ -53,6 +43,11 @@ export default function Footer() {
               <li>
                 <Link to="/privacy" className="text-gray-600 hover:text-primary-500 transition-colors">
                   Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/disclaimer" className="text-gray-600 hover:text-primary-500 transition-colors">
+                  Disclaimer
                 </Link>
               </li>
             </ul>
@@ -75,7 +70,7 @@ export default function Footer() {
                 </a>
               </li>
               <li className="mt-4 text-gray-600">
-                <p>We are a small business and will try to get back within 1 business day for all inquiries.</p>
+                <p>As a dedicated small business, we strive to respond to all inquiries within one business day.</p>
               </li>
             </ul>
           </div>

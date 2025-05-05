@@ -5,12 +5,15 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Check, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ClickwrapAgreement from '@/components/ClickwrapAgreement';
 
 export default function Payment() {
   const navigate = useNavigate();
   const [applicationData, setApplicationData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreementError, setAgreementError] = useState(false);
   
   useEffect(() => {
     // Get stored application data
@@ -21,9 +24,18 @@ export default function Payment() {
     }
     
     setApplicationData(JSON.parse(storedData));
+    
+    // Ensure page starts at the top
+    window.scrollTo(0, 0);
   }, [navigate]);
   
   const handlePayment = async () => {
+    // Validate agreement before proceeding
+    if (!agreedToTerms) {
+      setAgreementError(true);
+      return;
+    }
+    
     setLoading(true);
     setError('');
     
@@ -160,6 +172,12 @@ export default function Payment() {
               </div>
             </div>
             
+            <ClickwrapAgreement 
+              checked={agreedToTerms} 
+              onCheckedChange={setAgreedToTerms} 
+              error={agreementError}
+            />
+            
             <div className="bg-white shadow-md rounded-lg overflow-hidden mb-6">
               <div className="bg-gray-100 p-4">
                 <h2 className="text-xl font-semibold">Payment Details</h2>
@@ -196,10 +214,6 @@ export default function Payment() {
                 </Button>
               </div>
             </div>
-            
-            <p className="text-center text-gray-500 text-sm">
-              By completing this payment, you agree to our Terms of Service and Privacy Policy.
-            </p>
           </div>
         </div>
       </main>

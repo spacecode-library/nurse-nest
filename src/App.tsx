@@ -13,6 +13,9 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import Disclaimer from "./pages/Disclaimer";
 
 export default function App() {
   return (
@@ -30,6 +33,9 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:postId" element={<BlogPost />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
           
           {/* Add all other routes above the catch-all 404 route */}
           <Route path="*" element={<NotFound />} />

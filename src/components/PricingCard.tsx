@@ -13,11 +13,10 @@ export default function PricingCard() {
         scale: 1.05,
         transition: { duration: 0.5 }
       }}
-      style={{ maxHeight: '650px' }} // Make the card smaller to avoid scrolling
     >
-      <div className="bg-gradient-to-r from-nurse-dark to-primary-400 p-6 text-white text-center">
+      <div className="bg-gradient-to-r from-nurse-dark to-primary-400 p-5 text-white text-center">
         <h3 className="text-xl font-bold">Nurse Matching Service</h3>
-        <div className="mt-4">
+        <div className="mt-3">
           <p className="text-lg opacity-75 line-through">Regular Price: $1,333.33</p>
           <div className="mt-1">
             <span className="text-sm font-medium px-2 py-1 bg-white text-primary-500 rounded-full">
@@ -28,10 +27,10 @@ export default function PricingCard() {
         </div>
       </div>
       
-      <div className="p-6">
-        <div className="mb-5">
+      <div className="p-5">
+        <div className="mb-4">
           <h4 className="text-lg font-semibold mb-2">What's Included:</h4>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {[
               "Nationwide background check", 
               "License verification (active and in good standing)", 
@@ -39,46 +38,46 @@ export default function PricingCard() {
             ].map((item, index) => (
               <li key={index} className="flex items-start">
                 <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                <span>{item}</span>
+                <span className="text-sm">{item}</span>
               </li>
             ))}
           </ul>
         </div>
         
-        <div className="mb-5">
+        <div className="mb-4">
           <h4 className="text-lg font-semibold mb-2">Optional Add-Ons:</h4>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             <li className="flex items-start">
               <CircleDollarSign className="h-5 w-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5" />
-              <span>10-Panel Drug Test: <span className="font-medium">+$100</span></span>
+              <span className="text-sm">10-Panel Drug Test: <span className="font-medium">+$100</span></span>
             </li>
             <li className="flex items-start">
               <CircleDollarSign className="h-5 w-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5" />
-              <span>Driving History Report: <span className="font-medium">+$50</span></span>
+              <span className="text-sm">Driving History Report: <span className="font-medium">+$50</span></span>
             </li>
           </ul>
-          <p className="text-gray-500 text-sm mt-2 italic">
+          <p className="text-gray-500 text-xs mt-1 italic">
             (Recommended for nurses providing transportation or for added peace of mind)
           </p>
         </div>
         
-        <div className="mb-5">
+        <div className="mb-4">
           <h4 className="text-lg font-semibold mb-2">How It Works:</h4>
-          <p className="text-gray-600">
+          <p className="text-sm text-gray-600">
             Once you've selected a nurse you would like to proceed with, we initiate the screening process — including all verifications and background checks — to ensure they meet your standards.
           </p>
         </div>
         
-        <div className="mb-5">
+        <div className="mb-4">
           <h4 className="text-lg font-semibold mb-2">Our Guarantee:</h4>
-          <p className="text-gray-600">
+          <p className="text-sm text-gray-600">
             If no suitable match is found, you'll receive a refund minus a $100 advertising fee.
           </p>
         </div>
         
         <div className="mt-4">
           <Link to="/apply">
-            <Button className="w-full bg-nurse-dark hover:bg-primary-700 text-white py-3">
+            <Button className="w-full bg-nurse-dark hover:bg-primary-700 text-white py-2">
               Get Started Now
             </Button>
           </Link>
