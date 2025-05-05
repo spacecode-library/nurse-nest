@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
+import { useScrollToSection } from '@/hooks/use-scroll-to-section';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -15,6 +16,7 @@ const navLinks = [
 export default function Navbar({ showCta = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const scrollToSection = useScrollToSection();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -27,12 +29,7 @@ export default function Navbar({ showCta = false }) {
 
   const handleNavClick = (path) => {
     setIsOpen(false);
-    if (path.includes('#')) {
-      const element = document.getElementById(path.split('#')[1]);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    scrollToSection(path);
   };
   
   return (
@@ -57,7 +54,10 @@ export default function Navbar({ showCta = false }) {
             <Link 
               key={link.name}
               to={link.path}
-              onClick={() => link.path.includes('#') && handleNavClick(link.path)}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick(link.path);
+              }}
               className={cn(
                 "font-medium link-underline",
                 "text-gray-700 hover:text-primary-500"
@@ -127,7 +127,10 @@ export default function Navbar({ showCta = false }) {
                 key={link.name}
                 to={link.path}
                 className="font-medium text-gray-700 hover:text-primary-500"
-                onClick={() => handleNavClick(link.path)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(link.path);
+                }}
               >
                 {link.name}
               </Link>

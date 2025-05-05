@@ -14,15 +14,9 @@ export default function WhyChooseUsSection() {
       </div>
       
       <div className="container-custom relative z-10">
-        <div className="flex justify-center">
-          {/* Image Only with larger size */}
-          <div className={cn("relative w-full max-w-4xl", !isMobile && "animate-on-scroll opacity-0")}>
-            <img 
-              src="/lovable-uploads/598548b2-a370-469c-86f5-19503d151210.png"
-              alt="Nurse with baby and happy family" 
-              className="rounded-xl shadow-xl w-full object-cover"
-            />
-          </div>
+        {/* Content area with no image */}
+        <div className="text-center">
+          {/* Empty div to maintain spacing between sections */}
         </div>
       </div>
     </section>

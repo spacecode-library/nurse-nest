@@ -6,7 +6,7 @@ import ClientApplicationSection from '@/components/ClientApplicationSection';
 
 export default function Apply() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       
       <main className="flex-1 pt-24">
