@@ -84,7 +84,7 @@ export default function FaqSection() {
                   
                   <div
                     className={cn(
-                      "overflow-hidden transition-all duration-1000",
+                      "overflow-hidden transition-all duration-4000",
                       openIndex === index ? "max-h-[500px]" : "max-h-0"
                     )}
                   >

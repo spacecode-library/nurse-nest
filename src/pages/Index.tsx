@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import WhatIsNurseNestSection from "@/components/WhatIsNurseNestSection";
 import WhoWeHelpSection from "@/components/WhoWeHelpSection";
-import WhyChooseUsSection from "@/components/WhyChooseUsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import AboutMeSection from "@/components/AboutMeSection";
 import FaqSection from "@/components/FaqSection";
@@ -77,7 +76,6 @@ export default function Index() {
         <HeroSection />
         <WhatIsNurseNestSection />
         <WhoWeHelpSection />
-        <WhyChooseUsSection />
         <HowItWorksSection />
         <AboutMeSection />
         <FaqSection />

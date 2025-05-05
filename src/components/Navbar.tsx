@@ -9,6 +9,7 @@ import { useScrollToSection } from '@/hooks/use-scroll-to-section';
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'How It Works', path: '/#how-it-works' },
+  { name: 'Pricing', path: '/pricing' },
   { name: 'About Us', path: '/about' },
   { name: 'Contact', path: '/contact' },
 ];
@@ -20,10 +21,12 @@ export default function Navbar({ showCta = false }) {
   
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      // Only consider as scrolled if we're beyond the hero section height (100vh)
+      setIsScrolled(window.scrollY > window.innerHeight * 0.7);
     };
     
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -35,14 +38,14 @@ export default function Navbar({ showCta = false }) {
   return (
     <header className={cn(
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-      isScrolled ? 'bg-white shadow-md py-3' : 'bg-white py-5'
+      isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
     )}>
       <div className="container-custom flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <span className={cn(
             "text-2xl font-heading font-bold",
-            "text-nurse-dark"
+            isScrolled ? "text-nurse-dark" : "text-white"
           )}>
             Nurse<span className="text-primary-500">Nest</span>
           </span>
@@ -60,7 +63,9 @@ export default function Navbar({ showCta = false }) {
               }}
               className={cn(
                 "font-medium link-underline",
-                "text-gray-700 hover:text-primary-500"
+                isScrolled 
+                  ? "text-gray-700 hover:text-primary-500" 
+                  : "text-white hover:text-primary-100"
               )}
             >
               {link.name}
@@ -73,8 +78,9 @@ export default function Navbar({ showCta = false }) {
           <Link to="/apply">
             <Button 
               className={cn(
-                "bg-primary-500 hover:bg-primary-600 transition-opacity duration-1000",
-                showCta ? "opacity-100" : "opacity-0 pointer-events-none"
+                "transition-opacity duration-1000",
+                showCta ? "opacity-100" : "opacity-0 pointer-events-none",
+                isScrolled ? "bg-primary-500 hover:bg-primary-600" : "bg-white text-primary-500 hover:bg-gray-100"
               )}
             >
               Request a Nurse
@@ -86,7 +92,7 @@ export default function Navbar({ showCta = false }) {
         <button 
           className={cn(
             "lg:hidden focus:outline-none",
-            "text-gray-600"
+            isScrolled ? "text-gray-600" : "text-white"
           )}
           onClick={() => setIsOpen(!isOpen)}
         >
