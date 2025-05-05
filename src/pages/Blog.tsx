@@ -8,7 +8,7 @@ const blogPosts = [
   {
     id: 'understanding-private-duty-nursing',
     title: 'Understanding Private Duty Nursing: What You Need to Know',
-    excerpt: 'Discover what private duty nursing is, who it benefits, and why it's a growing choice for in-home care.',
+    excerpt: "Discover what private duty nursing is, who it benefits, and why it's a growing choice for in-home care.",
     date: 'May 5, 2025',
     image: '/lovable-uploads/49fc5184-fdc8-4f1d-bdb4-99bdb010c7e2.png',
     readTime: '6 min read'
