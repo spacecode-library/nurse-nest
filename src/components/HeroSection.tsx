@@ -26,7 +26,7 @@ export default function HeroSection() {
         <div className="max-w-xl mt-12 md:mt-0 pl-0 md:pl-0 lg:pl-0 ml-0 md:ml-0 lg:ml-24">
           <div>
             <h1 className={cn(
-              "text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-6 text-white drop-shadow-lg",
+              "text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-6 text-white drop-shadow-lg",
               !isMobile && "animate-on-scroll opacity-0"
             )}>
               <div>Specialized Nurses</div>

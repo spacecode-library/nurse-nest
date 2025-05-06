@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -95,37 +95,15 @@ export default function Footer() {
                   (425) 954-3381
                 </a>
               </li>
-              <li className="mt-4 text-gray-600">
-                <p>As a dedicated small business, we strive to respond to all inquiries within one business day.</p>
-              </li>
             </ul>
           </div>
         </div>
         
-        {/* Bottom Area - Simplified */}
+        {/* Bottom Area - Simplified and added space between Nurse Nest */}
         <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm">
-            &copy; {currentYear} NurseNest. All rights reserved.
+            &copy; {currentYear} Nurse Nest. All rights reserved.
           </p>
-          
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
-              <Facebook className="h-5 w-5" />
-              <span className="sr-only">Facebook</span>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
-              <Instagram className="h-5 w-5" />
-              <span className="sr-only">Instagram</span>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
-              <Twitter className="h-5 w-5" />
-              <span className="sr-only">Twitter</span>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors">
-              <Linkedin className="h-5 w-5" />
-              <span className="sr-only">LinkedIn</span>
-            </a>
-          </div>
         </div>
       </div>
     </footer>

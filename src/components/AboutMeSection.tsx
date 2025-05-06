@@ -16,7 +16,7 @@ export default function AboutMeSection() {
               <div className={cn("relative", !isMobile && "animate-on-scroll opacity-0")}>
                 <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-nurse-light shadow-xl">
                   <img
-                    src="/lovable-uploads/bbad18cd-7649-425c-8c5e-aee532e527a4.png"
+                    src="/lovable-uploads/9daccab5-730e-4656-81e6-a31931f7d3f6.png"
                     alt="Jayson Minagawa"
                     className="w-full h-full object-cover"
                   />

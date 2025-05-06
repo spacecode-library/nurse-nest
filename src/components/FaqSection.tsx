@@ -84,8 +84,8 @@ export default function FaqSection() {
                   
                   <div
                     className={cn(
-                      "overflow-hidden transition-all duration-4000",
-                      openIndex === index ? "max-h-[500px]" : "max-h-0"
+                      "overflow-hidden transition-all duration-1000",
+                      openIndex === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
                     )}
                   >
                     <p className="p-4 md:p-6 pt-0 text-gray-600">

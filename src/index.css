@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -156,9 +155,9 @@
     }
   }
 
-  /* Custom duration for FAQ animations */
-  .duration-4000 {
-    transition-duration: 4s;
+  /* Transition duration for FAQ animations - increased significantly */
+  .duration-1000 {
+    transition-duration: 1s;
   }
 }
 
