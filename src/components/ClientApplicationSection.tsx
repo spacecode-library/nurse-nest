@@ -61,7 +61,7 @@ export default function ClientApplicationSection() {
   };
   
   const nextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
     }
@@ -73,16 +73,23 @@ export default function ClientApplicationSection() {
       window.scrollTo(0, 0);
     }
   };
+
+  const goToStep = (step: number) => {
+    if (step <= currentStep) {
+      setCurrentStep(step);
+      window.scrollTo(0, 0);
+    }
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (currentStep === 4 && !agreed) {
+    if (currentStep === 5 && !agreed) {
       setAgreementError(true);
       return;
     }
     
-    if (currentStep === 4) {
+    if (currentStep === 5) {
       // Calculate total price based on base fee and add-ons
       const basePrice = 1000;
       let totalPrice = basePrice;
@@ -116,9 +123,12 @@ export default function ClientApplicationSection() {
     return (
       <div className="mb-8">
         <div className="flex justify-between items-center">
-          {[1, 2, 3, 4].map((step) => (
+          {[1, 2, 3, 4, 5].map((step) => (
             <React.Fragment key={step}>
-              <div className="flex flex-col items-center">
+              <div 
+                className="flex flex-col items-center cursor-pointer"
+                onClick={() => goToStep(step)}
+              >
                 <div 
                   className={`w-10 h-10 rounded-full ${
                     currentStep >= step ? 'bg-nurse-dark text-white' : 'bg-gray-200 text-gray-500'
@@ -129,7 +139,7 @@ export default function ClientApplicationSection() {
                 <div className="text-xs mt-2">{getStepName(step)}</div>
               </div>
               
-              {step < 4 && (
+              {step < 5 && (
                 <div className={`flex-1 h-1 mx-2 ${
                   currentStep > step ? 'bg-nurse-dark' : 'bg-gray-200'
                 }`}></div>
@@ -146,7 +156,8 @@ export default function ClientApplicationSection() {
       case 1: return 'Personal Info';
       case 2: return 'Service Details';
       case 3: return 'Requirements';
-      case 4: return 'Review & Pay';
+      case 4: return 'Review';
+      case 5: return 'Payment';
       default: return '';
     }
   };
@@ -356,7 +367,7 @@ export default function ClientApplicationSection() {
           </div>
         )}
         
-        {/* Step 4: Review & Payment */}
+        {/* Step 4: Review Your Application */}
         {currentStep === 4 && (
           <div className="space-y-6">
             <h3 className="text-lg font-semibold mb-4">Review Your Application</h3>
@@ -410,7 +421,12 @@ export default function ClientApplicationSection() {
                 <p>{formState.description}</p>
               </div>
             </div>
-            
+          </div>
+        )}
+        
+        {/* Step 5: Payment */}
+        {currentStep === 5 && (
+          <div className="space-y-6">
             <div className="border-t border-b py-4 my-6">
               <h4 className="text-md font-semibold mb-2">Pricing</h4>
               <div className="flex justify-between mb-2">
@@ -477,7 +493,7 @@ export default function ClientApplicationSection() {
             type="submit"
             className="bg-primary-500 hover:bg-primary-700 text-white"
           >
-            {currentStep === 4 ? 'Complete Payment' : 'Next'}
+            {currentStep === 5 ? 'Complete Payment' : 'Next'}
           </Button>
         </div>
       </form>

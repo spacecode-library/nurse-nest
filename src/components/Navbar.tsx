@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -21,6 +22,12 @@ export default function Navbar({ showCta = false }) {
   
   // Check if we're on the home page
   const isHomePage = location.pathname === '/';
+  
+  // Check if we're on pricing, blog, or contact pages
+  const shouldShowCta = location.pathname === '/pricing' || 
+                        location.pathname === '/blog' || 
+                        location.pathname.includes('/blog/') ||
+                        location.pathname === '/contact';
   
   // Text color should be dark on non-home pages or when scrolled
   const shouldUseDarkText = !isHomePage || isScrolled;
@@ -85,13 +92,13 @@ export default function Navbar({ showCta = false }) {
           ))}
         </nav>
         
-        {/* CTA Button - Only show when scroll past hero */}
+        {/* CTA Button - Show on specified pages or when scrolled past hero on homepage */}
         <div className="hidden lg:block">
           <Link to="/apply">
             <Button 
               className={cn(
                 "transition-opacity duration-1000",
-                showCta ? "opacity-100" : "opacity-0 pointer-events-none",
+                (showCta || shouldShowCta) ? "opacity-100" : "opacity-0 pointer-events-none",
                 isScrolled ? "bg-primary-500 hover:bg-primary-600" : "bg-white text-primary-500 hover:bg-gray-100"
               )}
             >

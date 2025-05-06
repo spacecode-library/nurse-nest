@@ -48,7 +48,7 @@ export default function Footer() {
             </ul>
           </div>
           
-          {/* Support Links - removed Contact and FAQ as requested */}
+          {/* Support Links */}
           <div>
             <h4 className="text-lg font-bold mb-6">Support</h4>
             <ul className="space-y-3">
@@ -79,7 +79,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Information - updated description as requested */}
+          {/* Contact Information */}
           <div>
             <h4 className="text-lg font-bold mb-6">Contact Us</h4>
             <ul className="space-y-3">
@@ -99,7 +99,7 @@ export default function Footer() {
           </div>
         </div>
         
-        {/* Bottom Area - Simplified and added space between Nurse Nest */}
+        {/* Bottom Area */}
         <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm">
             &copy; {currentYear} Nurse Nest. All rights reserved.
