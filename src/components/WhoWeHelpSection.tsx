@@ -24,11 +24,11 @@ export default function WhoWeHelpSection() {
   ];
 
   return (
-    <section className="section-padding bg-gradient-to-br from-nurse-light to-white" id="services">
+    <section className="section-padding bg-white" id="services">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto text-center mb-16 animate-on-scroll opacity-0">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Tailored Care for <span className="text-gradient">Every Situation</span>
+            Tailored Care for <span className="text-nurse-dark">Every Situation</span>
           </h2>
           <p className="text-lg text-gray-700 mb-6">
             Our specialized nursing services are customized for different needs and situations, providing expert care when and where you need it most.
@@ -40,7 +40,7 @@ export default function WhoWeHelpSection() {
           {categories.map((category, index) => (
             <div 
               key={index} 
-              className="glass-card overflow-hidden rounded-xl animate-on-scroll opacity-0"
+              className="shadow-lg bg-white rounded-xl animate-on-scroll opacity-0 overflow-hidden border border-gray-100"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="h-56 overflow-hidden">
