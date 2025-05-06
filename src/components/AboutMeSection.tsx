@@ -18,7 +18,7 @@ export default function AboutMeSection() {
                   <img
                     src="/lovable-uploads/9daccab5-730e-4656-81e6-a31931f7d3f6.png"
                     alt="Jayson Minagawa"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
                   />
                 </div>
               </div>
