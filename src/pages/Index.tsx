@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
@@ -15,14 +15,19 @@ export default function Index() {
   const isMobile = useIsMobile();
 
   // Handle navbar CTA visibility on scroll
-  window.onscroll = function() {
-    const heroButton = document.querySelector('#hero-cta-button');
-    if (heroButton) {
-      // Check if hero button is out of viewport
-      const rect = heroButton.getBoundingClientRect();
-      setShowNavbarCta(rect.bottom < 0);
-    }
-  };
+  useEffect(() => {
+    const handleScroll = function() {
+      const heroButton = document.querySelector('#hero-cta-button');
+      if (heroButton) {
+        // Check if hero button is out of viewport
+        const rect = heroButton.getBoundingClientRect();
+        setShowNavbarCta(rect.bottom < 0);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
