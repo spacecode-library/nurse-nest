@@ -25,6 +25,9 @@ export default function Index() {
       }
     };
     
+    // Initial check when component mounts
+    handleScroll();
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);

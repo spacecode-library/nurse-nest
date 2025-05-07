@@ -32,7 +32,7 @@ export default function HowItWorksSection() {
   return (
     <section className="section-padding bg-gradient-to-br from-nurse-light to-white" id="how-it-works">
       <div className="container-custom">
-        <div className={cn("max-w-3xl mx-auto text-center mb-16", !isMobile && "animate-on-scroll opacity-0")}>
+        <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Simple, <span className="text-gradient">Seamless</span> Nurse Matching
           </h2>
@@ -50,8 +50,7 @@ export default function HowItWorksSection() {
             {steps.map((step, index) => (
               <div 
                 key={index} 
-                className={cn("step-card", !isMobile && "animate-on-scroll opacity-0")}
-                style={{ animationDelay: `${index * 200}ms` }}
+                className="step-card"
               >
                 <div className={`step-number ${step.bgClass} z-10`}>{index + 1}</div>
                 <div className={`w-16 h-16 rounded-full ${step.bgClass} flex items-center justify-center mb-6`}>
@@ -64,7 +63,7 @@ export default function HowItWorksSection() {
           </div>
         </div>
         
-        <div className={cn("mt-16 text-center", !isMobile && "animate-on-scroll opacity-0")}>
+        <div className="mt-16 text-center">
           <Link to="/apply">
             <Button className="bg-nurse-dark hover:bg-primary-700 text-white">
               Get Started Now

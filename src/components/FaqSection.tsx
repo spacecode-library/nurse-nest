@@ -1,25 +1,13 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useInView } from 'framer-motion';
 
 export default function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(0); // Auto-open first FAQ
   const isMobile = useIsMobile();
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
-  
-  useEffect(() => {
-    // Auto-open first FAQ with delay when section comes into view
-    if (isInView) {
-      const timer = setTimeout(() => {
-        setOpenIndex(0);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView]);
   
   const faqs = [
     {
@@ -63,12 +51,10 @@ export default function FaqSection() {
         <div className="max-w-3xl mx-auto">
           <div className="space-y-4">
             {faqs.map((faq, index) => {
-              const animationClass = !isMobile ? "animate-on-scroll opacity-0" : "";
               return (
                 <div 
                   key={index} 
-                  className={`glass-card ${animationClass}`}
-                  style={!isMobile ? { animationDelay: `${index * 100}ms` } : {}}
+                  className="glass-card"
                 >
                   <button
                     onClick={() => toggleFaq(index)}
