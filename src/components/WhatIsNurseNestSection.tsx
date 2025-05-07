@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { CheckCheck, Shield, Users } from 'lucide-react';
 
 export default function WhatIsNurseNestSection() {
   return (
@@ -13,14 +14,29 @@ export default function WhatIsNurseNestSection() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-12 bg-nurse-dark rounded-full flex items-center justify-center">
+                  <CheckCheck className="h-6 w-6 text-white" />
+                </div>
+              </div>
               <h3 className="text-xl font-semibold mb-3">Experienced Nurses</h3>
               <p className="text-gray-600">All our nurses have a minimum of 2 years clinical experience and undergo thorough screening.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+              </div>
               <h3 className="text-xl font-semibold mb-3">Custom Matching</h3>
               <p className="text-gray-600">We carefully match nurses to your specific needs for the best possible care experience.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-12 bg-nurse-dark rounded-full flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-white" />
+                </div>
+              </div>
               <h3 className="text-xl font-semibold mb-3">Rapid Response</h3>
               <p className="text-gray-600">Our platform accelerates the matching process so you can receive care sooner.</p>
             </div>

@@ -1,183 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
-    --background: 210 50% 98%;
-    --foreground: 224 71.4% 4.1%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: 222.2 84% 4.9%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 208 100% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 212 84% 52%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 208 100% 50.4%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
     --radius: 0.5rem;
   }
- 
+
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 210 100% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 216 12.2% 83.9%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-primary text-white px-6 py-3 rounded-md font-medium transition-transform hover:scale-105 hover:shadow-lg;
-  }
-  
-  .btn-secondary {
-    @apply bg-white text-primary border border-primary px-6 py-3 rounded-md font-medium transition-transform hover:scale-105;
-  }
-  
   .container-custom {
-    @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+    @apply container mx-auto px-4 md:px-6;
   }
   
   .section-padding {
-    @apply py-10 md:py-16 lg:py-24;
-  }
-  
-  .glass-card {
-    @apply bg-white/80 backdrop-blur-sm border border-gray-100 rounded-xl shadow-md;
-  }
-  
-  .animate-delay-100 {
-    animation-delay: 100ms;
-  }
-  
-  .animate-delay-200 {
-    animation-delay: 200ms;
-  }
-  
-  .animate-delay-300 {
-    animation-delay: 300ms;
-  }
-  
-  .animate-delay-400 {
-    animation-delay: 400ms;
-  }
-  
-  .animate-delay-500 {
-    animation-delay: 500ms;
-  }
-  
-  .hover-scale {
-    @apply transition-all duration-300 hover:scale-105;
+    @apply py-16 md:py-24;
   }
   
   .link-underline {
-    @apply relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full;
-  }
-
-  .text-gradient {
-    @apply bg-gradient-to-r from-nurse-dark to-primary-400 inline-block text-transparent bg-clip-text;
-  }
-
-  .testimonial-card {
-    @apply bg-white p-6 rounded-xl shadow-md relative border border-gray-200;
+    @apply relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full;
   }
   
-  .testimonial-card::before {
-    content: "\201C";
-    @apply absolute -top-5 left-4 text-6xl text-nurse-medium opacity-30 font-serif;
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-gray-100;
   }
   
   .step-card {
-    @apply relative bg-white shadow-md rounded-xl p-6 flex flex-col items-center text-center;
+    @apply bg-white p-8 rounded-lg shadow-md text-center relative;
   }
   
   .step-number {
-    @apply absolute -top-4 -left-4 w-10 h-10 rounded-full bg-nurse-dark text-white flex items-center justify-center font-bold text-lg;
+    @apply w-10 h-10 rounded-full flex items-center justify-center text-white font-bold absolute -top-5 left-1/2 transform -translate-x-1/2;
   }
-
-  /* Enhanced Scroll Animation Styles */
-  .animate-on-scroll {
-    opacity: 0;
-    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
-    will-change: opacity, transform;
-    transform: translateY(40px);
-  }
-  
-  .animate-on-scroll.animate-fade-in {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Disable animations on mobile and tablets */
-  @media (max-width: 1023px) {
-    .animate-on-scroll {
-      opacity: 1 !important;
-      transform: none !important;
-      transition: none !important;
-    }
-  }
-
-  /* Transition duration for FAQ animations - increased significantly */
-  .duration-1000 {
-    transition-duration: 1s;
-  }
-}
-
-/* Staggered animations for lists with longer delays */
-.animate-on-scroll:nth-child(2) {
-  transition-delay: 0.2s;
-}
-.animate-on-scroll:nth-child(3) {
-  transition-delay: 0.4s;
-}
-.animate-on-scroll:nth-child(4) {
-  transition-delay: 0.6s;
-}
-.animate-on-scroll:nth-child(5) {
-  transition-delay: 0.8s;
-}
-
-/* Make sure all elements have the animation applied */
-img.animate-on-scroll,
-button.animate-on-scroll,
-a.animate-on-scroll {
-  transition-duration: 1.5s !important;
 }

@@ -8,15 +8,13 @@ import WhoWeHelpSection from "@/components/WhoWeHelpSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import AboutMeSection from "@/components/AboutMeSection";
 import FaqSection from "@/components/FaqSection";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Index() {
   const [showNavbarCta, setShowNavbarCta] = useState(false);
-  const isMobile = useIsMobile();
 
   // Handle navbar CTA visibility on scroll
   useEffect(() => {
-    const handleScroll = function() {
+    const handleScroll = () => {
       const heroButton = document.querySelector('#hero-cta-button');
       if (heroButton) {
         // Check if hero button is out of viewport
@@ -26,7 +24,7 @@ export default function Index() {
     };
     
     // Initial check when component mounts
-    handleScroll();
+    setTimeout(handleScroll, 500);
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);

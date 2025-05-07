@@ -1,12 +1,8 @@
 
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
 
 export default function HeroSection() {
-  const isMobile = useIsMobile();
-  
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Hero Image Background */}

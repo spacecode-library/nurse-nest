@@ -1,13 +1,10 @@
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0); // Auto-open first FAQ
-  const isMobile = useIsMobile();
-  const sectionRef = useRef(null);
   
   const faqs = [
     {
@@ -37,7 +34,7 @@ export default function FaqSection() {
   };
 
   return (
-    <section className="section-padding bg-nurse-light" id="faq" ref={sectionRef}>
+    <section className="section-padding bg-nurse-light" id="faq">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto text-center mb-8 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -70,7 +67,7 @@ export default function FaqSection() {
                   
                   <div
                     className={cn(
-                      "overflow-hidden transition-all duration-1000",
+                      "overflow-hidden transition-all duration-300",
                       openIndex === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
                     )}
                   >

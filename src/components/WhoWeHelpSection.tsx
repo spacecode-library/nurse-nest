@@ -26,7 +26,7 @@ export default function WhoWeHelpSection() {
   return (
     <section className="section-padding bg-gradient-to-r from-nurse-dark to-primary-700 text-white" id="services">
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16 animate-on-scroll opacity-0">
+        <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Tailored Care for <span className="text-primary-300">Every Situation</span>
           </h2>
@@ -40,8 +40,7 @@ export default function WhoWeHelpSection() {
           {categories.map((category, index) => (
             <div 
               key={index} 
-              className="shadow-lg bg-white/10 backdrop-blur-sm rounded-xl animate-on-scroll opacity-0 overflow-hidden border border-white/20"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="shadow-lg bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-white/20"
             >
               <div className="h-56 overflow-hidden">
                 <img 

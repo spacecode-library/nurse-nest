@@ -2,12 +2,8 @@
 import { ClipboardCheck, SearchCheck, Users } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
 
 export default function HowItWorksSection() {
-  const isMobile = useIsMobile();
-
   const steps = [
     {
       title: "Tell Us What You Need",
