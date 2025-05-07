@@ -10,7 +10,7 @@ const blogPosts = [
     title: 'Understanding Private Duty Nursing: What You Need to Know',
     excerpt: "Discover what private duty nursing is, who it benefits, and why it's a growing choice for in-home care.",
     date: 'May 5, 2025',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80',
     readTime: '6 min read'
   },
   {
@@ -18,7 +18,7 @@ const blogPosts = [
     title: 'How to Choose the Right Private Duty Nurse for Your Needs',
     excerpt: 'Learn how to hire a private duty nurse with our expert tips on finding qualified, compatible care.',
     date: 'May 3, 2025',
-    image: 'https://images.unsplash.com/photo-1516841273335-e39b37888115?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1746&q=80',
+    image: 'https://images.unsplash.com/photo-1631815588090-d1bcbe9b4b38?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1746&q=80',
     readTime: '5 min read'
   },
   {
@@ -26,7 +26,7 @@ const blogPosts = [
     title: 'The Nurse Nest Difference: Why Choose Us for Your Private Duty Nursing Needs',
     excerpt: 'Discover why Nurse Nest is the top choice for private duty nursing with our vetted nurses and personalized matching.',
     date: 'April 29, 2025',
-    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    image: 'https://images.unsplash.com/photo-1527613426441-4da17471b66d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
     readTime: '4 min read'
   },
 ];
@@ -52,17 +52,17 @@ export default function Blog() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogPosts.map((post) => (
               <Link key={post.id} to={`/blog/${post.id}`}>
-                <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-1">
+                <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-1 h-full flex flex-col">
                   <div className="h-48 overflow-hidden">
                     <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex flex-col flex-grow">
                     <div className="flex justify-between text-sm text-gray-500 mb-2">
                       <span>{post.date}</span>
                       <span>{post.readTime}</span>
                     </div>
                     <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                    <p className="text-gray-600">{post.excerpt}</p>
+                    <p className="text-gray-600 flex-grow">{post.excerpt}</p>
                     <div className="mt-4">
                       <span className="text-primary-500 font-medium">Read more &rarr;</span>
                     </div>

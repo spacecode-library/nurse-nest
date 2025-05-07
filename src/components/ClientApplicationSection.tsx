@@ -14,6 +14,7 @@ export default function ClientApplicationSection() {
   const [currentStep, setCurrentStep] = useState(1);
   const [agreed, setAgreed] = useState(false);
   const [agreementError, setAgreementError] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   
   const [formState, setFormState] = useState({
     name: '',
@@ -58,6 +59,7 @@ export default function ClientApplicationSection() {
       ...prev,
       startDate: date
     }));
+    setShowCalendar(false); // Close the calendar after selection
   };
   
   const nextStep = () => {
@@ -112,8 +114,8 @@ export default function ClientApplicationSection() {
         }
       }));
       
-      // Navigate to payment success page
-      navigate('/payment-success');
+      // Navigate to payment page
+      navigate('/payment');
     } else {
       nextStep();
     }
@@ -241,7 +243,7 @@ export default function ClientApplicationSection() {
               <label htmlFor="startDate" className="block text-gray-700 text-sm font-bold mb-2">
                 Start Date:
               </label>
-              <Popover>
+              <Popover open={showCalendar} onOpenChange={setShowCalendar}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -427,44 +429,67 @@ export default function ClientApplicationSection() {
         {/* Step 5: Payment */}
         {currentStep === 5 && (
           <div className="space-y-6">
-            <div className="border-t border-b py-4 my-6">
-              <h4 className="text-md font-semibold mb-2">Pricing</h4>
-              <div className="flex justify-between mb-2">
-                <span>Base Matching Fee:</span>
-                <span>$1,000.00</span>
+            <div className="bg-white shadow-md rounded-lg overflow-hidden mb-6">
+              <div className="bg-gradient-to-r from-nurse-dark to-primary-400 p-4 text-white">
+                <h2 className="text-xl font-semibold">Order Summary</h2>
               </div>
               
-              <div className="space-y-2 mb-2">
-                <div>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="addon-drugTest"
-                      checked={formState.addOns.drugTest}
-                      onChange={handleInputChange}
-                      className="mr-2"
-                    />
-                    10-panel drug test (+$100.00)
-                  </label>
+              <div className="p-6">
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Nurse Matching Service</h3>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-gray-600">Base Price:</span>
+                    <span className="line-through text-gray-400">$1,333.33</span>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-green-600">Limited Time Discount (25%):</span>
+                    <span className="text-green-600">-$333.33</span>
+                  </div>
+                  <div className="flex justify-between font-semibold">
+                    <span>Discounted Price:</span>
+                    <span>$1000.00</span>
+                  </div>
                 </div>
                 
-                <div>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="addon-drivingHistory"
-                      checked={formState.addOns.drivingHistory}
-                      onChange={handleInputChange}
-                      className="mr-2"
-                    />
-                    Driving history report (+$50.00)
-                  </label>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Add-Ons</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="addon-drugTest"
+                          checked={formState.addOns.drugTest}
+                          onChange={handleInputChange}
+                          className="mr-2"
+                        />
+                        <label htmlFor="addon-drugTest">10-Panel Drug Test</label>
+                      </div>
+                      <span>${formState.addOns.drugTest ? '100.00' : '0.00'}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="addon-drivingHistory"
+                          checked={formState.addOns.drivingHistory}
+                          onChange={handleInputChange}
+                          className="mr-2"
+                        />
+                        <label htmlFor="addon-drivingHistory">Driving History Report</label>
+                      </div>
+                      <span>${formState.addOns.drivingHistory ? '50.00' : '0.00'}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex justify-between font-bold text-lg">
-                <span>Total:</span>
-                <span>${1000 + (formState.addOns.drugTest ? 100 : 0) + (formState.addOns.drivingHistory ? 50 : 0)}.00</span>
+                
+                <div className="border-t pt-4">
+                  <div className="flex justify-between text-xl font-bold">
+                    <span>Total:</span>
+                    <span>${1000 + (formState.addOns.drugTest ? 100 : 0) + (formState.addOns.drivingHistory ? 50 : 0)}.00</span>
+                  </div>
+                </div>
               </div>
             </div>
             

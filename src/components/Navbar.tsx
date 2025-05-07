@@ -1,10 +1,17 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, UserRound, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useScrollToSection } from '@/hooks/use-scroll-to-section';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -19,6 +26,8 @@ export default function Navbar({ showCta = false }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const scrollToSection = useScrollToSection();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   
   // Check if we're on the home page
   const isHomePage = location.pathname === '/';
@@ -27,7 +36,11 @@ export default function Navbar({ showCta = false }) {
   const shouldShowCta = location.pathname === '/pricing' || 
                         location.pathname === '/blog' || 
                         location.pathname.includes('/blog/') ||
-                        location.pathname === '/contact';
+                        location.pathname === '/contact' ||
+                        location.pathname === '/about' ||
+                        location.pathname === '/terms' ||
+                        location.pathname === '/privacy' ||
+                        location.pathname === '/disclaimer';
   
   // Text color should be dark on non-home pages or when scrolled
   const shouldUseDarkText = !isHomePage || isScrolled;
@@ -52,6 +65,16 @@ export default function Navbar({ showCta = false }) {
   const handleNavClick = (path) => {
     setIsOpen(false);
     scrollToSection(path);
+  };
+  
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const handleRequestNurse = () => {
+    navigate('/apply');
+    window.scrollTo(0, 0); // Scroll to top when navigating
   };
   
   return (
@@ -92,19 +115,54 @@ export default function Navbar({ showCta = false }) {
           ))}
         </nav>
         
-        {/* CTA Button - Show on specified pages or when scrolled past hero on homepage */}
-        <div className="hidden lg:block">
-          <Link to="/apply">
-            <Button 
-              className={cn(
-                "transition-opacity duration-1000",
-                (showCta || shouldShowCta) ? "opacity-100" : "opacity-0 pointer-events-none",
-                isScrolled ? "bg-primary-500 hover:bg-primary-600" : "bg-white text-primary-500 hover:bg-gray-100"
-              )}
-            >
-              Request a Nurse
-            </Button>
-          </Link>
+        {/* Authentication and CTA Button - Desktop */}
+        <div className="hidden lg:flex items-center space-x-4">
+          {/* Auth Button */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost"
+                  className={cn(
+                    "flex items-center",
+                    shouldUseDarkText ? "text-gray-700" : "text-white"
+                  )}
+                >
+                  <UserRound className="h-5 w-5 mr-1" />
+                  <span className="hidden md:inline">Account</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link to="/auth">
+              <Button 
+                variant="ghost"
+                className={cn(
+                  shouldUseDarkText ? "text-gray-700 hover:text-primary-500" : "text-white hover:text-primary-100"
+                )}
+              >
+                Sign In
+              </Button>
+            </Link>
+          )}
+          
+          {/* CTA Button */}
+          <Button 
+            className={cn(
+              "transition-opacity duration-300",
+              (showCta || shouldShowCta) ? "opacity-100" : "opacity-0 pointer-events-none",
+              isScrolled ? "bg-primary-500 hover:bg-primary-600" : "bg-white text-primary-500 hover:bg-gray-100"
+            )}
+            onClick={handleRequestNurse}
+          >
+            Request a Nurse
+          </Button>
         </div>
         
         {/* Mobile Menu Button */}
@@ -161,11 +219,34 @@ export default function Navbar({ showCta = false }) {
               </Link>
             ))}
             
-            <Link to="/apply" onClick={() => setIsOpen(false)}>
-              <Button className="bg-primary-500 hover:bg-primary-600 w-full mt-4">
-                Request a Nurse
+            {user ? (
+              <Button 
+                variant="ghost" 
+                className="justify-start px-0 text-gray-700 hover:text-primary-500"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
               </Button>
-            </Link>
+            ) : (
+              <Link 
+                to="/auth"
+                className="font-medium text-gray-700 hover:text-primary-500"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign In
+              </Link>
+            )}
+            
+            <Button 
+              className="bg-primary-500 hover:bg-primary-600 w-full mt-4"
+              onClick={() => {
+                setIsOpen(false);
+                handleRequestNurse();
+              }}
+            >
+              Request a Nurse
+            </Button>
           </nav>
         </div>
       </div>
