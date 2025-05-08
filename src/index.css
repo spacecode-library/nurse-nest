@@ -105,4 +105,85 @@
   .step-number {
     @apply w-10 h-10 rounded-full flex items-center justify-center text-white font-bold absolute -top-5 left-1/2 transform -translate-x-1/2;
   }
+
+  /* Animation for the "Delivered" text */
+  .animate-fade-in-delivered {
+    animation: fadeInDelivered 1.5s ease-out forwards;
+    display: inline-block;
+  }
+}
+
+@keyframes fadeInDelivered {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  .fade-in {
+    @apply opacity-0 translate-y-4;
+    animation: fadeIn 0.8s forwards;
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    @apply opacity-0;
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  .animate-fade-in-right {
+    @apply opacity-0;
+    animation: fadeInRight 0.8s ease-out forwards;
+  }
+  
+  .animate-slide-in-bottom {
+    @apply opacity-0;
+    animation: slideInBottom 0.8s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInBottom {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

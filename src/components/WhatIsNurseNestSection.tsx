@@ -1,44 +1,55 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { CheckCheck, Shield, Users } from 'lucide-react';
+import { Shield, Users, Clock } from 'lucide-react';
 
 export default function WhatIsNurseNestSection() {
   return (
-    <section id="what-is" className="py-20 bg-nurse-light">
+    <section id="what-is" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Nationwide Nurse Placement by a Nurse-Owned Agency You Can Trust</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <span className="text-black">Nationwide Nurse Placement by a </span>
+            <span className="text-primary-500">Nurse-Owned</span>
+            <span className="text-black"> Agency You Can Trust</span>
+          </h2>
           <p className="text-lg text-gray-700 mb-8">
-            Nurse Nest connects families and facilities with qualified private duty nurses for personalized care. Our platform is trusted by families seeking reliable healthcare professionals for in-home nursing care and medical facilities looking for specialized staff.
+            We connect families and healthcare providers with licensed, background-checked nurses 
+            for in-home or in-practice support. Whether you need a NICU-trained night nurse, a 
+            postpartum caregiver, or an elder care nurse — we find the right match, fast.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 bg-nurse-dark rounded-full flex items-center justify-center">
-                  <CheckCheck className="h-6 w-6 text-white" />
+                <div className="w-16 h-16 text-primary-500">
+                  <Shield className="h-16 w-16" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Experienced Nurses</h3>
-              <p className="text-gray-600">All our nurses have a minimum of 2 years clinical experience and undergo thorough screening.</p>
+              <h3 className="text-xl font-semibold mb-3">Licensed & Verified</h3>
+              <p className="text-gray-600">
+                Every nurse in our network is licensed, background-checked, and credential-verified.
+              </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center">
-                  <Users className="h-6 w-6 text-white" />
+                <div className="w-16 h-16 text-primary-500">
+                  <Users className="h-16 w-16" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Custom Matching</h3>
-              <p className="text-gray-600">We carefully match nurses to your specific needs for the best possible care experience.</p>
+              <h3 className="text-xl font-semibold mb-3">Perfect Matching</h3>
+              <p className="text-gray-600">
+                We match your unique needs with nurses who have the right specialization and experience.
+              </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 bg-nurse-dark rounded-full flex items-center justify-center">
-                  <Shield className="h-6 w-6 text-white" />
+                <div className="w-16 h-16 text-primary-500">
+                  <Clock className="h-16 w-16" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Rapid Response</h3>
-              <p className="text-gray-600">Our platform accelerates the matching process so you can receive care sooner.</p>
+              <h3 className="text-xl font-semibold mb-3">Quick Response</h3>
+              <p className="text-gray-600">
+                We understand urgency and work to match you with the right nurse as quickly as possible.
+              </p>
             </div>
           </div>
         </div>

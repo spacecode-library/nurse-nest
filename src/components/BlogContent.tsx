@@ -7,7 +7,7 @@ const blogPosts = {
     title: 'Understanding Private Duty Nursing: What You Need to Know',
     date: 'May 5, 2025',
     author: 'Nurse Nest Team',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    image: '/lovable-uploads/5f639624-34cd-4127-a52d-62e70271587c.png',
     content: `
       <p>Private duty nursing is transforming how families access personalized healthcare, offering one-on-one care in the comfort of home. As the demand for private duty nurses grows, understanding its benefits and applications can help you decide if it's the right choice for your loved ones. At Nurse Nest, we specialize in matching clients with pre-vetted nurses to ensure quality care tailored to your needs.</p>
       
@@ -55,7 +55,7 @@ const blogPosts = {
     title: 'How to Choose the Right Private Duty Nurse for Your Needs',
     date: 'May 3, 2025',
     author: 'Nurse Nest Team',
-    image: 'https://images.unsplash.com/photo-1516841273335-e39b37888115?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1746&q=80',
+    image: '/lovable-uploads/c12def84-e1c1-4758-83be-b70e6cee40a7.png',
     content: `
       <p>Hiring a private duty nurse is a critical decision that impacts your loved one's health and well-being. With so many factors to consider, from qualifications to compatibility, the process can feel overwhelming. Nurse Nest is here to guide you with practical tips and questions to ensure you find the perfect nurse for your needs.</p>
       
@@ -136,7 +136,7 @@ const blogPosts = {
     title: 'The Nurse Nest Difference: Why Choose Us for Your Private Duty Nursing Needs',
     date: 'April 29, 2025',
     author: 'Nurse Nest Team',
-    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    image: '/lovable-uploads/a1e4fb69-0c92-4952-a6c4-835053c1b7c6.png',
     content: `
       <p>When it comes to finding a private duty nurse, Nurse Nest stands out as a trusted partner. Our innovative platform connects clients with pre-vetted, licensed nurses, offering personalized care for newborns, elderly loved ones, or those recovering from surgery. Here's why Nurse Nest is the preferred choice for your nursing needs.</p>
       

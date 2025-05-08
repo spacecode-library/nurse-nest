@@ -10,7 +10,7 @@ const blogPosts = [
     title: 'Understanding Private Duty Nursing: What You Need to Know',
     excerpt: "Discover what private duty nursing is, who it benefits, and why it's a growing choice for in-home care.",
     date: 'May 5, 2025',
-    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80',
+    image: '/lovable-uploads/5f639624-34cd-4127-a52d-62e70271587c.png',
     readTime: '6 min read'
   },
   {
@@ -18,7 +18,7 @@ const blogPosts = [
     title: 'How to Choose the Right Private Duty Nurse for Your Needs',
     excerpt: 'Learn how to hire a private duty nurse with our expert tips on finding qualified, compatible care.',
     date: 'May 3, 2025',
-    image: 'https://images.unsplash.com/photo-1631815588090-d1bcbe9b4b38?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1746&q=80',
+    image: '/lovable-uploads/c12def84-e1c1-4758-83be-b70e6cee40a7.png',
     readTime: '5 min read'
   },
   {
@@ -26,7 +26,7 @@ const blogPosts = [
     title: 'The Nurse Nest Difference: Why Choose Us for Your Private Duty Nursing Needs',
     excerpt: 'Discover why Nurse Nest is the top choice for private duty nursing with our vetted nurses and personalized matching.',
     date: 'April 29, 2025',
-    image: 'https://images.unsplash.com/photo-1527613426441-4da17471b66d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    image: '/lovable-uploads/a1e4fb69-0c92-4952-a6c4-835053c1b7c6.png',
     readTime: '4 min read'
   },
 ];

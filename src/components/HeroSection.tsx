@@ -1,6 +1,7 @@
 
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
+import '@/index.css';
 
 export default function HeroSection() {
   return (
@@ -18,12 +19,14 @@ export default function HeroSection() {
       
       {/* Hero Content */}
       <div className="container-custom relative z-10 pt-16 md:pt-24">
-        <div className="max-w-xl mt-12 md:mt-0 pl-0 md:pl-0 lg:pl-0 ml-0 md:ml-0 lg:ml-24">
+        <div className="mt-12 md:mt-0 ml-0 md:ml-4 lg:ml-12">
           <div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6 text-white drop-shadow-lg">
               <div>Specialized Nurses</div>
               <div>
-                <span><span className="text-blue-400">Delivered</span> to</span>
+                <span className="relative">
+                  <span className="animate-fade-in-delivered text-blue-400">Delivered</span>
+                </span> to
               </div>
               <div>Your Doorstep</div>
             </h1>
