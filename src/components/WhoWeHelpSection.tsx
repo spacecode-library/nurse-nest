@@ -24,8 +24,17 @@ export default function WhoWeHelpSection() {
   ];
 
   return (
-    <section className="section-padding bg-white text-gray-800" id="services">
-      <div className="container-custom">
+    <section className="section-padding bg-white text-gray-800 relative" id="services">
+      {/* Background Element */}
+      <div className="absolute inset-0 overflow-hidden z-0 opacity-10">
+        <div className="absolute top-0 left-0 w-full h-full">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <path fill="#1E88E5" d="M52.8,-75.2C68.7,-67.3,81.9,-53.1,88.4,-36.5C94.9,-19.9,94.7,-1,89.8,15.7C84.9,32.3,75.3,46.7,62.8,58.4C50.3,70.1,35,79.1,18.4,83.1C1.7,87.2,-16.3,86.3,-32.1,80.1C-47.9,73.8,-61.5,62.3,-70.3,48C-79.2,33.6,-83.3,16.8,-83.9,-0.4C-84.5,-17.5,-81.6,-34.9,-72.1,-47.8C-62.6,-60.7,-46.4,-69.1,-30.9,-76.6C-15.4,-84.2,-0.6,-91,15.1,-90.7C30.7,-90.5,36.8,-83.2,52.8,-75.2Z" transform="translate(100 100)" />
+          </svg>
+        </div>
+      </div>
+
+      <div className="container-custom relative z-10">
         <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Tailored Care for <span className="text-primary-500">Every Situation</span>

@@ -10,7 +10,7 @@ const blogPosts = [
     title: 'Understanding Private Duty Nursing: What You Need to Know',
     excerpt: "Discover what private duty nursing is, who it benefits, and why it's a growing choice for in-home care.",
     date: 'May 5, 2025',
-    image: '/lovable-uploads/5f639624-34cd-4127-a52d-62e70271587c.png',
+    image: '/lovable-uploads/b17982c9-ea7e-4528-b267-637fbf419566.png',
     readTime: '6 min read'
   },
   {
@@ -18,7 +18,7 @@ const blogPosts = [
     title: 'How to Choose the Right Private Duty Nurse for Your Needs',
     excerpt: 'Learn how to hire a private duty nurse with our expert tips on finding qualified, compatible care.',
     date: 'May 3, 2025',
-    image: '/lovable-uploads/c12def84-e1c1-4758-83be-b70e6cee40a7.png',
+    image: '/lovable-uploads/489a6911-f667-4946-9075-6fd326c7b384.png',
     readTime: '5 min read'
   },
   {

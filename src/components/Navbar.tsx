@@ -89,7 +89,7 @@ export default function Navbar({ showCta = false }) {
             "text-2xl font-heading font-bold",
             shouldUseDarkText ? "text-nurse-dark" : "text-white"
           )}>
-            Nurse <span className="text-primary-500">Nest</span>
+            Nurse<span className="text-primary-500">Nest</span>
           </span>
         </Link>
         
@@ -144,7 +144,9 @@ export default function Navbar({ showCta = false }) {
               <Button 
                 variant="ghost"
                 className={cn(
-                  shouldUseDarkText ? "text-gray-700 hover:text-primary-500" : "text-white hover:text-primary-100"
+                  shouldUseDarkText 
+                    ? "text-gray-700 hover:text-primary-500 hover:bg-transparent" 
+                    : "text-white hover:text-primary-100 hover:bg-transparent"
                 )}
               >
                 Sign In
@@ -192,7 +194,7 @@ export default function Navbar({ showCta = false }) {
           <div className="flex items-center justify-between mb-8">
             <Link to="/" className="flex items-center">
               <span className="text-2xl font-heading font-bold text-nurse-dark">
-                Nurse <span className="text-primary-500">Nest</span>
+                Nurse<span className="text-primary-500">Nest</span>
               </span>
             </Link>
             
