@@ -53,10 +53,12 @@ export default function HowItWorksSection() {
                 className="bg-white p-8 rounded-lg shadow-md text-center relative flow-card overflow-hidden"
                 data-step={index + 1}
               >
-                <div className={`w-10 h-10 rounded-full ${step.bgClass} absolute -top-5 left-5 flex items-center justify-center text-white font-bold z-10`}>
+                {/* Step Number - Fixed positioning to make it fully visible */}
+                <div className={`w-10 h-10 rounded-full ${step.bgClass} flex items-center justify-center text-white font-bold absolute -top-5 left-5 z-10`}>
                   {index + 1}
                 </div>
-                <div className={`w-16 h-16 rounded-full ${step.bgClass} flex items-center justify-center mb-6 mx-auto`}>
+                
+                <div className={`w-16 h-16 rounded-full ${step.bgClass} flex items-center justify-center mb-6 mx-auto mt-4`}>
                   {step.icon}
                 </div>
                 <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
