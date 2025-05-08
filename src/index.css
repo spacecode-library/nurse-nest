@@ -98,13 +98,14 @@
     @apply bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-gray-100;
   }
   
-  .step-card {
-    @apply bg-white p-8 rounded-lg shadow-md text-center relative;
+  /* Button hover effect */
+  .button-hover-effect {
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease;
   }
   
-  .step-card::after {
+  .button-hover-effect::before {
     content: '';
     position: absolute;
     top: 0;
@@ -114,22 +115,39 @@
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(30, 136, 229, 0.2), 
+      rgba(255, 255, 255, 0.2), 
       transparent
     );
-    animation: glowEffect 5s infinite;
+    transition: all 0.4s ease;
   }
   
-  .step-number {
-    @apply w-10 h-10 rounded-full flex items-center justify-center text-white font-bold absolute -top-5 left-1/2 transform -translate-x-1/2;
+  .button-hover-effect:hover::before {
+    left: 100%;
+    transition: all 0.4s ease;
   }
   
-  .glow-animation {
+  .button-hover-effect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(30, 136, 229, 0.3);
+  }
+  
+  /* Service card pulse animation */
+  .service-card-pulse {
+    transition: all 0.5s ease;
+    animation: subtle-pulse 4s infinite ease-in-out;
+  }
+  
+  .service-card-pulse:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Flow cards animation */
+  .flow-card {
     position: relative;
     overflow: hidden;
   }
   
-  .glow-animation::before {
+  .flow-card[data-step="1"]::after {
     content: '';
     position: absolute;
     top: 0;
@@ -139,16 +157,96 @@
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(255, 255, 255, 0.4), 
+      rgba(30, 136, 229, 0.1), 
       transparent
     );
-    animation: glowEffect 3s infinite ease-in-out;
+    animation: flowAnimation 6s infinite;
+    animation-delay: 0s;
+  }
+  
+  .flow-card[data-step="2"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg, 
+      transparent, 
+      rgba(30, 136, 229, 0.1), 
+      transparent
+    );
+    animation: flowAnimation 6s infinite;
+    animation-delay: 2s;
+  }
+  
+  .flow-card[data-step="3"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg, 
+      transparent, 
+      rgba(30, 136, 229, 0.1), 
+      transparent
+    );
+    animation: flowAnimation 6s infinite;
+    animation-delay: 4s;
+  }
+
+  /* Service cards animation */
+  .service-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg, 
+      transparent, 
+      rgba(30, 136, 229, 0.1), 
+      transparent
+    );
+    animation: flowAnimationServicesCards 9s infinite;
+  }
+
+  .service-card:nth-child(1)::after {
+    animation-delay: 0s;
+  }
+
+  .service-card:nth-child(2)::after {
+    animation-delay: 3s;
+  }
+
+  .service-card:nth-child(3)::after {
+    animation-delay: 6s;
+  }
+
+  /* Pulse text animation for "Every Situation" */
+  .pulse-text {
+    animation: subtle-text-pulse 3s infinite ease-in-out;
   }
 
   /* Animation for the "Delivered" text */
   .animate-fade-in-delivered {
     animation: fadeInDelivered 1.5s ease-out forwards;
     display: inline-block;
+  }
+  
+  /* Override sign-in button hover behavior */
+  .sign-in-button:hover {
+    color: #1E88E5 !important;
+    background-color: transparent !important;
   }
 }
 
@@ -163,15 +261,39 @@
   }
 }
 
-@keyframes glowEffect {
+@keyframes flowAnimation {
   0% {
     left: -100%;
   }
-  50% {
+  50%, 100% {
     left: 100%;
   }
-  100% {
+}
+
+@keyframes flowAnimationServicesCards {
+  0% {
+    left: -100%;
+  }
+  33%, 100% {
     left: 100%;
+  }
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes subtle-text-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
   }
 }
 

@@ -144,9 +144,10 @@ export default function Navbar({ showCta = false }) {
               <Button 
                 variant="ghost"
                 className={cn(
+                  "sign-in-button",
                   shouldUseDarkText 
                     ? "text-gray-700 hover:text-primary-500 hover:bg-transparent" 
-                    : "text-white hover:text-primary-100 hover:bg-transparent"
+                    : "text-white hover:text-primary-300 hover:bg-transparent"
                 )}
               >
                 Sign In
@@ -157,7 +158,7 @@ export default function Navbar({ showCta = false }) {
           {/* CTA Button */}
           <Button 
             className={cn(
-              "transition-opacity duration-300",
+              "transition-opacity duration-300 button-hover-effect",
               (showCta || shouldShowCta) ? "opacity-100" : "opacity-0 pointer-events-none",
               isScrolled ? "bg-primary-500 hover:bg-primary-600" : "bg-white text-primary-500 hover:bg-gray-100"
             )}
@@ -194,7 +195,7 @@ export default function Navbar({ showCta = false }) {
           <div className="flex items-center justify-between mb-8">
             <Link to="/" className="flex items-center">
               <span className="text-2xl font-heading font-bold text-nurse-dark">
-                Nurse<span className="text-primary-500">Nest</span>
+                Nurse <span className="text-primary-500">Nest</span>
               </span>
             </Link>
             
@@ -241,7 +242,7 @@ export default function Navbar({ showCta = false }) {
             )}
             
             <Button 
-              className="bg-primary-500 hover:bg-primary-600 w-full mt-4"
+              className="bg-primary-500 hover:bg-primary-600 w-full mt-4 button-hover-effect"
               onClick={() => {
                 setIsOpen(false);
                 handleRequestNurse();

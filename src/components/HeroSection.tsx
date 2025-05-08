@@ -19,7 +19,7 @@ export default function HeroSection() {
       
       {/* Hero Content */}
       <div className="container-custom relative z-10 pt-16 md:pt-24">
-        <div className="mt-12 md:mt-0 ml-4 lg:ml-6">
+        <div className="mt-12 md:mt-0 ml-4 md:ml-6 lg:ml-6">
           <div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6 text-white drop-shadow-lg">
               <div>Specialized Nurses</div>
@@ -35,7 +35,7 @@ export default function HeroSection() {
             </p>
             <div>
               <Link to="/apply">
-                <Button id="hero-cta-button" className="bg-nurse-dark hover:bg-primary-700 text-white shadow-lg">
+                <Button id="hero-cta-button" className="bg-nurse-dark hover:bg-primary-700 text-white shadow-lg button-hover-effect">
                   Request a Nurse
                 </Button>
               </Link>
