@@ -12,9 +12,9 @@ export default function WhatIsNurseNestSection() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            <div className="text-black">Nationwide Nurse Placement by a</div>
-            <div className="text-primary-500">Nurse-Owned Agency</div>
-            <div className="text-black">You Can Trust</div>
+            <span className="text-black">Nationwide Nurse Placement by a </span>
+            <span className="text-primary-500">Nurse-Owned Agency</span>
+            <span className="text-black"> You Can Trust</span>
           </h2>
           <p className="text-lg text-gray-700 mb-8">
             We connect families and healthcare providers with licensed, background-checked nurses 

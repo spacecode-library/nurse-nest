@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -140,7 +141,7 @@
     transform: translateY(-5px);
   }
   
-  /* Flow cards animation - Updated to sequence through cards */
+  /* Flow cards animation */
   .flow-card {
     position: relative;
     overflow: hidden;
@@ -156,10 +157,10 @@
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(30, 136, 229, 0.08), 
+      rgba(30, 136, 229, 0.1), 
       transparent
     );
-    animation: flowAnimation 9s infinite;
+    animation: flowAnimation 6s infinite;
     animation-delay: 0s;
   }
   
@@ -173,11 +174,11 @@
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(30, 136, 229, 0.08), 
+      rgba(30, 136, 229, 0.1), 
       transparent
     );
-    animation: flowAnimation 9s infinite;
-    animation-delay: 3s;
+    animation: flowAnimation 6s infinite;
+    animation-delay: 2s;
   }
   
   .flow-card[data-step="3"]::after {
@@ -190,14 +191,14 @@
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(30, 136, 229, 0.08), 
+      rgba(30, 136, 229, 0.1), 
       transparent
     );
-    animation: flowAnimation 9s infinite;
-    animation-delay: 6s;
+    animation: flowAnimation 6s infinite;
+    animation-delay: 4s;
   }
 
-  /* Service cards animation - Updated to match flow-card pattern */
+  /* Service cards animation */
   .service-card {
     position: relative;
     overflow: hidden;
@@ -213,23 +214,21 @@
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(30, 136, 229, 0.08), 
+      rgba(30, 136, 229, 0.1), 
       transparent
     );
+    animation: flowAnimationServicesCards 9s infinite;
   }
 
   .service-card:nth-child(1)::after {
-    animation: flowAnimation 9s infinite;
     animation-delay: 0s;
   }
 
   .service-card:nth-child(2)::after {
-    animation: flowAnimation 9s infinite;
     animation-delay: 3s;
   }
 
   .service-card:nth-child(3)::after {
-    animation: flowAnimation 9s infinite;
     animation-delay: 6s;
   }
 
@@ -266,7 +265,16 @@
   0% {
     left: -100%;
   }
-  30%, 100% {
+  50%, 100% {
+    left: 100%;
+  }
+}
+
+@keyframes flowAnimationServicesCards {
+  0% {
+    left: -100%;
+  }
+  33%, 100% {
     left: 100%;
   }
 }
