@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { City, ArrowRight, User } from "lucide-react";
+import { MapPin, ArrowRight, User } from "lucide-react";
 
 // Define form schema
 const calculatorFormSchema = z.object({
@@ -81,7 +81,7 @@ export default function SalaryCalculator() {
                         <FormLabel>City</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <City className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
                             <Input className="pl-10" placeholder="Enter your city" {...field} />
                           </div>
                         </FormControl>
