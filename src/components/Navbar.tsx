@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, UserRound, LogOut } from 'lucide-react';
@@ -17,6 +16,7 @@ const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'How It Works', path: '/#how-it-works' },
   { name: 'Pricing', path: '/pricing' },
+  { name: 'AI Nurse Salary Calculator', path: '/salary-calculator' },
   { name: 'Blog', path: '/blog' },
   { name: 'Contact', path: '/contact' },
 ];
@@ -40,7 +40,8 @@ export default function Navbar({ showCta = false }) {
                         location.pathname === '/about' ||
                         location.pathname === '/terms' ||
                         location.pathname === '/privacy' ||
-                        location.pathname === '/disclaimer';
+                        location.pathname === '/disclaimer' ||
+                        location.pathname === '/salary-calculator';
   
   // Text color should be dark on non-home pages or when scrolled
   const shouldUseDarkText = !isHomePage || isScrolled;

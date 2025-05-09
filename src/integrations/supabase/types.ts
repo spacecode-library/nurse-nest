@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      "Nurse Salary Calculator": {
+        Row: {
+          city: string
+          created_at: string | null
+          id: string
+          response_text: string | null
+          specialty: string
+          state: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string | null
+          id?: string
+          response_text?: string | null
+          specialty?: string
+          state?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string | null
+          id?: string
+          response_text?: string | null
+          specialty?: string
+          state?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

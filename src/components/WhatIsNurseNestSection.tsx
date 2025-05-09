@@ -6,7 +6,7 @@ import BackgroundElements from './BackgroundElements';
 export default function WhatIsNurseNestSection() {
   return (
     <section id="what-is" className="py-20 bg-nurse-light relative">
-      {/* Background Elements */}
+      {/* Background Elements with improved visibility */}
       <BackgroundElements />
 
       <div className="container mx-auto px-4 relative z-10">
