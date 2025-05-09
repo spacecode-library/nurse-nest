@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, UserRound, LogOut } from 'lucide-react';
@@ -14,9 +15,8 @@ import {
 
 const navLinks = [
   { name: 'Home', path: '/' },
-  { name: 'How It Works', path: '/#how-it-works' },
   { name: 'Pricing', path: '/pricing' },
-  { name: 'AI Nurse Salary Calculator', path: '/salary-calculator' },
+  { name: 'Pay Calculator', path: '/salary-calculator' },
   { name: 'Blog', path: '/blog' },
   { name: 'Contact', path: '/contact' },
 ];
