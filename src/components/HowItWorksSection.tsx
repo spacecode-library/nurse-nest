@@ -39,7 +39,7 @@ export default function HowItWorksSection() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-white relative overflow-hidden" id="how-it-works">
+    <section className="py-16 md:py-24 bg-gradient-to-b from-white to-blue-50 relative overflow-hidden" id="how-it-works">
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
         <div className="absolute top-1/4 left-10 w-32 h-32 rounded-full bg-primary-300"></div>
@@ -48,69 +48,36 @@ export default function HowItWorksSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col md:flex-row items-start">
-          {/* Left Side: Diagram */}
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+          {/* Left Side: Image */}
           <div className="w-full md:w-1/2 mb-10 md:mb-0 px-4">
             <div className="relative">
-              {/* Drawn-style diagram container */}
-              <div className="relative bg-nurse-light rounded-2xl p-6 shadow-lg border-2 border-dashed border-primary-300" style={{maxWidth: "550px", margin: "0 auto"}}>
-                {/* Connection lines between step circles - vertical path */}
-                <div className="absolute left-1/2 top-[60px] bottom-[60px] w-[3px] bg-primary-200 transform -translate-x-1/2 z-0" 
-                     style={{backgroundImage: "linear-gradient(to bottom, transparent 0%, transparent 5%, currentColor 5%, currentColor 95%, transparent 95%, transparent 100%)", 
-                           backgroundSize: "8px 16px"}}></div>
-
-                {/* Steps - Vertically stacked */}
-                <div className="space-y-16 relative z-10">
-                  {steps.map((step, index) => (
-                    <div key={index} className="flex items-center relative">
-                      {/* Circle number with sketch effect */}
-                      <div className={`relative w-14 h-14 rounded-full flex items-center justify-center bg-white border-[3px] border-primary-500 z-10 
-                                     shadow-md transform transition-transform duration-300 hover:scale-110`}
-                           style={{borderRadius: "50%", boxShadow: "0 0 0 4px rgba(30, 136, 229, 0.2)"}}>
-                        <span className="text-xl font-bold text-primary-500">{step.number}</span>
-                        {/* Irregular circle sketch effect */}
-                        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="50" cy="50" r="48" fill="none" stroke="#1E88E5" strokeWidth="1" 
-                                 strokeDasharray="5,3" className="opacity-60" />
-                        </svg>
-                      </div>
-                      
-                      {/* Icon element */}
-                      <div className={`ml-4 w-10 h-10 rounded-full flex items-center justify-center bg-primary-100 border border-primary-200`}>
-                        <div className="text-primary-500">{step.icon}</div>
-                      </div>
-                      
-                      {/* Step title */}
-                      <div className="ml-4">
-                        <h3 className="text-lg font-semibold text-gray-800">{step.title}</h3>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              {/* Image container with glow and styling effects */}
+              <div className="relative rounded-2xl overflow-hidden shadow-xl" 
+                   style={{maxWidth: "600px", margin: "0 auto"}}>
+                {/* Glowing overlay effect */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-500/30 to-transparent opacity-40 z-10"></div>
                 
-                {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-16 h-16 text-primary-200 opacity-30">
-                  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                    <path d="M30,10 Q50,-10 70,10 Q90,30 70,50 Q50,70 30,50 Q10,30 30,10 Z" />
-                  </svg>
-                </div>
-                <div className="absolute -bottom-4 -left-4 w-16 h-16 text-nurse-accent opacity-30 transform rotate-45">
-                  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                    <path d="M30,10 Q50,-10 70,10 Q90,30 70,50 Q50,70 30,50 Q10,30 30,10 Z" />
-                  </svg>
-                </div>
+                {/* The nurse image */}
+                <img 
+                  src="/lovable-uploads/c3267a23-af03-4d97-8ebb-c8680d11dcee.png" 
+                  alt="Nurse as a gift to families" 
+                  className="w-full h-auto object-cover rounded-2xl shadow-lg transform transition-all duration-500 hover:scale-[1.02]"
+                />
+                
+                {/* Subtle overlay on hover */}
+                <div className="absolute inset-0 bg-primary-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300 z-20"></div>
               </div>
               
-              {/* Hand-drawn style decorative elements */}
-              <div className="absolute -top-10 -left-10 w-20 h-20 text-primary-200 opacity-40 transform -rotate-12 hidden md:block">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20,50 Q50,20 80,50" strokeLinecap="round" strokeDasharray="5,5" />
-                  <path d="M20,70 Q50,40 80,70" strokeLinecap="round" strokeDasharray="4,6" />
+              {/* Decorative elements */}
+              <div className="absolute -top-6 -right-6 w-16 h-16 text-primary-200 opacity-50 hidden md:block">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                  <path d="M30,10 Q50,-10 70,10 Q90,30 70,50 Q50,70 30,50 Q10,30 30,10 Z" />
                 </svg>
               </div>
-              <div className="absolute -bottom-10 -right-10 w-24 h-24 text-nurse-accent opacity-30 transform rotate-12 hidden md:block">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="50" cy="50" r="30" strokeDasharray="10,5" />
+              <div className="absolute -bottom-6 -left-6 w-16 h-16 text-blue-300 opacity-50 transform rotate-45 hidden md:block">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                  <path d="M30,10 Q50,-10 70,10 Q90,30 70,50 Q50,70 30,50 Q10,30 30,10 Z" />
                 </svg>
               </div>
             </div>
