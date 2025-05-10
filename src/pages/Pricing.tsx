@@ -16,15 +16,7 @@ export default function Pricing() {
       
       <main className="flex-1 pt-24 pb-16">
         <section className="section-padding bg-white">
-          <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
-              Simple, Transparent <span className="text-nurse-dark">Pricing</span>
-            </h1>
-            
-            <div className="flex justify-center">
-              <PricingCard />
-            </div>
-          </div>
+          <PricingCard />
         </section>
       </main>
       
