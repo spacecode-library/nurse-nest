@@ -1,5 +1,6 @@
 
 import { Baby, Users, Stethoscope } from 'lucide-react';
+import BackgroundElements from './BackgroundElements';
 import AnimatedSection from './AnimatedSection';
 
 export default function WhoWeHelpSection() {
@@ -25,9 +26,12 @@ export default function WhoWeHelpSection() {
   ];
 
   return (
-    <section className="section-padding text-gray-800 relative" id="services">
+    <section className="section-padding bg-white text-gray-800 relative" id="services">
+      {/* Background Element */}
+      <BackgroundElements />
+
       <div className="container-custom relative z-10">
-        <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-16 bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+        <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Tailored Care for <span className="text-primary-500 pulse-text">Every Situation</span>
           </h2>

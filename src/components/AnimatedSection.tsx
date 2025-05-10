@@ -8,7 +8,6 @@ interface AnimatedSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   delay?: number;
   className?: string;
   animation?: 'fade-up' | 'fade-in' | 'slide-in-right' | 'none';
-  transparent?: boolean;
 }
 
 export default function AnimatedSection({
@@ -16,7 +15,6 @@ export default function AnimatedSection({
   delay = 0,
   className,
   animation = 'fade-up',
-  transparent = false,
   ...props
 }: AnimatedSectionProps) {
   const { ref, isVisible } = useScrollAnimation({
@@ -39,16 +37,12 @@ export default function AnimatedSection({
     'none': ''
   };
 
-  // Add background by default unless transparent is true
-  const bgClass = transparent ? '' : 'bg-white/80 backdrop-blur-sm';
-
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
       className={cn(
         animationClasses[animation],
         initialStyles[animation],
-        bgClass,
         className
       )}
       {...props}

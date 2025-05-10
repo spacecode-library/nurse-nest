@@ -7,7 +7,6 @@ import WhoWeHelpSection from "@/components/WhoWeHelpSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import AboutMeSection from "@/components/AboutMeSection";
 import FaqSection from "@/components/FaqSection";
-import BackgroundContainer from "@/components/BackgroundContainer";
 
 export default function Index() {
   const [showNavbarCta, setShowNavbarCta] = useState(false);
@@ -36,14 +35,9 @@ export default function Index() {
       
       <main className="flex-1">
         <HeroSection />
-        
-        {/* Wrap middle sections with the background container */}
-        <BackgroundContainer>
-          <HowItWorksSection />
-          <WhoWeHelpSection />
-          <AboutMeSection />
-        </BackgroundContainer>
-        
+        <HowItWorksSection />
+        <WhoWeHelpSection />
+        <AboutMeSection />
         <FaqSection />
       </main>
       

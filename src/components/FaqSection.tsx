@@ -35,11 +35,8 @@ export default function FaqSection() {
   };
 
   return (
-    <section className="section-padding bg-nurse-light relative" id="faq">
-      {/* Gradient transition from background image to section */}
-      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-nurse-light w-full"></div>
-      
-      <div className="container-custom relative z-10">
+    <section className="section-padding bg-nurse-light" id="faq">
+      <div className="container-custom">
         <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-8 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Got <span className="text-gradient">Questions</span>? We've Got Answers.
