@@ -1,148 +1,155 @@
 
-import { ClipboardCheck, SearchCheck, Users, DollarSign, CheckCircle, Check } from 'lucide-react';
+import React from 'react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import BackgroundElements from './BackgroundElements';
-import FastTrackCallout from './FastTrackCallout';
+import { FileText, DollarSign, Search, Users, CheckCircle } from 'lucide-react';
 
 export default function HowItWorksSection() {
   const steps = [
     {
-      number: "1",
-      title: "Tell Us What You Need",
-      description: "Fill out a short form with your preferences and care requirements.",
-      icon: <ClipboardCheck className="h-10 w-10 text-white" />,
-      bgClass: "bg-primary-500"
+      number: 1,
+      title: "Share Your Care Needs",
+      description: "Start by making an account, then complete a short form to tell us your preferences and specific care requirements.",
+      icon: <FileText className="h-6 w-6" />
     },
     {
-      number: "2",
-      title: "Pay to Begin Your Search",
-      description: "$100 to start. Need a faster match? Add the $500 FastTrack Match to get a nurse within 5 business days.",
-      icon: <DollarSign className="h-10 w-10 text-white" />,
-      bgClass: "bg-primary-500"
+      number: 2,
+      title: "Begin Your Search",
+      description: "Start for just $100. Prefer speed? Add our optional Fast Track Match to receive a nurse within 5 business days. If we can't find a match within 14 days (or 5 days with Fast Track), you'll receive a full refund.",
+      icon: <DollarSign className="h-6 w-6" />
     },
     {
-      number: "3",
-      title: "We Source and Vet Nurses",
-      description: "We tap our nationwide network, run verifications, and present you with hand-selected RNs.",
-      icon: <SearchCheck className="h-10 w-10 text-white" />,
-      bgClass: "bg-primary-500"
+      number: 3,
+      title: "Expert Nurse Matching",
+      description: "We leverage our nationwide RN network, run targeted recruitment ads, and post job listings across multiple platforms. You'll receive a curated selection of thoroughly vetted, licensed nurses matched to your unique needs.",
+      icon: <Search className="h-6 w-6" />
     },
     {
-      number: "4",
-      title: "You Choose Your Nurse",
-      description: "Review profiles and choose who you'd like to move forward with.",
-      icon: <Users className="h-10 w-10 text-white" />,
-      bgClass: "bg-primary-500"
+      number: 4,
+      title: "You Select Your Nurse",
+      description: "Review detailed nurse profiles and choose the one that best fits your needs. Once selected, we conduct a comprehensive vetting process—including background check, license verification, reference checks, and optional drug screening and driving record review.",
+      icon: <Users className="h-6 w-6" />
     },
     {
-      number: "5",
-      title: "Approve Hours & Pay Seamlessly",
-      description: "Your nurse logs hours via our system. You review, approve, and pay directly through our platform—secure and simple.",
-      icon: <CheckCircle className="h-10 w-10 text-white" />,
-      bgClass: "bg-primary-500"
+      number: 5,
+      title: "Approve Hours & Pay Securely",
+      description: "Your nurse logs hours through our system. You review and approve them, then make payments through our platform—sent directly to your nurse, securely and seamlessly.",
+      icon: <CheckCircle className="h-6 w-6" />
     }
   ];
 
   return (
-    <section className="section-padding bg-gradient-to-br from-nurse-light to-white relative" id="how-it-works">
-      {/* Background Element */}
-      <BackgroundElements />
+    <section className="py-16 md:py-24 bg-white relative overflow-hidden" id="how-it-works">
+      {/* Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+        <div className="absolute top-1/4 left-10 w-32 h-32 rounded-full bg-primary-300"></div>
+        <div className="absolute bottom-1/4 right-10 w-40 h-40 rounded-full bg-nurse-accent"></div>
+        <div className="absolute top-3/4 left-1/3 w-24 h-24 rounded-full bg-primary-300"></div>
+      </div>
 
-      <div className="container-custom relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            How Nurse Nest <span className="text-primary-500">Works</span>
-          </h2>
-          <p className="text-lg text-gray-700">
-            Our streamlined process makes finding the perfect nurse quick and hassle-free.
-          </p>
-        </div>
-        
-        {/* Process Steps - Vertical Timeline */}
-        <div className="relative max-w-4xl mx-auto">
-          {/* Connection Line */}
-          <div className="absolute left-6 top-10 bottom-10 w-1 bg-gray-200 z-0 md:left-1/2 md:transform md:-translate-x-1/2"></div>
-          
-          <div className="space-y-12">
-            {steps.map((step, index) => (
-              <div 
-                key={index} 
-                className={`flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} items-center`}
-              >
-                <div className="md:w-1/2 px-8">
-                  <div 
-                    className="bg-white p-6 rounded-lg shadow-md relative flow-card overflow-hidden border-l-4 border-primary-500"
-                    data-step={step.number}
-                  >
-                    <div className="z-10 relative">
-                      <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                      <p className="text-gray-600">{step.description}</p>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex flex-col md:flex-row items-start">
+          {/* Left Side: Diagram */}
+          <div className="w-full md:w-1/2 mb-10 md:mb-0 px-4">
+            <div className="relative">
+              {/* Drawn-style diagram container */}
+              <div className="relative bg-nurse-light rounded-2xl p-6 shadow-lg border-2 border-dashed border-primary-300" style={{maxWidth: "550px", margin: "0 auto"}}>
+                {/* Connection lines between step circles - vertical path */}
+                <div className="absolute left-1/2 top-[60px] bottom-[60px] w-[3px] bg-primary-200 transform -translate-x-1/2 z-0" 
+                     style={{backgroundImage: "linear-gradient(to bottom, transparent 0%, transparent 5%, currentColor 5%, currentColor 95%, transparent 95%, transparent 100%)", 
+                           backgroundSize: "8px 16px"}}></div>
+
+                {/* Steps - Vertically stacked */}
+                <div className="space-y-16 relative z-10">
+                  {steps.map((step, index) => (
+                    <div key={index} className="flex items-center relative">
+                      {/* Circle number with sketch effect */}
+                      <div className={`relative w-14 h-14 rounded-full flex items-center justify-center bg-white border-[3px] border-primary-500 z-10 
+                                     shadow-md transform transition-transform duration-300 hover:scale-110`}
+                           style={{borderRadius: "50%", boxShadow: "0 0 0 4px rgba(30, 136, 229, 0.2)"}}>
+                        <span className="text-xl font-bold text-primary-500">{step.number}</span>
+                        {/* Irregular circle sketch effect */}
+                        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="50" cy="50" r="48" fill="none" stroke="#1E88E5" strokeWidth="1" 
+                                 strokeDasharray="5,3" className="opacity-60" />
+                        </svg>
+                      </div>
+                      
+                      {/* Icon element */}
+                      <div className={`ml-4 w-10 h-10 rounded-full flex items-center justify-center bg-primary-100 border border-primary-200`}>
+                        <div className="text-primary-500">{step.icon}</div>
+                      </div>
+                      
+                      {/* Step title */}
+                      <div className="ml-4">
+                        <h3 className="text-lg font-semibold text-gray-800">{step.title}</h3>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
                 
-                <div className="md:w-0 flex justify-center my-4 md:my-0 z-10">
-                  <div className={`w-12 h-12 rounded-full ${step.bgClass} flex items-center justify-center text-white font-bold shadow-lg`}>
-                    {step.number}
-                  </div>
+                {/* Decorative elements */}
+                <div className="absolute -top-4 -right-4 w-16 h-16 text-primary-200 opacity-30">
+                  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                    <path d="M30,10 Q50,-10 70,10 Q90,30 70,50 Q50,70 30,50 Q10,30 30,10 Z" />
+                  </svg>
                 </div>
-                
-                <div className="md:w-1/2"></div>
+                <div className="absolute -bottom-4 -left-4 w-16 h-16 text-nurse-accent opacity-30 transform rotate-45">
+                  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                    <path d="M30,10 Q50,-10 70,10 Q90,30 70,50 Q50,70 30,50 Q10,30 30,10 Z" />
+                  </svg>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* FastTrack Callout */}
-        <div className="mt-16">
-          <FastTrackCallout />
-        </div>
-        
-        {/* Client Dashboard Welcome - Hidden on homepage, shown on dashboard */}
-        <div className="hidden dashboard-only">
-          <div className="mt-16 bg-white rounded-xl shadow-md p-8">
-            <div className="max-w-3xl mx-auto">
-              <h3 className="text-2xl font-bold mb-4">Welcome to your Nurse Nest dashboard.</h3>
-              <p className="mb-4">From here, you can:</p>
-              <ul className="space-y-2 mb-6">
-                <li className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span>View and approve your nurse's timesheets</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span>Track your current match status</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span>Access receipts, contracts, and communications</span>
-                </li>
-              </ul>
-              <div className="bg-blue-50 p-4 rounded-md border-l-4 border-blue-500">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-blue-700">
-                      Tip: Approve hours directly to trigger secure payment via Stripe—Nurse Nest handles the details.
-                    </p>
-                  </div>
-                </div>
+              
+              {/* Hand-drawn style decorative elements */}
+              <div className="absolute -top-10 -left-10 w-20 h-20 text-primary-200 opacity-40 transform -rotate-12 hidden md:block">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20,50 Q50,20 80,50" strokeLinecap="round" strokeDasharray="5,5" />
+                  <path d="M20,70 Q50,40 80,70" strokeLinecap="round" strokeDasharray="4,6" />
+                </svg>
+              </div>
+              <div className="absolute -bottom-10 -right-10 w-24 h-24 text-nurse-accent opacity-30 transform rotate-12 hidden md:block">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="50" cy="50" r="30" strokeDasharray="10,5" />
+                </svg>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="mt-16 text-center">
-          <Link to="/apply">
-            <Button className="bg-primary-500 hover:bg-primary-600 text-white button-hover-effect">
-              Get Started Now
-            </Button>
-          </Link>
+          
+          {/* Right Side: Header and Content */}
+          <div className="w-full md:w-1/2 px-4">
+            <div className="mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                How Nurse Nest <span className="text-primary-500">Works</span>
+              </h2>
+              <p className="text-lg text-gray-700">
+                Our streamlined process makes finding your perfect nurse simple, secure, and stress-free.
+              </p>
+            </div>
+            
+            {/* Step details - vertical cards */}
+            <div className="space-y-6">
+              {steps.map((step, index) => (
+                <div key={index} className="bg-white p-5 rounded-lg shadow-sm border-l-4 border-primary-500 hover:shadow-md transition-shadow">
+                  <h3 className="text-xl font-semibold mb-2 flex items-center">
+                    <span className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm mr-3 flex-shrink-0">
+                      {step.number}
+                    </span>
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-700 pl-10">{step.description}</p>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-10">
+              <Link to="/apply">
+                <Button className="bg-primary-500 hover:bg-primary-600 text-white button-hover-effect">
+                  Start Your Nurse Search
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
