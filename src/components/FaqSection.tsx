@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import AnimatedSection from './AnimatedSection';
 
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0); // Auto-open first FAQ
@@ -36,21 +37,23 @@ export default function FaqSection() {
   return (
     <section className="section-padding bg-nurse-light" id="faq">
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-8 md:mb-16">
+        <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-8 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Got <span className="text-gradient">Questions</span>? We've Got Answers.
           </h2>
           <p className="text-lg text-gray-700">
             Find answers to commonly asked questions about our nurse matching service.
           </p>
-        </div>
+        </AnimatedSection>
         
         <div className="max-w-3xl mx-auto">
           <div className="space-y-4">
             {faqs.map((faq, index) => {
               return (
-                <div 
-                  key={index} 
+                <AnimatedSection 
+                  key={index}
+                  animation="fade-up"
+                  delay={index * 100}
                   className="glass-card"
                 >
                   <button
@@ -75,13 +78,13 @@ export default function FaqSection() {
                       {faq.answer}
                     </p>
                   </div>
-                </div>
+                </AnimatedSection>
               );
             })}
           </div>
         </div>
         
-        <div className="max-w-xl mx-auto mt-8 md:mt-12 text-center">
+        <AnimatedSection animation="fade-up" delay={500} className="max-w-xl mx-auto mt-8 md:mt-12 text-center">
           <p className="text-gray-600 mb-4">
             Still have questions? We're here to help!
           </p>
@@ -92,7 +95,7 @@ export default function FaqSection() {
             Contact our team for more information
             <ArrowRight className="ml-1 h-4 w-4" />
           </a>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );

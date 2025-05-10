@@ -2,6 +2,7 @@
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import '@/index.css';
+import AnimatedSection from './AnimatedSection';
 
 export default function HeroSection() {
   return (
@@ -21,7 +22,7 @@ export default function HeroSection() {
       {/* Hero Content */}
       <div className="container-custom relative z-10 pt-16 md:pt-24">
         <div className="mt-12 md:mt-0">
-          <div>
+          <AnimatedSection animation="fade-up">
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6 text-white drop-shadow-lg">
               <div>Specialized Nurses</div>
               <div>
@@ -41,7 +42,7 @@ export default function HeroSection() {
                 </Button>
               </Link>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </div>
     </section>

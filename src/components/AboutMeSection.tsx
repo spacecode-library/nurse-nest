@@ -1,5 +1,6 @@
 
 import React from 'react';
+import AnimatedSection from './AnimatedSection';
 
 export default function AboutMeSection() {
   return (
@@ -8,7 +9,10 @@ export default function AboutMeSection() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-12 gap-8 items-center">
             {/* Image Column */}
-            <div className="md:col-span-4 lg:col-span-3 flex justify-center md:justify-end">
+            <AnimatedSection 
+              animation="fade-up" 
+              className="md:col-span-4 lg:col-span-3 flex justify-center md:justify-end"
+            >
               <div className="relative">
                 <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-nurse-light shadow-xl">
                   <img
@@ -18,10 +22,14 @@ export default function AboutMeSection() {
                   />
                 </div>
               </div>
-            </div>
+            </AnimatedSection>
             
             {/* Content Column */}
-            <div className="md:col-span-8 lg:col-span-9">
+            <AnimatedSection 
+              animation="fade-up" 
+              delay={150} 
+              className="md:col-span-8 lg:col-span-9"
+            >
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-1">
                   Jayson Minagawa
@@ -46,7 +54,7 @@ export default function AboutMeSection() {
                   </p>
                 </div>
               </div>
-            </div>
+            </AnimatedSection>
           </div>
         </div>
       </div>

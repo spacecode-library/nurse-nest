@@ -1,6 +1,7 @@
 
 import { Baby, Users, Stethoscope } from 'lucide-react';
 import BackgroundElements from './BackgroundElements';
+import AnimatedSection from './AnimatedSection';
 
 export default function WhoWeHelpSection() {
   const categories = [
@@ -30,20 +31,22 @@ export default function WhoWeHelpSection() {
       <BackgroundElements />
 
       <div className="container-custom relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Tailored Care for <span className="text-primary-500 pulse-text">Every Situation</span>
           </h2>
           <p className="text-lg text-gray-700 mb-6">
             Our specialized nursing services are customized for different needs and situations, providing expert care when and where you need it most.
           </p>
-        </div>
+        </AnimatedSection>
         
         {/* Services Grid */}
         <div className="grid md:grid-cols-3 gap-8">
           {categories.map((category, index) => (
-            <div 
-              key={index} 
+            <AnimatedSection 
+              key={index}
+              animation="fade-up"
+              delay={index * 150}
               className="shadow-lg bg-white rounded-xl overflow-hidden border border-gray-200 service-card-pulse"
             >
               <div className="h-56 overflow-hidden">
@@ -60,7 +63,7 @@ export default function WhoWeHelpSection() {
                 </div>
                 <p className="text-gray-700">{category.description}</p>
               </div>
-            </div>
+            </AnimatedSection>
           ))}
         </div>
       </div>

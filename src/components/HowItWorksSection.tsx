@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { FileText, DollarSign, Search, Users, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
+import AnimatedSection from './AnimatedSection';
 
 export default function HowItWorksSection() {
   const steps = [
@@ -47,46 +48,52 @@ export default function HowItWorksSection() {
   return (
     <section className="py-16 md:py-24 bg-white relative overflow-hidden" id="how-it-works">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-12">
+        <AnimatedSection animation="fade-up" className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             How Nurse Nest <span className="text-primary-500">Works</span>
           </h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">
             Our streamlined process makes finding your perfect nurse simple, secure, and stress-free.
           </p>
-        </div>
+        </AnimatedSection>
         
         {/* First Section: Steps 1-3 on left, new image on right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
           {/* Left Side: First 3 Steps */}
-          <div className="space-y-6">
+          <AnimatedSection animation="fade-up" className="space-y-6">
             {firstSteps.map((step, index) => (
-              <Card key={index} className="border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary-100">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
-                    {/* Step Number - Always on the left */}
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 text-white font-bold text-lg shadow-md group-hover:shadow-lg group-hover:bg-primary-600 transition-all duration-300">
-                        {step.number}
+              <AnimatedSection
+                key={index}
+                animation="fade-up"
+                delay={index * 100}
+              >
+                <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary-100">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      {/* Step Number - Always on the left */}
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 text-white font-bold text-lg shadow-md group-hover:shadow-lg group-hover:bg-primary-600 transition-all duration-300">
+                          {step.number}
+                        </div>
+                      </div>
+                      
+                      {/* Step Content */}
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                          <span className="text-primary-500">{step.title}</span>
+                          {step.icon}
+                        </h3>
+                        <p className="text-gray-700">{step.description}</p>
                       </div>
                     </div>
-                    
-                    {/* Step Content */}
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
-                        <span className="text-primary-500">{step.title}</span>
-                        {step.icon}
-                      </h3>
-                      <p className="text-gray-700">{step.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
             ))}
-          </div>
+          </AnimatedSection>
           
           {/* Right Side: New Image */}
-          <div className="order-first lg:order-last">
+          <AnimatedSection animation="fade-up" delay={200} className="order-first lg:order-last">
             <div className="relative mx-auto max-w-md">
               <div className="rounded-2xl overflow-hidden shadow-xl transform transition-all duration-700 hover:scale-[1.02]">
                 <div className="relative">
@@ -103,13 +110,13 @@ export default function HowItWorksSection() {
               {/* Subtle light effect */}
               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-2/3 h-20 bg-primary-300/30 blur-3xl rounded-full"></div>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
         
         {/* Second Section: Original image on left, Steps 4-5 on right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Side: Original Image */}
-          <div>
+          <AnimatedSection animation="fade-up">
             <div className="relative mx-auto max-w-md">
               <div className="rounded-2xl overflow-hidden shadow-xl transform transition-all duration-700 hover:scale-[1.02]">
                 <div className="relative">
@@ -126,44 +133,50 @@ export default function HowItWorksSection() {
               {/* Subtle light effect */}
               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-2/3 h-20 bg-primary-300/30 blur-3xl rounded-full"></div>
             </div>
-          </div>
+          </AnimatedSection>
           
           {/* Right Side: Last 2 Steps */}
-          <div className="space-y-6">
+          <AnimatedSection animation="fade-up" delay={100} className="space-y-6">
             {lastSteps.map((step, index) => (
-              <Card key={index} className="border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary-100">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
-                    {/* Step Number - Always on the left */}
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 text-white font-bold text-lg shadow-md group-hover:shadow-lg group-hover:bg-primary-600 transition-all duration-300">
-                        {step.number}
+              <AnimatedSection
+                key={index}
+                animation="fade-up"
+                delay={index * 100 + 300}
+              >
+                <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary-100">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      {/* Step Number - Always on the left */}
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 text-white font-bold text-lg shadow-md group-hover:shadow-lg group-hover:bg-primary-600 transition-all duration-300">
+                          {step.number}
+                        </div>
+                      </div>
+                      
+                      {/* Step Content */}
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                          <span className="text-primary-500">{step.title}</span>
+                          {step.icon}
+                        </h3>
+                        <p className="text-gray-700">{step.description}</p>
                       </div>
                     </div>
-                    
-                    {/* Step Content */}
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
-                        <span className="text-primary-500">{step.title}</span>
-                        {step.icon}
-                      </h3>
-                      <p className="text-gray-700">{step.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
             ))}
-          </div>
+          </AnimatedSection>
         </div>
         
         {/* CTA Button */}
-        <div className="mt-12 text-center">
+        <AnimatedSection animation="fade-up" delay={500} className="mt-12 text-center">
           <Link to="/apply">
             <Button className="bg-primary-500 hover:bg-primary-600 text-white button-hover-effect">
               Start Your Nurse Search
             </Button>
           </Link>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );
