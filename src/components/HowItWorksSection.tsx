@@ -1,5 +1,5 @@
 
-import { ClipboardCheck, SearchCheck, Users, DollarSign, CheckCircle } from 'lucide-react';
+import { ClipboardCheck, SearchCheck, Users, DollarSign, CheckCircle, Check } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import BackgroundElements from './BackgroundElements';
