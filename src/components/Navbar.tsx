@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, UserRound, LogOut } from 'lucide-react';
+import { Menu, X, UserRound, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useScrollToSection } from '@/hooks/use-scroll-to-section';
@@ -134,6 +133,10 @@ export default function Navbar({ showCta = false }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/dashboard')}>
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Dashboard
+                </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
@@ -224,14 +227,24 @@ export default function Navbar({ showCta = false }) {
             ))}
             
             {user ? (
-              <Button 
-                variant="ghost" 
-                className="justify-start px-0 text-gray-700 hover:text-primary-500"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
+              <>
+                <Link 
+                  to="/dashboard" 
+                  className="font-medium text-gray-700 hover:text-primary-500"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <LayoutDashboard className="h-4 w-4 mr-2 inline" />
+                  Dashboard
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  className="justify-start px-0 text-gray-700 hover:text-primary-500"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
             ) : (
               <Link 
                 to="/auth"
