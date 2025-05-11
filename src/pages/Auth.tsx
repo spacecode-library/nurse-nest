@@ -7,7 +7,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { AlertCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { Session } from '@supabase/supabase-js';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -22,7 +21,7 @@ export default function Auth() {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
-        navigate('/');
+        navigate('/dashboard');
       }
     };
     
@@ -32,7 +31,7 @@ export default function Auth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session) {
-          navigate('/');
+          navigate('/dashboard');
         }
       }
     );

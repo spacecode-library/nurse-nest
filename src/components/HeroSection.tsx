@@ -27,7 +27,7 @@ export default function HeroSection() {
               <div>Specialized Nurses</div>
               <div>
                 <span className="relative">
-                  <span className="animate-fade-in-delivered text-blue-400">Delivered</span>
+                  <span className="text-blue-400">Delivered</span>
                 </span> to
               </div>
               <div>Your Doorstep</div>

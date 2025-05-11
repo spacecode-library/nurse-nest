@@ -18,6 +18,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Disclaimer from "./pages/Disclaimer";
 import SalaryCalculator from "./pages/SalaryCalculator";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/blog/:postId" element={<BlogPost />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/salary-calculator" element={<SalaryCalculator />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             
             {/* Add all other routes above the catch-all 404 route */}
             <Route path="*" element={<NotFound />} />
