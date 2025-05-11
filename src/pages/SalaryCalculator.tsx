@@ -9,7 +9,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { MapPin, ArrowRight, User } from "lucide-react";
+import { MapPin, ArrowRight, User, Stethoscope } from "lucide-react";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 // Define form schema
 const calculatorFormSchema = z.object({
@@ -115,8 +122,24 @@ export default function SalaryCalculator() {
                         <FormLabel>Nursing Specialty</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                            <Input className="pl-10" placeholder="e.g., ICU, Pediatric, ER" {...field} />
+                            <Stethoscope className="absolute left-3 z-10 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <SelectTrigger className="w-full pl-10">
+                                <SelectValue placeholder="Select a specialty" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="ICU">ICU</SelectItem>
+                                <SelectItem value="ER">ER</SelectItem>
+                                <SelectItem value="L&D">Labor & Delivery</SelectItem>
+                                <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                                <SelectItem value="Postpartum">Postpartum</SelectItem>
+                                <SelectItem value="Home Health">Home Health</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
                         </FormControl>
                         <FormMessage />
