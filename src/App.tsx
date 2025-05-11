@@ -18,6 +18,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Disclaimer from "./pages/Disclaimer";
 import SalaryCalculator from "./pages/SalaryCalculator";
+import SalaryResult from "./pages/SalaryResult";
 import Dashboard from "./pages/Dashboard";
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/blog/:postId" element={<BlogPost />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/salary-calculator" element={<SalaryCalculator />} />
+            <Route path="/salary-result" element={<SalaryResult />} />
             <Route path="/dashboard" element={<Dashboard />} />
             
             {/* Add all other routes above the catch-all 404 route */}

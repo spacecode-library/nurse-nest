@@ -3,6 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -28,6 +29,7 @@ const calculatorFormSchema = z.object({
 type CalculatorFormValues = z.infer<typeof calculatorFormSchema>;
 
 export default function SalaryCalculator() {
+  const navigate = useNavigate();
   const form = useForm<CalculatorFormValues>({
     resolver: zodResolver(calculatorFormSchema),
     defaultValues: {
@@ -51,6 +53,9 @@ export default function SalaryCalculator() {
           description: "Your salary calculation request has been submitted.",
         });
         form.reset();
+        
+        // Redirect to the salary result page
+        navigate("/salary-result");
       } else {
         throw new Error("Failed to submit form");
       }
