@@ -1,16 +1,33 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { LockKeyhole, LogIn, ArrowRight } from "lucide-react";
+import { LockKeyhole, LogIn, ArrowRight, FileText } from "lucide-react";
 
 export default function SalaryResult() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [answer, setAnswer] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Parse the URL parameters to get the answer
+    const params = new URLSearchParams(window.location.search);
+    const answerParam = params.get('answer');
+    
+    if (answerParam) {
+      try {
+        const decodedAnswer = decodeURIComponent(answerParam);
+        setAnswer(decodedAnswer);
+      } catch (error) {
+        console.error("Error decoding answer:", error);
+        setAnswer("Error decoding your salary report. Please try again.");
+      }
+    }
+  }, []);
 
   // This ensures we redirect only after auth state is confirmed
   if (!loading && !user) {
@@ -75,30 +92,15 @@ export default function SalaryResult() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="p-6 bg-gray-50 rounded-lg mb-6">
-                  <h3 className="text-xl font-medium mb-4">Estimated Salary Range</h3>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold">$75,000 - $95,000</span>
-                    <span className="text-sm text-gray-500">Annual salary</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium text-gray-700">Regional Factors</h3>
-                    <p className="text-gray-600">
-                      Nursing salaries in your selected location are influenced by cost of living, 
-                      demand for healthcare services, and local economic conditions.
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium text-gray-700">Specialty Impact</h3>
-                    <p className="text-gray-600">
-                      Your selected nursing specialty typically commands competitive compensation 
-                      due to the specialized skills and training required.
-                    </p>
-                  </div>
+                <div 
+                  id="aiAnswer" 
+                  className="p-6 bg-gray-50 rounded-lg mb-6 whitespace-pre-line leading-relaxed"
+                >
+                  {answer ? (
+                    answer
+                  ) : (
+                    "Loading your personalized salary report..."
+                  )}
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col">
@@ -106,9 +108,10 @@ export default function SalaryResult() {
                   This is an estimate based on current market data. Actual salaries may vary based on 
                   experience, education, and specific employer offerings.
                 </p>
-                <Button asChild>
-                  <Link to="/apply">
-                    Find Housing with Nurse Nest
+                <Button className="w-full md:w-auto" asChild>
+                  <Link to="/apply" className="flex items-center justify-center">
+                    <FileText className="mr-2 h-5 w-5" />
+                    Find Nurse
                   </Link>
                 </Button>
               </CardFooter>
