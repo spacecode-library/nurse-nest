@@ -52,14 +52,39 @@ export default function SalaryCalculator() {
           title: "Success!",
           description: "Your salary calculation request has been submitted.",
         });
-        form.reset();
+
+        // Try to get JSON response if available
+        let redirectUrl = "/salary-result";
+        let responseData;
         
-        // Redirect to the salary result page
-        navigate("/salary-result");
+        try {
+          // Check if the response has a JSON body
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            responseData = await response.json();
+            console.log("Make.com response:", responseData);
+            
+            // If we have a redirect_url with answer parameter
+            if (responseData && responseData.redirect_url) {
+              redirectUrl = responseData.redirect_url;
+            }
+            // If we have an answer directly
+            else if (responseData && responseData.answer) {
+              redirectUrl = `/salary-result?answer=${encodeURIComponent(responseData.answer)}`;
+            }
+          }
+        } catch (jsonError) {
+          console.error("Error parsing JSON response:", jsonError);
+        }
+        
+        // Reset form and redirect to results page
+        form.reset();
+        navigate(redirectUrl);
       } else {
         throw new Error("Failed to submit form");
       }
     } catch (error) {
+      console.error("Error submitting form:", error);
       toast({
         title: "Error",
         description: "There was a problem submitting your request. Please try again.",
