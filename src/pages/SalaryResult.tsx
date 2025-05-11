@@ -6,12 +6,14 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { LockKeyhole, LogIn, ArrowRight, FileText } from "lucide-react";
+import { ArrowLeft, LockKeyhole, LogIn, ArrowRight, FileText } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SalaryResult() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [answer, setAnswer] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Parse the URL parameters to get the answer
@@ -21,11 +23,22 @@ export default function SalaryResult() {
     if (answerParam) {
       try {
         const decodedAnswer = decodeURIComponent(answerParam);
-        setAnswer(decodedAnswer);
+        
+        // Add a small delay for the loading animation
+        const timer = setTimeout(() => {
+          setAnswer(decodedAnswer);
+          setIsLoading(false);
+        }, 1000);
+        
+        return () => clearTimeout(timer);
       } catch (error) {
         console.error("Error decoding answer:", error);
         setAnswer("Error decoding your salary report. Please try again.");
+        setIsLoading(false);
       }
+    } else {
+      setAnswer("No data found. Please resubmit your request.");
+      setIsLoading(false);
     }
   }, []);
 
@@ -92,14 +105,19 @@ export default function SalaryResult() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div 
-                  id="aiAnswer" 
-                  className="p-6 bg-gray-50 rounded-lg mb-6 whitespace-pre-line leading-relaxed"
-                >
-                  {answer ? (
-                    answer
+                <div className="max-w-2xl mx-auto">
+                  {isLoading ? (
+                    <div className="flex flex-col items-center py-8">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                      <p className="text-gray-600">Generating your personalized salary report...</p>
+                    </div>
                   ) : (
-                    "Loading your personalized salary report..."
+                    <div 
+                      id="aiAnswer" 
+                      className="p-6 bg-gray-50 rounded-lg mb-6 whitespace-pre-line leading-relaxed"
+                    >
+                      {answer || "Loading your personalized salary report..."}
+                    </div>
                   )}
                 </div>
               </CardContent>
@@ -108,12 +126,20 @@ export default function SalaryResult() {
                   This is an estimate based on current market data. Actual salaries may vary based on 
                   experience, education, and specific employer offerings.
                 </p>
-                <Button className="w-full md:w-auto" asChild>
-                  <Link to="/apply" className="flex items-center justify-center">
-                    <FileText className="mr-2 h-5 w-5" />
-                    Find Nurse
-                  </Link>
-                </Button>
+                <div className="flex gap-4 justify-center w-full">
+                  <Button variant="outline" asChild className="flex items-center justify-center">
+                    <Link to="/salary-calculator" className="flex items-center justify-center">
+                      <ArrowLeft className="mr-2 h-5 w-5" />
+                      Back to Calculator
+                    </Link>
+                  </Button>
+                  <Button className="flex items-center justify-center" asChild>
+                    <Link to="/apply">
+                      <FileText className="mr-2 h-5 w-5" />
+                      Find Nurse
+                    </Link>
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           </div>
