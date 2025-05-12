@@ -24,7 +24,7 @@ export default function PreResult() {
       return () => clearTimeout(timer);
     } else {
       // If no answer is present, redirect back to calculator
-      // Changed from "pay-calculator" to "salary-calculator" to match the route in App.tsx
+      // Note that the URL should be /salary-calculator to match our routes
       navigate("/salary-calculator");
     }
   }, [navigate]);
