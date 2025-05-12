@@ -15,16 +15,17 @@ export default function PreResult() {
     if (answer) {
       // Store the answer in local storage
       localStorage.setItem("nurseAnswer", answer);
-      // Redirect to the protected page
-      navigate("/salary-result");
-    } else {
-      // If no answer is present, wait briefly for potential async operations
+      // Add a half-second delay to ensure the answer is saved
       const timer = setTimeout(() => {
-        // If still no answer after timeout, redirect back to calculator
-        navigate("/salary-calculator");
-      }, 2000);
+        // Redirect to the protected page
+        navigate("/salary-result");
+      }, 500);
       
       return () => clearTimeout(timer);
+    } else {
+      // If no answer is present, redirect back to calculator
+      // Changed from "pay-calculator" to "salary-calculator" to match the route in App.tsx
+      navigate("/salary-calculator");
     }
   }, [navigate]);
 

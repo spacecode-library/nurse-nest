@@ -24,30 +24,8 @@ export default function SalaryResult() {
       // Clear after use
       localStorage.removeItem("nurseAnswer");
     } else {
-      // Fall back to URL parameters if not in local storage
-      const params = new URLSearchParams(window.location.search);
-      const answerParam = params.get('answer');
-      
-      if (answerParam) {
-        try {
-          const decodedAnswer = decodeURIComponent(answerParam);
-          
-          // Add a small delay for the loading animation
-          const timer = setTimeout(() => {
-            setAnswer(decodedAnswer);
-            setIsLoading(false);
-          }, 1000);
-          
-          return () => clearTimeout(timer);
-        } catch (error) {
-          console.error("Error decoding answer:", error);
-          setAnswer("Error decoding your salary report. Please try again.");
-          setIsLoading(false);
-        }
-      } else {
-        setAnswer("No data found. Please resubmit your request.");
-        setIsLoading(false);
-      }
+      setAnswer("No data found. Please resubmit your request.");
+      setIsLoading(false);
     }
   }, []);
 
