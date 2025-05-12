@@ -18,8 +18,13 @@ export default function PreResult() {
       // Redirect to the protected page
       navigate("/salary-result");
     } else {
-      // If no answer is present, send user back to the calculator
-      navigate("/salary-calculator");
+      // If no answer is present, wait briefly for potential async operations
+      const timer = setTimeout(() => {
+        // If still no answer after timeout, redirect back to calculator
+        navigate("/salary-calculator");
+      }, 2000);
+      
+      return () => clearTimeout(timer);
     }
   }, [navigate]);
 

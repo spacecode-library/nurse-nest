@@ -10,14 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { MapPin, ArrowRight, User, Stethoscope } from "lucide-react";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Define form schema
 const calculatorFormSchema = z.object({
@@ -48,38 +41,31 @@ export default function SalaryCalculator() {
       });
 
       if (response.ok) {
+        // Try to get JSON response if available
+        try {
+          const responseData = await response.json();
+          console.log("Make.com response:", responseData);
+          
+          // If we have a redirect_url with answer parameter
+          if (responseData && responseData.redirect_url) {
+            navigate(responseData.redirect_url);
+            return;
+          }
+          // If we have an answer directly
+          else if (responseData && responseData.answer) {
+            navigate(`/pre-result?answer=${encodeURIComponent(responseData.answer)}`);
+            return;
+          }
+        } catch (jsonError) {
+          console.log("Response is not JSON, proceeding with default redirect");
+        }
+        
+        // Default behavior - just go to pre-result page
         toast({
           title: "Success!",
           description: "Your salary calculation request has been submitted.",
         });
-
-        // Try to get JSON response if available
-        let redirectUrl = "/pre-result"; // Use pre-result page instead of directly going to salary-result
-        let responseData;
-        
-        try {
-          // Check if the response has a JSON body
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.includes("application/json")) {
-            responseData = await response.json();
-            console.log("Make.com response:", responseData);
-            
-            // If we have a redirect_url with answer parameter
-            if (responseData && responseData.redirect_url) {
-              redirectUrl = responseData.redirect_url;
-            }
-            // If we have an answer directly
-            else if (responseData && responseData.answer) {
-              redirectUrl = `/pre-result?answer=${encodeURIComponent(responseData.answer)}`;
-            }
-          }
-        } catch (jsonError) {
-          console.error("Error parsing JSON response:", jsonError);
-        }
-        
-        // Reset form and redirect to results page
-        form.reset();
-        navigate(redirectUrl);
+        navigate("/pre-result");
       } else {
         throw new Error("Failed to submit form");
       }
@@ -99,7 +85,7 @@ export default function SalaryCalculator() {
       
       <main className="flex-1 pt-24">
         <div className="container mx-auto px-4 py-12">
-          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
             <div className="p-8">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Pay Calculator</h1>
@@ -117,10 +103,7 @@ export default function SalaryCalculator() {
                       <FormItem>
                         <FormLabel>City</FormLabel>
                         <FormControl>
-                          <div className="relative">
-                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                            <Input className="pl-10" placeholder="Enter your city" {...field} />
-                          </div>
+                          <Input placeholder="e.g., Seattle" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -134,10 +117,7 @@ export default function SalaryCalculator() {
                       <FormItem>
                         <FormLabel>State</FormLabel>
                         <FormControl>
-                          <div className="relative">
-                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                            <Input className="pl-10" placeholder="Enter your state" {...field} />
-                          </div>
+                          <Input placeholder="e.g., WA" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -151,26 +131,22 @@ export default function SalaryCalculator() {
                       <FormItem>
                         <FormLabel>Nursing Specialty</FormLabel>
                         <FormControl>
-                          <div className="relative">
-                            <Stethoscope className="absolute left-3 z-10 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <SelectTrigger className="w-full pl-10">
-                                <SelectValue placeholder="Select a specialty" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="ICU">ICU</SelectItem>
-                                <SelectItem value="ER">ER</SelectItem>
-                                <SelectItem value="L&D">Labor & Delivery</SelectItem>
-                                <SelectItem value="Pediatrics">Pediatrics</SelectItem>
-                                <SelectItem value="Postpartum">Postpartum</SelectItem>
-                                <SelectItem value="Home Health">Home Health</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a specialty" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="ICU">ICU</SelectItem>
+                              <SelectItem value="ER">ER</SelectItem>
+                              <SelectItem value="L&D">Labor & Delivery</SelectItem>
+                              <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                              <SelectItem value="Postpartum">Postpartum</SelectItem>
+                              <SelectItem value="Home Health">Home Health</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -179,10 +155,9 @@ export default function SalaryCalculator() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-primary-500 hover:bg-primary-600 button-hover-effect flex items-center justify-center"
+                    className="w-full"
                   >
-                    Calculate Salary
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    Calculate My Pay
                   </Button>
                 </form>
               </Form>
