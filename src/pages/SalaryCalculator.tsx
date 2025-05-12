@@ -54,7 +54,7 @@ export default function SalaryCalculator() {
         });
 
         // Try to get JSON response if available
-        let redirectUrl = "/salary-result";
+        let redirectUrl = "/pre-result"; // Use pre-result page instead of directly going to salary-result
         let responseData;
         
         try {
@@ -70,7 +70,7 @@ export default function SalaryCalculator() {
             }
             // If we have an answer directly
             else if (responseData && responseData.answer) {
-              redirectUrl = `/salary-result?answer=${encodeURIComponent(responseData.answer)}`;
+              redirectUrl = `/pre-result?answer=${encodeURIComponent(responseData.answer)}`;
             }
           }
         } catch (jsonError) {

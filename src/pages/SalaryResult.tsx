@@ -7,7 +7,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, LockKeyhole, LogIn, ArrowRight, FileText } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SalaryResult() {
   const { user, loading } = useAuth();
@@ -16,29 +15,39 @@ export default function SalaryResult() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Parse the URL parameters to get the answer
-    const params = new URLSearchParams(window.location.search);
-    const answerParam = params.get('answer');
+    // Try to get the answer from local storage first (for login-safe redirect)
+    const storedAnswer = localStorage.getItem("nurseAnswer");
     
-    if (answerParam) {
-      try {
-        const decodedAnswer = decodeURIComponent(answerParam);
-        
-        // Add a small delay for the loading animation
-        const timer = setTimeout(() => {
-          setAnswer(decodedAnswer);
+    if (storedAnswer) {
+      setAnswer(decodeURIComponent(storedAnswer));
+      setIsLoading(false);
+      // Clear after use
+      localStorage.removeItem("nurseAnswer");
+    } else {
+      // Fall back to URL parameters if not in local storage
+      const params = new URLSearchParams(window.location.search);
+      const answerParam = params.get('answer');
+      
+      if (answerParam) {
+        try {
+          const decodedAnswer = decodeURIComponent(answerParam);
+          
+          // Add a small delay for the loading animation
+          const timer = setTimeout(() => {
+            setAnswer(decodedAnswer);
+            setIsLoading(false);
+          }, 1000);
+          
+          return () => clearTimeout(timer);
+        } catch (error) {
+          console.error("Error decoding answer:", error);
+          setAnswer("Error decoding your salary report. Please try again.");
           setIsLoading(false);
-        }, 1000);
-        
-        return () => clearTimeout(timer);
-      } catch (error) {
-        console.error("Error decoding answer:", error);
-        setAnswer("Error decoding your salary report. Please try again.");
+        }
+      } else {
+        setAnswer("No data found. Please resubmit your request.");
         setIsLoading(false);
       }
-    } else {
-      setAnswer("No data found. Please resubmit your request.");
-      setIsLoading(false);
     }
   }, []);
 
