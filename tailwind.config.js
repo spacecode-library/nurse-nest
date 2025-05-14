@@ -25,7 +25,7 @@ export default {
           500: "#1E88E5", // Main primary color
           600: "#1A6FC4",
           700: "#155293",
-          800: "#0F3B6B",
+          800: "#0F3B6B",  // Using this darker blue for footer
           900: "#0A2647",
         },
         secondary: {
@@ -53,7 +53,7 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         nurse: {
-          light: "#E3F2FD", // Light blue - representing care and trust
+          light: "#E3F2FD", // Light blue - representing care and trust (This is the FAQ section background color)
           medium: "#90CAF9", // Medium blue - calming
           dark: "#1E88E5", // Dark blue - professionalism and reliability
           accent: "#FF6B6B", // Warm accent - compassion

@@ -14,17 +14,17 @@ export default function Footer() {
   };
   
   return (
-    <footer className="bg-white py-8 border-t">
+    <footer className="bg-primary-800 py-8 text-white">
       <div className="container-custom">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Company Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Company</h4>
+            <h4 className="text-lg font-bold mb-6 text-white">Company</h4>
             <ul className="space-y-3">
               <li>
                 <button 
                   onClick={() => handleNavigation('/about')} 
-                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   About Us
                 </button>
@@ -32,7 +32,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/pricing')}
-                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   Pricing
                 </button>
@@ -40,7 +40,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/blog')}
-                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   Blog
                 </button>
@@ -50,12 +50,12 @@ export default function Footer() {
           
           {/* Support Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Support</h4>
+            <h4 className="text-lg font-bold mb-6 text-white">Support</h4>
             <ul className="space-y-3">
               <li>
                 <button 
                   onClick={() => handleNavigation('/terms')}
-                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   Terms of Service
                 </button>
@@ -63,7 +63,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/privacy')}
-                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   Privacy Policy
                 </button>
@@ -71,7 +71,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/disclaimer')}
-                  className="text-gray-600 hover:text-primary-500 transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   Disclaimer
                 </button>
@@ -81,17 +81,17 @@ export default function Footer() {
 
           {/* Contact Information */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Contact Us</h4>
+            <h4 className="text-lg font-bold mb-6 text-white">Contact Us</h4>
             <ul className="space-y-3">
               <li className="flex items-start">
-                <Mail className="h-5 w-5 text-primary-500 mr-2 mt-0.5" />
-                <a href="mailto:contact@nursenest.us" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <Mail className="h-5 w-5 text-primary-300 mr-2 mt-0.5" />
+                <a href="mailto:contact@nursenest.us" className="text-white/80 hover:text-white transition-colors">
                   contact@nursenest.us
                 </a>
               </li>
               <li className="flex items-start">
-                <Phone className="h-5 w-5 text-primary-500 mr-2 mt-0.5" />
-                <a href="tel:4259543381" className="text-gray-600 hover:text-primary-500 transition-colors">
+                <Phone className="h-5 w-5 text-primary-300 mr-2 mt-0.5" />
+                <a href="tel:4259543381" className="text-white/80 hover:text-white transition-colors">
                   (425) 954-3381
                 </a>
               </li>
@@ -100,8 +100,8 @@ export default function Footer() {
         </div>
         
         {/* Bottom Area */}
-        <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">
+        <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-white/60 text-sm">
             &copy; {currentYear} Nurse Nest. All rights reserved.
           </p>
         </div>
