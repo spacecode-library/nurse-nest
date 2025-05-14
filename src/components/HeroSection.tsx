@@ -18,7 +18,7 @@ export default function HeroSection() {
             alt="Nurse in a box delivered to doorstep" 
             className="w-full h-full object-cover"
             loading="eager" 
-            fetchpriority="high"
+            fetchPriority="high"
             width="1200"
             height="800"
           />
