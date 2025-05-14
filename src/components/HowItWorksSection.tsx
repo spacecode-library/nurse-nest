@@ -99,7 +99,7 @@ export default function HowItWorksSection() {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Steps Navigation */}
-          <AnimatedSection animation="fade-right" className="order-2 lg:order-1">
+          <AnimatedSection animation="slide-in-right" className="order-2 lg:order-1">
             <div className="space-y-4">
               {steps.map((step, index) => (
                 <motion.div
@@ -159,7 +159,7 @@ export default function HowItWorksSection() {
           </AnimatedSection>
           
           {/* Right Column - Image Carousel */}
-          <AnimatedSection animation="fade-left" className="order-1 lg:order-2">
+          <AnimatedSection animation="fade-in" className="order-1 lg:order-2">
             <div className="max-w-sm mx-auto mb-8">
               <Carousel
                 className="w-full"
