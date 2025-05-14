@@ -7,10 +7,15 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 export default function HowItWorksSection() {
   // Use our custom hook to set up scroll animation
   useScrollAnimationObserver();
+  
+  // Check if on mobile
+  const isMobile = useIsMobile();
   
   // State for current step
   const [currentStep, setCurrentStep] = useState(0);
@@ -69,6 +74,165 @@ export default function HowItWorksSection() {
   // Determine if we're at the last step
   const isLastStep = currentStep === steps.length - 1;
 
+  // Mobile carousel with swipe functionality
+  const MobileCarousel = () => (
+    <div className="md:hidden w-full">
+      <Carousel
+        className="w-full"
+        onSelect={(index) => setCurrentStep(index)}
+        defaultIndex={currentStep}
+      >
+        <CarouselContent>
+          {steps.map((step, index) => (
+            <CarouselItem key={index}>
+              <div className="p-4">
+                <div className="rounded-xl overflow-hidden shadow-lg bg-[#F9FAFB]">
+                  <div className="p-6">
+                    {/* Image */}
+                    <div className="mb-6">
+                      <div className="rounded-lg overflow-hidden shadow-md">
+                        <AspectRatio ratio={16/9}>
+                          <img 
+                            src={step.imageSrc} 
+                            alt={step.imageAlt}
+                            className={`w-full h-full object-cover ${step.number === 4 ? "object-bottom" : "object-center"}`}
+                          />
+                        </AspectRatio>
+                      </div>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-2xl">
+                          {step.icon}
+                        </div>
+                        <h3 className="text-xl font-bold text-primary-500">
+                          {step.title}
+                        </h3>
+                      </div>
+                      <p className="text-gray-700">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <CarouselPrevious className="relative inset-auto left-0 right-0 translate-y-0 mx-1 h-8 w-8" />
+          <div className="flex gap-2">
+            {steps.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentStep(index)}
+                className={cn(
+                  "w-2 h-2 rounded-full transition-all",
+                  index === currentStep ? "bg-primary-500" : "bg-gray-300"
+                )}
+                aria-label={`Go to step ${index + 1}`}
+              />
+            ))}
+          </div>
+          <CarouselNext className="relative inset-auto left-0 right-0 translate-y-0 mx-1 h-8 w-8" />
+        </div>
+      </Carousel>
+      
+      {/* Final CTA Button - only show on last step for mobile */}
+      {isLastStep && (
+        <div className="mt-8 text-center">
+          <Link to="/apply">
+            <Button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white py-6 px-8 text-lg rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1">
+              Start Your Nurse Search
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+
+  // Desktop view
+  const DesktopView = () => (
+    <div className="hidden md:block max-w-6xl mx-auto">
+      <div 
+        className="relative overflow-hidden rounded-xl shadow-lg bg-[#F9FAFB]"
+        style={{ minHeight: "500px" }}
+      >
+        {/* Step content with animations */}
+        <div 
+          className="transition-all duration-500 ease-out flex"
+          style={{ 
+            transform: `translateX(-${currentStep * 100}%)`,
+          }}
+        >
+          {steps.map((step, index) => (
+            <div 
+              key={index}
+              className="w-full flex-shrink-0 px-6 md:px-10 py-12 flex flex-col md:flex-row gap-8 items-center"
+              aria-hidden={currentStep !== index}
+            >
+              {/* Image */}
+              <div className="md:w-1/2">
+                <div className="rounded-lg overflow-hidden shadow-md">
+                  <AspectRatio ratio={16/9}>
+                    <img 
+                      src={step.imageSrc} 
+                      alt={step.imageAlt}
+                      className={`w-full h-full object-cover ${step.number === 4 ? "object-bottom" : "object-center"}`}
+                    />
+                  </AspectRatio>
+                </div>
+              </div>
+              
+              {/* Content */}
+              <div className="md:w-1/2 space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-2xl">
+                    {step.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold text-primary-500">
+                    {step.title}
+                  </h3>
+                </div>
+                <p className="text-gray-700 text-lg">
+                  {step.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Navigation buttons */}
+        <div className="absolute bottom-6 right-6 flex gap-3">
+          <Button
+            variant="outline"
+            onClick={prevStep}
+            disabled={currentStep === 0}
+            className="rounded-full h-10 w-10 p-0 flex items-center justify-center"
+            aria-label="Previous step"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          {!isLastStep ? (
+            <Button
+              onClick={nextStep}
+              className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-primary-500 hover:bg-primary-600"
+              aria-label="Next step"
+            >
+              <ArrowRight className="h-5 w-5" />
+            </Button>
+          ) : (
+            <span></span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="py-20 md:py-32 bg-white relative overflow-hidden" id="how-it-works">
       <div className="container mx-auto px-4 relative z-10">
@@ -81,8 +245,8 @@ export default function HowItWorksSection() {
           </p>
         </AnimatedSection>
         
-        {/* Progress Indicator */}
-        <div className="flex justify-center mb-8">
+        {/* Progress Indicator - Only visible on desktop */}
+        <div className="hidden md:flex justify-center mb-8">
           <div className="flex items-center space-x-3">
             {steps.map((step, index) => (
               <button
@@ -120,85 +284,13 @@ export default function HowItWorksSection() {
           </div>
         </div>
         
-        {/* Step Content */}
-        <div className="max-w-6xl mx-auto">
-          <div 
-            className="relative overflow-hidden rounded-xl shadow-lg bg-white"
-            style={{ minHeight: "500px" }}
-          >
-            {/* Step content with animations */}
-            <div 
-              className="transition-all duration-500 ease-out flex"
-              style={{ 
-                transform: `translateX(-${currentStep * 100}%)`,
-              }}
-            >
-              {steps.map((step, index) => (
-                <div 
-                  key={index}
-                  className="w-full flex-shrink-0 px-6 md:px-10 py-12 flex flex-col md:flex-row gap-8 items-center bg-[#F9FAFB]"
-                  aria-hidden={currentStep !== index}
-                >
-                  {/* Image */}
-                  <div className="md:w-1/2">
-                    <div className="rounded-lg overflow-hidden shadow-md transform transition-all duration-500">
-                      <AspectRatio ratio={16/9}>
-                        <img 
-                          src={step.imageSrc} 
-                          alt={step.imageAlt}
-                          className={`w-full h-full object-cover ${step.number === 4 ? "object-bottom" : "object-center"}`}
-                        />
-                      </AspectRatio>
-                    </div>
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="md:w-1/2 space-y-6">
-                    <div className="flex items-center gap-4">
-                      <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-2xl">
-                        {step.icon}
-                      </div>
-                      <h3 className="text-2xl font-bold text-primary-500">
-                        {step.title}
-                      </h3>
-                    </div>
-                    <p className="text-gray-700 text-lg">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            {/* Navigation buttons */}
-            <div className="absolute bottom-6 right-6 flex gap-3">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentStep === 0}
-                className="rounded-full h-10 w-10 p-0 flex items-center justify-center"
-                aria-label="Previous step"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              {!isLastStep ? (
-                <Button
-                  onClick={nextStep}
-                  className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-primary-500 hover:bg-primary-600"
-                  aria-label="Next step"
-                >
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              ) : (
-                <span></span>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* Conditional rendering based on screen size */}
+        <MobileCarousel />
+        <DesktopView />
         
-        {/* Final CTA Button - only show on last step */}
+        {/* Final CTA Button - only show on last step for desktop */}
         {isLastStep && (
-          <AnimatedSection animation="fade-up" delay={300} className="mt-12 text-center">
+          <AnimatedSection animation="fade-up" delay={300} className="mt-12 text-center hidden md:block">
             <Link to="/apply">
               <Button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white py-6 px-8 text-lg rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1">
                 Start Your Nurse Search
