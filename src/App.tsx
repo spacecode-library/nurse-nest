@@ -21,6 +21,7 @@ import SalaryCalculator from "./pages/SalaryCalculator";
 import SalaryResult from "./pages/SalaryResult";
 import PreResult from "./pages/PreResult";
 import Dashboard from "./pages/Dashboard";
+import VettingOptions from "./pages/VettingOptions";
 
 export default function App() {
   return (
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/pre-result" element={<PreResult />} />
             <Route path="/salary-result" element={<SalaryResult />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/vetting-options" element={<VettingOptions />} />
             
             {/* Add all other routes above the catch-all 404 route */}
             <Route path="*" element={<NotFound />} />
