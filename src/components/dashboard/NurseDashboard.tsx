@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Timesheet } from "@/types/dashboard";
+import TimesheetsCard from "./TimesheetsCard";
 
 interface NurseDashboardProps {
   profile: {
