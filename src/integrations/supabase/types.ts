@@ -63,6 +63,57 @@ export type Database = {
         }
         Relationships: []
       }
+      signed_documents: {
+        Row: {
+          document_type: string
+          id: string
+          ip_address: string | null
+          signed_at: string
+          signed_pdf_url: string
+          user_id: string
+        }
+        Insert: {
+          document_type: string
+          id?: string
+          ip_address?: string | null
+          signed_at?: string
+          signed_pdf_url: string
+          user_id: string
+        }
+        Update: {
+          document_type?: string
+          id?: string
+          ip_address?: string | null
+          signed_at?: string
+          signed_pdf_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_agreements: {
+        Row: {
+          agreed_at: string
+          document_type: string
+          id: string
+          ip_address: string | null
+          user_id: string
+        }
+        Insert: {
+          agreed_at?: string
+          document_type: string
+          id?: string
+          ip_address?: string | null
+          user_id: string
+        }
+        Update: {
+          agreed_at?: string
+          document_type?: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
