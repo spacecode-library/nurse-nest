@@ -6,7 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import WhoWeHelpSection from "@/components/WhoWeHelpSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import AboutMeSection from "@/components/AboutMeSection";
-import FaqSection from "@/components/FaqSection";
+import TabFaqSection from "@/components/TabFaqSection";
 
 export default function Index() {
   const [showNavbarCta, setShowNavbarCta] = useState(false);
@@ -38,7 +38,7 @@ export default function Index() {
         <HowItWorksSection />
         <WhoWeHelpSection />
         <AboutMeSection />
-        <FaqSection />
+        <TabFaqSection />
       </main>
       
       <Footer />

@@ -249,6 +249,57 @@
     color: #1E88E5 !important;
     background-color: transparent !important;
   }
+
+  /* Step block animation for How It Works section */
+  .step-block {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .step-block.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Icon animation */
+  [data-icon-animation] {
+    transition: transform 0.3s ease;
+  }
+  
+  /* Tab navigation styling */
+  .tab-navigation {
+    @apply flex overflow-x-auto pb-2;
+  }
+  
+  .tab-trigger {
+    @apply px-4 py-2 rounded-t-lg border-b-2 border-transparent whitespace-nowrap transition-all;
+  }
+  
+  .tab-trigger.active {
+    @apply border-primary-500 text-primary-500 font-medium;
+  }
+
+  /* Add a smooth transition for tab content */
+  .tab-content {
+    @apply transition-opacity duration-300;
+  }
+  
+  .tab-content-enter {
+    @apply opacity-0;
+  }
+  
+  .tab-content-enter-active {
+    @apply opacity-100;
+  }
+  
+  .tab-content-exit {
+    @apply opacity-100;
+  }
+  
+  .tab-content-exit-active {
+    @apply opacity-0;
+  }
 }
 
 @keyframes fadeInDelivered {
@@ -350,5 +401,17 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* Scroll animation observer setup */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

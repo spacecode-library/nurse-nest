@@ -2,178 +2,126 @@
 import React from 'react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { FileText, DollarSign, Search, Users, CheckCircle } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
+import { ArrowRight } from 'lucide-react';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import AnimatedSection from './AnimatedSection';
+import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
 
 export default function HowItWorksSection() {
+  // Use our custom hook to set up scroll animation
+  useScrollAnimationObserver();
+  
   const steps = [
     {
       number: 1,
-      title: "Share Your Care Needs",
-      description: "Start by making an account, then complete a short form to tell us your preferences and specific care requirements.",
-      icon: <FileText className="h-6 w-6" />
+      title: "Tell Us What You Need",
+      description: "Create your account and complete a brief form describing your care preferences—like start date, specialty, and location. Whether postpartum, overnight, or elder care, we tailor the search to your unique needs.",
+      icon: "📝",
+      imageSrc: "/lovable-uploads/119a6708-a3cb-400b-ac7b-c2437a103499.png",
+      imageAlt: "Nurse consultation form"
     },
     {
       number: 2,
-      title: "Begin Your Search",
-      description: "Start for just $100. Prefer speed? Add our optional Fast Track Match to receive a nurse within 5 business days. If we can't find a match within 14 days (or 5 days with Fast Track), you'll receive a full refund.",
-      icon: <DollarSign className="h-6 w-6" />
+      title: "Secure Your Search",
+      description: "Pay a fully refundable $100 nurse search fee to begin. Want speed? Choose FastTrack Match for a guaranteed nurse within 5 business days—or get your money back.",
+      icon: "💸",
+      imageSrc: "/lovable-uploads/4ef081e3-1c5e-4e3b-a36f-40a679b96779.png",
+      imageAlt: "Secure payment process"
     },
     {
       number: 3,
-      title: "Expert Nurse Matching",
-      description: "We leverage our nationwide RN network, run targeted recruitment ads, and post job listings across multiple platforms. You'll receive a curated selection of thoroughly vetted, licensed nurses matched to your unique needs.",
-      icon: <Search className="h-6 w-6" />
+      title: "We Find the Right Fit",
+      description: "We post your job across platforms, run targeted recruitment ads, and tap our nationwide network of licensed nurses. Every candidate is pre-screened for location, availability, and skills before we present options.",
+      icon: "🎯",
+      imageSrc: "/lovable-uploads/bbad18cd-7649-425c-8c5e-aee532e527a4.png",
+      imageAlt: "Nurse matching process"
     },
     {
       number: 4,
-      title: "You Select Your Nurse",
-      description: "Review detailed nurse profiles and choose the one that best fits your needs. Once selected, we conduct a comprehensive vetting process—including background check, license verification, reference checks, and optional drug screening and driving record review.",
-      icon: <Users className="h-6 w-6" />
+      title: "You Choose Your Nurse",
+      description: "Browse handpicked profiles and select the nurse who fits best. We then conduct a full vetting process—license verification, background check, references, and optional drug or driving screening.",
+      icon: "👩‍⚕️",
+      imageSrc: "/lovable-uploads/c3267a23-af03-4d97-8ebb-c8680d11dcee.png",
+      imageAlt: "Selecting a nurse from profiles"
     },
     {
       number: 5,
       title: "Approve Hours & Pay Securely",
-      description: "Your nurse logs hours through our system. You review and approve them, then make payments through our platform—sent directly to your nurse, securely and seamlessly.",
-      icon: <CheckCircle className="h-6 w-6" />
+      description: "Your nurse logs hours via our platform. You approve them, and payment is processed securely through Stripe—sent directly to the nurse. You stay in control; we handle the rest.",
+      icon: "🔒",
+      imageSrc: "/lovable-uploads/a1e4fb69-0c92-4952-a6c4-835053c1b7c6.png",
+      imageAlt: "Secure payment approval"
     }
   ];
 
-  // First three steps for the left side
-  const firstSteps = steps.slice(0, 3);
-  // Last two steps for the right side
-  const lastSteps = steps.slice(3);
-
   return (
-    <section className="py-16 md:py-24 bg-white relative overflow-hidden" id="how-it-works">
+    <section className="py-20 md:py-32 bg-white relative overflow-hidden" id="how-it-works">
       <div className="container mx-auto px-4 relative z-10">
-        <AnimatedSection animation="fade-up" className="text-center mb-12">
+        <AnimatedSection animation="fade-up" className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            How Nurse Nest <span className="text-primary-500">Works</span>
+            How It <span className="text-primary-500">Works</span>
           </h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            Our streamlined process makes finding your perfect nurse simple, secure, and stress-free.
+            From request to payment—your seamless path to expert in-home care.
           </p>
         </AnimatedSection>
         
-        {/* First Section: Steps 1-3 on left, new image on right */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-          {/* Left Side: First 3 Steps */}
-          <AnimatedSection animation="fade-up" className="space-y-6">
-            {firstSteps.map((step, index) => (
-              <AnimatedSection
-                key={index}
-                animation="fade-up"
-                delay={index * 100}
-              >
-                <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary-100">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-4">
-                      {/* Step Number - Always on the left */}
-                      <div className="flex-shrink-0">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 text-white font-bold text-lg shadow-md group-hover:shadow-lg group-hover:bg-primary-600 transition-all duration-300">
-                          {step.number}
-                        </div>
-                      </div>
-                      
-                      {/* Step Content */}
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
-                          <span className="text-primary-500">{step.title}</span>
-                          {step.icon}
-                        </h3>
-                        <p className="text-gray-700">{step.description}</p>
-                      </div>
+        {/* Steps */}
+        <div className="space-y-24 md:space-y-32 max-w-6xl mx-auto">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className={`step-block grid grid-cols-1 ${index % 2 === 0 ? 'lg:grid-cols-[1fr_1.2fr]' : 'lg:grid-cols-[1.2fr_1fr]'} gap-8 lg:gap-16 items-center`}
+              style={{ transitionDelay: `${index * 200}ms` }}
+            >
+              {/* Image section */}
+              <div className={`${index % 2 !== 0 ? 'lg:order-first' : 'lg:order-last'}`}>
+                <div className="relative rounded-2xl overflow-hidden shadow-xl transform hover:scale-[1.02] transition-all duration-700">
+                  <AspectRatio ratio={16/9}>
+                    <div className="relative w-full h-full">
+                      <img 
+                        src={step.imageSrc} 
+                        alt={step.imageAlt}
+                        className="w-full h-full object-cover"
+                      />
+                      {/* Subtle gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 via-transparent to-primary-500/20 opacity-60 mix-blend-soft-light"></div>
                     </div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
-            ))}
-          </AnimatedSection>
-          
-          {/* Right Side: New Image */}
-          <AnimatedSection animation="fade-up" delay={200} className="order-first lg:order-last">
-            <div className="relative mx-auto max-w-md">
-              <div className="rounded-2xl overflow-hidden shadow-xl transform transition-all duration-700 hover:scale-[1.02]">
-                <div className="relative">
-                  <img 
-                    src="/lovable-uploads/4ef081e3-1c5e-4e3b-a36f-40a679b96779.png" 
-                    alt="Nurse delivered as a gift to a family" 
-                    className="w-full h-auto object-cover"
-                  />
-                  {/* Subtle glow overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 via-transparent to-blue-500/20 opacity-60 mix-blend-soft-light"></div>
+                  </AspectRatio>
+                  
+                  {/* Subtle light effect */}
+                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-2/3 h-20 bg-primary-300/30 blur-3xl rounded-full"></div>
                 </div>
               </div>
               
-              {/* Subtle light effect */}
-              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-2/3 h-20 bg-primary-300/30 blur-3xl rounded-full"></div>
-            </div>
-          </AnimatedSection>
-        </div>
-        
-        {/* Second Section: Original image on left, Steps 4-5 on right */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side: Original Image */}
-          <AnimatedSection animation="fade-up">
-            <div className="relative mx-auto max-w-md">
-              <div className="rounded-2xl overflow-hidden shadow-xl transform transition-all duration-700 hover:scale-[1.02]">
-                <div className="relative">
-                  <img 
-                    src="/lovable-uploads/119a6708-a3cb-400b-ac7b-c2437a103499.png" 
-                    alt="Connection between nurse and patient" 
-                    className="w-full h-auto object-cover"
-                  />
-                  {/* Subtle glow overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 via-transparent to-blue-500/20 opacity-60 mix-blend-soft-light"></div>
+              {/* Content section */}
+              <div>
+                <div className="flex items-start gap-6">
+                  <div className="flex-shrink-0 flex flex-col items-center">
+                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-primary-500 text-white font-bold text-xl shadow-lg">
+                      {step.number}
+                    </div>
+                    <div className="h-full w-0.5 bg-gradient-to-b from-primary-500 to-transparent mt-4 hidden lg:block" 
+                         style={{ display: index === steps.length - 1 ? 'none' : '' }}></div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="text-4xl" data-icon-animation>{step.icon}</div>
+                    <h3 className="text-2xl font-bold text-primary-500">{step.title}</h3>
+                    <p className="text-gray-700 leading-relaxed">{step.description}</p>
+                  </div>
                 </div>
               </div>
-              
-              {/* Subtle light effect */}
-              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-2/3 h-20 bg-primary-300/30 blur-3xl rounded-full"></div>
             </div>
-          </AnimatedSection>
-          
-          {/* Right Side: Last 2 Steps */}
-          <AnimatedSection animation="fade-up" delay={100} className="space-y-6">
-            {lastSteps.map((step, index) => (
-              <AnimatedSection
-                key={index}
-                animation="fade-up"
-                delay={index * 100 + 300}
-              >
-                <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary-100">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-4">
-                      {/* Step Number - Always on the left */}
-                      <div className="flex-shrink-0">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 text-white font-bold text-lg shadow-md group-hover:shadow-lg group-hover:bg-primary-600 transition-all duration-300">
-                          {step.number}
-                        </div>
-                      </div>
-                      
-                      {/* Step Content */}
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
-                          <span className="text-primary-500">{step.title}</span>
-                          {step.icon}
-                        </h3>
-                        <p className="text-gray-700">{step.description}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
-            ))}
-          </AnimatedSection>
+          ))}
         </div>
         
         {/* CTA Button */}
-        <AnimatedSection animation="fade-up" delay={500} className="mt-12 text-center">
+        <AnimatedSection animation="fade-up" delay={600} className="mt-20 text-center">
           <Link to="/apply">
-            <Button className="bg-primary-500 hover:bg-primary-600 text-white button-hover-effect">
+            <Button className="bg-primary-500 hover:bg-primary-600 text-white py-6 px-8 text-lg rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1">
               Start Your Nurse Search
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
         </AnimatedSection>
