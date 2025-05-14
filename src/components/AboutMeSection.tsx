@@ -58,7 +58,7 @@ export default function AboutMeSection() {
                 <div className="w-60 h-60 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-gray-200 shadow-md mx-auto">
                   <img
                     src="/lovable-uploads/9daccab5-730e-4656-81e6-a31931f7d3f6.png"
-                    alt="Jayson"
+                    alt="Jayson M."
                     className="w-full h-full object-cover object-top"
                   />
                 </div>
@@ -73,7 +73,7 @@ export default function AboutMeSection() {
             >
               <div className="max-w-2xl">
                 <h2 className="text-3xl md:text-4xl font-bold mb-1 text-gray-800">
-                  Jayson
+                  Jayson M.
                 </h2>
                 <p className="text-primary-500 text-lg mb-6">Founder of Nurse Nest</p>
                 
@@ -103,10 +103,10 @@ export default function AboutMeSection() {
                 
                 {/* Animated Signature */}
                 <div className="mt-8" id="signature-animation">
-                  <svg width="180" height="80" viewBox="0 0 180 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="220" height="80" viewBox="0 0 220 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path 
                       ref={signatureRef}
-                      d="M20,40 C30,10 40,70 50,40 C55,25 60,55 65,40 C70,25 75,55 80,40 C85,20 90,60 95,40 C100,30 105,50 110,40 C115,30 120,50 130,40 C140,30 150,50 160,40"
+                      d="M20,50 C25,35 28,48 32,40 C38,28 42,52 47,40 C50,30 52,52 54,40 C56,30 58,40 60,35 C62,28 64,40 66,42 C68,38 70,47 72,42 C74,38 76,43 78,40 C82,34 80,43 82,40 C84,38 86,40 87,35 C90,28 92,40 94,35 C96,30 98,43 100,35 C102,25 104,45 106,35 C108,30 111,35 112,30 C114,25 116,40 118,30 C120,25 123,50 125,45 C127,39 129,50 132,44 C136,35 138,48 140,40 C142,35 144,40 146,35 C148,30 150,35 152,38 C154,35 156,40 158,38 C160,35 164,42 166,38 C168,35 170,42 172,38 C178,30 174,45 177,40 C180,35 183,40 186,35 C190,28 194,45 200,40"
                       stroke="#4A90E2"
                       strokeWidth="2"
                       strokeLinecap="round"
