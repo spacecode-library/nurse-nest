@@ -29,8 +29,8 @@ export default function HowItWorksSection() {
       title: "Secure Your Search",
       description: "Pay a fully refundable $100 search fee to begin. For urgent needs, choose FastTrack Match to guarantee a nurse within 5 business days—or get your money back.",
       icon: "💸",
-      imageSrc: "/lovable-uploads/4ef081e3-1c5e-4e3b-a36f-40a679b96779.png",
-      imageAlt: "Secure payment process"
+      imageSrc: "/lovable-uploads/f66fe8ea-d702-495f-8720-47b3cb6adcdc.png",
+      imageAlt: "Nurse arriving by parachute"
     },
     {
       number: 3,
@@ -136,7 +136,7 @@ export default function HowItWorksSection() {
               {steps.map((step, index) => (
                 <div 
                   key={index}
-                  className="w-full flex-shrink-0 px-6 md:px-10 py-12 flex flex-col md:flex-row gap-8 items-center"
+                  className="w-full flex-shrink-0 px-6 md:px-10 py-12 flex flex-col md:flex-row gap-8 items-center bg-[#F9FAFB]"
                   aria-hidden={currentStep !== index}
                 >
                   {/* Image */}
@@ -146,7 +146,7 @@ export default function HowItWorksSection() {
                         <img 
                           src={step.imageSrc} 
                           alt={step.imageAlt}
-                          className="w-full h-full object-cover"
+                          className={`w-full h-full object-cover ${step.number === 4 ? "object-bottom" : "object-center"}`}
                         />
                       </AspectRatio>
                     </div>
