@@ -13,6 +13,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi
 } from "@/components/ui/carousel";
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -23,6 +24,33 @@ export default function HowItWorksSection() {
   // State for current step
   const [currentStep, setCurrentStep] = useState(0);
   const isMobile = useIsMobile();
+  
+  // State for carousel API
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  
+  // Effect to handle carousel and step sync
+  React.useEffect(() => {
+    if (!api) return;
+    
+    // Update currentStep when carousel changes
+    const onSelect = () => {
+      setCurrentStep(api.selectedScrollSnap());
+    };
+    
+    api.on("select", onSelect);
+    
+    // Cleanup
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+  
+  // Effect to update carousel when currentStep changes manually (via buttons)
+  React.useEffect(() => {
+    if (!api) return;
+    
+    api.scrollTo(currentStep);
+  }, [currentStep, api]);
   
   const steps = [
     {
@@ -136,9 +164,7 @@ export default function HowItWorksSection() {
           <div className="max-w-sm mx-auto mb-8">
             <Carousel
               className="w-full"
-              onSelect={(api) => {
-                if (api) setCurrentStep(api.selectedScrollSnap());
-              }}
+              setApi={setApi}
               opts={{
                 align: "start",
                 loop: false,
