@@ -64,7 +64,7 @@ export default function HowItWorksSection() {
     {
       number: 2,
       title: "Secure Your Search",
-      description: "Pay a fully refundable $100 search fee to begin. For urgent needs, choose FastTrack Match to guarantee a nurse within 5 business days—or get your money back.",
+      description: "Pay a fully refundable $100 search fee to begin your personalized nurse match. If we're unable to match you within 14 days, you'll receive a full refund—no questions asked.",
       icon: "💸",
       imageSrc: "/lovable-uploads/f66fe8ea-d702-495f-8720-47b3cb6adcdc.png",
       imageAlt: "Nurse arriving by parachute"
