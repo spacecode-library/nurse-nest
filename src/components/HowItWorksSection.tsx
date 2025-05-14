@@ -33,24 +33,24 @@ export default function HowItWorksSection() {
       title: "We Find the Right Fit",
       description: "We post your job across platforms, run targeted recruitment ads, and tap our nationwide network of licensed nurses. Every candidate is pre-screened for location, availability, and skills before we present options.",
       icon: "🎯",
-      imageSrc: "/lovable-uploads/bbad18cd-7649-425c-8c5e-aee532e527a4.png",
-      imageAlt: "Nurse matching process"
+      imageSrc: "/lovable-uploads/0ecf2c8e-3915-4487-bb58-3e25ada5cf81.png",
+      imageAlt: "Nurse providing care to elderly person"
     },
     {
       number: 4,
       title: "You Choose Your Nurse",
       description: "Browse handpicked profiles and select the nurse who fits best. We then conduct a full vetting process—license verification, background check, references, and optional drug or driving screening.",
       icon: "👩‍⚕️",
-      imageSrc: "/lovable-uploads/c3267a23-af03-4d97-8ebb-c8680d11dcee.png",
-      imageAlt: "Selecting a nurse from profiles"
+      imageSrc: "/lovable-uploads/77ddc10d-2117-4745-8bba-2347c09f1bb7.png",
+      imageAlt: "Group of nurses meeting with family"
     },
     {
       number: 5,
       title: "Approve Hours & Pay Securely",
       description: "Your nurse logs hours via our platform. You approve them, and payment is processed securely through Stripe—sent directly to the nurse. You stay in control; we handle the rest.",
       icon: "🔒",
-      imageSrc: "/lovable-uploads/a1e4fb69-0c92-4952-a6c4-835053c1b7c6.png",
-      imageAlt: "Secure payment approval"
+      imageSrc: "/lovable-uploads/24d6dd5c-dd41-4a60-88eb-f70d46f03ae9.png",
+      imageAlt: "Nurse arriving at home in the evening"
     }
   ];
 
