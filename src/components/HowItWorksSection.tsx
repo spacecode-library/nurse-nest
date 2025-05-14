@@ -9,6 +9,7 @@ import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observe
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import type { CarouselApi } from '@/components/ui/carousel';
 
 export default function HowItWorksSection() {
   // Use our custom hook to set up scroll animation
@@ -19,6 +20,26 @@ export default function HowItWorksSection() {
   
   // State for current step
   const [currentStep, setCurrentStep] = useState(0);
+  
+  // Carousel API state
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  
+  // Set up effect to sync carousel with currentStep
+  React.useEffect(() => {
+    if (!api) return;
+    
+    const onSelect = () => {
+      setCurrentStep(api.selectedScrollSnap());
+    };
+    
+    api.on("select", onSelect);
+    // Handle initial selection
+    onSelect();
+    
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
   
   const steps = [
     {
@@ -79,8 +100,7 @@ export default function HowItWorksSection() {
     <div className="md:hidden w-full">
       <Carousel
         className="w-full"
-        onSelect={(index) => setCurrentStep(index)}
-        defaultIndex={currentStep}
+        setApi={setApi}
       >
         <CarouselContent>
           {steps.map((step, index) => (
@@ -128,7 +148,10 @@ export default function HowItWorksSection() {
             {steps.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentStep(index)}
+                onClick={() => {
+                  setCurrentStep(index);
+                  api?.scrollTo(index);
+                }}
                 className={cn(
                   "w-2 h-2 rounded-full transition-all",
                   index === currentStep ? "bg-primary-500" : "bg-gray-300"
