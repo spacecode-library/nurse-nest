@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, User, FileText, Settings } from "lucide-react";
+import { Calendar, Clock, User, FileText, Settings, Check, ShieldCheck } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 // Interface for user profile data
 interface UserProfile {
@@ -25,7 +27,6 @@ interface UserProfile {
 interface Purchase {
   id: string;
   type: string;
-  tier: "Standard" | "FastTrack";
   status: "In Progress" | "Match Found" | "Refund Eligible";
   purchaseDate: string;
   expiresAt: string;
@@ -41,6 +42,17 @@ interface Timesheet {
   status: "Pending" | "Approved" | "Paid";
 }
 
+// Interface for nurse submissions
+interface NurseSubmission {
+  id: string;
+  nurseName: string;
+  submittedDate: string;
+  experience: string;
+  hourlyRate: number;
+  status: "New" | "Reviewing" | "Selected" | "Rejected";
+  vettingAddOns: string[];
+}
+
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -49,6 +61,9 @@ export default function Dashboard() {
   const [timesheets, setTimesheets] = useState<Timesheet[]>([]);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [userRole, setUserRole] = useState<"nurse" | "client" | null>(null);
+  const [nurseSubmissions, setNurseSubmissions] = useState<NurseSubmission[]>([]);
+  const [selectedNurse, setSelectedNurse] = useState<NurseSubmission | null>(null);
+  const [showVettingOptions, setShowVettingOptions] = useState<boolean>(false);
   
   // Redirect if not authenticated
   useEffect(() => {
@@ -96,10 +111,9 @@ export default function Dashboard() {
         {
           id: '1',
           type: 'Nurse Search Fee',
-          tier: 'FastTrack',
           status: 'In Progress',
           purchaseDate: '2025-05-01',
-          expiresAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days from now
+          expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString() // 14 days from now
         }
       ];
       setPurchases(mockPurchases);
@@ -115,6 +129,30 @@ export default function Dashboard() {
         }
       ];
       setTimesheets(mockTimesheets);
+      
+      // Mock nurse submissions
+      const mockSubmissions: NurseSubmission[] = [
+        {
+          id: '201',
+          nurseName: 'Sarah Johnson',
+          submittedDate: '2025-05-08',
+          experience: '5 years in pediatric care',
+          hourlyRate: 45,
+          status: 'New',
+          vettingAddOns: []
+        },
+        {
+          id: '202',
+          nurseName: 'Michael Rivera',
+          submittedDate: '2025-05-09',
+          experience: '8 years in elder care',
+          hourlyRate: 55,
+          status: 'New',
+          vettingAddOns: []
+        }
+      ];
+      setNurseSubmissions(mockSubmissions);
+      
     } else if (userRole === 'nurse') {
       // Mock nurse timesheets
       const mockTimesheets: Timesheet[] = [
@@ -170,6 +208,39 @@ export default function Dashboard() {
     
     return () => clearInterval(intervalId);
   }, [purchases, userRole]);
+  
+  // Function to handle selecting a nurse
+  const handleSelectNurse = (nurse: NurseSubmission) => {
+    setSelectedNurse(nurse);
+    setShowVettingOptions(true);
+  };
+  
+  // Function to proceed to vetting options
+  const goToVettingOptions = () => {
+    navigate('/vetting-options');
+  };
+  
+  // Function to finalize selection without vetting
+  const finalizeSelection = (nurse: NurseSubmission) => {
+    toast({
+      title: "Nurse Selected!",
+      description: `You've selected ${nurse.nurseName}. We'll reach out to finalize details.`,
+      duration: 5000,
+    });
+    
+    // Update nurse status in the mock data
+    const updatedSubmissions = nurseSubmissions.map(n => 
+      n.id === nurse.id 
+        ? {...n, status: 'Selected' as 'Selected'} 
+        : n.id !== nurse.id && n.status === 'New' 
+          ? {...n, status: 'Rejected' as 'Rejected'} 
+          : n
+    );
+    
+    setNurseSubmissions(updatedSubmissions);
+    setSelectedNurse(null);
+    setShowVettingOptions(false);
+  };
 
   if (loading || !profile) {
     return (
@@ -220,9 +291,6 @@ export default function Dashboard() {
                       <div key={purchase.id} className="bg-gray-50 rounded-lg p-4">
                         <div className="flex flex-col md:flex-row justify-between mb-2">
                           <h3 className="text-lg font-medium">{purchase.type}</h3>
-                          <Badge className={`${purchase.tier === 'FastTrack' ? 'bg-nurse-accent' : 'bg-nurse-dark'} text-white`}>
-                            {purchase.tier}
-                          </Badge>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
@@ -251,6 +319,158 @@ export default function Dashboard() {
                   </div>
                 )}
               </CardContent>
+            </Card>
+          )}
+          
+          {/* Nurse Submissions Section - For Clients */}
+          {userRole === 'client' && (
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="h-5 w-5 mr-2 text-nurse-dark" />
+                  Nurse Submissions
+                </CardTitle>
+                <CardDescription>Review and select from available nurse candidates</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {nurseSubmissions.length > 0 ? (
+                  <div className="space-y-6">
+                    {nurseSubmissions.map((nurse) => (
+                      <div key={nurse.id} className={`bg-white border rounded-lg shadow-sm ${nurse.status === 'Selected' ? 'border-green-500' : nurse.status === 'Rejected' ? 'opacity-50' : ''}`}>
+                        <div className="p-5">
+                          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                            <div className="flex items-center">
+                              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-bold text-lg mr-4">
+                                {nurse.nurseName.charAt(0)}
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-medium">{nurse.nurseName}</h3>
+                                <p className="text-sm text-gray-500">Submitted {new Date(nurse.submittedDate).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                            <Badge className={
+                              nurse.status === 'New' ? 'bg-blue-100 text-blue-800' :
+                              nurse.status === 'Selected' ? 'bg-green-100 text-green-800' :
+                              nurse.status === 'Rejected' ? 'bg-gray-100 text-gray-800' :
+                              'bg-yellow-100 text-yellow-800'
+                            }>
+                              {nurse.status}
+                            </Badge>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                              <p className="text-xs text-gray-500">Experience</p>
+                              <p className="font-medium">{nurse.experience}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500">Hourly Rate</p>
+                              <p className="font-medium">${nurse.hourlyRate}/hour</p>
+                            </div>
+                            <div>
+                              {nurse.vettingAddOns.length > 0 ? (
+                                <div>
+                                  <p className="text-xs text-gray-500">Vetting Add-ons</p>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {nurse.vettingAddOns.map((addon, index) => (
+                                      <Badge key={index} variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                        <Check className="h-3 w-3 mr-1" /> {addon}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <p className="text-xs text-gray-500">Vetting Add-ons</p>
+                                  <p className="text-sm text-gray-400">None selected</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {nurse.status === 'New' && (
+                            <div className="flex flex-col md:flex-row gap-2 mt-4">
+                              <Button 
+                                onClick={() => handleSelectNurse(nurse)}
+                                className="bg-primary-500 hover:bg-primary-600"
+                              >
+                                Select This Nurse
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                onClick={() => goToVettingOptions()} 
+                                className="text-primary-700 border-primary-300"
+                              >
+                                <ShieldCheck className="h-4 w-4 mr-2" />
+                                Add Vetting Options First
+                              </Button>
+                            </div>
+                          )}
+                          
+                          {nurse.status === 'Selected' && (
+                            <div className="bg-green-50 border border-green-200 rounded p-3 mt-4">
+                              <div className="flex items-center text-green-700">
+                                <Check className="h-5 w-5 mr-2" />
+                                <p className="font-medium">
+                                  Selected! We'll reach out to finalize the details.
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No nurse submissions yet. We'll notify you when nurses apply.</p>
+                  </div>
+                )}
+                
+                {/* Selection confirmation dialog */}
+                {selectedNurse && showVettingOptions && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                      <h3 className="text-xl font-bold mb-4">Add Vetting Options?</h3>
+                      <p className="mb-4 text-gray-600">
+                        Would you like to add additional vetting options for {selectedNurse.nurseName} before confirming your selection?
+                      </p>
+                      <div className="flex flex-col md:flex-row gap-2">
+                        <Button 
+                          onClick={goToVettingOptions}
+                          className="bg-primary-500 hover:bg-primary-600"
+                        >
+                          <ShieldCheck className="h-4 w-4 mr-2" />
+                          Add Vetting Options
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => finalizeSelection(selectedNurse)}
+                          className="text-gray-700"
+                        >
+                          Continue Without Vetting
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => {
+                            setSelectedNurse(null);
+                            setShowVettingOptions(false);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter>
+                <p className="text-sm text-gray-500">
+                  <Link to="/vetting-options" className="text-primary-600 hover:underline">
+                    Learn more about our vetting options
+                  </Link>
+                </p>
+              </CardFooter>
             </Card>
           )}
           

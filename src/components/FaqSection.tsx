@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Search, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,7 +15,7 @@ export default function FaqSection() {
   const faqs = [
     {
       question: "When should I request a nurse match?",
-      answer: "We recommend submitting your request 3–4 weeks in advance for the best availability. If you're in a rush, our FastTrack Match guarantees a match within 5 business days or your money back.",
+      answer: "We recommend submitting your request 3–4 weeks in advance for the best availability.",
       icon: "🕒"
     },
     {
@@ -36,7 +35,7 @@ export default function FaqSection() {
     },
     {
       question: "How fast can I expect a match?",
-      answer: "Once your application and $100 fee are submitted:\n\n• We create your job listing\n\n• Promote it across our network\n\n• Start vetting applicants\n\nStandard Match: 5–10 business days\nFastTrack Match: Guaranteed within 5 business days",
+      answer: "Once your application and $100 fee are submitted:\n\n• We create your job listing\n\n• Promote it across our network\n\n• Start vetting applicants\n\nTypical matching time is 5–10 business days.",
       icon: "⚡"
     },
     {
