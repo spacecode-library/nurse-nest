@@ -92,9 +92,74 @@ export default function Payment() {
               <div className="p-6">
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2">Nurse Matching Service</h3>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-gray-600">Base Price:</span>
+                    <span className="line-through text-gray-400">$1,333.33</span>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-green-600">Limited Time Discount (25%):</span>
+                    <span className="text-green-600">-$333.33</span>
+                  </div>
                   <div className="flex justify-between font-semibold">
-                    <span>Base Price:</span>
+                    <span>Discounted Price:</span>
                     <span>${pricing.basePrice.toFixed(2)}</span>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Add-Ons</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="drug-test"
+                          checked={formData.addOns.drugTest}
+                          onChange={() => {
+                            const updatedData = {...applicationData};
+                            updatedData.formData.addOns.drugTest = !formData.addOns.drugTest;
+                            
+                            // Recalculate total
+                            let newTotal = pricing.basePrice;
+                            if (updatedData.formData.addOns.drugTest) newTotal += 100;
+                            if (updatedData.formData.addOns.drivingHistory) newTotal += 50;
+                            updatedData.pricing.totalPrice = newTotal;
+                            
+                            setApplicationData(updatedData);
+                            sessionStorage.setItem('applicationData', JSON.stringify(updatedData));
+                          }}
+                          className="mr-2"
+                        />
+                        <label htmlFor="drug-test">10-Panel Drug Test</label>
+                      </div>
+                      <span>${formData.addOns.drugTest ? '100.00' : '0.00'}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="driving-history"
+                          checked={formData.addOns.drivingHistory}
+                          onChange={() => {
+                            const updatedData = {...applicationData};
+                            updatedData.formData.addOns.drivingHistory = !formData.addOns.drivingHistory;
+                            
+                            // Recalculate total
+                            let newTotal = pricing.basePrice;
+                            if (updatedData.formData.addOns.drugTest) newTotal += 100;
+                            if (updatedData.formData.addOns.drivingHistory) newTotal += 50;
+                            updatedData.pricing.totalPrice = newTotal;
+                            
+                            setApplicationData(updatedData);
+                            sessionStorage.setItem('applicationData', JSON.stringify(updatedData));
+                          }}
+                          className="mr-2"
+                        />
+                        <label htmlFor="driving-history">Driving History Report</label>
+                      </div>
+                      <span>${formData.addOns.drivingHistory ? '50.00' : '0.00'}</span>
+                    </div>
                   </div>
                 </div>
                 
