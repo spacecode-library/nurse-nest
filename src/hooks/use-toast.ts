@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import {
   type ToastActionElement,
@@ -189,12 +188,36 @@ export function useToast() {
   }
 }
 
-// Create a singleton instance of the toast hook for direct exports
-const { toast: toastFn } = useToast()
+// Define a function to handle direct toast calls
+export function toast(props: Omit<ToasterToastProps, "id">) {
+  const id = genId()
 
-// Export a toast function for direct use
-export const toast = (props: Omit<ToasterToastProps, "id">) => {
-  return toastFn(props)
+  const update = (props: Omit<Partial<ToasterToastProps>, "id">) => 
+    dispatch({
+      type: actionTypes.UPDATE_TOAST,
+      toast: { ...props, id },
+    })
+  
+  const dismiss = () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id })
+
+  dispatch({
+    type: actionTypes.ADD_TOAST,
+    toast: {
+      ...props,
+      id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss()
+        props.onOpenChange?.(open)
+      },
+    },
+  })
+
+  return {
+    id: id,
+    dismiss,
+    update,
+  }
 }
 
 export type { ToasterToastProps as Toast }
