@@ -415,3 +415,60 @@
     transform: translateY(0);
   }
 }
+
+/* Add soft gradient underline for section headers */
+.section-header-gradient-underline {
+  width: 96px;
+  height: 5px;
+  margin: 0 auto 8px auto;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #E0EFFF 0%, #B9DDFF 50%, #F0F7FF 100%);
+  opacity: 0.65;
+}
+
+/* Add section background bands */
+.section-band-1 {
+  background: #F8F8F8;
+}
+.section-band-2 {
+  background: #FBF5F6;
+}
+.section-band-3 {
+  background: #F2FCE2;
+}
+
+/* Add card polish */
+.card-soft-shadow {
+  box-shadow: 0 2px 16px 0 rgba(30, 136, 229, 0.06);
+}
+.card-hover-elevate:hover {
+  box-shadow: 0 6px 32px 0 rgba(30, 136, 229, 0.09);
+  transition: box-shadow 0.2s;
+}
+
+/* Brand pill style for pricing badge */
+.brand-badge-pill {
+  border-radius: 9999px;
+  font-weight: 500;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.93rem;
+  display: inline-block;
+  margin-top: 0.15rem;
+}
+
+/* Soft section divider */
+.soft-divider {
+  width: 90%;
+  height: 2.5px;
+  margin: 24px auto 16px auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #E0EFFF, #F6F7FA, #F0F7FF 90%);
+}
+
+@media (min-width: 768px) {
+  .soft-divider {
+    width: 320px;
+  }
+}
+
+/* Adjust bullet for employment duplicate check fix (leave only one check) */

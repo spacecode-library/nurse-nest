@@ -1,6 +1,4 @@
 
-// PRICING PAGE REBUILD – Nurse Nest Lattice-inspired
-
 import React from "react";
 import PricingBundlesSection from "@/components/pricing/PricingBundlesSection";
 import ScreeningSection from "@/components/pricing/ScreeningSection";
@@ -9,8 +7,8 @@ import PricingFooterInfo from "@/components/pricing/PricingFooterInfo";
 export default function PricingContent() {
   return (
     <section className="w-full flex flex-col items-center">
-      {/* Page Title & Subtitle (Single) */}
-      <div className="w-full max-w-4xl mx-auto text-center mb-12 mt-10 px-4">
+      {/* --- GLOBAL TITLE & SUBTITLE (single instance) --- */}
+      <div className="w-full max-w-4xl mx-auto text-center mb-14 mt-10 px-4">
         <h1 className="text-4xl md:text-5xl font-heading font-bold mb-3 text-gray-800">
           Transparent Pricing. Total Control.
         </h1>
@@ -21,15 +19,17 @@ export default function PricingContent() {
         </div>
       </div>
 
-      {/* Bundles Section */}
+      {/* Bundles Section (white background) */}
       <PricingBundlesSection className="mb-16" />
 
-      {/* Build-Your-Own Screening */}
-      <ScreeningSection className="mb-16" />
+      {/* --- SOFT GRAY BAND --- */}
+      <div className="w-full bg-[#F8F8F8]">
+        {/* Build-Your-Own Screening (alternating background) */}
+        <ScreeningSection className="mb-16 py-16" />
+      </div>
 
-      {/* Info Footer */}
+      {/* Enhanced Payment Footer */}
       <PricingFooterInfo />
     </section>
   );
 }
-
