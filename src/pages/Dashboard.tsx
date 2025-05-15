@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import ClientDashboard from "@/components/dashboard/ClientDashboard";
 import NurseDashboard from "@/components/dashboard/NurseDashboard";
+import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import AccountSettings from "@/components/dashboard/AccountSettings";
 import { UserProfile } from "@/types/dashboard";
 
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [userRole, setUserRole] = useState<"nurse" | "client" | null>(null);
+  const [userRole, setUserRole] = useState<"nurse" | "client" | "admin" | null>(null);
   
   // Redirect if not authenticated
   useEffect(() => {
@@ -38,9 +39,8 @@ export default function Dashboard() {
           
         if (error) throw error;
         
-        // For demo, we'll set a role based on email
-        // In a real app, this would come from your database
-        const role = data.email?.includes('nurse') ? 'nurse' : 'client';
+        // Use the role from the database
+        const role = data.role || 'client';
         setUserRole(role);
         setProfile({
           ...data,
@@ -71,7 +71,7 @@ export default function Dashboard() {
       <Navbar />
       
       <main className="flex-1 pt-24 pb-16">
-        <div className="container-custom max-w-6xl">
+        <div className="container-custom max-w-6xl mx-auto px-4">
           {/* Welcome Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
@@ -90,6 +90,7 @@ export default function Dashboard() {
           {/* Role-specific content */}
           {userRole === 'client' && <ClientDashboard profile={profile} />}
           {userRole === 'nurse' && <NurseDashboard profile={profile} />}
+          {userRole === 'admin' && <AdminDashboard profile={profile} />}
           
           {/* Account Settings - shown for all roles */}
           <AccountSettings profile={profile} userRole={userRole} />

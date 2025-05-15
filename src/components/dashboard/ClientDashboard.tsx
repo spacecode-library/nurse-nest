@@ -7,6 +7,7 @@ import { Clock, Star, Shield, User } from "lucide-react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Timesheet } from "@/types/dashboard";
 import TimesheetsCard from "./TimesheetsCard";
+import ClientAgreements from "./ClientAgreements";
 import { toast } from "@/hooks/use-toast";
 
 interface ClientDashboardProps {
@@ -30,6 +31,7 @@ export default function ClientDashboard({ profile }: ClientDashboardProps) {
       experience: '5 years',
       availability: 'Full-time',
       vetted: false,
+      vettingStatus: 'In Progress'
     },
     {
       id: '2',
@@ -38,7 +40,8 @@ export default function ClientDashboard({ profile }: ClientDashboardProps) {
       specialties: ['Geriatric', 'Rehabilitation'],
       experience: '8 years',
       availability: 'Part-time',
-      vetted: false,
+      vetted: true,
+      vettingStatus: 'Verified'
     }
   ]);
 
@@ -148,8 +151,33 @@ export default function ClientDashboard({ profile }: ClientDashboardProps) {
     });
   };
 
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case 'Verified':
+        return 'bg-green-100 text-green-800';
+      case 'Flagged':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Verified':
+        return '✅';
+      case 'Flagged':
+        return '⚠️';
+      default:
+        return '⏳';
+    }
+  };
+
   return (
     <>
+      {/* Client Agreements */}
+      <ClientAgreements userId={profile.id} />
+
       {/* Nurse Submissions Card */}
       <Card className="mb-8">
         <CardHeader>
@@ -182,6 +210,11 @@ export default function ClientDashboard({ profile }: ClientDashboardProps) {
                             {specialty}
                           </Badge>
                         ))}
+                      </div>
+                      <div className="mt-2">
+                        <Badge className={getStatusBadgeColor(nurse.vettingStatus)}>
+                          {getStatusIcon(nurse.vettingStatus)} {nurse.vettingStatus}
+                        </Badge>
                       </div>
                     </div>
                     <div className="mt-4 md:mt-0">

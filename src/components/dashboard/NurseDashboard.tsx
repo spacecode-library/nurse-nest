@@ -7,6 +7,7 @@ import { Clock } from "lucide-react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Timesheet } from "@/types/dashboard";
 import TimesheetsCard from "./TimesheetsCard";
+import NurseAgreements from "./NurseAgreements";
 
 interface NurseDashboardProps {
   profile: {
@@ -52,6 +53,7 @@ export default function NurseDashboard({ profile }: NurseDashboardProps) {
 
   return (
     <>
+      <NurseAgreements userId={profile.id} />
       <TimesheetsCard timesheets={timesheets} userRole="nurse" />
     </>
   );

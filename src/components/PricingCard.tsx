@@ -1,155 +1,238 @@
-
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Button } from './ui/button';
-import { CircleDollarSign, Shield, Info } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
-import { toast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Check, Plus, Minus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PricingCard() {
-  const basePrice = 100;
+  const [showCustomOptions, setShowCustomOptions] = useState(false);
+  const navigate = useNavigate();
 
-  const handleGoToPayment = () => {
-    // Store the selection in session storage for the payment page
-    const applicationData = {
-      formData: {
-        addOns: {
-          drugTest: false,
-          drivingHistory: false,
-          backgroundCheck: false,
-          tbTest: false,
-          goldPackage: false
-        }
-      },
-      pricing: {
-        basePrice: basePrice,
-        totalPrice: basePrice
-      }
-    };
-    
-    sessionStorage.setItem('applicationData', JSON.stringify(applicationData));
-    toast({
-      title: "Your selection has been saved!",
-      description: "Taking you to payment...",
-    });
+  const handleGetStarted = (plan: string) => {
+    // Store the selected plan in session storage
+    sessionStorage.setItem('selectedPlan', plan);
+    navigate('/vetting-options');
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 py-12">
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">Transparent, Upfront Pricing</h2>
-        <p className="text-lg text-gray-700">Simple pricing. Optional upgrades. No surprises.</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-4">Nurse Vetting Packages</h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Choose the right vetting package for your needs or build your own custom screening solution
+        </p>
       </div>
-      
-      <div className="max-w-4xl mx-auto">
-        {/* Required Service */}
-        <motion.div 
-          className="rounded-xl shadow-lg overflow-hidden bg-white border border-gray-100 mb-8"
-          whileHover={{ 
-            scale: 1.01,
-            transition: { duration: 0.3 }
-          }}
-        >
-          <div className="bg-gradient-to-r from-nurse-dark to-primary-500 p-5 text-white">
-            <h3 className="text-xl font-bold flex items-center">
-              <Shield className="h-5 w-5 mr-2" /> Nurse Search Fee
-            </h3>
-          </div>
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <div className="text-3xl font-bold mb-2 text-primary-600">$100</div>
-                <p className="text-gray-700">
-                  Begin your personalized RN match with a fully refundable search fee 
-                  (if we don't match you in 14 days).
-                </p>
-              </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
+        {/* Nest Safe Basic */}
+        <div className="border rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+          <div className="bg-gradient-to-r from-nurse-dark to-primary-400 p-6 text-white">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">🛡️ Nest Safe Basic</h2>
+              <span className="bg-white text-primary-600 font-bold px-3 py-1 rounded-full text-sm">Recommended</span>
             </div>
+            <div className="mt-4">
+              <span className="text-3xl font-bold">$169</span>
+              <span className="text-white/80 ml-1">one-time fee</span>
+            </div>
+            <p className="mt-2 text-white/80">💸 Client Saves $15</p>
           </div>
-        </motion.div>
-        
-        {/* Add-ons Preview - Coming in next phase */}
-        <div className="mt-16 pt-8 border-t border-gray-200">
-          <h3 className="text-xl font-bold mb-6 text-center">
-            Additional Vetting Options <span className="text-gray-500 text-sm">(Available after matching)</span>
-          </h3>
-          <div className="grid md:grid-cols-2 gap-4 opacity-75">
-            <Card className="bg-gray-50">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h4 className="font-semibold">Drug Test (10-panel)</h4>
-                    <p className="text-sm text-gray-600">Additional verification for peace of mind</p>
-                  </div>
-                  <span className="text-lg font-bold">$100</span>
-                </div>
-              </CardContent>
-            </Card>
+          
+          <div className="p-6 bg-white">
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>Basic Background Check</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>License Verification</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>5-Panel Drug Test</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>Motor Vehicle Record</span>
+              </li>
+            </ul>
             
-            <Card className="bg-gray-50">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h4 className="font-semibold">Driving History Report</h4>
-                    <p className="text-sm text-gray-600">For nurses who will provide transportation</p>
-                  </div>
-                  <span className="text-lg font-bold">$50</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-gray-50">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h4 className="font-semibold">Background Check</h4>
-                    <p className="text-sm text-gray-600">Detailed national background check</p>
-                  </div>
-                  <span className="text-lg font-bold">$50</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-gray-50">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h4 className="font-semibold">TB Test Clearance</h4>
-                    <p className="text-sm text-gray-600">Proof of recent negative TB test</p>
-                  </div>
-                  <span className="text-lg font-bold">$250</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-amber-50 col-span-full">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="flex items-center">
-                      <h4 className="font-semibold">Gold Vetting Package</h4>
-                      <span className="ml-2 px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full">Most Comprehensive</span>
-                    </div>
-                    <p className="text-sm text-gray-600">Includes Background Check, Drug Test, and Driving History Report</p>
-                  </div>
-                  <span className="text-lg font-bold">$150</span>
-                </div>
-              </CardContent>
-            </Card>
+            <Button 
+              className="w-full mt-6 bg-nurse-dark hover:bg-primary-700"
+              onClick={() => handleGetStarted('basic')}
+            >
+              Get Started
+            </Button>
           </div>
         </div>
         
-        {/* Secure Payment Info */}
-        <div className="mt-12 bg-white rounded-xl shadow-md p-8 border-l-4 border-primary-500">
-          <div className="flex items-start">
-            <CircleDollarSign className="h-8 w-8 text-primary-500 mr-4 flex-shrink-0 mt-1" />
-            <div>
-              <h3 className="text-xl font-bold mb-2">Secure Payment Processing</h3>
-              <p className="text-gray-700">
-                Payments are handled via Stripe. You pay your nurse directly, and we retain a 15% platform fee to handle vetting, onboarding, and support.
-              </p>
+        {/* Nest Shield Pro */}
+        <div className="border rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+          <div className="bg-gradient-to-r from-primary-400 to-purple-600 p-6 text-white">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">🛡️ Nest Shield Pro</h2>
+              <span className="bg-white text-purple-600 font-bold px-3 py-1 rounded-full text-sm">Premium</span>
             </div>
+            <div className="mt-4">
+              <span className="text-3xl font-bold">$289</span>
+              <span className="text-white/80 ml-1">one-time fee</span>
+            </div>
+            <p className="mt-2 text-white/80">💸 Client Saves $44</p>
           </div>
+          
+          <div className="p-6 bg-white">
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>Comprehensive Background Check</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>License Verification</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>10-Panel Drug Test</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>Employment Verification</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                <span>Motor Vehicle Record</span>
+              </li>
+            </ul>
+            
+            <Button 
+              className="w-full mt-6 bg-purple-600 hover:bg-purple-700"
+              onClick={() => handleGetStarted('pro')}
+            >
+              Get Started
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Build Your Own */}
+      <div className="max-w-5xl mx-auto">
+        <div 
+          className="border rounded-xl overflow-hidden cursor-pointer"
+          onClick={() => setShowCustomOptions(!showCustomOptions)}
+        >
+          <div className="bg-gray-100 p-6 flex justify-between items-center">
+            <h2 className="text-xl font-bold flex items-center">
+              Build-Your-Own Screening
+            </h2>
+            <button className="text-gray-600 hover:text-gray-900">
+              {showCustomOptions ? <Minus className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+            </button>
+          </div>
+          
+          {showCustomOptions && (
+            <div className="p-6 bg-white">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Background Checks */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Background Checks</h3>
+                  
+                  <div className="mb-6 border rounded-md p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium">Basic Background</h4>
+                      <span className="text-lg font-bold">$45</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• SSN trace</li>
+                      <li>• Sex offender registry search</li>
+                      <li>• Global watchlist search</li>
+                      <li>• National criminal search</li>
+                    </ul>
+                    <p className="text-xs text-gray-500 mt-2">Results typically &lt;24hrs</p>
+                  </div>
+                  
+                  <div className="mb-6 border rounded-md p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium">Comprehensive Background</h4>
+                      <span className="text-lg font-bold">$125</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Includes all Basic Background features</li>
+                      <li>• State Criminal Search</li>
+                      <li>• Federal Criminal Search</li>
+                    </ul>
+                    <p className="text-xs text-gray-500 mt-2">Results in 5-7 business days</p>
+                  </div>
+                  
+                  <div className="mb-6 border rounded-md p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium">Professional License Verification</h4>
+                      <span className="text-lg font-bold">$15</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Complete report of all active and inactive licenses</li>
+                    </ul>
+                    <p className="text-xs text-gray-500 mt-2">Results typically &lt;24hrs</p>
+                  </div>
+                  
+                  <div className="mb-6 border rounded-md p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium">Employment History Verification</h4>
+                      <span className="text-lg font-bold">$49</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• 7-year lookback period</li>
+                      <li>• Confirmation of employment dates and titles</li>
+                    </ul>
+                    <p className="text-xs text-gray-500 mt-2">Automated results when candidate connects payroll provider</p>
+                  </div>
+                </div>
+                
+                {/* Other Checks */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Additional Verifications</h3>
+                  
+                  <div className="mb-6 border rounded-md p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium">Motor Vehicle Record</h4>
+                      <span className="text-lg font-bold">$19</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Driver's license confirmation</li>
+                      <li>• Driving incident identification</li>
+                    </ul>
+                    <p className="text-xs text-gray-500 mt-2">PA residents require manual processing - contact us</p>
+                  </div>
+                  
+                  <div className="mb-6 border rounded-md p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium">5-Panel Drug Test</h4>
+                      <span className="text-lg font-bold">$85</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Screens for: Amphetamines, Cocaine, Marijuana (THC), Opiates, PCP</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="mb-6 border rounded-md p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium">10-Panel Drug Test</h4>
+                      <span className="text-lg font-bold">$125</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• All 5-panel substances plus: Barbiturates, Benzodiazepines, Methadone, Methaqualone, Propoxyphene</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                className="mt-6 bg-nurse-dark hover:bg-primary-700"
+                onClick={() => navigate('/vetting-options')}
+              >
+                Build Custom Package
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
