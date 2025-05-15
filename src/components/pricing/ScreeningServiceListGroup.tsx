@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Search, FileText, Car } from "lucide-react";
 
@@ -42,20 +41,21 @@ export default function ScreeningServiceListGroup({
         {services.map((service, idx) => (
           <li
             key={service.name}
-            className="group flex flex-row items-stretch px-4 py-5 md:py-6 hover:bg-primary-50/80 transition"
+            className="group flex flex-row items-stretch px-4 py-5 md:py-7 hover:bg-primary-50/80 transition"
           >
             {/* Price Left */}
-            <span className="font-bold text-primary-700 text-xl md:text-2xl flex-shrink-0 min-w-[70px] text-left">
+            <span className="font-bold text-primary-700 text-xl md:text-2xl flex-shrink-0 min-w-[70px] text-left mr-6">
               {service.price}
             </span>
             {/* Text block (fills remainder) */}
-            <div className="ml-6 flex flex-col flex-1 justify-center">
-              <div className="text-base md:text-lg font-semibold text-gray-800 leading-tight">
+            <div className="flex flex-col flex-1 justify-center">
+              <div className="text-lg md:text-2xl font-extrabold text-gray-800 leading-tight">
                 {service.name}
               </div>
-              <div className="text-gray-500 text-sm md:text-base font-normal mt-0.5">
+              <div className="text-gray-500 text-sm md:text-base font-normal mt-0.5 md:mt-1">
                 {service.details}
               </div>
+              {/* Only show note if it exists & is NOT "Instant" or "Manual" (those have been removed from data) */}
               {service.note && (
                 <span className={`mt-1 inline-flex items-center text-sm md:text-base font-medium
                   ${
@@ -70,11 +70,6 @@ export default function ScreeningServiceListGroup({
                 `}>
                   {service.noteType === "fast" && (
                     <span className="mr-1 text-blue-400 text-lg">⏱️</span>
-                  )}
-                  {service.noteType === "instant" && (
-                    <span className="mr-1">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#299D5D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </span>
                   )}
                   {service.noteType === "danger" && (
                     <span className="mr-1 text-red-500 text-lg">❗</span>

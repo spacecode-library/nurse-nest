@@ -449,11 +449,16 @@
 /* Brand pill style for pricing badge */
 .brand-badge-pill {
   border-radius: 9999px;
-  font-weight: 500;
-  padding: 0.2rem 0.85rem;
-  font-size: 0.93rem;
+  font-weight: 600;
+  padding: 0.20rem 1.1rem;
+  font-size: 1.07rem;
   display: inline-block;
   margin-top: 0.15rem;
+  background: #ffe28f;
+  color: #947200;
+  border: 1.5px solid #f0d686;
+  box-shadow: 0 2px 8px #ffedc277;
+  letter-spacing: 0.01em;
 }
 
 /* Soft section divider */
@@ -472,3 +477,22 @@
 }
 
 /* Adjust bullet for employment duplicate check fix (leave only one check) */
+
+.luxury-gold-gradient {
+  background: linear-gradient(120deg, #fffaed 0%, #ffecb3 70%, #ffe082 100%);
+  box-shadow: 0 4px 40px 0 rgba(246, 215, 76, 0.13), 0 2px 8px 0 rgba(158, 129, 43, 0.08);
+  border: 1.5px solid #f0d686;
+}
+
+.hover\:glow-gold:hover {
+  box-shadow:
+    0 0 0 2px #ffe082,
+    0 12px 36px 0 #ffe08244,
+    0 4px 40px 0 #f6d74c45,
+    0 0 32px 4px #ffe17166;
+  transition: box-shadow 0.15s;
+}
+
+.drop-shadow-glow-gold {
+  filter: drop-shadow(0 0 6px #ffe08288);
+}

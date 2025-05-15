@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Shield, 
@@ -35,13 +34,13 @@ export default function PricingCards() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
         {/* Basic Bundle */}
         <AnimatedSection animation="fade-up" delay={100}>
-          <Card className="border rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all h-full">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b pb-6">
+          <Card className="border rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all h-full bg-[#F0F7FF] border-blue-200 relative card-soft-shadow card-hover-elevate">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b pb-6 rounded-t-2xl">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
                     <Lock className="h-5 w-5 text-primary-500" />
-                    <CardTitle className="text-2xl font-bold">
+                    <CardTitle className="text-2xl font-bold text-primary-700">
                       Nest Safe Basic
                     </CardTitle>
                   </div>
@@ -49,22 +48,19 @@ export default function PricingCards() {
                     Standard safety assurance
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="bg-primary-100 text-primary-600 font-semibold border-primary-200 text-sm px-3 py-1 flex items-center">
-                  <BadgeDollarSign className="h-4 w-4 mr-1" />
-                  Client Saves $15
-                </Badge>
+                {/* Removed blue badge here */}
               </div>
               <div className="mt-4 flex items-end">
-                <span className="text-4xl font-bold text-gray-800">$169</span>
+                <span className="text-4xl font-bold text-primary-800 drop-shadow-sm">$169</span>
               </div>
             </CardHeader>
-            
+
             <CardContent className="pt-6">
               <h3 className="font-semibold text-gray-700 mb-4">Includes:</h3>
               <ul className="space-y-3">
                 {[
-                  'Basic Background Check', 
-                  'License Verification', 
+                  'Basic Background Check',
+                  'License Verification',
                   '5-Panel Drug Test',
                   'Motor Vehicle Record'
                 ].map((feature, index) => (
@@ -75,14 +71,14 @@ export default function PricingCards() {
                 ))}
               </ul>
             </CardContent>
-            
-            <CardFooter className="border-t pt-6 pb-6">
+
+            <CardFooter className="border-t pt-6 pb-6 rounded-b-2xl">
               <div className="w-full">
                 <p className="text-sm text-gray-600 mb-4">
                   Best for: Standard safety assurance for most care roles.
                 </p>
                 <Link to="/apply" className="w-full block">
-                  <Button className="w-full bg-primary-500 hover:bg-primary-600">
+                  <Button className="w-full bg-primary-500 hover:bg-primary-600 button-hover-effect">
                     Select This Bundle
                   </Button>
                 </Link>
@@ -90,39 +86,36 @@ export default function PricingCards() {
             </CardFooter>
           </Card>
         </AnimatedSection>
-        
+
         {/* Pro Bundle */}
         <AnimatedSection animation="fade-up" delay={200}>
-          <Card className="border rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all h-full relative">
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <Badge className="bg-primary-500 text-white px-3 py-1">Most Popular</Badge>
+          <Card className="luxury-gold-gradient rounded-2xl overflow-hidden shadow-md transition-all h-full relative card-soft-shadow card-hover-elevate hover:glow-gold before:rounded-2xl border border-[#f0d686]">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+              {/* Most Popular Badge */}
+              <span className="brand-badge-pill bg-[#FFD700] text-yellow-900 border border-yellow-200 shadow">Most Popular</span>
             </div>
-            
-            <CardHeader className="bg-gradient-to-r from-blue-100 to-blue-200 border-b pb-6 pt-8">
+            <CardHeader className="bg-gradient-to-r from-[#fff5df] to-[#ffe8a3] border-b pb-6 pt-8 rounded-t-2xl">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
-                    <Shield className="h-5 w-5 text-primary-500" />
-                    <CardTitle className="text-2xl font-bold">
+                    <Shield className="h-5 w-5 text-[#b39a47]" />
+                    <CardTitle className="text-2xl font-bold text-[#a3822b]">
                       Nest Shield Pro
                     </CardTitle>
                   </div>
-                  <CardDescription className="text-base font-medium text-gray-600">
+                  <CardDescription className="text-base font-medium text-[#bba037]">
                     Comprehensive protection
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="bg-primary-100 text-primary-600 font-semibold border-primary-200 text-sm px-3 py-1 flex items-center">
-                  <BadgeDollarSign className="h-4 w-4 mr-1" />
-                  Client Saves $44
-                </Badge>
+                {/* Removed gold badge here */}
               </div>
               <div className="mt-4 flex items-end">
-                <span className="text-4xl font-bold text-gray-800">$289</span>
+                <span className="text-4xl font-bold text-[#9f7d24] drop-shadow-glow-gold">$289</span>
               </div>
             </CardHeader>
-            
+
             <CardContent className="pt-6">
-              <h3 className="font-semibold text-gray-700 mb-4">Includes:</h3>
+              <h3 className="font-semibold text-[#937045] mb-4">Includes:</h3>
               <ul className="space-y-3">
                 {[
                   'Comprehensive Background Check',
@@ -132,20 +125,20 @@ export default function PricingCards() {
                   'Motor Vehicle Record'
                 ].map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary-500 mt-0.5 mr-3 flex-shrink-0" />
+                    <CheckCircle2 className="h-5 w-5 text-[#bba037] mt-0.5 mr-3 flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
             </CardContent>
-            
-            <CardFooter className="border-t pt-6 pb-6">
+
+            <CardFooter className="border-t pt-6 pb-6 rounded-b-2xl">
               <div className="w-full">
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-[#796431] mb-4">
                   Best for: High-trust roles requiring deeper security and work history screening.
                 </p>
                 <Link to="/apply" className="w-full block">
-                  <Button className="w-full bg-primary-500 hover:bg-primary-600">
+                  <Button className="w-full bg-[#bfa945] hover:bg-[#e7d481] text-white font-semibold button-hover-effect">
                     Select This Bundle
                   </Button>
                 </Link>

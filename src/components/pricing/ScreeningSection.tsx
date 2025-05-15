@@ -1,4 +1,3 @@
-
 import React from "react";
 import ScreeningCategoryGroup from "./ScreeningCategoryGroup";
 import ScreeningServiceListGroup from "./ScreeningServiceListGroup";
@@ -63,8 +62,6 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
               name: "Employment History Verification",
               price: "$49",
               details: "7-year job history with title/date confirmation",
-              note: "✅ Instant if nurse connects payroll provider",
-              noteType: "instant",
             },
           ]}
         />
@@ -77,8 +74,6 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
               name: "Motor Vehicle Record",
               price: "$19",
               details: "Verifies license and driving history",
-              note: "❗ Manual setup required for Pennsylvania",
-              noteType: "danger",
             },
             {
               name: "5-Panel Drug Test",
