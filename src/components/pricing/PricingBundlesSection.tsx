@@ -6,9 +6,20 @@ interface BundlesSectionProps {
   className?: string;
 }
 
+type Bundle = {
+  title: string;
+  price: string;
+  tag: string;
+  tagColor: string;
+  badge: { text: string; color: string; textColor: string };
+  features: string[];
+  icon: "shield";
+  badgeTestId?: string;
+};
+
 export default function PricingBundlesSection({ className = "" }: BundlesSectionProps) {
-  // Bundle definitions
-  const bundles = [
+  // Bundle definitions, ensure icon type is "shield"
+  const bundles: Bundle[] = [
     {
       title: "Nest Safe Basic",
       price: "$169",
