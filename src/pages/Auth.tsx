@@ -5,7 +5,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { AlertCircle, LockKeyhole } from 'lucide-react';
@@ -17,9 +16,6 @@ export default function Auth() {
   const [fullName, setFullName] = useState('');
   const [dob, setDob] = useState('');
   const [address, setAddress] = useState('');
-  const [role, setRole] = useState<'nurse' | 'client'>('client');
-  const [adminCode, setAdminCode] = useState('');
-  const [showAdminField, setShowAdminField] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,12 +61,12 @@ export default function Auth() {
           toast({
             title: "Login failed",
             description: error.message,
-            variant: "destructive",
+            variant: "destructive"
           });
         } else {
           toast({
             title: "Login successful",
-            description: "Welcome back!",
+            description: "Welcome back!"
           });
         }
       } else {
@@ -78,9 +74,6 @@ export default function Auth() {
         const nameParts = fullName.trim().split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-        
-        // Determine final role (if admin code matches)
-        const finalRole = showAdminField && adminCode === "ADMIN123" ? "admin" : role;
         
         // Sign up the user
         const { error, data } = await supabase.auth.signUp({
@@ -91,8 +84,7 @@ export default function Auth() {
               first_name: firstName,
               last_name: lastName,
               dob: dob,
-              address: address,
-              role: finalRole
+              address: address
             }
           }
         });
@@ -102,13 +94,14 @@ export default function Auth() {
           toast({
             title: "Sign up failed",
             description: error.message,
-            variant: "destructive",
+            variant: "destructive"
           });
         } else {
           toast({
             title: "Sign up successful",
-            description: "Please check your email to verify your account.",
+            description: "Please check your email to verify your account."
           });
+          // Don't automatically set isLogin to true to avoid confusion
         }
       }
     } catch (error) {
@@ -132,7 +125,7 @@ export default function Auth() {
         toast({
           title: "Google Sign In Failed",
           description: error.message,
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     } catch (error) {
@@ -153,16 +146,12 @@ export default function Auth() {
         toast({
           title: "Apple Sign In Failed",
           description: error.message,
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Apple auth error:', error);
     }
-  };
-
-  const toggleAdminField = () => {
-    setShowAdminField(!showAdminField);
   };
   
   return (
@@ -251,51 +240,6 @@ export default function Auth() {
                           required={!isLogin}
                           placeholder="123 Main St, City, State, ZIP"
                         />
-                      </div>
-
-                      <div>
-                        <Label className="mb-2 block">I am signing up as a:</Label>
-                        <RadioGroup 
-                          value={role} 
-                          onValueChange={(value) => setRole(value as 'nurse' | 'client')}
-                          className="flex flex-col space-y-2"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="nurse" id="role-nurse" />
-                            <Label htmlFor="role-nurse" className="flex items-center">
-                              <span className="mr-2">👩‍⚕️</span> Nurse
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="client" id="role-client" />
-                            <Label htmlFor="role-client" className="flex items-center">
-                              <span className="mr-2">👨‍💼</span> Client
-                            </Label>
-                          </div>
-                        </RadioGroup>
-                        <div className="mt-2">
-                          <button 
-                            type="button" 
-                            onClick={toggleAdminField} 
-                            className="text-xs text-primary-500 hover:underline"
-                          >
-                            {showAdminField ? 'Hide admin options' : 'Have an admin code?'}
-                          </button>
-                        </div>
-                        
-                        {showAdminField && (
-                          <div className="mt-2">
-                            <Label htmlFor="adminCode">Admin Code</Label>
-                            <Input
-                              id="adminCode"
-                              type="text"
-                              value={adminCode}
-                              onChange={(e) => setAdminCode(e.target.value)}
-                              className="mt-1"
-                              placeholder="Enter admin code"
-                            />
-                          </div>
-                        )}
                       </div>
                     </>
                   )}

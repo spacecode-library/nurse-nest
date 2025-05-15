@@ -1,14 +1,20 @@
 
-// Add or update the user role type to include 'admin'
-export type UserRole = 'nurse' | 'client' | 'admin';
+// Type definitions for dashboard components
 
 export interface UserProfile {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
-  role?: UserRole;
-  [key: string]: any; // For any additional properties
+  role?: string;
+}
+
+export interface Purchase {
+  id: string;
+  type: string;
+  status: "In Progress" | "Match Found" | "Refund Eligible";
+  purchaseDate: string;
+  expiresAt: string;
 }
 
 export interface Timesheet {
@@ -17,6 +23,24 @@ export interface Timesheet {
   nurseName?: string;
   clientName?: string;
   totalHours: number;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Paid';
-  [key: string]: any; // For any additional properties
+  status: "Pending" | "Approved" | "Paid";
+}
+
+export interface NurseSubmission {
+  id: string;
+  nurseId: string;
+  nurseName: string;
+  specialty: string;
+  experience: number;
+  availability: string;
+  status: "New" | "Under Review" | "Approved" | "Rejected";
+  submittedAt: string;
+}
+
+export interface VettingOption {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  selected: boolean;
 }

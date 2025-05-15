@@ -3,11 +3,16 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Settings, FileText } from "lucide-react";
-import { UserProfile, UserRole } from "@/types/dashboard";
 
 interface AccountSettingsProps {
-  profile: UserProfile;
-  userRole: UserRole | null;
+  profile: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    role?: string;
+  };
+  userRole: "nurse" | "client" | null;
 }
 
 export default function AccountSettings({ profile, userRole }: AccountSettingsProps) {
