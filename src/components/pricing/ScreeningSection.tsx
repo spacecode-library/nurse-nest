@@ -24,7 +24,7 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
         </div>
       </div>
       {/* --- CATEGORY GROUPS (alternate soft bg sections) --- */}
-      <div className="space-y-24">
+      <div className="space-y-10">
         <div className="bg-white rounded-xl px-2 py-6 shadow-sm">
           <ScreeningCategoryGroup
             icon="search"
@@ -77,6 +77,7 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
           <ScreeningCategoryGroup
             icon="car"
             title="Driving & Drug Testing"
+            layout="2+1"
             cards={[
               {
                 name: "Motor Vehicle Record",
