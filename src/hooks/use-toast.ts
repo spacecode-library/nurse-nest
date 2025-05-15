@@ -1,15 +1,16 @@
 
 import * as React from "react";
+
+// Import the types from toast.tsx but rename them to avoid conflicts
 import {
-  Toast,
+  Toast as ToastPrimitive,
   ToastActionElement,
-  ToastProps,
 } from "@/components/ui/toast";
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 1000000;
 
-export interface ToasterToast extends Omit<Toast, "id"> {
+export interface ToasterToast extends Omit<ToastPrimitive, "id"> {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;

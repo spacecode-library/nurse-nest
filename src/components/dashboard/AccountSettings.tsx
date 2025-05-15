@@ -1,18 +1,11 @@
-
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Settings, FileText } from "lucide-react";
 
 interface AccountSettingsProps {
-  profile: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    role?: string;
-  };
-  userRole: "nurse" | "client" | null;
+  profile: UserProfile;
+  userRole: UserRole | null;
 }
 
 export default function AccountSettings({ profile, userRole }: AccountSettingsProps) {

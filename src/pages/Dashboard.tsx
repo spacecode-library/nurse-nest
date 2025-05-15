@@ -10,13 +10,13 @@ import ClientDashboard from "@/components/dashboard/ClientDashboard";
 import NurseDashboard from "@/components/dashboard/NurseDashboard";
 import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import AccountSettings from "@/components/dashboard/AccountSettings";
-import { UserProfile } from "@/types/dashboard";
+import { UserProfile, UserRole } from "@/types/dashboard";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [userRole, setUserRole] = useState<"nurse" | "client" | "admin" | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   
   // Redirect if not authenticated
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function Dashboard() {
         
         // Use the role from the database
         const role = data.role || 'client';
-        setUserRole(role);
+        setUserRole(role as UserRole);
         setProfile({
           ...data,
           role: role
