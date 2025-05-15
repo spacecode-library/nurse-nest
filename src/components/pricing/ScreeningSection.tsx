@@ -1,5 +1,7 @@
+
 import React from "react";
 import ScreeningCategoryGroup from "./ScreeningCategoryGroup";
+import ScreeningServiceListGroup from "./ScreeningServiceListGroup";
 import { Clipboard, Shield, Car } from "lucide-react";
 
 interface ScreeningSectionProps {
