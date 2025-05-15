@@ -1,4 +1,3 @@
-
 import React from "react";
 import ScreeningCategoryGroup from "./ScreeningCategoryGroup";
 import { Clipboard, Shield, Car } from "lucide-react";
@@ -23,87 +22,74 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
           Customize your screening. No hidden fees—choose only what you need.
         </div>
       </div>
-      {/* --- CATEGORY GROUPS (alternate soft bg sections) --- */}
-      <div className="space-y-10">
-        <div className="bg-white rounded-xl px-2 py-6 shadow-sm">
-          <ScreeningCategoryGroup
-            icon="search"
-            title="Background Checks"
-            cards={[
-              {
-                name: "Basic Background",
-                price: "$45",
-                bullets: [
-                  "SSN trace, sex offender registry, global watchlist, national criminal search",
-                  "⏱️ Results: Under 24 hours",
-                ],
-              },
-              {
-                name: "Comprehensive Background",
-                price: "$125",
-                bullets: [
-                  "All Basic features + State & Federal criminal search",
-                  "⏱️ Results: 5–7 business days",
-                ],
-              },
-            ]}
-          />
-        </div>
-        <div className="bg-[#FBF5F6] rounded-xl px-2 py-6 shadow-sm">
-          <ScreeningCategoryGroup
-            icon="file-text"
-            title="License & Employment Verification"
-            cards={[
-              {
-                name: "Professional License Verification",
-                price: "$15",
-                bullets: [
-                  "All active/inactive licenses",
-                  "⏱️ Results: Under 24 hours",
-                ],
-              },
-              {
-                name: "Employment History Verification",
-                price: "$49",
-                bullets: [
-                  "7-year job history with title/date confirmation",
-                  "✅ Instant if nurse connects payroll provider",
-                ],
-              },
-            ]}
-          />
-        </div>
-        <div className="bg-[#F2FCE2] rounded-xl px-2 py-6 shadow-sm">
-          <ScreeningCategoryGroup
-            icon="car"
-            title="Driving & Drug Testing"
-            layout="2+1"
-            cards={[
-              {
-                name: "Motor Vehicle Record",
-                price: "$19",
-                bullets: [
-                  "Verifies license and driving history",
-                  "❗ Manual setup required for Pennsylvania",
-                ],
-              },
-              {
-                name: "5-Panel Drug Test",
-                price: "$85",
-                bullets: [
-                  "Screens: Amphetamines, Cocaine, THC, Opiates, PCP",
-                ],
-              },
-              {
-                name: "10-Panel Drug Test",
-                price: "$125",
-                bullets: [
-                  "Includes 5-panel + Barbiturates, Benzodiazepines, Methadone, Methaqualone, Propoxyphene",
-                ],
-              },
-            ]}
-          />
-        </div>
+      {/* --- CATEGORY LIST GROUPS: alternate soft bg sections --- */}
+      <div className="space-y-7">
+        <ScreeningServiceListGroup
+          icon="search"
+          title="Background Checks"
+          bgClass="bg-white"
+          services={[
+            {
+              name: "Basic Background",
+              price: "$45",
+              details: "SSN trace, sex offender registry, global watchlist, national criminal search",
+              note: "Results: Under 24 hours",
+              noteType: "fast",
+            },
+            {
+              name: "Comprehensive Background",
+              price: "$125",
+              details: "All Basic features + State & Federal criminal search",
+              note: "Results: 5–7 business days",
+              noteType: "fast",
+            },
+          ]}
+        />
+        <ScreeningServiceListGroup
+          icon="file-text"
+          title="License & Employment Verification"
+          bgClass="bg-[#FBF5F6]"
+          services={[
+            {
+              name: "Professional License Verification",
+              price: "$15",
+              details: "All active/inactive licenses",
+              note: "Results: Under 24 hours",
+              noteType: "fast",
+            },
+            {
+              name: "Employment History Verification",
+              price: "$49",
+              details: "7-year job history with title/date confirmation",
+              note: "✅ Instant if nurse connects payroll provider",
+              noteType: "instant",
+            },
+          ]}
+        />
+        <ScreeningServiceListGroup
+          icon="car"
+          title="Driving & Drug Testing"
+          bgClass="bg-[#F2FCE2]"
+          services={[
+            {
+              name: "Motor Vehicle Record",
+              price: "$19",
+              details: "Verifies license and driving history",
+              note: "❗ Manual setup required for Pennsylvania",
+              noteType: "danger",
+            },
+            {
+              name: "5-Panel Drug Test",
+              price: "$85",
+              details: "Screens: Amphetamines, Cocaine, THC, Opiates, PCP",
+            },
+            {
+              name: "10-Panel Drug Test",
+              price: "$125",
+              details: "Includes 5-panel + Barbiturates, Benzodiazepines, Methadone, Methaqualone, Propoxyphene",
+            },
+          ]}
+        />
       </div>
     </section>
   );
