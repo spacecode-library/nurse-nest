@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import PricingCards from '@/components/PricingCards';
+import PricingContent from '@/components/PricingContent';
 import { Toaster } from '@/components/ui/toaster';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -28,7 +28,7 @@ export default function Pricing() {
             </p>
           </AnimatedSection>
         </div>
-        <PricingCards />
+        <PricingContent />
       </main>
       
       <Footer />
