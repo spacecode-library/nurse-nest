@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import {
   type ToastActionElement,
@@ -159,10 +160,10 @@ function useToast() {
 }
 
 // Define a function to handle direct toast calls
-function toast(props: Omit<ToasterToastProps, "id">) {
+function toast(props: Omit<ToasterToast, "id">) {
   const id = genId()
 
-  const update = (props: Omit<Partial<ToasterToastProps>, "id">) => 
+  const update = (props: Omit<Partial<ToasterToast>, "id">) => 
     dispatch({
       type: actionTypes.UPDATE_TOAST,
       toast: { ...props, id },
@@ -191,4 +192,4 @@ function toast(props: Omit<ToasterToastProps, "id">) {
 }
 
 export { useToast, toast }
-export type { ToasterToast as ToasterToastProps }
+export type { ToasterToast }
