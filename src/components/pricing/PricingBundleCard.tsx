@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Shield, Check } from "lucide-react";
+import { Shield } from "lucide-react";
 
 interface BundleBadge {
   text: string;
@@ -34,37 +34,38 @@ export default function PricingBundleCard({
 
   return (
     <article
-      className="relative flex flex-col rounded-2xl bg-white shadow-lg transition 
-        border border-gray-100 px-8 py-6 min-h-[410px] md:min-h-[460px] overflow-hidden"
+      className="relative flex flex-col rounded-2xl bg-white shadow-xl transition border border-gray-100 px-7 py-7 min-h-[380px] md:min-h-[430px] overflow-hidden"
+      style={{ minHeight: 430 }}
     >
-      {/* Tag (top-right) */}
+      {/* Badge (top right) */}
       <div
-        className={`absolute top-6 right-8 px-3 py-1 text-xs font-medium rounded-full shadow-sm ${tagColor} z-10`}
+        data-testid={badgeTestId}
+        className="absolute top-6 right-7 z-10 rounded-full font-medium text-xs px-3 py-1"
+        style={{
+          background: badge.color,
+          color: badge.textColor,
+        }}
+      >
+        {badge.text}
+      </div>
+      {/* Tag ("Best for") */}
+      <div
+        className={`absolute top-6 left-7 px-3 py-1 text-xs font-medium rounded-full ${tagColor} z-10`}
+        style={{ fontSize: 13, opacity: 0.95 }}
       >
         {tag}
       </div>
-      {/* Card header with icon + title/badge */}
-      <div className="flex items-center mb-5">
+      {/* Card header with icon + title */}
+      <div className="flex items-center mb-6 mt-8">
         {IconEl && (
           <div className="rounded-full p-2 bg-gray-50 flex items-center justify-center mr-3 shadow-sm">
-            <IconEl className="w-6 h-6 text-primary-500" />
+            <IconEl className="w-7 h-7 text-primary-500" />
           </div>
         )}
-        <h2 className="font-semibold text-2xl text-gray-800 mr-auto">{title}</h2>
+        <h2 className="font-semibold text-2xl md:text-2xl text-gray-800 mr-auto">{title}</h2>
       </div>
-      {/* Badge and price */}
-      <div className="flex flex-row items-end mb-3">
-        <span
-          data-testid={badgeTestId}
-          className="rounded-full font-medium text-xs px-3 py-1 mr-4"
-          style={{
-            background: badge.color,
-            color: badge.textColor,
-            minWidth: "fit-content"
-          }}
-        >
-          {badge.text}
-        </span>
+      {/* Price */}
+      <div className="flex flex-col items-start mb-4 mt-1">
         <span className="text-3xl font-bold text-gray-900 tracking-tight">{price}</span>
       </div>
       {/* Divider */}
@@ -72,8 +73,8 @@ export default function PricingBundleCard({
       {/* Features */}
       <ul className="flex-1 flex flex-col justify-start gap-2 mb-2">
         {features.map((feat, i) => (
-          <li key={i} className="flex items-center text-base text-gray-700">
-            <Check className="w-4 h-4 mr-2 text-green-600" />
+          <li key={i} className="flex items-center text-base text-gray-700 font-normal">
+            <span className="inline-block mr-2 text-green-600 text-lg" aria-hidden="true">✔</span>
             <span>{feat}</span>
           </li>
         ))}
@@ -81,3 +82,4 @@ export default function PricingBundleCard({
     </article>
   );
 }
+

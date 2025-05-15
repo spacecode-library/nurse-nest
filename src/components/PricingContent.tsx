@@ -9,9 +9,9 @@ import PricingFooterInfo from "@/components/pricing/PricingFooterInfo";
 export default function PricingContent() {
   return (
     <section className="w-full flex flex-col items-center">
-      {/* Top: Page Title & Subtitle */}
-      <div className="w-full max-w-4xl mx-auto text-center mb-10 mt-6 px-4">
-        <h1 className="text-4xl font-heading font-bold mb-3 text-gray-800">
+      {/* Page Title & Subtitle (Single) */}
+      <div className="w-full max-w-4xl mx-auto text-center mb-12 mt-10 px-4">
+        <h1 className="text-4xl md:text-5xl font-heading font-bold mb-3 text-gray-800">
           Transparent Pricing. Total Control.
         </h1>
         <div className="max-w-xl mx-auto">
@@ -23,7 +23,7 @@ export default function PricingContent() {
 
       {/* Bundles Section */}
       <PricingBundlesSection className="mb-16" />
-      
+
       {/* Build-Your-Own Screening */}
       <ScreeningSection className="mb-16" />
 
@@ -32,3 +32,4 @@ export default function PricingContent() {
     </section>
   );
 }
+

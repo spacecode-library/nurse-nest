@@ -10,16 +10,15 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
   return (
     <section className={`w-full max-w-6xl mx-auto ${className}`}>
       {/* Title */}
-      <div className="text-center mb-10 mt-1">
-        <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-800 mb-2">
+      <div className="text-center mb-12 mt-2">
+        <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-gray-800 mb-2">
           Build-Your-Own Screening
         </h2>
-        <div className="max-w-md mx-auto text-gray-500 text-base md:text-lg">
+        <div className="max-w-md mx-auto text-gray-400 font-medium text-base md:text-lg">
           Customize your screening. No hidden fees—choose only what you need.
         </div>
       </div>
-
-      <div className="space-y-14 px-1">
+      <div className="space-y-16 px-1">
         <ScreeningCategoryGroup
           icon="search"
           title="Background Checks"

@@ -2,10 +2,6 @@
 import React from "react";
 import PricingBundleCard from "./PricingBundleCard";
 
-interface BundlesSectionProps {
-  className?: string;
-}
-
 type Bundle = {
   title: string;
   price: string;
@@ -17,8 +13,11 @@ type Bundle = {
   badgeTestId?: string;
 };
 
+interface BundlesSectionProps {
+  className?: string;
+}
+
 export default function PricingBundlesSection({ className = "" }: BundlesSectionProps) {
-  // Bundle definitions, ensure icon type is "shield"
   const bundles: Bundle[] = [
     {
       title: "Nest Safe Basic",
@@ -55,8 +54,8 @@ export default function PricingBundlesSection({ className = "" }: BundlesSection
 
   return (
     <section className={`w-full max-w-5xl mx-auto ${className}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        {bundles.map((b, idx) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-7 items-stretch">
+        {bundles.map((b) => (
           <PricingBundleCard
             key={b.title}
             title={b.title}
