@@ -33,7 +33,7 @@ export default function HeroSection() {
               <div>Your Doorstep</div>
             </h1>
             <p className="text-base md:text-lg text-white mb-8 max-w-xl drop-shadow-md">
-              A concierge-style platform that handles everything—from matching you with qualified nurses to secure messaging, custom vetting, video calls, hiring, timecard approvals, and payment. All in one place. HIPAA-compliant. Privacy-first. No outside apps needed.
+              A concierge-style platform that handles everything—from matching you with qualified nurses to secure messaging, custom vetting, video calls, hiring, timecard approvals, and payment. All in one place.
             </p>
             <div>
               <Link to="/apply">
