@@ -10,6 +10,7 @@ type Bundle = {
   badge: { text: string; color: string; textColor: string };
   features: string[];
   icon: "shield";
+  variant?: "basic" | "pro";
 };
 
 interface BundlesSectionProps {
@@ -22,7 +23,7 @@ export default function PricingBundlesSection({ className = "" }: BundlesSection
       title: "Nest Safe Basic",
       price: "$169",
       tag: "Best for: Standard safety assurance",
-      tagColor: "text-gray-500 italic text-[15px] mb-0.5",
+      tagColor: "text-gray-600 italic text-[15px] mb-0.5",
       badge: { text: "Saves $15", color: "#E6F4EA", textColor: "#1A7F37" },
       features: [
         "Basic Background Check",
@@ -31,12 +32,13 @@ export default function PricingBundlesSection({ className = "" }: BundlesSection
         "Motor Vehicle Record",
       ],
       icon: "shield",
+      variant: "basic",
     },
     {
       title: "Nest Shield Pro",
       price: "$289",
       tag: "Best for: High-trust roles & deep vetting",
-      tagColor: "text-gray-500 italic text-[15px] mb-0.5",
+      tagColor: "text-yellow-800 italic text-[15px] mb-0.5",
       badge: { text: "Saves $44", color: "#FFF4E5", textColor: "#B95B00" },
       features: [
         "Comprehensive Background Check",
@@ -46,6 +48,7 @@ export default function PricingBundlesSection({ className = "" }: BundlesSection
         "Motor Vehicle Record",
       ],
       icon: "shield",
+      variant: "pro",
     },
   ];
 
@@ -62,6 +65,7 @@ export default function PricingBundlesSection({ className = "" }: BundlesSection
             tagColor={b.tagColor}
             features={b.features}
             icon={b.icon}
+            variant={b.variant}
           />
         ))}
       </div>
