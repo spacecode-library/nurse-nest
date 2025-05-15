@@ -1,7 +1,9 @@
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Settings, FileText } from "lucide-react";
+import { UserProfile, UserRole } from "@/types/dashboard";
 
 interface AccountSettingsProps {
   profile: UserProfile;

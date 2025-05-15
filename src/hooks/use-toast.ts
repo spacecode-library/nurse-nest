@@ -10,7 +10,7 @@ import {
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 1000000;
 
-export interface ToasterToast extends Omit<ToastPrimitive, "id"> {
+export interface ToasterToast extends Omit<typeof ToastPrimitive, "id"> {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
