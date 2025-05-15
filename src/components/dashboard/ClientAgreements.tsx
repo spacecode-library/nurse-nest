@@ -13,7 +13,8 @@ interface ClientAgreementsProps {
 interface SignedDocument {
   id: string;
   document_type: string;
-  signed_at: string;
+  signed_at?: string;
+  agreed_at?: string; // Add this to match the database schema
 }
 
 export default function ClientAgreements({ userId }: ClientAgreementsProps) {
@@ -43,7 +44,14 @@ export default function ClientAgreements({ userId }: ClientAgreementsProps) {
         
       if (error) throw error;
       
-      setDocuments(data || []);
+      // Map the database fields to our SignedDocument interface
+      const formattedData = data?.map(item => ({
+        id: item.id,
+        document_type: item.document_type,
+        agreed_at: item.agreed_at,
+      })) || [];
+      
+      setDocuments(formattedData);
     } catch (error) {
       console.error('Error fetching signed documents:', error);
       toast({
