@@ -129,7 +129,7 @@ export default function ClientDashboard({ profile }: ClientDashboardProps) {
       toast({
         title: "No options selected",
         description: "Please select at least one vetting option",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }

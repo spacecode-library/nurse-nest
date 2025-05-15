@@ -65,12 +65,12 @@ export default function Auth() {
           toast({
             title: "Login failed",
             description: error.message,
-            variant: "destructive"
+            variant: "destructive",
           });
         } else {
           toast({
             title: "Login successful",
-            description: "Welcome back!"
+            description: "Welcome back!",
           });
         }
       } else {
@@ -102,12 +102,12 @@ export default function Auth() {
           toast({
             title: "Sign up failed",
             description: error.message,
-            variant: "destructive"
+            variant: "destructive",
           });
         } else {
           toast({
             title: "Sign up successful",
-            description: "Please check your email to verify your account."
+            description: "Please check your email to verify your account.",
           });
         }
       }
@@ -132,7 +132,7 @@ export default function Auth() {
         toast({
           title: "Google Sign In Failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
@@ -153,7 +153,7 @@ export default function Auth() {
         toast({
           title: "Apple Sign In Failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {

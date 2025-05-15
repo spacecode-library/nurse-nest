@@ -114,7 +114,7 @@ export default function NurseAgreements({ userId }: NurseAgreementsProps) {
       toast({
         title: "Error",
         description: "Failed to save your agreement. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -153,7 +153,7 @@ export default function NurseAgreements({ userId }: NurseAgreementsProps) {
       toast({
         title: "Error",
         description: "Failed to upload one or more files. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setUploading(false);

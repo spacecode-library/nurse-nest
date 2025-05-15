@@ -1,20 +1,22 @@
 
 import * as React from "react";
 
-// Import the types from toast.tsx but rename them to avoid conflicts
-import {
-  Toast as ToastPrimitive,
+import type {
   ToastActionElement,
+  ToastProps
 } from "@/components/ui/toast";
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 1000000;
 
-export interface ToasterToast extends Omit<typeof ToastPrimitive, "id"> {
+export interface ToasterToast extends Omit<ToastProps, "id"> {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  variant?: "default" | "destructive";
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const actionTypes = {
@@ -125,9 +127,9 @@ function dispatch(action: Action) {
   });
 }
 
-type ToastProps = Omit<ToasterToast, "id">;
+type Toast = Omit<ToasterToast, "id">;
 
-function toast({ ...props }: ToastProps) {
+function toast({ ...props }: Toast) {
   const id = generateId();
 
   const update = (props: ToasterToast) =>

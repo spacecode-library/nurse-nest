@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,8 +12,8 @@ interface ClientAgreementsProps {
 interface SignedDocument {
   id: string;
   document_type: string;
-  signed_at?: string;
-  agreed_at?: string; // Add this to match the database schema
+  agreed_at?: string;
+  signed_at?: string; // Map agreed_at to signed_at for the interface
 }
 
 export default function ClientAgreements({ userId }: ClientAgreementsProps) {
@@ -49,6 +48,7 @@ export default function ClientAgreements({ userId }: ClientAgreementsProps) {
         id: item.id,
         document_type: item.document_type,
         agreed_at: item.agreed_at,
+        signed_at: item.agreed_at, // Map agreed_at to signed_at for the interface
       })) || [];
       
       setDocuments(formattedData);
@@ -57,7 +57,7 @@ export default function ClientAgreements({ userId }: ClientAgreementsProps) {
       toast({
         title: "Error",
         description: "Failed to load your signed documents.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
