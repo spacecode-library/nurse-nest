@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Search, Lock, MessageSquare, ClipboardCheck, CreditCard } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
@@ -55,43 +55,43 @@ export default function HowItWorksSection() {
   const steps = [
     {
       number: 1,
-      title: "Tell Us What You Need",
-      description: "Create your account and complete a short form describing your care preferences—like start date, specialty, and location. We'll tailor the search based on your unique needs.",
-      icon: "📝",
+      title: "Create Your Custom Request",
+      description: "Start by submitting a quick care request tailored to your needs. Just tell us the type of nurse, your location, timeline, and preferences. From there, our smart matching engine begins sourcing the best-fit nurses—curated just for you.",
+      icon: <Search className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/119a6708-a3cb-400b-ac7b-c2437a103499.png",
-      imageAlt: "Nurse consultation form"
+      imageAlt: "Gloved & elderly hand"
     },
     {
       number: 2,
-      title: "Secure Your Search",
-      description: "Pay a fully refundable $100 search fee to begin your personalized nurse match. If we're unable to match you within 14 days, you'll receive a full refund—no questions asked.",
-      icon: "💸",
+      title: "Unlock Full Platform Access",
+      description: "Begin your nurse search with a fully refundable $100 concierge fee. This gives you instant access to Nurse Nest's secure messaging center, customizable vetting options, and built-in video/phone calling—right from your dashboard. Everything happens on our HIPAA-compliant, privacy-first platform.",
+      icon: <Lock className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/f66fe8ea-d702-495f-8720-47b3cb6adcdc.png",
-      imageAlt: "Nurse arriving by parachute"
+      imageAlt: "Nurse parachuting to home"
     },
     {
       number: 3,
-      title: "We Find the Right Fit",
-      description: "We promote your listing through targeted advertising, private nurse networks, and vetted job boards. Every applicant is screened for location, licensing, and compatibility before being presented to you.",
-      icon: "🎯",
+      title: "Let Us Curate the Best Matches",
+      description: "We broadcast your job across our private network and nurse-facing platforms. Every applicant is screened with both AI and human review for licensure, specialty, experience, and proximity. Only top-tier candidates reach your inbox—saving you time and ensuring peace of mind.",
+      icon: <MessageSquare className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/0ecf2c8e-3915-4487-bb58-3e25ada5cf81.png",
-      imageAlt: "Nurse providing care to elderly person"
+      imageAlt: "Nurse with elderly man outdoors"
     },
     {
       number: 4,
-      title: "You Choose Your Nurse",
-      description: "We'll send you detailed profiles to review. Once you select your match, we complete additional vetting (background checks, license verification, and optional drug screening) before you proceed.",
-      icon: "👩‍⚕️",
+      title: "Review, Connect, and Customize Vetting",
+      description: "Explore nurse profiles featuring summaries, work history, and certifications. From your dashboard, securely message candidates or jump on a video call—no external apps needed. You decide which vetting services to run: background check, drug screen, license verification, or all of the above.",
+      icon: <ClipboardCheck className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/77ddc10d-2117-4745-8bba-2347c09f1bb7.png",
-      imageAlt: "Group of nurses meeting with family"
+      imageAlt: "Family reviewing nurses"
     },
     {
       number: 5,
-      title: "Approve Hours & Pay Securely",
-      description: "Your nurse logs hours via our system. You approve the timesheet, and payment is processed securely through Stripe—sent directly to your nurse. Seamless, safe, and fully transparent.",
-      icon: "🔒",
+      title: "Hire with Confidence & Pay Seamlessly",
+      description: "Once you've chosen your nurse, they'll log hours on the platform. You approve the timecard, and Stripe handles the rest—automatically paying your nurse while Nurse Nest collects a 15% fee. It's transparent, trackable, and completely paperless. One platform. Total control.",
+      icon: <CreditCard className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/24d6dd5c-dd41-4a60-88eb-f70d46f03ae9.png",
-      imageAlt: "Nurse arriving at home in the evening"
+      imageAlt: "Nurse emerging from gift box"
     }
   ];
 
@@ -188,7 +188,7 @@ export default function HowItWorksSection() {
                       {/* Content */}
                       <div className="p-6 space-y-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-xl">
+                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-500">
                             {step.icon}
                           </div>
                           <h3 className="text-xl font-semibold text-primary-500">
@@ -253,7 +253,7 @@ export default function HowItWorksSection() {
                     {/* Content */}
                     <div className="md:w-1/2 space-y-6">
                       <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-2xl">
+                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-primary-500">
                           {step.icon}
                         </div>
                         <h3 className="text-2xl font-bold text-primary-500">

@@ -32,8 +32,8 @@ export default function HeroSection() {
               </div>
               <div>Your Doorstep</div>
             </h1>
-            <p className="text-base md:text-lg text-white mb-8 max-w-lg drop-shadow-md">
-              Nationwide nurse-matching for newborns, elderly loved ones, and private practices — all backed by real clinical experience.
+            <p className="text-base md:text-lg text-white mb-8 max-w-xl drop-shadow-md">
+              A concierge-style platform that handles everything—from matching you with qualified nurses to secure messaging, custom vetting, video calls, hiring, timecard approvals, and payment. All in one place. HIPAA-compliant. Privacy-first. No outside apps needed.
             </p>
             <div>
               <Link to="/apply">
