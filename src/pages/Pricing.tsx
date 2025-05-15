@@ -18,14 +18,19 @@ export default function Pricing() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       <main className="flex-1 pt-24 pb-16">
-        <div className="container mx-auto px-4 text-center mb-12">
+        {/* Sticky Header */}
+        <div
+          className="container mx-auto px-4 text-center mb-12 z-20 sticky top-0 bg-white bg-opacity-95 backdrop-blur-[2px] pt-6 pb-4 shadow-md"
+          style={{ transition: 'background 0.3s, box-shadow 0.3s' }}
+        >
           <AnimatedSection animation="fade-up">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 leading-snug">
               <span className="text-primary-500">Transparent</span> Pricing.{' '}
               <span className="relative inline-block">
                 <span>Total Control.</span>
+                {/* Blue brush stroke under "Total" */}
                 <span
-                  className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-[90%] w-[117%] h-4"
+                  className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-[80%] w-[117%] h-4 pointer-events-none"
                   aria-hidden
                 >
                   <svg

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Shield, 
   CheckCircle2,
-  BadgeDollarSign,
   Lock,
   Clipboard,
   Car,
@@ -34,28 +33,32 @@ export default function PricingCards() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
         {/* Basic Bundle */}
         <AnimatedSection animation="fade-up" delay={100}>
-          <Card className="border rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all h-full bg-[#F0F7FF] border-blue-200 relative card-soft-shadow card-hover-elevate">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b pb-6 rounded-t-2xl">
+          <div
+            className="
+              border rounded-2xl overflow-hidden
+              shadow-xl hover:shadow-[0_18px_54px_-9px_rgba(30,136,229,0.18),0_8px_40px_0_rgba(30,136,229,0.11)]
+              transition-all h-full bg-gradient-to-br from-[#e5f1fb] via-[#f0f7ff] to-[#cbe7fd]
+              border-blue-200 relative card-soft-shadow card-hover-elevate
+              hover:scale-[1.033] will-change-transform
+            "
+            style={{ boxShadow: "0 8px 32px 0 rgba(30,136,229,0.15), 0 1.5px 6px 0 #B9DDFF80" }}
+          >
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-b pb-6 rounded-t-2xl pt-8 px-6 flex flex-col h-auto">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
                     <Lock className="h-5 w-5 text-primary-500" />
-                    <CardTitle className="text-2xl font-bold text-primary-700">
-                      Nest Safe Basic
-                    </CardTitle>
+                    <span className="text-2xl font-bold text-primary-700">Nest Safe Basic</span>
                   </div>
-                  <CardDescription className="text-base font-medium text-gray-600">
-                    Standard safety assurance
-                  </CardDescription>
+                  <span className="text-base font-medium text-gray-600">Standard safety assurance</span>
                 </div>
-                {/* Removed blue badge here */}
               </div>
               <div className="mt-4 flex items-end">
                 <span className="text-4xl font-bold text-primary-800 drop-shadow-sm">$169</span>
               </div>
-            </CardHeader>
+            </div>
 
-            <CardContent className="pt-6">
+            <div className="pt-6 px-6">
               <h3 className="font-semibold text-gray-700 mb-4">Includes:</h3>
               <ul className="space-y-3">
                 {[
@@ -70,52 +73,74 @@ export default function PricingCards() {
                   </li>
                 ))}
               </ul>
-            </CardContent>
+            </div>
 
-            <CardFooter className="border-t pt-6 pb-6 rounded-b-2xl">
+            <div className="border-t pt-6 pb-6 rounded-b-2xl px-6">
               <div className="w-full">
                 <p className="text-sm text-gray-600 mb-4">
                   Best for: Standard safety assurance for most care roles.
                 </p>
                 <Link to="/apply" className="w-full block">
-                  <Button className="w-full bg-primary-500 hover:bg-primary-600 button-hover-effect">
+                  <Button className="w-full bg-primary-500 hover:bg-primary-700 text-white shadow-lg">
                     Select This Bundle
                   </Button>
                 </Link>
               </div>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </AnimatedSection>
 
         {/* Pro Bundle */}
         <AnimatedSection animation="fade-up" delay={200}>
-          <Card className="luxury-gold-gradient rounded-2xl overflow-hidden shadow-md transition-all h-full relative card-soft-shadow card-hover-elevate hover:glow-gold before:rounded-2xl border border-[#f0d686]">
+          <div
+            className="
+              pro-shadow
+              luxury-gold-gradient
+              rounded-2xl overflow-hidden
+              border border-[#f6e6ac]
+              transition-all h-full relative card-soft-shadow card-hover-elevate hover:scale-[1.04]
+              will-change-transform
+              hover:shadow-[0_22px_85px_-15px_rgba(191,169,69,0.32),0_8px_40px_0_rgba(191,169,69,0.25)]
+              before:rounded-2xl
+              before:pointer-events-none
+            "
+            style={{
+              boxShadow: "0 12px 45px 0 #e6d6b7a8, 0 6px 36px 0 #ffe08244, 0 2px 8px 0 #d3be83",
+              background: "linear-gradient(135deg, #FFF9EA 0%, #FFE699 60%, #FFE082 100%)",
+            }}
+          >
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-              {/* Most Popular Badge */}
               <span className="brand-badge-pill bg-[#FFD700] text-yellow-900 border border-yellow-200 shadow">Most Popular</span>
             </div>
-            <CardHeader className="bg-gradient-to-r from-[#fff5df] to-[#ffe8a3] border-b pb-6 pt-8 rounded-t-2xl">
+            <div
+              className="bg-gradient-to-r from-[#fff5df] to-[#ffe8a3] border-b pb-6 pt-10 rounded-t-2xl px-6"
+              style={{
+                borderTopLeftRadius: "1rem",
+                borderTopRightRadius: "1rem"
+              }}
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
-                    <Shield className="h-5 w-5 text-[#b39a47]" />
-                    <CardTitle className="text-2xl font-bold text-[#a3822b]">
+                    <Shield className="h-5 w-5 text-[#b39a47] drop-shadow-glow-gold" />
+                    <span className="text-2xl font-bold text-gold-900" style={{ color: "#a3822b", textShadow: "0 1px 8px #ffefb544" }}>
                       Nest Shield Pro
-                    </CardTitle>
+                    </span>
                   </div>
-                  <CardDescription className="text-base font-medium text-[#bba037]">
+                  <span className="text-base font-medium" style={{ color: "#bba037" }}>
                     Comprehensive protection
-                  </CardDescription>
+                  </span>
                 </div>
-                {/* Removed gold badge here */}
               </div>
               <div className="mt-4 flex items-end">
-                <span className="text-4xl font-bold text-[#9f7d24] drop-shadow-glow-gold">$289</span>
+                <span className="text-4xl font-bold drop-shadow-glow-gold" style={{ color: "#9f7d24", textShadow: "0 0 12px #ffe8a366, 0 2px 8px #ffe08290" }}>
+                  $289
+                </span>
               </div>
-            </CardHeader>
+            </div>
 
-            <CardContent className="pt-6">
-              <h3 className="font-semibold text-[#937045] mb-4">Includes:</h3>
+            <div className="pt-6 px-6">
+              <h3 className="font-semibold" style={{ color: "#9B803D" }}>Includes:</h3>
               <ul className="space-y-3">
                 {[
                   'Comprehensive Background Check',
@@ -125,26 +150,26 @@ export default function PricingCards() {
                   'Motor Vehicle Record'
                 ].map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-[#bba037] mt-0.5 mr-3 flex-shrink-0" />
+                    <CheckCircle2 className="h-5 w-5" style={{ color: "#bba037" }} />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
-            </CardContent>
+            </div>
 
-            <CardFooter className="border-t pt-6 pb-6 rounded-b-2xl">
+            <div className="border-t pt-6 pb-6 rounded-b-2xl px-6">
               <div className="w-full">
-                <p className="text-sm text-[#796431] mb-4">
+                <p className="text-sm" style={{ color: "#796431" }}>
                   Best for: High-trust roles requiring deeper security and work history screening.
                 </p>
                 <Link to="/apply" className="w-full block">
-                  <Button className="w-full bg-[#bfa945] hover:bg-[#e7d481] text-white font-semibold button-hover-effect">
+                  <Button className="w-full bg-[#ffedbe] hover:bg-[#ffe082] text-[#a3822b] font-semibold shadow-xl border border-[#e6d6b7]">
                     Select This Bundle
                   </Button>
                 </Link>
               </div>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </AnimatedSection>
       </div>
 
@@ -177,8 +202,8 @@ export default function PricingCards() {
                 <div className="space-y-6 py-2">
                   <div className="border-b pb-4">
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">Basic Background</h4>
-                      <span className="font-bold">$45</span>
+                      <span className="font-bold text-xl text-primary-700 min-w-[70px] text-left mr-6">$45</span>
+                      <h4 className="font-semibold text-lg">Basic Background</h4>
                     </div>
                     <p className="text-sm text-gray-600 mb-2">
                       SSN trace, sex offender registry, global watchlist, national criminal search
@@ -194,8 +219,8 @@ export default function PricingCards() {
                   
                   <div>
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">Comprehensive Background</h4>
-                      <span className="font-bold">$125</span>
+                      <span className="font-bold text-xl text-primary-700 min-w-[70px] text-left mr-6">$125</span>
+                      <h4 className="font-semibold text-lg">Comprehensive Background</h4>
                     </div>
                     <p className="text-sm text-gray-600 mb-2">
                       Includes all Basic features + state & federal criminal searches
@@ -223,8 +248,8 @@ export default function PricingCards() {
                 <div className="space-y-6 py-2">
                   <div className="border-b pb-4">
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">Professional License Verification</h4>
-                      <span className="font-bold">$15</span>
+                      <span className="font-bold text-xl text-primary-700 min-w-[70px] text-left mr-6">$15</span>
+                      <h4 className="font-semibold text-lg">Professional License Verification</h4>
                     </div>
                     <p className="text-sm text-gray-600 mb-2">
                       Report of all active and inactive licenses
@@ -240,16 +265,12 @@ export default function PricingCards() {
                   
                   <div>
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">Employment History Verification</h4>
-                      <span className="font-bold">$49</span>
+                      <span className="font-bold text-xl text-primary-700 min-w-[70px] text-left mr-6">$49</span>
+                      <h4 className="font-semibold text-lg">Employment History Verification</h4>
                     </div>
                     <p className="text-sm text-gray-600 mb-2">
                       7-year history, confirms job titles and dates
                     </p>
-                    <div className="flex items-center text-sm text-primary-500">
-                      <CheckCircle2 className="h-4 w-4 mr-1" />
-                      Instant if nurse connects payroll provider
-                    </div>
                   </div>
                 </div>
               </AccordionContent>
@@ -266,38 +287,30 @@ export default function PricingCards() {
                 <div className="space-y-6 py-2">
                   <div className="border-b pb-4">
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">Motor Vehicle Record</h4>
-                      <span className="font-bold">$19</span>
+                      <span className="font-bold text-xl text-primary-700 min-w-[70px] text-left mr-6">$19</span>
+                      <h4 className="font-semibold text-lg">Motor Vehicle Record</h4>
                     </div>
                     <p className="text-sm text-gray-600 mb-2">
                       Confirms valid license and driving history
                     </p>
-                    <div className="flex items-center text-sm text-red-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                      </svg>
-                      Manual processing required for PA
-                    </div>
                   </div>
                   
                   <div className="border-b pb-4">
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">5-Panel Drug Test</h4>
-                      <span className="font-bold">$85</span>
+                      <span className="font-bold text-xl text-primary-700 min-w-[70px] text-left mr-6">$85</span>
+                      <h4 className="font-semibold text-lg">5-Panel Drug Test</h4>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      Screens: Amphetamines, Cocaine, THC, Opiates, PCP
+                    <p className="text-sm text-gray-600 mb-2">
+                      Includes Amphetamines, Cocaine, THC, Opiates, and PCP
                     </p>
                   </div>
                   
                   <div>
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">10-Panel Drug Test</h4>
-                      <span className="font-bold">$125</span>
+                      <span className="font-bold text-xl text-primary-700 min-w-[70px] text-left mr-6">$125</span>
+                      <h4 className="font-semibold text-lg">10-Panel Drug Test</h4>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 mb-2">
                       Includes all 5-panel + Barbiturates, Benzodiazepines, Methadone, Methaqualone, Propoxyphene
                     </p>
                   </div>
@@ -329,3 +342,5 @@ export default function PricingCards() {
     </div>
   );
 }
+
+// Custom CSS for 3D effects and gold improvements
