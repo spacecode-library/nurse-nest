@@ -7,11 +7,12 @@ import {
 const TOAST_LIMIT = 100
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToasterToast = ToastProps & {
+type ToasterToastProps = Omit<ToastProps, "id"> & {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  onOpenChange?: (open: boolean) => void
 }
 
 const actionTypes = {
@@ -33,11 +34,11 @@ type ActionType = typeof actionTypes
 type Action =
   | {
       type: ActionType["ADD_TOAST"]
-      toast: ToasterToast
+      toast: ToasterToastProps
     }
   | {
       type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
+      toast: Partial<ToasterToastProps>
     }
   | {
       type: ActionType["DISMISS_TOAST"]
@@ -49,7 +50,7 @@ type Action =
     }
 
 interface State {
-  toasts: ToasterToast[]
+  toasts: ToasterToastProps[]
 }
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
@@ -153,10 +154,10 @@ export function useToast() {
 
   return {
     ...state,
-    toast: (props: Omit<ToasterToast, "id">) => {
+    toast: (props: Omit<ToasterToastProps, "id">) => {
       const id = genId()
 
-      const update = (props: Omit<Partial<ToasterToast>, "id">) => 
+      const update = (props: Omit<Partial<ToasterToastProps>, "id">) => 
         dispatch({
           type: actionTypes.UPDATE_TOAST,
           toast: { ...props, id },
@@ -172,6 +173,7 @@ export function useToast() {
           open: true,
           onOpenChange: (open) => {
             if (!open) dismiss()
+            props.onOpenChange?.(open)
           },
         },
       })
@@ -186,10 +188,10 @@ export function useToast() {
   }
 }
 
-export type { ToasterToast as Toast }
-
 // Export a toast function for direct use
-export const toast = (props: Omit<ToasterToast, "id">) => {
-  const { toast: toastFunc } = useToast()
+export const toast = (props: Omit<ToasterToastProps, "id">) => {
+  const { toast: toastFunc } = { toast: () => ({id: '0', dismiss: () => {}, update: () => {}}) }
   return toastFunc(props)
 }
+
+export type { ToasterToastProps as Toast }
