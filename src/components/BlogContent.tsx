@@ -3,6 +3,189 @@ import React from 'react';
 
 // Blog post content
 const blogPosts = {
+  'private-elderly-care-cost': {
+    title: 'How Much Does Private Elderly Care at Home Cost?',
+    date: 'May 16, 2025',
+    author: 'Nurse Nest Team',
+    image: '/lovable-uploads/04b8dbb6-ac67-4547-89ff-f4564c30f2ec.png',
+    content: `
+      <h1>How Much Does Private Elderly Care at Home Cost?</h1>
+
+      <p>Choosing <strong>private elderly care at home</strong> is one of the most impactful decisions a family can make. It allows aging loved ones to remain in a comfortable, familiar environment—while still receiving the support they need. But how much does it cost?</p>
+
+      <p>At <strong>Nurse Nest</strong>, we specialize in matching families with vetted <strong>private duty in-home caregivers</strong> and nurses who meet your loved one's exact needs—whether clinical, personal, or both.</p>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">💵 What Influences the Cost of In-Home Elderly Care?</h2>
+      <p>The cost of care can vary significantly depending on:</p>
+      <ul class="list-disc pl-8 mt-4 mb-6 space-y-2">
+        <li><strong>Type of care provider:</strong> RN, LPN, or caregiver</li>
+        <li><strong>Care level:</strong> Clinical (medications, vitals) vs. personal (mobility, hygiene)</li>
+        <li><strong>Schedule:</strong> Hourly, overnight, or live-in</li>
+        <li><strong>Location:</strong> Metro vs. rural areas</li>
+      </ul>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">📊 Average Hourly Rates for Private Duty Homecare Services</h2>
+      <div class="overflow-x-auto mb-8">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="py-3 px-4 text-left border-b">Provider Type</th>
+              <th class="py-3 px-4 text-left border-b">Rate</th>
+              <th class="py-3 px-4 text-left border-b">Services</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="py-3 px-4 border-b">Registered Nurse (RN)</td>
+              <td class="py-3 px-4 border-b">$45–$75/hr</td>
+              <td class="py-3 px-4 border-b">Medical care, chronic conditions, wound care</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 border-b">Licensed Practical Nurse (LPN)</td>
+              <td class="py-3 px-4 border-b">$35–$55/hr</td>
+              <td class="py-3 px-4 border-b">Basic medical support, medication reminders</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 border-b">Private Duty In-Home Caregiver</td>
+              <td class="py-3 px-4 border-b">$25–$40/hr</td>
+              <td class="py-3 px-4 border-b">Hygiene assistance, companionship, mobility</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">💡 Save with Bundled Vetting Services</h2>
+      <p>Hiring through a marketplace like Nurse Nest offers cost efficiency and peace of mind. Our nurse vetting packages include:</p>
+      <ul class="list-disc pl-8 mt-4 mb-6 space-y-2">
+        <li>Background checks</li>
+        <li>License verification</li>
+        <li>Optional drug tests & driving records</li>
+      </ul>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">Why Families Choose Nurse Nest</h2>
+      <ul class="list-disc pl-8 mt-4 mb-6 space-y-2">
+        <li>15% concierge fee only applied after nurse is selected and hired</li>
+        <li>Flexible care plans tailored to your schedule</li>
+        <li>FastTrack matching available within 5 business days</li>
+      </ul>
+
+      <p class="mt-8"><strong>Ready to hire trusted in-home care?</strong> Start with a refundable $100 search fee. Let us handle the vetting and matching so you can focus on what matters most.</p>
+    `
+  },
+  'private-duty-nurse-vs-home-health-aide': {
+    title: 'Private Duty Nurse vs Home Health Aide: What's the Difference?',
+    date: 'May 12, 2025',
+    author: 'Nurse Nest Team',
+    image: '/lovable-uploads/24d6dd5c-dd41-4a60-88eb-f70d46f03ae9.png',
+    content: `
+      <h1>Private Duty Nurse vs Home Health Aide: What's the Difference?</h1>
+
+      <p>When it comes to <strong>private duty homecare services</strong>, families often ask: should I hire a nurse or a home health aide? Understanding the differences can ensure your loved one receives the right level of care—and avoid overpaying for unnecessary services.</p>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">🩺 What Does a Private Duty Nurse Do?</h2>
+      <p>A <strong>private duty nurse</strong> is a licensed medical professional (RN or LPN) who can deliver clinical care in a home setting. Services include:</p>
+      <ul class="list-disc pl-8 mt-4 mb-6 space-y-2">
+        <li>Administering medications or injections</li>
+        <li>Monitoring blood pressure, blood sugar, or vitals</li>
+        <li>Managing feeding tubes, catheters, or wounds</li>
+        <li>Supporting post-operative recovery or hospice care</li>
+      </ul>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">🧼 What Does a Home Health Aide Provide?</h2>
+      <p>A <strong>home health aide</strong> offers non-clinical support, including:</p>
+      <ul class="list-disc pl-8 mt-4 mb-6 space-y-2">
+        <li>Bathing, grooming, dressing</li>
+        <li>Toileting and mobility assistance</li>
+        <li>Meal prep, feeding, and hydration</li>
+        <li>Light housekeeping and companionship</li>
+      </ul>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">💲 Cost Comparison</h2>
+      <div class="bg-gray-50 p-6 rounded-lg shadow-sm mb-8">
+        <ul class="list-disc pl-8 space-y-2">
+          <li>RN: $45–$75/hr</li>
+          <li>LPN: $35–$55/hr</li>
+          <li>Aide: $25–$40/hr</li>
+        </ul>
+      </div>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">Which Should You Hire?</h2>
+      <p>If your loved one needs <strong>medical supervision</strong> or chronic condition management, go with a <strong>private duty nurse</strong>. If the need is more for <strong>daily living support</strong> and safety, a <strong>private duty in-home caregiver</strong> may suffice.</p>
+
+      <p class="mt-8"><strong>Nurse Nest</strong> can help you determine the best fit—and deliver a vetted match within days.</p>
+    `
+  },
+  'hire-postpartum-private-nurse': {
+    title: 'How to Hire a Private Nurse for Postpartum Support Near You',
+    date: 'May 9, 2025',
+    author: 'Nurse Nest Team',
+    image: '/lovable-uploads/77ddc10d-2117-4745-8bba-2347c09f1bb7.png',
+    content: `
+      <h1>How to Hire a Private Nurse for Postpartum Support Near You</h1>
+
+      <p>Recovering from childbirth while caring for a newborn is a full-time job. Many parents search for a <strong>private nurse near me</strong> to receive postpartum support without the stress of vetting strangers from job boards.</p>
+
+      <p>At <strong>Nurse Nest</strong>, we help families hire licensed postpartum nurses who specialize in newborn care, maternal recovery, and overnight support.</p>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">👶 What Services Does a Postpartum Private Duty Nurse Provide?</h2>
+      <ul class="list-disc pl-8 mt-4 mb-6 space-y-2">
+        <li>Overnight infant care (diapers, feedings, soothing)</li>
+        <li>Breastfeeding and pumping assistance</li>
+        <li>Monitoring mother's recovery: vitals, incision care, mental health</li>
+        <li>Sleep training guidance and routine building</li>
+      </ul>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">📍 How to Hire a Postpartum Nurse Near You with Nurse Nest</h2>
+      <div class="bg-gray-50 p-6 rounded-lg shadow-sm mb-8">
+        <ol class="list-decimal pl-8 space-y-3">
+          <li>Submit your intake form with care preferences</li>
+          <li>Pay the refundable $100 nurse search fee</li>
+          <li>Get matched with fully vetted nurses near you</li>
+          <li>Choose your ideal nurse and connect securely</li>
+        </ol>
+      </div>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">✨ Why Choose Nurse Nest?</h2>
+      <ul class="list-disc pl-8 mt-4 mb-6 space-y-2">
+        <li>Only pay the 15% platform fee after hiring</li>
+        <li>Optional drug tests, MVR checks, and references available</li>
+        <li>HIPAA-compliant platform for privacy and trust</li>
+      </ul>
+
+      <p class="mt-8"><strong>Need someone fast?</strong> Use FastTrack Match to get help in 5 business days—or get your search fee refunded.</p>
+    `
+  },
+  'private-nurse-near-me-guide': {
+    title: 'Private Nurse Near Me: What You Should Know Before Hiring',
+    date: 'May 7, 2025',
+    author: 'Nurse Nest Team',
+    image: '/lovable-uploads/4ef081e3-1c5e-4e3b-a36f-40a679b96779.png',
+    content: `
+      <h1>Private Nurse Near Me: What You Should Know Before Hiring</h1>
+
+      <p>Whether for postpartum care, recovery after surgery, or elderly support, hiring a <strong>private nurse near me</strong> can be life-changing. But how do you ensure you're hiring someone qualified, safe, and trustworthy?</p>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">✔️ 5 Things You Must Know Before Hiring a Private Duty Nurse</h2>
+      <ol class="list-decimal pl-8 mt-4 mb-6 space-y-3">
+        <li><strong>Always verify credentials.</strong> Look up licenses on Nursys or use platforms like Nurse Nest that verify for you.</li>
+        <li><strong>Define the care needed.</strong> Medication administration? Wound care? Daily companionship? Clarity helps with better matching.</li>
+        <li><strong>Know who you're paying.</strong> Avoid cash deals. Use secure systems like Stripe for transparency and safety.</li>
+        <li><strong>Consider personality and bedside manner.</strong> You're inviting someone into your home—fit matters.</li>
+        <li><strong>Vet beyond a résumé.</strong> Ask about CPR, ACLS, malpractice insurance, and references.</li>
+      </ol>
+
+      <h2 class="text-3xl font-bold mt-10 mb-6 text-nurse-dark">Why Use Nurse Nest for Your Nurse Search?</h2>
+      <div class="bg-gray-50 p-6 rounded-lg shadow-sm mb-8">
+        <ul class="list-disc pl-8 space-y-2">
+          <li>Only pay 15% after you've hired</li>
+          <li>Every nurse is vetted, background-checked, and license-verified</li>
+          <li>Concierge support to answer your questions and guide your match</li>
+        </ul>
+      </div>
+
+      <p class="mt-8"><strong>Start today with a refundable $100 search fee</strong>. Our team will take care of the vetting and matching—so you can focus on peace of mind.</p>
+    `
+  },
   'understanding-private-duty-nursing': {
     title: 'Understanding Private Duty Nursing: What You Need to Know',
     date: 'May 5, 2025',

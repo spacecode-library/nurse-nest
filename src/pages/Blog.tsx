@@ -6,6 +6,38 @@ import Footer from '@/components/Footer';
 
 const blogPosts = [
   {
+    id: 'private-elderly-care-cost',
+    title: 'How Much Does Private Elderly Care at Home Cost?',
+    excerpt: "Get a complete breakdown of private elderly care at home costs for RNs, LPNs, and caregivers with our transparent pricing guide.",
+    date: 'May 16, 2025',
+    image: '/lovable-uploads/04b8dbb6-ac67-4547-89ff-f4564c30f2ec.png',
+    readTime: '6 min read'
+  },
+  {
+    id: 'private-duty-nurse-vs-home-health-aide',
+    title: 'Private Duty Nurse vs Home Health Aide: What's the Difference?',
+    excerpt: 'Compare services, qualifications and costs between private duty nurses and home health aides to make the right choice for your loved ones.',
+    date: 'May 12, 2025',
+    image: '/lovable-uploads/24d6dd5c-dd41-4a60-88eb-f70d46f03ae9.png',
+    readTime: '7 min read'
+  },
+  {
+    id: 'hire-postpartum-private-nurse',
+    title: 'How to Hire a Private Nurse for Postpartum Support Near You',
+    excerpt: 'Learn how to find and hire a vetted private nurse for overnight infant care, breastfeeding support, and postpartum recovery.',
+    date: 'May 9, 2025',
+    image: '/lovable-uploads/77ddc10d-2117-4745-8bba-2347c09f1bb7.png',
+    readTime: '5 min read'
+  },
+  {
+    id: 'private-nurse-near-me-guide',
+    title: 'Private Nurse Near Me: What You Should Know Before Hiring',
+    excerpt: 'Discover the essential steps to safely find and hire a qualified private nurse in your area with our comprehensive guide.',
+    date: 'May 7, 2025',
+    image: '/lovable-uploads/4ef081e3-1c5e-4e3b-a36f-40a679b96779.png',
+    readTime: '8 min read'
+  },
+  {
     id: 'understanding-private-duty-nursing',
     title: 'Understanding Private Duty Nursing: What You Need to Know',
     excerpt: "Discover what private duty nursing is, who it benefits, and why it's a growing choice for in-home care.",
