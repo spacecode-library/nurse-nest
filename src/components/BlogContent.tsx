@@ -73,7 +73,7 @@ const blogPosts = {
     `
   },
   'private-duty-nurse-vs-home-health-aide': {
-    title: 'Private Duty Nurse vs Home Health Aide: What's the Difference?',
+    title: "Private Duty Nurse vs Home Health Aide: What's the Difference?",
     date: 'May 12, 2025',
     author: 'Nurse Nest Team',
     image: '/lovable-uploads/24d6dd5c-dd41-4a60-88eb-f70d46f03ae9.png',
