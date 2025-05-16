@@ -479,9 +479,30 @@
 /* Adjust bullet for employment duplicate check fix (leave only one check) */
 
 .luxury-gold-gradient {
-  background: linear-gradient(120deg, #fffaed 0%, #ffecb3 70%, #ffe082 100%);
-  box-shadow: 0 4px 40px 0 rgba(246, 215, 76, 0.13), 0 2px 8px 0 rgba(158, 129, 43, 0.08);
-  border: 1.5px solid #f0d686;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffe082 60%, #ffd54f 100%);
+  box-shadow: 
+    0 10px 25px -5px rgba(255, 183, 77, 0.2),
+    0 8px 10px -6px rgba(255, 183, 77, 0.1);
+  border: 1px solid #ffe082;
+  position: relative;
+  overflow: hidden;
+}
+
+.luxury-gold-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hover\:glow-gold:hover {

@@ -53,7 +53,8 @@ export default function PricingBundlesSection({ className = "" }: BundlesSection
   ];
 
   return (
-    <section className={`w-full max-w-5xl mx-auto ${className}`}>
+    <section className={`w-full max-w-5xl mx-auto px-4 ${className}`}>
+      <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Vetting Bundles</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-7 items-stretch">
         {bundles.map((b) => (
           <PricingBundleCard

@@ -6,6 +6,7 @@ import PricingContent from '@/components/PricingContent';
 import { Toaster } from '@/components/ui/toaster';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
 import AnimatedSection from '@/components/AnimatedSection';
+import { Shield, Lock } from 'lucide-react';
 
 export default function Pricing() {
   useScrollAnimationObserver();
