@@ -24,13 +24,13 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
       name: "Basic Background",
       price: "$45",
       description: "SSN trace, sex offender registry, global watchlist, national criminal search",
-      resultTime: "<24 hrs",
+      resultTime: "Under 24 hrs",
       category: "background"
     },
     {
       name: "Comprehensive Background",
       price: "$125",
-      description: "All Basic features + State & Federal criminal search",
+      description: "Adds State + Federal criminal checks",
       resultTime: "5–7 days",
       category: "background"
     },
@@ -39,32 +39,34 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
       name: "Professional License Verification",
       price: "$15",
       description: "All active/inactive licenses",
-      resultTime: "<24 hrs", 
+      resultTime: "Under 24 hrs", 
       category: "license"
     },
     {
       name: "Employment History Verification",
       price: "$49",
-      description: "7-year job history with title/date confirmation",
+      description: "7-year work history",
       category: "license"
     },
     // Driving & Drug
     {
       name: "Motor Vehicle Record",
       price: "$19",
-      description: "Verifies license and driving history",
+      description: "Confirms license and incidents",
       category: "driving"
     },
     {
       name: "5-Panel Drug Test",
       price: "$85",
       description: "Includes Amphetamines, Cocaine, THC, Opiates, and PCP",
+      resultTime: "1-3 days",
       category: "driving"
     },
     {
       name: "10-Panel Drug Test",
       price: "$125",
-      description: "Includes 5-panel + Barbiturates, Benzodiazepines, Methadone, Methaqualone, Propoxyphene",
+      description: "All 5-panel plus: Benzos, Barbiturates, Methadone, etc.",
+      resultTime: "1-3 days",
       category: "driving"
     }
   ];
@@ -83,13 +85,24 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
     }
   };
 
+  // Helper function to get result time icon
+  const getResultTimeIcon = (time: string | undefined) => {
+    if (!time) return null;
+    
+    if (time.includes("Under")) {
+      return <span className="text-blue-500">⏱️</span>;
+    }
+    
+    return <span className="text-gray-500">⏱️</span>;
+  };
+
   return (
     <section className={`w-full max-w-6xl mx-auto px-4 ${className}`}>
       {/* Section Header */}
-      <AnimatedSection animation="fade-up" className="text-center mb-12">
+      <AnimatedSection animation="fade-up" className="text-center mb-10">
         <div className="flex justify-center items-center mb-3">
-          <Shield className="w-7 h-7 mr-2 text-primary-500 opacity-60" />
-          <h2 className="text-3xl font-bold text-gray-800">
+          <Shield className="w-6 h-6 mr-2 text-primary-500" />
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
             Build-Your-Own Screening
           </h2>
         </div>
@@ -100,34 +113,33 @@ export default function ScreeningSection({ className = "" }: ScreeningSectionPro
 
       {/* New Grid Layout of Services */}
       <AnimatedSection animation="fade-up" delay={100}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {services.map((service, index) => {
             const style = getCategoryStyle(service.category);
+            const resultIcon = getResultTimeIcon(service.resultTime);
+            
             return (
               <div 
                 key={index}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col hover:shadow-md transition-shadow"
+                className="relative bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col hover:shadow-md transition-shadow h-full"
               >
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg font-medium text-gray-800">{service.name}</h3>
                   <span className="text-xl font-bold text-primary-700">{service.price}</span>
-                  <h3 className="text-lg font-medium text-gray-800 text-right">{service.name}</h3>
                 </div>
                 
                 {/* Category Tag */}
-                <div className={`inline-flex self-end px-2 py-0.5 rounded-full text-xs mb-2 ${style.bg} ${style.border} ${style.text}`}>
+                <div className={`inline-flex self-start px-2.5 py-0.5 rounded-full text-xs mb-3 ${style.bg} ${style.border} ${style.text}`}>
                   {service.category === "background" ? "Background" : 
                    service.category === "license" ? "Verification" : "Testing"}
                 </div>
 
-                <p className="text-gray-600 text-sm">{service.description}</p>
+                <p className="text-gray-600 text-sm mb-3">{service.description}</p>
                 
                 {service.resultTime && (
-                  <div className="mt-auto pt-2 text-xs text-gray-500 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                      <polyline points="12 6 12 12 16 14" strokeWidth="2" />
-                    </svg>
-                    Results: {service.resultTime}
+                  <div className="mt-auto pt-2 text-sm text-gray-500 flex items-center">
+                    {resultIcon}
+                    <span className="ml-1">Results: {service.resultTime}</span>
                   </div>
                 )}
               </div>
