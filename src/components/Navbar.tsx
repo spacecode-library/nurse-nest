@@ -17,7 +17,6 @@ const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Pricing', path: '/pricing' },
   { name: 'Pay Calculator', path: '/salary-calculator' },
-  { name: 'Blog', path: '/blog' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -34,14 +33,17 @@ export default function Navbar({ showCta = false }) {
   
   // Check if we're on pricing, blog, or contact pages
   const shouldShowCta = location.pathname === '/pricing' || 
-                        location.pathname === '/blog' || 
-                        location.pathname.includes('/blog/') ||
                         location.pathname === '/contact' ||
                         location.pathname === '/about' ||
                         location.pathname === '/terms' ||
                         location.pathname === '/privacy' ||
                         location.pathname === '/disclaimer' ||
                         location.pathname === '/salary-calculator';
+  
+  // Check if we're on one of the nurses resources pages
+  const isNursePage = location.pathname === '/malpractice-insurance' ||
+                     location.pathname === '/llc-setup-help' ||
+                     location.pathname === '/1099-tax-tips';
   
   // Text color should be dark on non-home pages or when scrolled
   const shouldUseDarkText = !isHomePage || isScrolled;
@@ -95,7 +97,7 @@ export default function Navbar({ showCta = false }) {
     )}>
       <div className="container mx-auto px-6 flex items-center justify-between">
         {/* Logo - moved further left */}
-        <Link to="/" className="flex items-center mr-8">
+        <Link to="/" className="flex items-center mr-12">
           <span className={cn(
             "text-2xl font-heading font-bold",
             shouldUseDarkText ? "text-nurse-dark" : "text-white"
@@ -157,7 +159,7 @@ export default function Navbar({ showCta = false }) {
         </nav>
         
         {/* Authentication and CTA Button - Desktop - moved further right */}
-        <div className="hidden lg:flex items-center space-x-6 ml-8">
+        <div className="hidden lg:flex items-center space-x-6 ml-auto">
           {/* Auth Button */}
           {user ? (
             <DropdownMenu>
@@ -200,17 +202,18 @@ export default function Navbar({ showCta = false }) {
             </Link>
           )}
           
-          {/* CTA Button */}
-          <Button 
-            className={cn(
-              "transition-opacity duration-300 button-hover-effect",
-              (showCta || shouldShowCta) ? "opacity-100" : "opacity-0 pointer-events-none",
-              isScrolled ? "bg-primary-500 hover:bg-primary-600" : "bg-white text-primary-500 hover:bg-gray-100"
-            )}
-            onClick={handleRequestNurse}
-          >
-            Request a Nurse
-          </Button>
+          {/* CTA Button - only show on appropriate pages and hide on nurse pages */}
+          {(showCta || shouldShowCta) && !isNursePage && (
+            <Button 
+              className={cn(
+                "transition-opacity duration-300 button-hover-effect",
+                isScrolled ? "bg-primary-500 hover:bg-primary-600" : "bg-white text-primary-500 hover:bg-gray-100"
+              )}
+              onClick={handleRequestNurse}
+            >
+              Request a Nurse
+            </Button>
+          )}
         </div>
         
         {/* Mobile Menu Button */}
@@ -333,15 +336,18 @@ export default function Navbar({ showCta = false }) {
               </Link>
             )}
             
-            <Button 
-              className="bg-primary-500 hover:bg-primary-600 w-full mt-4 button-hover-effect"
-              onClick={() => {
-                setIsOpen(false);
-                handleRequestNurse();
-              }}
-            >
-              Request a Nurse
-            </Button>
+            {/* CTA Button - Only show if not on nurse pages */}
+            {!isNursePage && (
+              <Button 
+                className="bg-primary-500 hover:bg-primary-600 w-full mt-4 button-hover-effect"
+                onClick={() => {
+                  setIsOpen(false);
+                  handleRequestNurse();
+                }}
+              >
+                Request a Nurse
+              </Button>
+            )}
           </nav>
         </div>
       </div>
