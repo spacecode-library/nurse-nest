@@ -3,11 +3,9 @@ import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 
 export default function LlcSetupHelp() {
-  const navigate = useNavigate();
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -93,29 +91,59 @@ export default function LlcSetupHelp() {
               <div className="grid md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                   <h3 className="font-semibold mb-2">LegalZoom</h3>
-                  <ul className="text-sm text-gray-600">
+                  <ul className="text-sm text-gray-600 mb-4">
                     <li>✓ Well-established</li>
                     <li>✓ Additional legal services</li>
                     <li>✓ $79 + state fees</li>
                   </ul>
+                  <a 
+                    href="https://www.legalzoom.com/marketing/business-formation/llc?utm_source=bing&utm_medium=cpc&utm_term=start%20llc&utm_content=78134259565528&utm_campaign=SMB%20%7C%20LLC%20%7C%20Exact&utm_campaignID=31756160&utm_adgroupID=1250144791224007&utm_partner=bingsearch&b_adgroup=SMB%20%7C%20LLC%20%7C%20Action%20-%20Start%20%7C%20Exact&b_adgroupid=1250144791224007&b_adid=78134259565528&b_campaign=SMB%20%7C%20LLC%20%7C%20Exact&b_campaignid=31756160&b_isproduct=&b_productid=&b_term=start%20llc&b_termid=kwd-78134120244813:loc-4132&msclkid=87df36fd6f5a144604155ef249cf72e7" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center w-full"
+                  >
+                    <Button className="w-full bg-primary-500 hover:bg-primary-600 text-sm">
+                      Visit LegalZoom <ExternalLink className="h-4 w-4 ml-1" />
+                    </Button>
+                  </a>
                 </div>
                 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                   <h3 className="font-semibold mb-2">ZenBusiness</h3>
-                  <ul className="text-sm text-gray-600">
+                  <ul className="text-sm text-gray-600 mb-4">
                     <li>✓ Great pricing</li>
                     <li>✓ Fast processing</li>
                     <li>✓ $49 + state fees</li>
                   </ul>
+                  <a 
+                    href="https://www.zenbusiness.com/file/llc-c/?headline=Start+Your+LLC+Today&utm_source=bing&utm_medium=cpc&utm_campaign=388610299&adgroupid=1274334906371325&creative=&matchtype=e&utm_term=start%20llc&device=c&CT=Prospecting_&ST=ZenBusiness_&msclkid=9899b124517a102c07c1d92b77eff933" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center w-full"
+                  >
+                    <Button className="w-full bg-primary-500 hover:bg-primary-600 text-sm">
+                      Visit ZenBusiness <ExternalLink className="h-4 w-4 ml-1" />
+                    </Button>
+                  </a>
                 </div>
                 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                   <h3 className="font-semibold mb-2">Bizee</h3>
-                  <ul className="text-sm text-gray-600">
+                  <ul className="text-sm text-gray-600 mb-4">
                     <li>✓ User-friendly</li>
                     <li>✓ LLC formation experts</li>
                     <li>✓ $0 + state fees</li>
                   </ul>
+                  <a 
+                    href="https://bizee.com/form/bizee-2?adlclid=0e5e4e0ae5cf14a7a0192605c2c7d93c&msclkid=0e5e4e0ae5cf14a7a0192605c2c7d93c&utm_source=bing&utm_medium=cpc&utm_campaign=%5BADL%5D%20%5BNon-Brand%5D%20LLC&utm_term=how%20to%20start%20a%20llc%20business&utm_content=LLC%20-%20Start%20LLC%20-%20General" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center w-full"
+                  >
+                    <Button className="w-full bg-primary-500 hover:bg-primary-600 text-sm">
+                      Visit Bizee <ExternalLink className="h-4 w-4 ml-1" />
+                    </Button>
+                  </a>
                 </div>
               </div>
               
@@ -131,15 +159,6 @@ export default function LlcSetupHelp() {
                   <strong>Check state-specific requirements</strong> - some states require publication notices or annual report filings
                 </li>
               </ol>
-            </div>
-            
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <Button 
-                onClick={() => navigate('/apply')} 
-                className="bg-primary-500 hover:bg-primary-600 button-hover-effect"
-              >
-                Request a Nurse
-              </Button>
             </div>
           </div>
         </div>

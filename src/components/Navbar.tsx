@@ -93,9 +93,9 @@ export default function Navbar({ showCta = false }) {
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
       isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
     )}>
-      <div className="container-custom flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center">
+      <div className="container mx-auto px-6 flex items-center justify-between">
+        {/* Logo - moved further left */}
+        <Link to="/" className="flex items-center mr-8">
           <span className={cn(
             "text-2xl font-heading font-bold",
             shouldUseDarkText ? "text-nurse-dark" : "text-white"
@@ -104,8 +104,8 @@ export default function Navbar({ showCta = false }) {
           </span>
         </Link>
         
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-8">
+        {/* Desktop Navigation - centered */}
+        <nav className="hidden lg:flex items-center space-x-10 flex-grow justify-center">
           {navLinks.map((link) => (
             <Link 
               key={link.name}
@@ -156,8 +156,8 @@ export default function Navbar({ showCta = false }) {
           </DropdownMenu>
         </nav>
         
-        {/* Authentication and CTA Button - Desktop */}
-        <div className="hidden lg:flex items-center space-x-4">
+        {/* Authentication and CTA Button - Desktop - moved further right */}
+        <div className="hidden lg:flex items-center space-x-6 ml-8">
           {/* Auth Button */}
           {user ? (
             <DropdownMenu>

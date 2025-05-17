@@ -1,3 +1,4 @@
+
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import '@/index.css';
@@ -32,7 +33,7 @@ export default function HeroSection() {
               <div>Your Doorstep</div>
             </h1>
             <p className="text-base md:text-lg text-white mb-8 max-w-xl drop-shadow-md">
-              A concierge-style platform that handles everything—from matching you with qualified nurses to secure messaging, custom vetting, video calls, hiring, timecard approvals, and payment. All in one place.
+              Hire trusted nurses. Anywhere. Anytime. Pain-Free. Nationwide concierge service with built-in vetting, video calls, and payments.
             </p>
             <div>
               <Link to="/apply">

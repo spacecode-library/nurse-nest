@@ -1,13 +1,8 @@
-
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 export default function TaxTips() {
-  const navigate = useNavigate();
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -156,15 +151,6 @@ export default function TaxTips() {
                   Use an app like QuickBooks Self-Employed, Wave, or FreshBooks to track expenses throughout the year. This makes tax time much easier and helps ensure you don't miss deductions.
                 </p>
               </div>
-            </div>
-            
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <Button 
-                onClick={() => navigate('/apply')} 
-                className="bg-primary-500 hover:bg-primary-600 button-hover-effect"
-              >
-                Request a Nurse
-              </Button>
             </div>
           </div>
         </div>

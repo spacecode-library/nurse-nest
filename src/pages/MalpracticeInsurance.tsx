@@ -3,11 +3,9 @@ import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 
 export default function MalpracticeInsurance() {
-  const navigate = useNavigate();
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -66,15 +64,45 @@ export default function MalpracticeInsurance() {
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="bg-white p-4 rounded shadow-sm border border-gray-100">
                     <h4 className="font-medium mb-2">NSO</h4>
-                    <p className="text-sm text-gray-600">Specializes in nursing coverage with 60+ years experience</p>
+                    <p className="text-sm text-gray-600 mb-4">Specializes in nursing coverage with 60+ years experience</p>
+                    <a 
+                      href="https://www.nso.com/malpractice-insurance/Individuals/Nurses" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center"
+                    >
+                      <Button className="w-full bg-primary-500 hover:bg-primary-600 text-sm">
+                        Visit NSO <ExternalLink className="h-4 w-4 ml-1" />
+                      </Button>
+                    </a>
                   </div>
                   <div className="bg-white p-4 rounded shadow-sm border border-gray-100">
                     <h4 className="font-medium mb-2">Berxi</h4>
-                    <p className="text-sm text-gray-600">Digital-first with instant quotes and competitive rates</p>
+                    <p className="text-sm text-gray-600 mb-4">Digital-first with instant quotes and competitive rates</p>
+                    <a 
+                      href="https://www.berxi.com/insurance/all-nurses/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center"
+                    >
+                      <Button className="w-full bg-primary-500 hover:bg-primary-600 text-sm">
+                        Visit Berxi <ExternalLink className="h-4 w-4 ml-1" />
+                      </Button>
+                    </a>
                   </div>
                   <div className="bg-white p-4 rounded shadow-sm border border-gray-100">
                     <h4 className="font-medium mb-2">CM&F Group</h4>
-                    <p className="text-sm text-gray-600">Flexible policies with same-day coverage available</p>
+                    <p className="text-sm text-gray-600 mb-4">Flexible policies with same-day coverage available</p>
+                    <a 
+                      href="https://www.cmfgroup.com/professional-liability-insurance/nursing-liability-insurance/registered-nurse-rn-insurance/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center"
+                    >
+                      <Button className="w-full bg-primary-500 hover:bg-primary-600 text-sm">
+                        Visit CM&F <ExternalLink className="h-4 w-4 ml-1" />
+                      </Button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -82,15 +110,6 @@ export default function MalpracticeInsurance() {
               <p>
                 Most providers offer <strong>same-day coverage</strong>, so you can get protected quickly when you need it. Remember to keep your policy limits adequate for your practice area, typically at least $1 million per occurrence.
               </p>
-            </div>
-            
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <Button 
-                onClick={() => navigate('/apply')} 
-                className="bg-primary-500 hover:bg-primary-600 button-hover-effect"
-              >
-                Request a Nurse
-              </Button>
             </div>
           </div>
         </div>
