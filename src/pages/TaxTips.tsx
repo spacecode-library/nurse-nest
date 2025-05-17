@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export default function TaxTips() {
   useEffect(() => {
