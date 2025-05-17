@@ -30,28 +30,6 @@ export default function LlcSetupHelp() {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Get liability protection, tax advantages, and look more professional.
             </p>
-            
-            {/* Trust badges */}
-            <div className="flex flex-wrap justify-center gap-3 mt-6">
-              <span className="bg-green-50 text-green-700 text-xs px-3 py-1 rounded-full border border-green-200 flex items-center">
-                <svg className="w-3 h-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Nurse-Verified
-              </span>
-              <span className="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full border border-blue-200 flex items-center">
-                <svg className="w-3 h-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                </svg>
-                Updated for 2025
-              </span>
-              <span className="bg-purple-50 text-purple-700 text-xs px-3 py-1 rounded-full border border-purple-200 flex items-center">
-                <svg className="w-3 h-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
-                </svg>
-                Resource Guide
-              </span>
-            </div>
           </div>
           
           {/* Disclaimer */}
@@ -230,6 +208,28 @@ export default function LlcSetupHelp() {
                     <p>The timeline varies by state, but typically ranges from 1-6 weeks. Expedited services through providers like ZenBusiness can speed up the process for an additional fee.</p>
                   </div>
                 </div>
+              </div>
+              
+              {/* Trust badges moved to bottom */}
+              <div className="flex flex-wrap justify-center gap-3 mt-8 border-t pt-6">
+                <span className="bg-green-50 text-green-700 text-xs px-3 py-1 rounded-full border border-green-200 flex items-center">
+                  <svg className="w-3 h-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  Nurse-Verified
+                </span>
+                <span className="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full border border-blue-200 flex items-center">
+                  <svg className="w-3 h-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                  </svg>
+                  Updated for 2025
+                </span>
+                <span className="bg-purple-50 text-purple-700 text-xs px-3 py-1 rounded-full border border-purple-200 flex items-center">
+                  <svg className="w-3 h-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                  </svg>
+                  Resource Guide
+                </span>
               </div>
             </div>
           </div>

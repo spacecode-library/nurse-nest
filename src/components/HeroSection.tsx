@@ -33,7 +33,7 @@ export default function HeroSection() {
               <div>Your Doorstep</div>
             </h1>
             <p className="text-base md:text-lg text-white mb-8 max-w-xl drop-shadow-md">
-              Hire trusted nurses. Anywhere. Anytime. Pain-Free. Nationwide concierge service with built-in vetting, video calls, and payments.
+              Hire trusted nurses. Anywhere. Anytime. Nationwide concierge service with built-in vetting, video calls, and payments.
             </p>
             <div>
               <Link to="/apply">

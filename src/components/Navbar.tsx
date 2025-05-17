@@ -11,7 +11,7 @@ import UserMenu from './navbar/UserMenu';
 import CtaButton from './navbar/CtaButton';
 import MobileMenu from './navbar/MobileMenu';
 
-export default function Navbar({ showCta = false }) {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -102,7 +102,7 @@ export default function Navbar({ showCta = false }) {
           <UserMenu shouldUseDarkText={shouldUseDarkText} />
           
           {/* CTA Button - only show on appropriate pages and hide on nurse pages */}
-          {(showCta || shouldShowCta) && !isNursePage && (
+          {shouldShowCta && !isNursePage && (
             <CtaButton isScrolled={isScrolled} onClick={handleRequestNurse} />
           )}
         </div>
