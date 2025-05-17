@@ -22,6 +22,10 @@ import SalaryResult from "./pages/SalaryResult";
 import PreResult from "./pages/PreResult";
 import Dashboard from "./pages/Dashboard";
 import VettingOptions from "./pages/VettingOptions";
+import NurseApplication from "./pages/NurseApplication";
+import MalpracticeInsurance from "./pages/MalpracticeInsurance";
+import LlcSetupHelp from "./pages/LlcSetupHelp";
+import TaxTips from "./pages/TaxTips";
 
 export default function App() {
   return (
@@ -47,6 +51,12 @@ export default function App() {
             <Route path="/salary-result" element={<SalaryResult />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/vetting-options" element={<VettingOptions />} />
+            
+            {/* New Nurse Resources Routes */}
+            <Route path="/nurse-application" element={<NurseApplication />} />
+            <Route path="/malpractice-insurance" element={<MalpracticeInsurance />} />
+            <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
+            <Route path="/1099-tax-tips" element={<TaxTips />} />
             
             {/* Add all other routes above the catch-all 404 route */}
             <Route path="*" element={<NotFound />} />

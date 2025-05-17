@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, UserRound, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, UserRound, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useScrollToSection } from '@/hooks/use-scroll-to-section';
@@ -76,6 +77,16 @@ export default function Navbar({ showCta = false }) {
     navigate('/apply');
     window.scrollTo(0, 0); // Scroll to top when navigating
   };
+
+  const handleApplyNowClick = () => {
+    if (!user) {
+      // If user is not logged in, redirect to auth page
+      navigate('/auth', { state: { redirectAfterAuth: 'https://www.nursenest.us/nurseapplication' } });
+    } else {
+      // If user is logged in, redirect directly to the application
+      window.location.href = 'https://www.nursenest.us/nurseapplication';
+    }
+  };
   
   return (
     <header className={cn(
@@ -113,6 +124,36 @@ export default function Navbar({ showCta = false }) {
               {link.name}
             </Link>
           ))}
+
+          {/* For Nurses Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button 
+                className={cn(
+                  "font-medium flex items-center link-underline",
+                  shouldUseDarkText
+                    ? "text-gray-700 hover:text-primary-500" 
+                    : "text-white hover:text-primary-100"
+                )}
+              >
+                For Nurses <ChevronDown className="ml-1 h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-white shadow-md rounded-md border border-gray-100 w-64">
+              <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={handleApplyNowClick}>
+                Apply Now
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={() => navigate('/malpractice-insurance')}>
+                Malpractice Insurance
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={() => navigate('/llc-setup-help')}>
+                LLC Setup Help
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={() => navigate('/1099-tax-tips')}>
+                1099 Tax Tips
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
         
         {/* Authentication and CTA Button - Desktop */}
@@ -225,6 +266,43 @@ export default function Navbar({ showCta = false }) {
                 {link.name}
               </Link>
             ))}
+            
+            {/* For Nurses Section in Mobile Menu */}
+            <div className="border-t border-b border-gray-100 py-4 space-y-4">
+              <h3 className="font-semibold text-gray-800">For Nurses</h3>
+              <Link 
+                to="#"
+                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsOpen(false);
+                  handleApplyNowClick();
+                }}
+              >
+                Apply Now
+              </Link>
+              <Link 
+                to="/malpractice-insurance"
+                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
+                onClick={() => setIsOpen(false)}
+              >
+                Malpractice Insurance
+              </Link>
+              <Link 
+                to="/llc-setup-help"
+                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
+                onClick={() => setIsOpen(false)}
+              >
+                LLC Setup Help
+              </Link>
+              <Link 
+                to="/1099-tax-tips"
+                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
+                onClick={() => setIsOpen(false)}
+              >
+                1099 Tax Tips
+              </Link>
+            </div>
             
             {user ? (
               <>
