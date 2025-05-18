@@ -16,9 +16,11 @@ const translations: Record<string, Translations> = {
   it
 };
 
+// Create the context with a default undefined value
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+// Define the provider component as a named function component
+export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState('en');
   const [t, setT] = useState<Translations>(translations.en);
 
@@ -45,6 +47,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// Export the hook to use this context
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (context === undefined) {
