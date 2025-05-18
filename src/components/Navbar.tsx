@@ -11,7 +11,11 @@ import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import FloatingCta from './navbar/FloatingCta';
 
-export default function Navbar() {
+interface NavbarProps {
+  isHomePage?: boolean;
+}
+
+export default function Navbar({ isHomePage = false }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -19,7 +23,7 @@ export default function Navbar() {
   const { user } = useAuth();
   
   // Check if we're on the home page
-  const isHomePage = location.pathname === '/';
+  const isHomePageRoute = location.pathname === '/';
   
   // Check if we're on one of the nurses resources pages
   const isNursePage = location.pathname === '/malpractice-insurance' ||
@@ -27,7 +31,7 @@ export default function Navbar() {
                      location.pathname === '/1099-tax-tips';
   
   // Text color should be dark on non-home pages or when scrolled
-  const shouldUseDarkText = !isHomePage || isScrolled;
+  const shouldUseDarkText = !isHomePageRoute || isScrolled;
   
   useEffect(() => {
     const handleScroll = () => {
@@ -39,12 +43,12 @@ export default function Navbar() {
     handleScroll(); // Initial check
     
     // Always set isScrolled to true for non-home pages to show dark text on light background
-    if (!isHomePage) {
+    if (!isHomePageRoute) {
       setIsScrolled(true);
     }
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isHomePage]);
+  }, [isHomePageRoute]);
 
   const handleNavClick = (path) => {
     setIsOpen(false);
@@ -115,8 +119,8 @@ export default function Navbar() {
         />
       </header>
       
-      {/* Floating CTA Button */}
-      <FloatingCta onClick={handleRequestNurse} />
+      {/* Floating CTA Button - Only show if not on the home page */}
+      {!isHomePage && <FloatingCta onClick={handleRequestNurse} />}
     </>
   );
 }
