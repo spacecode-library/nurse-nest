@@ -27,14 +27,15 @@ export function DesktopCarousel({ steps, currentStep, nextStep, prevStep, setCur
         }}
       >
         {steps.map((step, index) => (
-          <DesktopStep
-            key={index}
-            title={step.title}
-            description={step.description}
-            icon={step.icon}
-            imageSrc={step.imageSrc}
-            imageAlt={step.imageAlt}
-          />
+          <div key={index} className="w-full flex-shrink-0">
+            <DesktopStep
+              title={step.title}
+              description={step.description}
+              icon={step.icon}
+              imageSrc={step.imageSrc}
+              imageAlt={step.imageAlt}
+            />
+          </div>
         ))}
       </div>
       
@@ -47,13 +48,13 @@ export function DesktopCarousel({ steps, currentStep, nextStep, prevStep, setCur
       />
       
       {/* Step indicator */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3">
         {steps.map((_, i) => (
           <button 
             key={i}
             onClick={() => setCurrentStep(i)}
             className={`w-3 h-3 rounded-full transition-all ${
-              i === currentStep ? "bg-white scale-110" : "bg-white/50"
+              i === currentStep ? "bg-white scale-125" : "bg-white/50"
             }`}
             aria-label={`Go to step ${i + 1}`}
           />

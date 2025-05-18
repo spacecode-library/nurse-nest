@@ -49,13 +49,13 @@ export function MobileCarousel({ steps, currentStep, setCurrentStep }: MobileCar
         className="w-full"
         setApi={setApi}
         opts={{
-          align: "start",
+          align: "center",
           loop: false,
         }}
       >
         <CarouselContent>
           {steps.map((step, index) => (
-            <CarouselItem key={index} className="pl-0">
+            <CarouselItem key={index} className="pl-0 w-full">
               <MobileStep
                 title={step.title}
                 description={step.description}
@@ -70,7 +70,7 @@ export function MobileCarousel({ steps, currentStep, setCurrentStep }: MobileCar
           totalSteps={steps.length}
           currentStep={currentStep}
           onStepClick={setCurrentStep}
-          className="mt-4"
+          className="mt-6"
         />
       </Carousel>
     </div>
