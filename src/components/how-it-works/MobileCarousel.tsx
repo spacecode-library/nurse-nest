@@ -51,6 +51,7 @@ export function MobileCarousel({ steps, currentStep, setCurrentStep }: MobileCar
         opts={{
           align: "center",
           loop: false,
+          duration: 25
         }}
       >
         <CarouselContent>
@@ -62,6 +63,7 @@ export function MobileCarousel({ steps, currentStep, setCurrentStep }: MobileCar
                 icon={step.icon}
                 imageSrc={step.imageSrc}
                 imageAlt={step.imageAlt}
+                stepNumber={step.number}
               />
             </CarouselItem>
           ))}
@@ -70,7 +72,7 @@ export function MobileCarousel({ steps, currentStep, setCurrentStep }: MobileCar
           totalSteps={steps.length}
           currentStep={currentStep}
           onStepClick={setCurrentStep}
-          className="mt-6"
+          className="mt-8"
         />
       </Carousel>
     </div>

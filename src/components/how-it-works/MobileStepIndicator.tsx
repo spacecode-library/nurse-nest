@@ -11,14 +11,17 @@ interface MobileStepIndicatorProps {
 
 export function MobileStepIndicator({ totalSteps, currentStep, onStepClick, className }: MobileStepIndicatorProps) {
   return (
-    <div className={cn("flex justify-center gap-3", className)}>
+    <div className={cn("flex justify-center gap-4", className)}>
       {Array.from({ length: totalSteps }, (_, i) => (
         <button 
           key={i}
           onClick={() => onStepClick(i)}
-          className={`w-3 h-3 rounded-full transition-all ${
-            i === currentStep ? "bg-primary-500 scale-125" : "bg-gray-300"
-          }`}
+          className={cn(
+            "w-4 h-4 rounded-full transition-all duration-300",
+            i === currentStep 
+              ? "bg-primary-500 scale-125 shadow-md shadow-primary-300" 
+              : "bg-gray-300 hover:bg-gray-400"
+          )}
           aria-label={`Go to step ${i + 1}`}
         />
       ))}

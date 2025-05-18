@@ -74,9 +74,9 @@ export default function HowItWorksSection() {
   const isLastStep = currentStep === steps.length - 1;
 
   return (
-    <section className="py-20 md:py-32 bg-white relative overflow-hidden" id="how-it-works">
+    <section className="py-20 md:py-32 bg-gray-50 relative overflow-hidden" id="how-it-works">
       <div className="container mx-auto px-4 relative z-10">
-        <AnimatedSection animation="fade-up" className="text-center mb-12">
+        <AnimatedSection animation="fade-up" className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             How It <span className="text-primary-500">Works</span>
           </h2>
@@ -84,16 +84,6 @@ export default function HowItWorksSection() {
             From request to payment—your seamless path to expert in-home care.
           </p>
         </AnimatedSection>
-        
-        {/* Progress Indicator - Only for desktop */}
-        {!isMobile && (
-          <StepIndicator 
-            steps={steps.length} 
-            currentStep={currentStep} 
-            onStepClick={setCurrentStep} 
-            className="mb-8"
-          />
-        )}
         
         {/* Mobile Carousel View */}
         {isMobile ? (
@@ -104,7 +94,7 @@ export default function HowItWorksSection() {
           />
         ) : (
           /* Desktop View */
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <DesktopCarousel
               steps={steps}
               currentStep={currentStep}
@@ -117,16 +107,20 @@ export default function HowItWorksSection() {
         
         {/* Final CTA Button - only show on last step */}
         {isLastStep && (
-          <AnimatedSection animation="fade-up" delay={300} className="mt-12 text-center">
+          <AnimatedSection animation="fade-up" delay={300} className="mt-16 text-center">
             <Link to="/apply">
-              <Button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white py-6 px-8 text-lg rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1">
+              <Button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white py-6 px-8 text-lg rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1 group">
                 Start Your Nurse Search
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </AnimatedSection>
         )}
       </div>
+      
+      {/* Background decorative elements */}
+      <div className="hidden md:block absolute top-20 left-10 w-32 h-32 bg-primary-100 rounded-full opacity-30 blur-2xl"></div>
+      <div className="hidden md:block absolute bottom-20 right-10 w-64 h-64 bg-primary-100 rounded-full opacity-20 blur-3xl"></div>
     </section>
   );
 }

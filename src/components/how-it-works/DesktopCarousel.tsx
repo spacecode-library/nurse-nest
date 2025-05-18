@@ -2,7 +2,9 @@
 import React from 'react';
 import { DesktopStep } from './DesktopStep';
 import { NavigationControls } from './NavigationControls';
+import { StepIndicator } from './StepIndicator';
 import { StepType } from './types';
+import { cn } from '@/lib/utils';
 
 interface DesktopCarouselProps {
   steps: StepType[];
@@ -15,7 +17,7 @@ interface DesktopCarouselProps {
 export function DesktopCarousel({ steps, currentStep, nextStep, prevStep, setCurrentStep }: DesktopCarouselProps) {
   return (
     <div 
-      className="relative overflow-hidden rounded-xl shadow-lg"
+      className="relative overflow-hidden rounded-xl shadow-lg bg-white"
       style={{ height: "600px" }}
     >
       {/* Step content with animations */}
@@ -34,6 +36,7 @@ export function DesktopCarousel({ steps, currentStep, nextStep, prevStep, setCur
               icon={step.icon}
               imageSrc={step.imageSrc}
               imageAlt={step.imageAlt}
+              stepNumber={step.number}
             />
           </div>
         ))}
@@ -48,18 +51,12 @@ export function DesktopCarousel({ steps, currentStep, nextStep, prevStep, setCur
       />
       
       {/* Step indicator */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3">
-        {steps.map((_, i) => (
-          <button 
-            key={i}
-            onClick={() => setCurrentStep(i)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              i === currentStep ? "bg-white scale-125" : "bg-white/50"
-            }`}
-            aria-label={`Go to step ${i + 1}`}
-          />
-        ))}
-      </div>
+      <StepIndicator 
+        steps={steps.length} 
+        currentStep={currentStep} 
+        onStepClick={setCurrentStep}
+        className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex"
+      />
     </div>
   );
 }
