@@ -8,8 +8,8 @@ import Logo from './navbar/Logo';
 import NavLinks from './navbar/NavLinks';
 import NurseDropdown from './navbar/NurseDropdown';
 import UserMenu from './navbar/UserMenu';
-import CtaButton from './navbar/CtaButton';
 import MobileMenu from './navbar/MobileMenu';
+import FloatingCta from './navbar/FloatingCta';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,15 +20,6 @@ export default function Navbar() {
   
   // Check if we're on the home page
   const isHomePage = location.pathname === '/';
-  
-  // Check if we're on pricing, blog, or contact pages
-  const shouldShowCta = location.pathname === '/pricing' || 
-                        location.pathname === '/contact' ||
-                        location.pathname === '/about' ||
-                        location.pathname === '/terms' ||
-                        location.pathname === '/privacy' ||
-                        location.pathname === '/disclaimer' ||
-                        location.pathname === '/salary-calculator';
   
   // Check if we're on one of the nurses resources pages
   const isNursePage = location.pathname === '/malpractice-insurance' ||
@@ -77,56 +68,55 @@ export default function Navbar() {
   };
   
   return (
-    <header className={cn(
-      'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-      isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
-    )}>
-      <div className="container mx-auto px-6 flex items-center justify-between">
-        {/* Logo - moved further left */}
-        <Logo shouldUseDarkText={shouldUseDarkText} />
-        
-        {/* Desktop Navigation - centered */}
-        <nav className="hidden lg:flex items-center space-x-10 flex-grow justify-center">
-          <NavLinks shouldUseDarkText={shouldUseDarkText} />
-
-          {/* For Nurses Dropdown */}
-          <NurseDropdown 
-            shouldUseDarkText={shouldUseDarkText} 
-            handleApplyNowClick={handleApplyNowClick} 
-          />
-        </nav>
-        
-        {/* Authentication and CTA Button - Desktop - moved further right */}
-        <div className="hidden lg:flex items-center space-x-6 ml-auto">
-          {/* Auth Button */}
-          <UserMenu shouldUseDarkText={shouldUseDarkText} />
+    <>
+      <header className={cn(
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
+      )}>
+        <div className="container mx-auto px-6 flex items-center justify-between">
+          {/* Logo */}
+          <Logo shouldUseDarkText={shouldUseDarkText} />
           
-          {/* CTA Button - only show on appropriate pages and hide on nurse pages */}
-          {shouldShowCta && !isNursePage && (
-            <CtaButton isScrolled={isScrolled} onClick={handleRequestNurse} />
-          )}
+          {/* Desktop Navigation - centered */}
+          <nav className="hidden lg:flex items-center space-x-10 flex-grow justify-center">
+            <NavLinks shouldUseDarkText={shouldUseDarkText} />
+
+            {/* For Nurses Dropdown */}
+            <NurseDropdown 
+              shouldUseDarkText={shouldUseDarkText} 
+              handleApplyNowClick={handleApplyNowClick} 
+            />
+          </nav>
+          
+          {/* Authentication - Desktop */}
+          <div className="hidden lg:flex items-center ml-auto">
+            <UserMenu shouldUseDarkText={shouldUseDarkText} />
+          </div>
+          
+          {/* Mobile Menu Button */}
+          <button 
+            className={cn(
+              "lg:hidden focus:outline-none",
+              shouldUseDarkText ? "text-gray-600" : "text-white"
+            )}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
         
-        {/* Mobile Menu Button */}
-        <button 
-          className={cn(
-            "lg:hidden focus:outline-none",
-            shouldUseDarkText ? "text-gray-600" : "text-white"
-          )}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-      </div>
+        {/* Mobile Menu */}
+        <MobileMenu 
+          isOpen={isOpen} 
+          setIsOpen={setIsOpen} 
+          isNursePage={isNursePage}
+          handleApplyNowClick={handleApplyNowClick}
+          handleRequestNurse={handleRequestNurse}
+        />
+      </header>
       
-      {/* Mobile Menu */}
-      <MobileMenu 
-        isOpen={isOpen} 
-        setIsOpen={setIsOpen} 
-        isNursePage={isNursePage}
-        handleApplyNowClick={handleApplyNowClick}
-        handleRequestNurse={handleRequestNurse}
-      />
-    </header>
+      {/* Floating CTA Button */}
+      <FloatingCta onClick={handleRequestNurse} />
+    </>
   );
 }

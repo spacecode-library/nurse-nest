@@ -13,6 +13,8 @@ export default function HeroSection() {
           src="/lovable-uploads/8f74e0c5-9c2c-45c8-8588-e7b4fa1b1440.png" 
           alt="Nurse in a box delivered to doorstep" 
           className="w-full h-full object-cover"
+          loading="eager"
+          fetchpriority="high"
         />
 
         {/* Dark overlay for better text visibility */}
@@ -27,13 +29,13 @@ export default function HeroSection() {
               <div>Specialized Nurses</div>
               <div>
                 <span className="relative">
-                  <span className="text-blue-400">Delivered</span>
+                  <span className="text-blue-400 italic animate-pulse-slow">Delivered</span>
                 </span> to
               </div>
               <div>Your Doorstep</div>
             </h1>
             <p className="text-base md:text-lg text-white mb-8 max-w-xl drop-shadow-md">
-              Hire trusted nurses. Anywhere. Anytime. Nationwide concierge service with built-in vetting, video calls, and payments.
+              Your Personal Nurse, One Tap Away. Nurse Nest's nationwide platform rigorously vets healthcare professionals, coordinates consultations, delivers qualified nurses to your home, and handles all payments directly. Premium care on your terms, anytime you need it.
             </p>
             <div>
               <Link to="/apply">
