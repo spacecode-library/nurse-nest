@@ -173,29 +173,29 @@ export default function HowItWorksSection() {
               <CarouselContent>
                 {steps.map((step, index) => (
                   <CarouselItem key={index} className="pl-0">
-                    <div className="w-full rounded-xl shadow-lg overflow-hidden bg-[#F9FAFB]">
-                      {/* Image */}
-                      <div className="w-full">
-                        <AspectRatio ratio={16/9}>
-                          <img 
-                            src={step.imageSrc}
-                            alt={step.imageAlt} 
-                            className={`w-full h-full object-cover ${step.number === 4 ? "object-bottom" : "object-center"}`}
-                          />
-                        </AspectRatio>
+                    <div className="w-full rounded-xl shadow-lg overflow-hidden bg-[#F9FAFB] relative h-[500px]">
+                      {/* Full bleed image with overlay */}
+                      <div className="absolute inset-0 z-0">
+                        <img 
+                          src={step.imageSrc}
+                          alt={step.imageAlt} 
+                          className="w-full h-full object-cover"
+                        />
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
                       </div>
 
                       {/* Content */}
-                      <div className="p-6 space-y-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-500">
+                      <div className="relative z-10 p-6 h-full flex flex-col justify-end">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
                             {step.icon}
                           </div>
-                          <h3 className="text-xl font-semibold text-primary-500">
+                          <h3 className="text-xl font-semibold text-white">
                             {step.title}
                           </h3>
                         </div>
-                        <p className="text-gray-700">
+                        <p className="text-white/90 text-sm">
                           {step.description}
                         </p>
                       </div>
@@ -222,47 +222,48 @@ export default function HowItWorksSection() {
           <div className="max-w-6xl mx-auto">
             <div 
               className="relative overflow-hidden rounded-xl shadow-lg"
-              style={{ minHeight: "500px" }}
+              style={{ height: "600px" }}
             >
               {/* Step content with animations */}
               <div 
-                className="transition-all duration-500 ease-out flex"
+                className="transition-all duration-500 ease-out flex h-full"
                 style={{ 
                   transform: `translateX(-${currentStep * 100}%)`,
+                  width: `${steps.length * 100}%`
                 }}
               >
                 {steps.map((step, index) => (
                   <div 
                     key={index}
-                    className="w-full flex-shrink-0 px-6 md:px-10 py-12 flex flex-col md:flex-row gap-8 items-center bg-[#F9FAFB]"
+                    className="flex-shrink-0 relative h-full"
+                    style={{ width: `${100 / steps.length}%` }}
                     aria-hidden={currentStep !== index}
                   >
-                    {/* Image */}
-                    <div className="md:w-1/2">
-                      <div className="rounded-lg overflow-hidden shadow-md transform transition-all duration-500">
-                        <AspectRatio ratio={16/9}>
-                          <img 
-                            src={step.imageSrc} 
-                            alt={step.imageAlt}
-                            className={`w-full h-full object-cover ${step.number === 4 ? "object-bottom" : "object-center"}`}
-                          />
-                        </AspectRatio>
-                      </div>
-                    </div>
+                    {/* Full bleed image */}
+                    <img 
+                      src={step.imageSrc} 
+                      alt={step.imageAlt}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
                     
-                    {/* Content */}
-                    <div className="md:w-1/2 space-y-6">
-                      <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-primary-500">
-                          {step.icon}
+                    {/* Gradient overlay - right side positioned */}
+                    <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/60 to-transparent"></div>
+                    
+                    {/* Content - positioned on the right side */}
+                    <div className="absolute inset-0 flex items-center justify-end">
+                      <div className="w-1/2 p-10 space-y-6 text-right">
+                        <div className="flex items-center justify-end gap-4">
+                          <h3 className="text-3xl font-bold text-white">
+                            {step.title}
+                          </h3>
+                          <div className="flex-shrink-0 w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+                            {step.icon}
+                          </div>
                         </div>
-                        <h3 className="text-2xl font-bold text-primary-500">
-                          {step.title}
-                        </h3>
+                        <p className="text-white/90 text-lg leading-relaxed">
+                          {step.description}
+                        </p>
                       </div>
-                      <p className="text-gray-700 text-lg">
-                        {step.description}
-                      </p>
                     </div>
                   </div>
                 ))}
@@ -274,15 +275,15 @@ export default function HowItWorksSection() {
                   variant="outline"
                   onClick={prevStep}
                   disabled={currentStep === 0}
-                  className="rounded-full h-10 w-10 p-0 flex items-center justify-center"
+                  className="rounded-full h-12 w-12 p-0 flex items-center justify-center bg-white/30 backdrop-blur-sm border-white/40 hover:bg-white/50"
                   aria-label="Previous step"
                 >
-                  <ArrowLeft className="h-5 w-5" />
+                  <ArrowLeft className="h-5 w-5 text-white" />
                 </Button>
                 {!isLastStep ? (
                   <Button
                     onClick={nextStep}
-                    className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-primary-500 hover:bg-primary-600"
+                    className="rounded-full h-12 w-12 p-0 flex items-center justify-center bg-primary-500/90 hover:bg-primary-600 backdrop-blur-sm"
                     aria-label="Next step"
                   >
                     <ArrowRight className="h-5 w-5" />
@@ -290,6 +291,20 @@ export default function HowItWorksSection() {
                 ) : (
                   <span></span>
                 )}
+              </div>
+              
+              {/* Step indicator */}
+              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2">
+                {steps.map((_, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => setCurrentStep(i)}
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      i === currentStep ? "bg-white scale-110" : "bg-white/50"
+                    }`}
+                    aria-label={`Go to step ${i + 1}`}
+                  />
+                ))}
               </div>
             </div>
           </div>
