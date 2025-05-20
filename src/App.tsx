@@ -26,6 +26,7 @@ import NurseApplication from "./pages/NurseApplication";
 import MalpracticeInsurance from "./pages/MalpracticeInsurance";
 import LlcSetupHelp from "./pages/LlcSetupHelp";
 import TaxTips from "./pages/TaxTips";
+import NurseOnboarding from "./pages/NurseOnboarding";
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
             <Route path="/salary-result" element={<SalaryResult />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/vetting-options" element={<VettingOptions />} />
+            <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
             
             {/* New Nurse Resources Routes */}
             <Route path="/nurse-application" element={<NurseApplication />} />
