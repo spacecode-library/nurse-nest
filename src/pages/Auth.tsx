@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -53,7 +52,10 @@ export default function Auth() {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
-          password
+          password,
+          options: {
+            emailRedirectTo: window.location.origin + '/dashboard'
+          }
         });
         
         if (error) {
@@ -75,7 +77,7 @@ export default function Auth() {
         const firstName = nameParts[0] || '';
         const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
         
-        // Sign up the user
+        // Sign up the user without email confirmation
         const { error, data } = await supabase.auth.signUp({
           email,
           password,
@@ -85,7 +87,8 @@ export default function Auth() {
               last_name: lastName,
               dob: dob,
               address: address
-            }
+            },
+            emailRedirectTo: window.location.origin + '/dashboard'
           }
         });
         
@@ -97,11 +100,13 @@ export default function Auth() {
             variant: "destructive"
           });
         } else {
-          toast({
-            title: "Sign up successful",
-            description: "Please check your email to verify your account."
-          });
-          // Don't automatically set isLogin to true to avoid confusion
+          // Direct login after signup since we're not requiring email verification
+          if (data.user) {
+            toast({
+              title: "Sign up successful",
+              description: "Welcome to our platform! You've been automatically logged in."
+            });
+          }
         }
       }
     } catch (error) {
