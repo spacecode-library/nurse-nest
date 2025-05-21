@@ -10,9 +10,11 @@ import ClientDashboard from "@/components/dashboard/ClientDashboard";
 import NurseDashboard from "@/components/dashboard/NurseDashboard";
 import AccountSettings from "@/components/dashboard/AccountSettings";
 import { UserProfile } from "@/types/dashboard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<"nurse" | "client" | null>(null);
@@ -44,7 +46,8 @@ export default function Dashboard() {
         setUserRole(role);
         setProfile({
           ...data,
-          role: role
+          role: role,
+          bio: data.bio || '' // Include bio field with default empty string if not present
         });
         
       } catch (error) {
@@ -60,7 +63,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-nurse-dark border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-600">Loading your dashboard...</p>
+          <p className="mt-4 text-lg text-gray-600">{t.loading || 'Loading your dashboard...'}</p>
         </div>
       </div>
     );
@@ -76,14 +79,14 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
-                Welcome, {profile.first_name || 'User'}
+                {t.welcome || 'Welcome'}, {profile.first_name || 'User'}
               </h1>
               <p className="text-gray-600 mt-1">
-                Dashboard • <span className="font-medium text-nurse-dark capitalize">{userRole}</span>
+                {t.dashboard || 'Dashboard'} • <span className="font-medium text-nurse-dark capitalize">{userRole}</span>
               </p>
             </div>
             <Button className="mt-4 md:mt-0 bg-nurse-dark hover:bg-primary-700">
-              Edit Account Details
+              {t.editAccount || 'Edit Account Details'}
             </Button>
           </div>
           

@@ -7,6 +7,7 @@ export interface UserProfile {
   last_name: string;
   email: string;
   role?: string;
+  bio?: string; // Added optional bio field
 }
 
 export interface Purchase {
