@@ -6,16 +6,17 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { AlertCircle, LockKeyhole } from 'lucide-react';
+import { AlertCircle, LockKeyhole, Shield } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { signIn, signUp, getCurrentUser } from '@/supabase/auth/authService';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [userType, setUserType] = useState<'nurse' | 'client'>('client');
+  const [userType, setUserType] = useState<'nurse' | 'client' | 'admin'>('client');
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +27,18 @@ export default function Auth() {
     const checkSession = async () => {
       const { data } = await getCurrentUser();
       if (data?.user) {
-        navigate('/dashboard');
+        // Check user type and redirect accordingly
+        const { data: userMetadata } = await supabase
+          .from('user_metadata')
+          .select('user_type')
+          .eq('user_id', data.user.id)
+          .single();
+        
+        if (userMetadata?.user_type === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       }
     };
     
@@ -50,12 +62,24 @@ export default function Auth() {
             description: error.message,
             variant: "destructive"
           });
-        } else {
+        } else if (data?.user) {
+          // Check user type and redirect accordingly
+          const { data: userMetadata } = await supabase
+            .from('user_metadata')
+            .select('user_type')
+            .eq('user_id', data.user.id)
+            .single();
+          
           toast({
             title: "Login successful",
             description: "Welcome back!"
           });
-          navigate('/dashboard');
+          
+          if (userMetadata?.user_type === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/dashboard');
+          }
         }
       } else {
         // Sign up new user with proper metadata
@@ -81,13 +105,18 @@ export default function Auth() {
         } else {
           toast({
             title: "Sign up successful",
-            description: "Please check your email to verify your account."
+            description: userType === 'admin' 
+              ? "Admin account created successfully!" 
+              : "Please check your email to verify your account."
           });
-          // Redirect to onboarding
+          
+          // Redirect based on user type
           if (userType === 'nurse') {
             navigate('/onboarding/nurse');
-          } else {
+          } else if (userType === 'client') {
             navigate('/onboarding/client');
+          } else if (userType === 'admin') {
+            navigate('/admin');
           }
         }
       }
@@ -128,7 +157,11 @@ export default function Auth() {
               <div className="bg-white p-10">
                 <div className="flex justify-center mb-6">
                   <div className="rounded-full bg-primary-100 p-4">
-                    <LockKeyhole className="h-8 w-8 text-primary-500" />
+                    {userType === 'admin' ? (
+                      <Shield className="h-8 w-8 text-primary-500" />
+                    ) : (
+                      <LockKeyhole className="h-8 w-8 text-primary-500" />
+                    )}
                   </div>
                 </div>
                 
@@ -180,16 +213,32 @@ export default function Auth() {
                         <Label htmlFor="userType" className="block mb-2">I am a:</Label>
                         <RadioGroup 
                           value={userType} 
-                          onValueChange={(val) => setUserType(val as 'nurse' | 'client')}
-                          className="flex space-x-4"
+                          onValueChange={(val) => setUserType(val as 'nurse' | 'client' | 'admin')}
+                          className="flex flex-col space-y-2"
                         >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="nurse" id="nurse" />
-                            <Label htmlFor="nurse">Nurse</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 p-3 border rounded-md hover:bg-gray-50">
                             <RadioGroupItem value="client" id="client" />
-                            <Label htmlFor="client">Client</Label>
+                            <Label htmlFor="client" className="flex-1 cursor-pointer">
+                              <div className="font-medium">Client</div>
+                              <div className="text-sm text-gray-500">I need nursing care</div>
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 border rounded-md hover:bg-gray-50">
+                            <RadioGroupItem value="nurse" id="nurse" />
+                            <Label htmlFor="nurse" className="flex-1 cursor-pointer">
+                              <div className="font-medium">Nurse</div>
+                              <div className="text-sm text-gray-500">I provide nursing care</div>
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 border rounded-md hover:bg-gray-50 bg-blue-50">
+                            <RadioGroupItem value="admin" id="admin" />
+                            <Label htmlFor="admin" className="flex-1 cursor-pointer">
+                              <div className="font-medium flex items-center">
+                                <Shield className="h-4 w-4 mr-2 text-blue-600" />
+                                Administrator
+                              </div>
+                              <div className="text-sm text-gray-500">Platform administration access</div>
+                            </Label>
                           </div>
                         </RadioGroup>
                       </div>
@@ -246,7 +295,7 @@ export default function Auth() {
                   )}
                   
                   <Button
-                    className="w-full bg-primary-500 hover:bg-primary-600"
+                    className={`w-full ${userType === 'admin' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-primary-500 hover:bg-primary-600'}`}
                     disabled={loading}
                     type="submit"
                   >
@@ -279,6 +328,18 @@ export default function Auth() {
                     </p>
                   )}
                 </div>
+
+                {userType === 'admin' && !isLogin && (
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <div className="flex items-start">
+                      <Shield className="h-5 w-5 text-blue-500 mr-2 mt-0.5" />
+                      <div className="text-sm text-blue-800">
+                        <p className="font-medium mb-1">Admin Account</p>
+                        <p>You are creating an administrator account with full platform access. This should only be used by authorized personnel.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -16,6 +16,11 @@ export interface NurseProfile {
   onboarding_completion_percentage: number;
   created_at?: string;
   updated_at?: string;
+  street_address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  bio: string;
 }
 
 /**
@@ -174,7 +179,7 @@ export async function getAllNurseProfiles(limit: number = 10, offset: number = 0
 }
 
 /**
- * Search for nurses by name or specialty
+ * Search for nurses by name, specialty, or location (city, state, zip)
  * 
  * @param searchTerm Search term
  * @param limit Maximum number of records to return
@@ -195,7 +200,11 @@ export async function searchNurseProfiles(searchTerm: string, limit: number = 10
       `, { count: 'exact' })
       .or(`
         first_name.ilike.%${sanitizedTerm}%,
-        last_name.ilike.%${sanitizedTerm}%
+        last_name.ilike.%${sanitizedTerm}%,
+        city.ilike.%${sanitizedTerm}%,
+        state.ilike.%${sanitizedTerm}%,
+        zip_code.ilike.%${sanitizedTerm}%,
+        street_address.ilike.%${sanitizedTerm}%
       `)
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });

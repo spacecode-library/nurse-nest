@@ -17,6 +17,7 @@ export interface NurseLicense {
   license_number: string;
   issuing_state: string;
   expiration_date: string; // Format: YYYY-MM-DD
+  license_photo_url?: string;
   verification_status: VerificationStatus;
   created_at?: string;
   updated_at?: string;

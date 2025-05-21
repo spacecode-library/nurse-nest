@@ -30,7 +30,16 @@ export interface ClientProfile {
  * @param profileData Profile data to create
  * @returns Created profile
  */
-export async function createClientProfile(profileData: Partial<ClientProfile>) {
+export async function createClientProfile(profileData: {
+  user_id: string;
+  client_type: "individual" | "family";
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  relationship_to_recipient?: string | null;
+  onboarding_completed?: boolean;
+  onboarding_completion_percentage?: number;
+}) {
   try {
     const { data, error } = await supabase
       .from('client_profiles')

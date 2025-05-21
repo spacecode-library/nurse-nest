@@ -23,7 +23,7 @@ export interface SignUpMetadata {
 export async function signUp(
   email: string, 
   password: string, 
-  userType: 'nurse' | 'client', 
+  userType: 'nurse' | 'client' | 'admin', 
   metadata: Partial<SignUpMetadata> = {}
 ) {
   try {
