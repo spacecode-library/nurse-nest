@@ -1,244 +1,274 @@
 // components/dashboard/ClientDashboard.tsx
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Briefcase, 
-  Users, 
   Clock, 
-  DollarSign, 
+  Users, 
   FileText, 
-  Bell, 
-  Plus,
   Calendar,
   CheckCircle,
   AlertCircle,
+  TrendingUp,
+  MessageSquare,
+  UserCheck,
+  Eye,
+  Star,
   Timer,
-  TrendingUp
+  DollarSign,
+  Home,
+  Plus,
+  Filter,
+  Search,
+  ChevronRight,
+  Activity,
+  Copy,
+  MoreVertical,
+  X,
+  Bell
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
-
-// Import API services
 import { getClientProfileByUserId } from '@/supabase/api/clientProfileService';
 import { getClientJobPostings } from '@/supabase/api/jobPostingService';
-import { getClientTimecards } from '@/supabase/api/timecardService';
+import { getApplicationsByJob } from '@/supabase/api/applicationService';
+import { getPendingTimecards, getClientTimecards, calculateClientExpenses } from '@/supabase/api/timecardService';
 import { getClientContracts } from '@/supabase/api/contractService';
 
-// Import sub-components
-import ClientQuickActionsCard from './client/ClientQuickActionsCard';
+// Import dashboard cards
 import JobManagementCard from './client/JobManagementCard';
 import ApplicantReviewCard from './client/ApplicantReviewCard';
-import ClientContractsCard from './client/ClientContractsCard';
 import TimecardApprovalCard from './client/TimecardApprovalCard';
+import ClientContractsCard from './client/ClientContractsCard';
+import ClientQuickActionsCard from './client/ClientQuickActionsCard';
 
+// Helper function to format date
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { 
+    month: 'short', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  };
+  return date.toLocaleDateString('en-US', options);
+};
 
-interface ClientProfile {
-  id: string;
-  first_name: string;
-  last_name: string;
-  client_type: string;
-  onboarding_completed: boolean;
-  onboarding_completion_percentage: number;
-}
-
-interface DashboardStats {
-  openJobs: number;
-  newApplications: number;
-  pendingTimecards: number;
-  activeContracts: number;
-  avgResponseTime: number; // in hours
-  totalSpent: number;
-}
+const formatShortDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { 
+    weekday: 'long',
+    month: 'short', 
+    day: 'numeric'
+  };
+  return date.toLocaleDateString('en-US', options);
+};
 
 export default function ClientDashboard() {
-  const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [clientProfile, setClientProfile] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  const [profile, setProfile] = useState<ClientProfile | null>(null);
-  const [stats, setStats] = useState<DashboardStats>({
-    openJobs: 0,
-    newApplications: 0,
+  const [stats, setStats] = useState({
+    activeJobs: 0,
+    totalApplications: 0,
     pendingTimecards: 0,
     activeContracts: 0,
     avgResponseTime: 0,
-    totalSpent: 0
+    monthlySpend: 0,
+    newApplicants: 0,
+    pendingApprovals: 0
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  const [recentJobs, setRecentJobs] = useState<any[]>([]);
+  const [pendingTimecards, setPendingTimecards] = useState<any[]>([]);
+  const [recentApplications, setRecentApplications] = useState<any[]>([]);
+  const [activeContracts, setActiveContracts] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (!authLoading && user) {
-      loadDashboardData();
-    } else if (!authLoading && !user) {
-      navigate('/auth');
-    }
-  }, [user, authLoading, navigate]);
-
-  const loadDashboardData = async () => {
+  // Memoized fetch function to prevent unnecessary re-renders
+  const fetchDashboardData = useCallback(async () => {
+    if (!user?.id) return;
+    
     try {
       setLoading(true);
-      setError(null);
-
-      // Load client profile
-      const { data: profileData, error: profileError } = await getClientProfileByUserId(user!.id);
-      if (profileError) throw profileError;
       
-      if (!profileData) {
-        // User doesn't have a client profile, redirect to onboarding
-        navigate('/onboarding/client');
+      // Get client profile
+      const { data: profile } = await getClientProfileByUserId(user.id);
+      if (!profile) {
+        window.location.href = '/onboarding/client';
         return;
       }
+      setClientProfile(profile);
 
-      setProfile(profileData);
+      // Fetch all data in parallel
+      const [jobsResult, timecardsResult, contractsResult] = await Promise.all([
+        getClientJobPostings(profile.id, 20, 0),
+        getPendingTimecards(profile.id, 10, 0),
+        getClientContracts(profile.id, 20, 0)
+      ]);
 
-      // Load dashboard statistics
-      await loadDashboardStats(profileData.id);
+      // Process jobs data
+      const jobs = jobsResult.data || [];
+      setRecentJobs(jobs);
+      
+      // Get applications for all jobs
+      let totalApplications = 0;
+      let newApplicants = 0;
+      const applicationsPromises = jobs.map(job => getApplicationsByJob(job.id, 50, 0));
+      const applicationsResults = await Promise.all(applicationsPromises);
+      
+      const allApplications: any[] = [];
+      applicationsResults.forEach(result => {
+        if (result.data) {
+          allApplications.push(...result.data);
+          totalApplications += result.count || 0;
+          // Count new applications from last 24 hours
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          result.data.forEach(app => {
+            if (new Date(app.created_at) > yesterday && app.status === 'new') {
+              newApplicants++;
+            }
+          });
+        }
+      });
+      
+      // Sort applications by date and take recent ones
+      const sortedApplications = allApplications
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 10);
+      setRecentApplications(sortedApplications);
 
-    } catch (error: any) {
-      console.error('Error loading dashboard data:', error);
-      setError(error.message || 'Failed to load dashboard data');
+      // Process timecards
+      const pendingCards = timecardsResult.data || [];
+      setPendingTimecards(pendingCards);
+
+      // Process contracts
+      const contracts = contractsResult.data || [];
+      const active = contracts.filter(c => c.status === 'active');
+      setActiveContracts(active);
+
+      // Calculate stats
+      const activeJobs = jobs.filter(job => job.status === 'open').length;
+      
+      // Calculate monthly spend from recent timecards
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      const monthStart = new Date(currentYear, currentMonth, 1);
+      const monthEnd = new Date(currentYear, currentMonth + 1, 0);
+      
+      const { expenses } = await calculateClientExpenses(
+        profile.id,
+        monthStart.toISOString().split('T')[0],
+        monthEnd.toISOString().split('T')[0]
+      );
+
+      // Calculate average response time (mock for now)
+      const avgResponseTime = Math.round(Math.random() * 24 + 12); // 12-36 hours
+
+      setStats({
+        activeJobs,
+        totalApplications,
+        pendingTimecards: timecardsResult.count || 0,
+        activeContracts: active.length,
+        avgResponseTime,
+        monthlySpend: expenses?.total || 0,
+        newApplicants,
+        pendingApprovals: pendingCards.length
+      });
+
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
       toast({
-        title: "Error",
-        description: "Failed to load dashboard data. Please try again.",
+        title: "Error loading dashboard",
+        description: "Please refresh the page to try again.",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
 
-  const loadDashboardStats = async (clientId: string) => {
-    try {
-      // Load job postings
-      const { data: jobs } = await getClientJobPostings(clientId, 100, 0);
-      const openJobs = jobs?.filter(job => job.status === 'open').length || 0;
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData, refreshTrigger]);
 
-      // Load timecards
-      const { data: timecards } = await getClientTimecards(clientId, 100, 0);
-      const pendingTimecards = timecards?.filter(tc => tc.status === 'Submitted').length || 0;
+  // Function to trigger dashboard refresh
+  const handleRefresh = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
 
-      // Calculate total spent from paid timecards
-      const totalSpent = timecards?.filter(tc => 
-        tc.status === 'Paid'
-      ).reduce((sum, tc) => {
-        const nurseEarnings = tc.total_hours * 50; // $50/hour placeholder
-        const platformFee = nurseEarnings * 0.15; // 15% platform fee
-        return sum + nurseEarnings + platformFee;
-      }, 0) || 0;
+  // Auto-refresh every 30 seconds when on overview tab
+  useEffect(() => {
+    if (activeTab === 'overview') {
+      const interval = setInterval(handleRefresh, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab, handleRefresh]);
 
-      // Load contracts
-      const { data: contracts } = await getClientContracts(clientId, 100, 0);
-      const activeContracts = contracts?.filter(contract => 
-        contract.status === 'active'
-      ).length || 0;
-
-      // Mock data for applications and response time
-      // In production, you'd calculate these from actual data
-      const newApplications = Math.floor(Math.random() * 10) + 5;
-      const avgResponseTime = 18; // 18 hours average response time
-
-      setStats({
-        openJobs,
-        newApplications,
-        pendingTimecards,
-        activeContracts,
-        avgResponseTime,
-        totalSpent
-      });
-
-    } catch (error) {
-      console.error('Error loading dashboard stats:', error);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'open': return 'bg-green-500';
+      case 'filled': return 'bg-blue-500';
+      case 'expired': return 'bg-gray-500';
+      case 'new': return 'bg-yellow-500';
+      case 'shortlisted': return 'bg-purple-500';
+      case 'hired': return 'bg-green-500';
+      case 'declined': return 'bg-red-500';
+      case 'Submitted': return 'bg-blue-500';
+      case 'Approved': return 'bg-green-500';
+      case 'Rejected': return 'bg-red-500';
+      case 'Paid': return 'bg-emerald-500';
+      default: return 'bg-gray-500';
     }
   };
 
-  if (authLoading || loading) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
     );
   }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <Button onClick={() => loadDashboardData()}>
-            Try Again
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto">
-          <FileText className="h-16 w-16 text-blue-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Complete Your Profile</h2>
-          <p className="text-gray-600 mb-4">
-            Please complete your client profile to access the dashboard.
-          </p>
-          <Button onClick={() => navigate('/onboarding/client')}>
-            Complete Profile
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  const getResponseTimeColor = (hours: number) => {
-    if (hours <= 24) return 'text-green-600';
-    if (hours <= 48) return 'text-amber-600';
-    return 'text-red-600';
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
-                {profile.first_name.charAt(0)}{profile.last_name.charAt(0)}
-              </div>
-              <div className="ml-4">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Welcome back, {profile.first_name}!
-                </h1>
-                <p className="text-gray-600">
-                  {profile.onboarding_completed ? (
-                    <span className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
-                      Profile Complete • {profile.client_type} Client
-                    </span>
-                  ) : (
-                    <span className="flex items-center">
-                      <AlertCircle className="h-4 w-4 text-amber-500 mr-1" />
-                      Profile {profile.onboarding_completion_percentage}% Complete
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
+      {/* Fixed Header */}
+      <header className="fixed top-0 left-0 right-0 bg-white border-b z-40 shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/profile')}
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900">Client Dashboard</h1>
+              <Badge variant="outline" className="hidden md:inline-flex">
+                {clientProfile?.client_type === 'family' ? 'Family Account' : 'Individual Account'}
+              </Badge>
+            </div>
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh}
+                className="hidden md:inline-flex"
               >
-                Edit Profile
+                <Activity className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button 
+                size="sm" 
+                className="bg-primary-500 hover:bg-primary-600" 
+                onClick={() => setActiveTab('jobs')}
+              >
+                <Plus className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Post Job</span>
               </Button>
             </div>
           </div>
@@ -246,180 +276,362 @@ export default function ClientDashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
+      <main className="container mx-auto px-4 pt-20 pb-8">
+        {/* Welcome Section */}
+        <div className="mb-6 md:mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {clientProfile?.first_name}!
+          </h2>
+          <p className="text-gray-600">
+            Here's an overview of your care management activities
+          </p>
+          {stats.newApplicants > 0 && (
+            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Briefcase className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Open Jobs</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.openJobs}</p>
-                </div>
+                <Bell className="h-5 w-5 text-blue-600 mr-2" />
+                <span className="text-blue-900 font-medium">
+                  You have {stats.newApplicants} new applicant{stats.newApplicants !== 1 ? 's' : ''} to review!
+                </span>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="ml-auto"
+                  onClick={() => setActiveTab('applicants')}
+                >
+                  Review Now
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Users className="h-6 w-6 text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">New Applications</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.newApplications}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-amber-100 rounded-lg">
-                  <Clock className="h-6 w-6 text-amber-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Pending Timecards</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pendingTimecards}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <FileText className="h-6 w-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Active Contracts</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.activeContracts}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Timer className="h-6 w-6 text-orange-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Avg Response</p>
-                  <p className={`text-2xl font-bold ${getResponseTimeColor(stats.avgResponseTime)}`}>
-                    {stats.avgResponseTime}h
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-indigo-100 rounded-lg">
-                  <DollarSign className="h-6 w-6 text-indigo-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    ${stats.totalSpent.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </div>
 
-        {/* Quick Actions */}
-        <ClientQuickActionsCard clientId={profile.id} onRefresh={loadDashboardData} />
+        {/* Enhanced Stats Grid */}
+        <div className="mb-6 md:mb-8 overflow-x-auto pb-4">
+          <div className="flex md:grid md:grid-cols-4 lg:grid-cols-8 gap-4 min-w-max md:min-w-0">
+            <Card className="border-l-4 border-l-blue-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Active Jobs</p>
+                    <p className="text-xl md:text-2xl font-bold">{stats.activeJobs}</p>
+                  </div>
+                  <Briefcase className="h-6 w-6 md:h-8 md:w-8 text-blue-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Main Dashboard Content */}
-        <div className="mt-8">
-          <Tabs defaultValue="jobs" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="jobs" className="flex items-center">
-                <Briefcase className="h-4 w-4 mr-2" />
-                Job Management
-              </TabsTrigger>
-              <TabsTrigger value="applicants" className="flex items-center">
-                <Users className="h-4 w-4 mr-2" />
-                Applicant Review
-              </TabsTrigger>
-              <TabsTrigger value="timecards" className="flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
-                Timecard Approval
-              </TabsTrigger>
-              <TabsTrigger value="contracts" className="flex items-center">
-                <FileText className="h-4 w-4 mr-2" />
-                Contracts
-              </TabsTrigger>
-              <TabsTrigger value="billing" className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Billing
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex items-center">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Analytics
-              </TabsTrigger>
-            </TabsList>
+            <Card className="border-l-4 border-l-purple-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Applications</p>
+                    <p className="text-xl md:text-2xl font-bold">{stats.totalApplications}</p>
+                  </div>
+                  <Users className="h-6 w-6 md:h-8 md:w-8 text-purple-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
 
-            <TabsContent value="jobs" className="mt-6">
-              <JobManagementCard 
-                clientId={profile.id} 
-                onJobCreated={loadDashboardData}
-              />
-            </TabsContent>
+            <Card className="border-l-4 border-l-yellow-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">New Today</p>
+                    <p className="text-xl md:text-2xl font-bold">{stats.newApplicants}</p>
+                  </div>
+                  <Bell className="h-6 w-6 md:h-8 md:w-8 text-yellow-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
 
-            <TabsContent value="applicants" className="mt-6">
-              <ApplicantReviewCard 
-                clientId={profile.id} 
-                onApplicationUpdate={loadDashboardData}
-              />
-            </TabsContent>
+            <Card className="border-l-4 border-l-amber-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Pending</p>
+                    <p className="text-xl md:text-2xl font-bold">{stats.pendingApprovals}</p>
+                  </div>
+                  <Clock className="h-6 w-6 md:h-8 md:w-8 text-amber-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
 
-            <TabsContent value="timecards" className="mt-6">
-              <TimecardApprovalCard 
-                clientId={profile.id} 
-                onTimecardAction={loadDashboardData}
-              />
-            </TabsContent>
+            <Card className="border-l-4 border-l-green-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Contracts</p>
+                    <p className="text-xl md:text-2xl font-bold">{stats.activeContracts}</p>
+                  </div>
+                  <FileText className="h-6 w-6 md:h-8 md:w-8 text-green-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
 
-            <TabsContent value="contracts" className="mt-6">
-              <ClientContractsCard 
-                clientId={profile.id}
-                onContractUpdate={loadDashboardData}
-              />
-            </TabsContent>
+            <Card className="border-l-4 border-l-indigo-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Response Time</p>
+                    <p className="text-xl md:text-2xl font-bold">{stats.avgResponseTime}h</p>
+                  </div>
+                  <Timer className="h-6 w-6 md:h-8 md:w-8 text-indigo-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
 
+            <Card className="border-l-4 border-l-red-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Monthly Spend</p>
+                    <p className="text-xl md:text-2xl font-bold">${Math.round(stats.monthlySpend)}</p>
+                  </div>
+                  <DollarSign className="h-6 w-6 md:h-8 md:w-8 text-red-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
 
-            <TabsContent value="analytics" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Analytics Dashboard</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Analytics Coming Soon
-                    </h3>
-                    <p className="text-gray-600">
-                      Detailed analytics and reporting features will be available soon.
+            <Card className="border-l-4 border-l-teal-500 min-w-[160px] md:min-w-0">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Success Rate</p>
+                    <p className="text-xl md:text-2xl font-bold">
+                      {stats.totalApplications > 0 ? Math.round((stats.activeContracts / stats.totalApplications) * 100) : 0}%
                     </p>
                   </div>
+                  <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-teal-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="overview" className="text-xs md:text-sm">Overview</TabsTrigger>
+            <TabsTrigger value="jobs" className="text-xs md:text-sm">Jobs</TabsTrigger>
+            <TabsTrigger value="applicants" className="text-xs md:text-sm">
+              Applicants
+              {stats.newApplicants > 0 && (
+                <Badge variant="destructive" className="ml-1 text-xs">
+                  {stats.newApplicants}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="timecards" className="text-xs md:text-sm">
+              Timecards
+              {stats.pendingApprovals > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">
+                  {stats.pendingApprovals}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="contracts" className="text-xs md:text-sm">Contracts</TabsTrigger>
+            <TabsTrigger value="billing" className="text-xs md:text-sm">Billing</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            {/* Quick Actions */}
+            <ClientQuickActionsCard 
+              clientId={clientProfile?.id || ''} 
+              onRefresh={handleRefresh}
+            />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Recent Applications */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Recent Applications</CardTitle>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setActiveTab('applicants')}
+                    >
+                      View All
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {recentApplications.length > 0 ? (
+                    <div className="space-y-4 max-h-[300px] overflow-y-auto">
+                      {recentApplications.slice(0, 5).map((app) => (
+                        <div key={app.id} className="flex items-center justify-between p-4 rounded-lg border hover:bg-gray-50 transition-colors">
+                          <div className="flex items-center space-x-3 md:space-x-4">
+                            <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                              <Users className="h-4 w-4 md:h-6 md:w-6 text-primary-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm md:text-base">
+                                {app.nurse_profiles?.first_name} {app.nurse_profiles?.last_name}
+                              </p>
+                              <p className="text-xs md:text-sm text-gray-500">
+                                Applied {formatDate(app.created_at)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge className={`${getStatusColor(app.status)} text-white text-xs`}>
+                              {app.status}
+                              {app.status === 'new' && (
+                                <span className="ml-1 animate-pulse">●</span>
+                              )}
+                            </Badge>
+                            <Button size="sm" variant="ghost">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-[250px] text-gray-500">
+                      <Users className="h-12 w-12 mb-4 opacity-50" />
+                      <p>No recent applications</p>
+                      <Button 
+                        variant="link" 
+                        onClick={() => setActiveTab('jobs')}
+                      >
+                        Post a job to get started
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+
+              {/* Quick Timecard Approvals */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Pending Approvals</CardTitle>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setActiveTab('timecards')}
+                    >
+                      View All
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {pendingTimecards.length > 0 ? (
+                    <div className="space-y-4 max-h-[300px] overflow-y-auto">
+                      {pendingTimecards.slice(0, 3).map((timecard) => (
+                        <div key={timecard.id} className="p-4 rounded-lg border hover:bg-gray-50 transition-colors">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <p className="font-medium text-sm md:text-base">
+                                {timecard.nurse_profiles?.first_name} {timecard.nurse_profiles?.last_name}
+                              </p>
+                              <p className="text-xs md:text-sm text-gray-500">
+                                {formatShortDate(timecard.shift_date)}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-sm md:text-base">{timecard.total_hours} hrs</p>
+                              <p className="text-xs md:text-sm text-gray-500">
+                                ${(timecard.total_hours * 50 * 1.15).toFixed(2)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                            <span>Auto-approval in</span>
+                            <span>
+                              {Math.max(0, Math.floor((new Date(timecard.approval_deadline).getTime() - Date.now()) / 3600000))}h
+                            </span>
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button size="sm" className="flex-1">
+                              Quick Approve
+                            </Button>
+                            <Button size="sm" variant="outline">
+                              Review
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-[250px] text-gray-500">
+                      <Clock className="h-12 w-12 mb-4 opacity-50" />
+                      <p>No pending timecards</p>
+                      <p className="text-sm mt-2">Timecards will appear here for approval</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="jobs">
+            <JobManagementCard 
+              clientId={clientProfile?.id || ''} 
+              onJobCreated={handleRefresh}
+            />
+          </TabsContent>
+
+          <TabsContent value="applicants">
+            <ApplicantReviewCard 
+              clientId={clientProfile?.id || ''} 
+              onApplicationUpdate={handleRefresh}
+            />
+          </TabsContent>
+
+          <TabsContent value="timecards">
+            <TimecardApprovalCard 
+              clientId={clientProfile?.id || ''} 
+              onTimecardAction={handleRefresh}
+            />
+          </TabsContent>
+
+          <TabsContent value="contracts">
+            <ClientContractsCard 
+              clientId={clientProfile?.id || ''} 
+              onContractUpdate={handleRefresh}
+            />
+          </TabsContent>
+
+          <TabsContent value="billing">
+            <Card>
+              <CardHeader>
+                <CardTitle>Billing & Payments</CardTitle>
+                <CardDescription>Manage your payments and billing information</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600">This Month</p>
+                      <p className="text-2xl font-bold">${Math.round(stats.monthlySpend)}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600">Platform Fee (15%)</p>
+                      <p className="text-2xl font-bold">${Math.round(stats.monthlySpend * 0.15)}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600">Nurse Payments (85%)</p>
+                      <p className="text-2xl font-bold">${Math.round(stats.monthlySpend * 0.85)}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div className="text-center text-gray-500 py-8">
+                  <DollarSign className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                  <p>Detailed billing breakdown coming soon</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
