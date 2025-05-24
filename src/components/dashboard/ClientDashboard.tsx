@@ -85,7 +85,7 @@ export default function ClientDashboard() {
     newApplicants: 0,
     pendingApprovals: 0
   });
-  
+  console.log('user',user);
   const [recentJobs, setRecentJobs] = useState<any[]>([]);
   const [pendingTimecards, setPendingTimecards] = useState<any[]>([]);
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
@@ -197,8 +197,8 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [fetchDashboardData, refreshTrigger]);
-
+  }, [fetchDashboardData, ]);
+  // refreshTrigger
   // Function to trigger dashboard refresh
   const handleRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);

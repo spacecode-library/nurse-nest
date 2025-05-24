@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Briefcase, 
-  Clock, 
-  FileText, 
+import {
+  Briefcase,
+  Clock,
+  FileText,
   Calendar,
   CheckCircle,
   AlertCircle,
@@ -31,7 +31,8 @@ import {
   X,
   Filter,
   Bell,
-  Plus
+  Plus,
+  MessageCircle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -48,12 +49,13 @@ import TimecardsCard from './nurse/TimecardsCard';
 import ContractsCard from './nurse/ContractsCard';
 import QuickActionsCard from './nurse/QuickActionsCard';
 import NotificationsCard from './nurse/NotificationsCard';
+import { supabase } from '@/integrations/supabase/client';
 
 // Helper functions for date formatting
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = { 
-    month: 'short', 
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
@@ -64,9 +66,9 @@ const formatDate = (dateString: string) => {
 
 const formatShortDate = (dateString: string) => {
   const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = { 
+  const options: Intl.DateTimeFormatOptions = {
     weekday: 'long',
-    month: 'short', 
+    month: 'short',
     day: 'numeric'
   };
   return date.toLocaleDateString('en-US', options);
@@ -78,14 +80,14 @@ const getWeekDates = () => {
   const startOfWeek = new Date(today);
   startOfWeek.setDate(today.getDate() - dayOfWeek);
   startOfWeek.setHours(0, 0, 0, 0);
-  
+
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
   endOfWeek.setHours(23, 59, 59, 999);
-  
-  return { 
-    start: startOfWeek.toISOString().split('T')[0], 
-    end: endOfWeek.toISOString().split('T')[0] 
+
+  return {
+    start: startOfWeek.toISOString().split('T')[0],
+    end: endOfWeek.toISOString().split('T')[0]
   };
 };
 
@@ -95,14 +97,14 @@ export default function NurseDashboard() {
   const [nurseProfile, setNurseProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  
+
   const [eliteProgress, setEliteProgress] = useState({
     completedContracts: 0,
     isElite: false,
     nextMilestone: 3,
     benefits: ['Priority matching', 'Higher rates', 'Fast-track verification']
   });
-  
+
   const [stats, setStats] = useState({
     activeApplications: 0,
     activeContracts: 0,
@@ -114,7 +116,7 @@ export default function NurseDashboard() {
     profileViews: 0,
     responseRate: 0
   });
-  
+
   const [availableJobs, setAvailableJobs] = useState<any[]>([]);
   const [myApplications, setMyApplications] = useState<any[]>([]);
   const [recentTimecards, setRecentTimecards] = useState<any[]>([]);
@@ -126,12 +128,81 @@ export default function NurseDashboard() {
   const [showApplicationModal, setShowApplicationModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
 
+  // Chat/Message related states
+  const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+
+  // Fetch unread messages count
+  const fetchUnreadMessages = useCallback(async () => {
+    if (!nurseProfile?.id) return;
+
+    try {
+      const { count, error } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact' })
+        .eq('recipient_id', nurseProfile.id)
+        .eq('is_read', false);
+
+      if (error) throw error;
+      setTotalUnreadMessages(count || 0);
+      setHasNewMessages((count || 0) > 0);
+    } catch (error) {
+      console.error('Error fetching unread messages:', error);
+    }
+  }, [nurseProfile?.id]);
+
+  // Subscribe to real-time message notifications
+  const subscribeToMessages = useCallback(() => {
+    if (!nurseProfile?.id) return;
+
+    const subscription = supabase
+      .channel(`nurse_notifications:${nurseProfile.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `recipient_id=eq.${nurseProfile.id}`,
+        },
+        (payload) => {
+          setTotalUnreadMessages(prev => prev + 1);
+          setHasNewMessages(true);
+
+          // Show browser notification if permission granted
+          if (Notification.permission === 'granted') {
+            new Notification('New Message', {
+              body: 'You have a new message from a client about your job application',
+              icon: '/favicon.ico'
+            });
+          }
+
+          // Show toast notification
+          toast({
+            title: "💬 New Message",
+            description: "You have a new message about your job application",
+            action: (
+              <Button
+                size="sm"
+                onClick={() => setActiveTab('applications')}
+              >
+                View
+              </Button>
+            ),
+          });
+        }
+      )
+      .subscribe();
+
+    return () => subscription.unsubscribe();
+  }, [nurseProfile?.id]);
+
   const fetchDashboardData = useCallback(async () => {
     if (!user?.id) return;
 
     try {
       setLoading(true);
-      
+
       const { data: profile } = await getNurseProfileByUserId(user.id);
       if (!profile) {
         window.location.href = '/onboarding/nurse';
@@ -148,11 +219,11 @@ export default function NurseDashboard() {
 
       const jobs = jobsResult.data || [];
       setAvailableJobs(jobs);
-      
+
       const applicationChecks = await Promise.all(
         jobs.map(job => hasApplied(profile.id, job.id))
       );
-      
+
       const appliedIds = new Set<string>();
       jobs.forEach((job, index) => {
         if (applicationChecks[index]?.hasApplied) {
@@ -160,25 +231,25 @@ export default function NurseDashboard() {
         }
       });
       setAppliedJobIds(appliedIds);
-      
+
       const applications = applicationsResult.data || [];
       setMyApplications(applications);
-      const activeApps = applications.filter(app => 
+      const activeApps = applications.filter(app =>
         app.status === 'new' || app.status === 'shortlisted'
       ).length;
-      
+
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const newJobs = jobs.filter(job => new Date(job.created_at) > yesterday);
-      
+
       const timecards = timecardsResult.data || [];
       setRecentTimecards(timecards);
       const pendingTimecards = timecards.filter(tc => tc.status === 'Submitted').length;
-      
+
       const contracts = contractsResult.data || [];
       const active = contracts.filter(c => c.status === 'active');
       setActiveContracts(active);
-      
+
       const completedContracts = contracts.filter(c => c.status === 'completed').length;
       setEliteProgress(prev => ({
         ...prev,
@@ -186,14 +257,14 @@ export default function NurseDashboard() {
         isElite: completedContracts >= 3,
         nextMilestone: completedContracts >= 3 ? 0 : 3 - completedContracts
       }));
-      
+
       const weekDates = getWeekDates();
       const { earnings: weeklyEarnings } = await calculateNurseEarnings(
-        profile.id, 
-        weekDates.start, 
+        profile.id,
+        weekDates.start,
         weekDates.end
       );
-      
+
       const currentMonth = new Date();
       const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
       const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
@@ -204,7 +275,7 @@ export default function NurseDashboard() {
       );
 
       const totalApplications = applications.length;
-      const respondedApps = applications.filter(app => 
+      const respondedApps = applications.filter(app =>
         app.status !== 'new'
       ).length;
       const responseRate = totalApplications > 0 ? Math.round((respondedApps / totalApplications) * 100) : 0;
@@ -233,13 +304,38 @@ export default function NurseDashboard() {
     }
   }, [user?.id]);
 
+  // Initialize dashboard data
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData, refreshTrigger]);
 
+  // Initialize message functionality when nurse profile is loaded
+  useEffect(() => {
+    if (nurseProfile?.id) {
+      fetchUnreadMessages();
+      const unsubscribe = subscribeToMessages();
+      
+      // Request notification permission
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+      
+      // Ensure the cleanup function is always synchronous
+      return () => {
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      };
+    }
+  }, [nurseProfile?.id, fetchUnreadMessages, subscribeToMessages]);
+
   const handleRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
-  }, []);
+    // Also refresh message count
+    if (nurseProfile?.id) {
+      fetchUnreadMessages();
+    }
+  }, [nurseProfile?.id, fetchUnreadMessages]);
 
   useEffect(() => {
     if (activeTab === 'overview') {
@@ -251,19 +347,19 @@ export default function NurseDashboard() {
   const handleJobSearch = async () => {
     try {
       const filters: any = {};
-      
+
       if (searchTerm) filters.keywords = searchTerm;
       if (filterType && filterType !== 'all') filters.careType = filterType;
 
       const { data: jobs, error } = await advancedJobSearch(filters, 50, 0);
       if (error) throw error;
-      
+
       setAvailableJobs(jobs || []);
-      
+
       const applicationChecks = await Promise.all(
         (jobs || []).map(job => hasApplied(nurseProfile.id, job.id))
       );
-      
+
       const appliedIds = new Set<string>();
       (jobs || []).forEach((job, index) => {
         if (applicationChecks[index]?.hasApplied) {
@@ -271,7 +367,7 @@ export default function NurseDashboard() {
         }
       });
       setAppliedJobIds(appliedIds);
-      
+
     } catch (error: any) {
       console.error('Error searching jobs:', error);
       toast({
@@ -327,21 +423,45 @@ export default function NurseDashboard() {
                   {stats.newJobMatches} New Jobs
                 </Badge>
               )}
+              {/* New message notification badge */}
+              {hasNewMessages && (
+                <Badge className="bg-blue-600 text-white animate-pulse">
+                  <MessageCircle className="h-3 w-3 mr-1" />
+                  {totalUnreadMessages} New Message{totalUnreadMessages !== 1 ? 's' : ''}
+                </Badge>
+              )}
             </div>
             <div className="flex items-center space-x-2 md:space-x-3">
               <NotificationsCard />
+              
+              {/* Messages button with unread count */}
               <Button 
-                variant="outline" 
+                variant={hasNewMessages ? "default" : "outline"} 
                 size="sm" 
+                onClick={() => setActiveTab('applications')}
+                className={hasNewMessages ? "bg-blue-600 hover:bg-blue-700 animate-pulse" : ""}
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                <span className="hidden md:inline">Messages</span>
+                {totalUnreadMessages > 0 && (
+                  <Badge className="ml-2 bg-red-500 text-white text-xs">
+                    {totalUnreadMessages}
+                  </Badge>
+                )}
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleRefresh}
                 className="hidden md:inline-flex"
               >
                 <Activity className="h-4 w-4 mr-2" />
                 Refresh
               </Button>
-              <Button 
-                size="sm" 
-                className="bg-primary-500 hover:bg-primary-600" 
+              <Button
+                size="sm"
+                className="bg-primary-500 hover:bg-primary-600"
                 onClick={() => setActiveTab('jobs')}
               >
                 <Search className="h-4 w-4 md:mr-2" />
@@ -360,18 +480,38 @@ export default function NurseDashboard() {
           <p className="text-gray-600">
             Track your applications, manage timecards, and discover new opportunities
           </p>
-          
+
           <div className="mt-4 space-y-3">
-            {stats.newJobMatches > 0 && (
+            {/* New message alert */}
+            {hasNewMessages && (
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-center">
-                  <Briefcase className="h-5 w-5 text-blue-600 mr-2" />
+                  <MessageCircle className="h-5 w-5 text-blue-600 mr-2 animate-pulse" />
                   <span className="text-blue-900 font-medium">
-                    {stats.newJobMatches} new job{stats.newJobMatches !== 1 ? 's' : ''} match your preferences!
+                    You have {totalUnreadMessages} new message{totalUnreadMessages !== 1 ? 's' : ''} from clients!
                   </span>
                   <Button 
                     size="sm" 
                     variant="outline" 
+                    className="ml-auto"
+                    onClick={() => setActiveTab('applications')}
+                  >
+                    View Messages
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {stats.newJobMatches > 0 && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center">
+                  <Briefcase className="h-5 w-5 text-green-600 mr-2" />
+                  <span className="text-green-900 font-medium">
+                    {stats.newJobMatches} new job{stats.newJobMatches !== 1 ? 's' : ''} match your preferences!
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
                     className="ml-auto"
                     onClick={() => setActiveTab('jobs')}
                   >
@@ -380,7 +520,7 @@ export default function NurseDashboard() {
                 </div>
               </div>
             )}
-            
+
             {stats.pendingTimecards > 0 && (
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <div className="flex items-center">
@@ -388,9 +528,9 @@ export default function NurseDashboard() {
                   <span className="text-amber-900 font-medium">
                     You have {stats.pendingTimecards} timecard{stats.pendingTimecards !== 1 ? 's' : ''} awaiting approval
                   </span>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
+                  <Button
+                    size="sm"
+                    variant="outline"
                     className="ml-auto"
                     onClick={() => setActiveTab('timecards')}
                   >
@@ -421,9 +561,9 @@ export default function NurseDashboard() {
                   </p>
                 </div>
               </div>
-              <Progress 
-                value={(eliteProgress.completedContracts / 3) * 100} 
-                className="h-3 mb-3" 
+              <Progress
+                value={(eliteProgress.completedContracts / 3) * 100}
+                className="h-3 mb-3"
               />
               <div className="flex flex-wrap gap-2">
                 {eliteProgress.benefits.map((benefit, index) => (
@@ -462,14 +602,27 @@ export default function NurseDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-blue-500 min-w-[160px] md:min-w-0">
+            {/* Messages Card */}
+            <Card className={`border-l-4 border-l-blue-500 min-w-[160px] md:min-w-0 ${hasNewMessages ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}`}>
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Messages</p>
+                    <p className="text-xl md:text-2xl font-bold">{totalUnreadMessages}</p>
+                  </div>
+                  <MessageCircle className={`h-6 w-6 md:h-8 md:w-8 text-blue-500 opacity-50 ${hasNewMessages ? 'animate-pulse' : ''}`} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-orange-500 min-w-[160px] md:min-w-0">
               <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs md:text-sm text-gray-600">Pending</p>
                     <p className="text-xl md:text-2xl font-bold">{stats.pendingTimecards}</p>
                   </div>
-                  <Clock className="h-6 w-6 md:h-8 md:w-8 text-blue-500 opacity-50" />
+                  <Clock className="h-6 w-6 md:h-8 md:w-8 text-orange-500 opacity-50" />
                 </div>
               </CardContent>
             </Card>
@@ -498,26 +651,14 @@ export default function NurseDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-orange-500 min-w-[160px] md:min-w-0">
+            <Card className="border-l-4 border-l-teal-500 min-w-[160px] md:min-w-0">
               <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs md:text-sm text-gray-600">Hours</p>
                     <p className="text-xl md:text-2xl font-bold">{stats.totalHours}h</p>
                   </div>
-                  <Timer className="h-6 w-6 md:h-8 md:w-8 text-orange-500 opacity-50" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-cyan-500 min-w-[160px] md:min-w-0">
-              <CardContent className="p-4 md:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs md:text-sm text-gray-600">Profile Views</p>
-                    <p className="text-xl md:text-2xl font-bold">{stats.profileViews}</p>
-                  </div>
-                  <Eye className="h-6 w-6 md:h-8 md:w-8 text-cyan-500 opacity-50" />
+                  <Timer className="h-6 w-6 md:h-8 md:w-8 text-teal-500 opacity-50" />
                 </div>
               </CardContent>
             </Card>
@@ -547,7 +688,14 @@ export default function NurseDashboard() {
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="applications" className="text-xs md:text-sm">Applications</TabsTrigger>
+            <TabsTrigger value="applications" className="text-xs md:text-sm">
+              Applications
+              {hasNewMessages && (
+                <Badge className="ml-1 text-xs bg-blue-600 text-white animate-pulse">
+                  {totalUnreadMessages}
+                </Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="timecards" className="text-xs md:text-sm">
               Timecards
               {stats.pendingTimecards > 0 && (
@@ -560,8 +708,8 @@ export default function NurseDashboard() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <QuickActionsCard 
-              nurseId={nurseProfile?.id || ''} 
+            <QuickActionsCard
+              nurseId={nurseProfile?.id || ''}
               onRefresh={handleRefresh}
             />
 
@@ -570,9 +718,9 @@ export default function NurseDashboard() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Recommended Jobs</CardTitle>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => setActiveTab('jobs')}
                     >
                       View All
@@ -607,8 +755,8 @@ export default function NurseDashboard() {
                             </span>
                           </div>
                           <div className="flex space-x-2">
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => {
                                 setSelectedJob(job);
@@ -624,7 +772,7 @@ export default function NurseDashboard() {
                                 Applied
                               </Button>
                             ) : (
-                              <Button 
+                              <Button
                                 size="sm"
                                 onClick={() => {
                                   setSelectedJob(job);
@@ -654,10 +802,17 @@ export default function NurseDashboard() {
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>My Applications</CardTitle>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <CardTitle className="flex items-center">
+                      My Applications
+                      {hasNewMessages && (
+                        <Badge className="ml-2 bg-blue-600 text-white animate-pulse">
+                          {totalUnreadMessages} new
+                        </Badge>
+                      )}
+                    </CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => setActiveTab('applications')}
                     >
                       View All
@@ -699,30 +854,30 @@ export default function NurseDashboard() {
           </TabsContent>
 
           <TabsContent value="jobs">
-            <JobApplicationsCard 
-              nurseId={nurseProfile?.id || ''} 
+            <JobApplicationsCard
+              nurseId={nurseProfile?.id || ''}
               onApplicationSubmitted={handleRefresh}
             />
           </TabsContent>
 
           <TabsContent value="applications">
-            <JobApplicationsCard 
-              nurseId={nurseProfile?.id || ''} 
+            <JobApplicationsCard
+              nurseId={nurseProfile?.id || ''}
               onApplicationSubmitted={handleRefresh}
               showMyApplications={true}
             />
           </TabsContent>
 
           <TabsContent value="timecards">
-            <TimecardsCard 
-              nurseId={nurseProfile?.id || ''} 
+            <TimecardsCard
+              nurseId={nurseProfile?.id || ''}
               onTimecardSubmitted={handleRefresh}
             />
           </TabsContent>
 
           <TabsContent value="contracts">
-            <ContractsCard 
-              nurseId={nurseProfile?.id || ''} 
+            <ContractsCard
+              nurseId={nurseProfile?.id || ''}
             />
           </TabsContent>
         </Tabs>
