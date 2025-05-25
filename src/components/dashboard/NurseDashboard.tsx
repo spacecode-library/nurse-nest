@@ -1,6 +1,7 @@
+// components/dashboard/NurseDashboard.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
@@ -49,7 +50,11 @@ import TimecardsCard from './nurse/TimecardsCard';
 import ContractsCard from './nurse/ContractsCard';
 import QuickActionsCard from './nurse/QuickActionsCard';
 import NotificationsCard from './nurse/NotificationsCard';
+import ConversationsList from '@/components/ConversationList'; // Import the existing ConversationList
 import { supabase } from '@/integrations/supabase/client';
+
+import ContractNotifications from '@/components/ContractNotifications';
+
 
 // Helper functions for date formatting
 const formatDate = (dateString: string) => {
@@ -97,6 +102,9 @@ export default function NurseDashboard() {
   const [nurseProfile, setNurseProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
+  // Add state for messages view
+  const [showMessagesPage, setShowMessagesPage] = useState(false);
 
   const [eliteProgress, setEliteProgress] = useState({
     completedContracts: 0,
@@ -137,10 +145,11 @@ export default function NurseDashboard() {
     if (!nurseProfile?.id) return;
 
     try {
+      // Get unread count from messages where nurse is recipient
       const { count, error } = await supabase
         .from('messages')
         .select('id', { count: 'exact' })
-        .eq('recipient_id', nurseProfile.id)
+        .eq('recipient_id', user?.id) // Use user.id since messages are linked to auth users
         .eq('is_read', false);
 
       if (error) throw error;
@@ -149,21 +158,21 @@ export default function NurseDashboard() {
     } catch (error) {
       console.error('Error fetching unread messages:', error);
     }
-  }, [nurseProfile?.id]);
+  }, [nurseProfile?.id, user?.id]);
 
   // Subscribe to real-time message notifications
   const subscribeToMessages = useCallback(() => {
-    if (!nurseProfile?.id) return;
+    if (!user?.id) return;
 
     const subscription = supabase
-      .channel(`nurse_notifications:${nurseProfile.id}`)
+      .channel(`nurse_notifications:${user.id}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `recipient_id=eq.${nurseProfile.id}`,
+          filter: `recipient_id=eq.${user.id}`,
         },
         (payload) => {
           setTotalUnreadMessages(prev => prev + 1);
@@ -184,7 +193,7 @@ export default function NurseDashboard() {
             action: (
               <Button
                 size="sm"
-                onClick={() => setActiveTab('applications')}
+                onClick={() => setShowMessagesPage(true)}
               >
                 View
               </Button>
@@ -195,7 +204,7 @@ export default function NurseDashboard() {
       .subscribe();
 
     return () => subscription.unsubscribe();
-  }, [nurseProfile?.id]);
+  }, [user?.id]);
 
   const fetchDashboardData = useCallback(async () => {
     if (!user?.id) return;
@@ -311,7 +320,7 @@ export default function NurseDashboard() {
 
   // Initialize message functionality when nurse profile is loaded
   useEffect(() => {
-    if (nurseProfile?.id) {
+    if (user?.id) {
       fetchUnreadMessages();
       const unsubscribe = subscribeToMessages();
       
@@ -320,22 +329,21 @@ export default function NurseDashboard() {
         Notification.requestPermission();
       }
       
-      // Ensure the cleanup function is always synchronous
       return () => {
         if (typeof unsubscribe === 'function') {
           unsubscribe();
         }
       };
     }
-  }, [nurseProfile?.id, fetchUnreadMessages, subscribeToMessages]);
+  }, [user?.id, fetchUnreadMessages, subscribeToMessages]);
 
   const handleRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
     // Also refresh message count
-    if (nurseProfile?.id) {
+    if (user?.id) {
       fetchUnreadMessages();
     }
-  }, [nurseProfile?.id, fetchUnreadMessages]);
+  }, [user?.id, fetchUnreadMessages]);
 
   useEffect(() => {
     if (activeTab === 'overview') {
@@ -405,6 +413,19 @@ export default function NurseDashboard() {
     );
   }
 
+  // Show Messages Page if showMessagesPage is true
+  if (showMessagesPage) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <ConversationsList 
+          nurseId={nurseProfile?.id}
+          userId={user?.id}
+          onBack={() => setShowMessagesPage(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="fixed top-0 left-0 right-0 bg-white border-b z-40 shadow-sm">
@@ -434,11 +455,11 @@ export default function NurseDashboard() {
             <div className="flex items-center space-x-2 md:space-x-3">
               <NotificationsCard />
               
-              {/* Messages button with unread count */}
+              {/* Updated Messages button to show dedicated messages page */}
               <Button 
                 variant={hasNewMessages ? "default" : "outline"} 
                 size="sm" 
-                onClick={() => setActiveTab('applications')}
+                onClick={() => setShowMessagesPage(true)} // Changed to show messages page
                 className={hasNewMessages ? "bg-blue-600 hover:bg-blue-700 animate-pulse" : ""}
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
@@ -467,6 +488,14 @@ export default function NurseDashboard() {
                 <Search className="h-4 w-4 md:mr-2" />
                 <span className="hidden md:inline">Find Jobs</span>
               </Button>
+              <ContractNotifications
+                userId={user?.id} 
+                userType="nurse"
+                profileId={nurseProfile?.id}
+                onNotificationClick={(contractId) => {
+                  setActiveTab('contracts');
+                }}
+              />
             </div>
           </div>
         </div>
@@ -494,7 +523,7 @@ export default function NurseDashboard() {
                     size="sm" 
                     variant="outline" 
                     className="ml-auto"
-                    onClick={() => setActiveTab('applications')}
+                    onClick={() => setShowMessagesPage(true)}
                   >
                     View Messages
                   </Button>
@@ -690,11 +719,6 @@ export default function NurseDashboard() {
             </TabsTrigger>
             <TabsTrigger value="applications" className="text-xs md:text-sm">
               Applications
-              {hasNewMessages && (
-                <Badge className="ml-1 text-xs bg-blue-600 text-white animate-pulse">
-                  {totalUnreadMessages}
-                </Badge>
-              )}
             </TabsTrigger>
             <TabsTrigger value="timecards" className="text-xs md:text-sm">
               Timecards
