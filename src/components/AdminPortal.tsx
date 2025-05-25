@@ -37,6 +37,9 @@ import {
   type AdminUser
 } from '@/supabase/api/adminService';
 
+import ContractAnalytics from '@/components/admin/ContractAnalytics';
+
+
 export default function AdminPortal() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -675,6 +678,9 @@ export default function AdminPortal() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          <TabsContent value="contracts" className="space-y-6">
+            <ContractAnalytics />
           </TabsContent>
         </Tabs>
       </div>

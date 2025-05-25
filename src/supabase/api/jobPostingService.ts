@@ -133,7 +133,7 @@ export async function getClientJobPostings(
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+      if (error) throw error;
     return { data, count, error: null };
   } catch (error) {
     console.error('Error getting client job postings:', error);
@@ -166,7 +166,6 @@ export async function getOpenJobPostings(
       .eq('status', 'open')
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
-
     if (error) throw error;
     return { data, count, error: null };
   } catch (error) {

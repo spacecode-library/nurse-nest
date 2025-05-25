@@ -517,3 +517,101 @@
 .drop-shadow-glow-gold {
   filter: drop-shadow(0 0 6px #ffe08288);
 }
+
+
+
+
+
+
+
+
+
+.job-selector {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.job-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-specialty {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.job-title {
+  font-size: 0.8rem;
+  color: #667eea;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.last-message {
+  font-size: 0.9rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.job-context {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.message-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.read-status {
+  font-size: 0.7rem;
+  color: #667eea;
+}
+
+.read-status.unread {
+  color: #999;
+}
+
+.start-chat-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Real-time indicator */
+.conversation-item.has-unread {
+  background: #f0f8ff;
+  border-left: 3px solid #667eea;
+}
+
+.unread-badge {
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}

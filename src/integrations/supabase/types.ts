@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          permissions: string[] | null
+          phone_number: string | null
+          role: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          permissions?: string[] | null
+          phone_number?: string | null
+          role?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          permissions?: string[] | null
+          phone_number?: string | null
+          role?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           cover_message: string | null
@@ -280,6 +319,58 @@ export type Database = {
           },
         ]
       }
+      conversations: {
+        Row: {
+          client_id: string | null
+          created_at: string | null
+          id: string
+          job_id: string | null
+          last_message_at: string | null
+          nurse_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string | null
+          id?: string
+          job_id?: string | null
+          last_message_at?: string | null
+          nurse_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string | null
+          id?: string
+          job_id?: string | null
+          last_message_at?: string | null
+          nurse_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_nurse_id_fkey"
+            columns: ["nurse_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_postings: {
         Row: {
           benefits: string | null
@@ -326,6 +417,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      messages: {
+        Row: {
+          conversation_id: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message_content: string
+          recipient_id: string | null
+          sender_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_content: string
+          recipient_id?: string | null
+          sender_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_content?: string
+          recipient_id?: string | null
+          sender_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       notification_logs: {
         Row: {
@@ -408,11 +532,11 @@ export type Database = {
           id: string
           issuing_state: string
           license_number: string
+          license_photo_url: string | null
           license_type: string
           nurse_id: string | null
           updated_at: string | null
           verification_status: string
-          license_photo_url: string | null
         }
         Insert: {
           created_at?: string | null
@@ -420,11 +544,11 @@ export type Database = {
           id?: string
           issuing_state: string
           license_number: string
+          license_photo_url?: string | null
           license_type: string
           nurse_id?: string | null
           updated_at?: string | null
           verification_status?: string
-          license_photo_url?: string | null
         }
         Update: {
           created_at?: string | null
@@ -432,11 +556,11 @@ export type Database = {
           id?: string
           issuing_state?: string
           license_number?: string
+          license_photo_url?: string | null
           license_type?: string
           nurse_id?: string | null
           updated_at?: string | null
           verification_status?: string
-          license_photo_url?: string | null
         }
         Relationships: [
           {
@@ -494,6 +618,8 @@ export type Database = {
       }
       nurse_profiles: {
         Row: {
+          bio: string | null
+          city: string
           created_at: string | null
           first_name: string
           id: string
@@ -501,11 +627,16 @@ export type Database = {
           onboarding_completed: boolean | null
           onboarding_completion_percentage: number | null
           phone_number: string
-          profile_photo_url: string
+          profile_photo_url: string | null
+          state: string
+          street_address: string
           updated_at: string | null
           user_id: string | null
+          zip_code: string
         }
         Insert: {
+          bio?: string | null
+          city: string
           created_at?: string | null
           first_name: string
           id?: string
@@ -513,11 +644,16 @@ export type Database = {
           onboarding_completed?: boolean | null
           onboarding_completion_percentage?: number | null
           phone_number: string
-          profile_photo_url: string
+          profile_photo_url?: string | null
+          state: string
+          street_address: string
           updated_at?: string | null
           user_id?: string | null
+          zip_code: string
         }
         Update: {
+          bio?: string | null
+          city?: string
           created_at?: string | null
           first_name?: string
           id?: string
@@ -525,9 +661,12 @@ export type Database = {
           onboarding_completed?: boolean | null
           onboarding_completion_percentage?: number | null
           phone_number?: string
-          profile_photo_url?: string
+          profile_photo_url?: string | null
+          state?: string
+          street_address?: string
           updated_at?: string | null
           user_id?: string | null
+          zip_code?: string
         }
         Relationships: []
       }
@@ -694,7 +833,17 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_dashboard_stats: {
+        Row: {
+          new_applications: number | null
+          open_jobs: number | null
+          pending_client_profiles: number | null
+          pending_nurse_profiles: number | null
+          pending_timecards: number | null
+          pending_verifications: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

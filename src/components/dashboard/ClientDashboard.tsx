@@ -28,7 +28,8 @@ import {
   Copy,
   MoreVertical,
   X,
-  Bell
+  Bell,
+  MessageCircle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -37,6 +38,7 @@ import { getClientJobPostings } from '@/supabase/api/jobPostingService';
 import { getApplicationsByJob } from '@/supabase/api/applicationService';
 import { getPendingTimecards, getClientTimecards, calculateClientExpenses } from '@/supabase/api/timecardService';
 import { getClientContracts } from '@/supabase/api/contractService';
+import { supabase } from '@/integrations/supabase/client';
 
 // Import dashboard cards
 import JobManagementCard from './client/JobManagementCard';
@@ -44,6 +46,11 @@ import ApplicantReviewCard from './client/ApplicantReviewCard';
 import TimecardApprovalCard from './client/TimecardApprovalCard';
 import ClientContractsCard from './client/ClientContractsCard';
 import ClientQuickActionsCard from './client/ClientQuickActionsCard';
+
+import ClientConversationsList from '../ClientConversationList';
+import ContractNotifications from '@/components/ContractNotifications';
+
+
 
 // Helper function to format date
 const formatDate = (dateString: string) => {
@@ -75,6 +82,9 @@ export default function ClientDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
+  // Add state for messages page
+  const [showMessagesPage, setShowMessagesPage] = useState(false);
+  
   const [stats, setStats] = useState({
     activeJobs: 0,
     totalApplications: 0,
@@ -85,11 +95,81 @@ export default function ClientDashboard() {
     newApplicants: 0,
     pendingApprovals: 0
   });
-  
+
   const [recentJobs, setRecentJobs] = useState<any[]>([]);
   const [pendingTimecards, setPendingTimecards] = useState<any[]>([]);
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
   const [activeContracts, setActiveContracts] = useState<any[]>([]);
+
+  // Chat/Message related states
+  const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+
+  // Fetch unread messages count
+  const fetchUnreadMessages = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      // Get unread count from messages where client is recipient
+      const { count, error } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact' })
+        .eq('recipient_id', user.id) // Use user.id since messages are linked to auth users
+        .eq('is_read', false);
+
+      if (error) throw error;
+      setTotalUnreadMessages(count || 0);
+      setHasNewMessages((count || 0) > 0);
+    } catch (error) {
+      console.error('Error fetching unread messages:', error);
+    }
+  }, [user?.id]);
+
+  // Subscribe to real-time message notifications
+  const subscribeToMessages = useCallback(() => {
+    if (!user?.id) return;
+
+    const subscription = supabase
+      .channel(`client_notifications:${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `recipient_id=eq.${user.id}`,
+        },
+        (payload) => {
+          setTotalUnreadMessages(prev => prev + 1);
+          setHasNewMessages(true);
+
+          // Show browser notification if permission granted
+          if (Notification.permission === 'granted') {
+            new Notification('New Message', {
+              body: 'You have a new message from a nurse about your job posting',
+              icon: '/favicon.ico'
+            });
+          }
+
+          // Show toast notification
+          toast({
+            title: "💬 New Message",
+            description: "You have a new message from a nurse",
+            action: (
+              <Button
+                size="sm"
+                onClick={() => setShowMessagesPage(true)}
+              >
+                View
+              </Button>
+            ),
+          });
+        }
+      )
+      .subscribe();
+
+    return () => subscription.unsubscribe();
+  }, [user?.id]);
 
   // Memoized fetch function to prevent unnecessary re-renders
   const fetchDashboardData = useCallback(async () => {
@@ -199,18 +279,41 @@ export default function ClientDashboard() {
     fetchDashboardData();
   }, [fetchDashboardData, refreshTrigger]);
 
+  // Initialize message functionality when client profile is loaded
+  useEffect(() => {
+    if (user?.id) {
+      fetchUnreadMessages();
+      const unsubscribe = subscribeToMessages();
+      
+      // Request notification permission
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+      
+      return () => {
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      };
+    }
+  }, [user?.id, fetchUnreadMessages, subscribeToMessages]);
+
   // Function to trigger dashboard refresh
   const handleRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
-  }, []);
+    // Also refresh message count
+    if (user?.id) {
+      fetchUnreadMessages();
+    }
+  }, [user?.id, fetchUnreadMessages]);
 
   // Auto-refresh every 30 seconds when on overview tab
-  useEffect(() => {
-    if (activeTab === 'overview') {
-      const interval = setInterval(handleRefresh, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab, handleRefresh]);
+  // useEffect(() => {
+  //   if (activeTab === 'overview') {
+  //     const interval = setInterval(handleRefresh, 30000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [activeTab, handleRefresh]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -240,6 +343,19 @@ export default function ClientDashboard() {
     );
   }
 
+  // Show Messages Page if showMessagesPage is true
+  if (showMessagesPage) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <ClientConversationsList 
+          clientId={clientProfile?.id}
+          userId={user?.id}
+          onBack={() => setShowMessagesPage(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Fixed Header */}
@@ -251,8 +367,31 @@ export default function ClientDashboard() {
               <Badge variant="outline" className="hidden md:inline-flex">
                 {clientProfile?.client_type === 'family' ? 'Family Account' : 'Individual Account'}
               </Badge>
+              {/* New message notification badge */}
+              {hasNewMessages && (
+                <Badge className="bg-blue-600 text-white animate-pulse">
+                  <MessageCircle className="h-3 w-3 mr-1" />
+                  {totalUnreadMessages} New Message{totalUnreadMessages !== 1 ? 's' : ''}
+                </Badge>
+              )}
             </div>
             <div className="flex items-center space-x-2 md:space-x-3">
+              {/* Messages Button */}
+              <Button 
+                variant={hasNewMessages ? "default" : "outline"} 
+                size="sm" 
+                onClick={() => setShowMessagesPage(true)}
+                className={hasNewMessages ? "bg-blue-600 hover:bg-blue-700 animate-pulse" : ""}
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                <span className="hidden md:inline">Messages</span>
+                {totalUnreadMessages > 0 && (
+                  <Badge className="ml-2 bg-red-500 text-white text-xs">
+                    {totalUnreadMessages}
+                  </Badge>
+                )}
+              </Button>
+              
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -270,6 +409,15 @@ export default function ClientDashboard() {
                 <Plus className="h-4 w-4 md:mr-2" />
                 <span className="hidden md:inline">Post Job</span>
               </Button>
+              <ContractNotifications 
+                userId={user?.id}
+                userType="client"
+                profileId={clientProfile?.id}
+                onNotificationClick={(contractId) => {
+                  // Navigate to contracts tab and highlight specific contract
+                  setActiveTab('contracts');
+                }}
+              />
             </div>
           </div>
         </div>
@@ -285,24 +433,47 @@ export default function ClientDashboard() {
           <p className="text-gray-600">
             Here's an overview of your care management activities
           </p>
-          {stats.newApplicants > 0 && (
-            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center">
-                <Bell className="h-5 w-5 text-blue-600 mr-2" />
-                <span className="text-blue-900 font-medium">
-                  You have {stats.newApplicants} new applicant{stats.newApplicants !== 1 ? 's' : ''} to review!
-                </span>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="ml-auto"
-                  onClick={() => setActiveTab('applicants')}
-                >
-                  Review Now
-                </Button>
+          
+          <div className="mt-4 space-y-3">
+            {/* New message alert */}
+            {hasNewMessages && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center">
+                  <MessageCircle className="h-5 w-5 text-blue-600 mr-2 animate-pulse" />
+                  <span className="text-blue-900 font-medium">
+                    You have {totalUnreadMessages} new message{totalUnreadMessages !== 1 ? 's' : ''} from nurses!
+                  </span>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="ml-auto"
+                    onClick={() => setShowMessagesPage(true)}
+                  >
+                    View Messages
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+
+            {stats.newApplicants > 0 && (
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center">
+                  <Bell className="h-5 w-5 text-blue-600 mr-2" />
+                  <span className="text-blue-900 font-medium">
+                    You have {stats.newApplicants} new applicant{stats.newApplicants !== 1 ? 's' : ''} to review!
+                  </span>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="ml-auto"
+                    onClick={() => setActiveTab('applicants')}
+                  >
+                    Review Now
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Enhanced Stats Grid */}
@@ -340,6 +511,19 @@ export default function ClientDashboard() {
                     <p className="text-xl md:text-2xl font-bold">{stats.newApplicants}</p>
                   </div>
                   <Bell className="h-6 w-6 md:h-8 md:w-8 text-yellow-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Messages Card */}
+            <Card className={`border-l-4 border-l-green-500 min-w-[160px] md:min-w-0 ${hasNewMessages ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}`}>
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">Messages</p>
+                    <p className="text-xl md:text-2xl font-bold">{totalUnreadMessages}</p>
+                  </div>
+                  <MessageCircle className={`h-6 w-6 md:h-8 md:w-8 text-green-500 opacity-50 ${hasNewMessages ? 'animate-pulse' : ''}`} />
                 </div>
               </CardContent>
             </Card>
@@ -391,20 +575,6 @@ export default function ClientDashboard() {
                 </div>
               </CardContent>
             </Card>
-
-            <Card className="border-l-4 border-l-teal-500 min-w-[160px] md:min-w-0">
-              <CardContent className="p-4 md:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs md:text-sm text-gray-600">Success Rate</p>
-                    <p className="text-xl md:text-2xl font-bold">
-                      {stats.totalApplications > 0 ? Math.round((stats.activeContracts / stats.totalApplications) * 100) : 0}%
-                    </p>
-                  </div>
-                  <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-teal-500 opacity-50" />
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
 
@@ -445,7 +615,14 @@ export default function ClientDashboard() {
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>Recent Applications</CardTitle>
+                    <CardTitle className="flex items-center">
+                      Recent Applications
+                      {hasNewMessages && (
+                        <Badge className="ml-2 bg-blue-600 text-white animate-pulse">
+                          {totalUnreadMessages} new
+                        </Badge>
+                      )}
+                    </CardTitle>
                     <Button 
                       variant="ghost" 
                       size="sm" 
