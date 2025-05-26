@@ -46,6 +46,7 @@ import ApplicantReviewCard from './client/ApplicantReviewCard';
 import TimecardApprovalCard from './client/TimecardApprovalCard';
 import ClientContractsCard from './client/ClientContractsCard';
 import ClientQuickActionsCard from './client/ClientQuickActionsCard';
+import BrowseNursesCard from './client/BrowseNursesCard';
 
 import ClientConversationsList from '../ClientConversationList';
 import ContractNotifications from '@/components/ContractNotifications';
@@ -306,6 +307,16 @@ export default function ClientDashboard() {
       fetchUnreadMessages();
     }
   }, [user?.id, fetchUnreadMessages]);
+
+  // Handle nurse contact from browse nurses
+  const handleNurseContact = useCallback((nurseId: string, conversationId: string) => {
+    // Show messages page when a nurse is contacted
+    setShowMessagesPage(true);
+    toast({
+      title: "Conversation Started",
+      description: "You can now chat with the nurse about your care needs."
+    });
+  }, []);
 
   // Auto-refresh every 30 seconds when on overview tab
   // useEffect(() => {
@@ -580,8 +591,11 @@ export default function ClientDashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview" className="text-xs md:text-sm">Overview</TabsTrigger>
+            <TabsTrigger value="browse" className="text-xs md:text-sm">
+              Browse Nurses
+            </TabsTrigger>
             <TabsTrigger value="jobs" className="text-xs md:text-sm">Jobs</TabsTrigger>
             <TabsTrigger value="applicants" className="text-xs md:text-sm">
               Applicants
@@ -743,6 +757,13 @@ export default function ClientDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="browse">
+            <BrowseNursesCard 
+              clientId={clientProfile?.id || ''} 
+              onNurseContact={handleNurseContact}
+            />
           </TabsContent>
 
           <TabsContent value="jobs">

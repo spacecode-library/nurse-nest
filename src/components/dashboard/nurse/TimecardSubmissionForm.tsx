@@ -25,6 +25,7 @@ interface ActiveContract {
     care_type: string;
   };
   client_profiles: {
+    id: any;
     first_name: string;
     last_name: string;
   };

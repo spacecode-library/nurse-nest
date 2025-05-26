@@ -716,3 +716,4 @@ export async function getTimecardStats() {
     return { stats: null, error: error as PostgrestError };
   }
 }
+

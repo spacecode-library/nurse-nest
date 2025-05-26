@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Users, Clock, FileText, DollarSign, Briefcase } from 'lucide-react';
+import { Plus, Users, Clock, FileText, DollarSign, Briefcase, Search } from 'lucide-react';
 import JobPostingForm from './JobPostingForm';
 
 interface ClientQuickActionsCardProps {
@@ -22,6 +22,18 @@ export default function ClientQuickActionsCard({ clientId, onRefresh }: ClientQu
       icon: Plus,
       color: 'bg-blue-500 hover:bg-blue-600',
       action: () => setShowJobForm(true)
+    },
+    {
+      id: 'browse-nurses',
+      title: 'Browse Nurses',
+      description: 'Find qualified nurses',
+      icon: Search,
+      color: 'bg-emerald-500 hover:bg-emerald-600',
+      action: () => {
+        // Navigate to browse nurses tab
+        const browseTab = document.querySelector('[value="browse"]') as HTMLElement;
+        browseTab?.click();
+      }
     },
     {
       id: 'review-applicants',
@@ -69,17 +81,6 @@ export default function ClientQuickActionsCard({ clientId, onRefresh }: ClientQu
         // Scroll to billing tab
         const billingTab = document.querySelector('[value="billing"]') as HTMLElement;
         billingTab?.click();
-      }
-    },
-    {
-      id: 'find-nurses',
-      title: 'Find Nurses',
-      description: 'Browse available nurses',
-      icon: Briefcase,
-      color: 'bg-orange-500 hover:bg-orange-600',
-      action: () => {
-        // Navigate to nurse directory or open browse modal
-        window.location.href = '/browse-nurses';
       }
     }
   ];
