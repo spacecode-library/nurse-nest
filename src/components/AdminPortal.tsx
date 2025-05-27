@@ -679,6 +679,7 @@ export default function AdminPortal() {
               </CardContent>
             </Card>
           </TabsContent>
+          
           <TabsContent value="contracts" className="space-y-6">
             <ContractAnalytics />
           </TabsContent>
