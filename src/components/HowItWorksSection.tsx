@@ -56,7 +56,7 @@ export default function HowItWorksSection() {
     {
       number: 1,
       title: "Create Your Custom Request",
-      description: "Start by submitting a quick care request tailored to your needs. Just tell us the type of nurse, your location, timeline, and preferences. From there, our smart matching engine begins sourcing the best-fit nurses—curated just for you.",
+      description: "Start by submitting a quick care request tailored to your needs. Just tell us the type of nurse, your location, timeline, and preferences. From there, our smart matching engine begins sourcing the best-fit nurses—curated just for you. Impact-Site-Verification: 73519b78-1ca5-43b3-8cf1-4ce729124393",
       icon: <Search className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/119a6708-a3cb-400b-ac7b-c2437a103499.png",
       imageAlt: "Gloved & elderly hand"
