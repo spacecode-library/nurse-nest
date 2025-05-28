@@ -52,7 +52,10 @@ export default function Auth() {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
-          password
+          password,
+          options: {
+            emailRedirectTo: window.location.origin + '/dashboard'
+          }
         });
         
         if (error) {
