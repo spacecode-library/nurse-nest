@@ -484,6 +484,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          auto_approval_warnings: boolean | null
+          created_at: string | null
+          dispute_notifications: boolean | null
+          email_notifications: boolean | null
+          id: string
+          payment_confirmations: boolean | null
+          push_notifications: boolean | null
+          sms_notifications: boolean | null
+          timecard_reminders: boolean | null
+          timecard_submissions: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          auto_approval_warnings?: boolean | null
+          created_at?: string | null
+          dispute_notifications?: boolean | null
+          email_notifications?: boolean | null
+          id?: string
+          payment_confirmations?: boolean | null
+          push_notifications?: boolean | null
+          sms_notifications?: boolean | null
+          timecard_reminders?: boolean | null
+          timecard_submissions?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          auto_approval_warnings?: boolean | null
+          created_at?: string | null
+          dispute_notifications?: boolean | null
+          email_notifications?: boolean | null
+          id?: string
+          payment_confirmations?: boolean | null
+          push_notifications?: boolean | null
+          sms_notifications?: boolean | null
+          timecard_reminders?: boolean | null
+          timecard_submissions?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       nurse_certifications: {
         Row: {
           certification_file_url: string | null
@@ -608,6 +653,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_nurse_preferences_nurse"
+            columns: ["nurse_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "nurse_preferences_nurse_id_fkey"
             columns: ["nurse_id"]
             isOneToOne: false
@@ -717,25 +769,208 @@ export type Database = {
           },
         ]
       }
+      timecard_disputes: {
+        Row: {
+          admin_notes: string | null
+          client_evidence: string | null
+          created_at: string | null
+          dispute_reason: string
+          id: string
+          initiated_by: string
+          initiated_by_type: string
+          nurse_evidence: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database["public"]["Enums"]["dispute_status"] | null
+          timecard_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          client_evidence?: string | null
+          created_at?: string | null
+          dispute_reason: string
+          id?: string
+          initiated_by: string
+          initiated_by_type: string
+          nurse_evidence?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"] | null
+          timecard_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          client_evidence?: string | null
+          created_at?: string | null
+          dispute_reason?: string
+          id?: string
+          initiated_by?: string
+          initiated_by_type?: string
+          nurse_evidence?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"] | null
+          timecard_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timecard_disputes_timecard_id_fkey"
+            columns: ["timecard_id"]
+            isOneToOne: false
+            referencedRelation: "timecards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timecard_notifications: {
+        Row: {
+          created_at: string | null
+          email_sent: boolean | null
+          id: string
+          notification_type: string
+          push_sent: boolean | null
+          read_at: string | null
+          recipient_id: string
+          sent_at: string | null
+          sms_sent: boolean | null
+          timecard_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_sent?: boolean | null
+          id?: string
+          notification_type: string
+          push_sent?: boolean | null
+          read_at?: string | null
+          recipient_id: string
+          sent_at?: string | null
+          sms_sent?: boolean | null
+          timecard_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_sent?: boolean | null
+          id?: string
+          notification_type?: string
+          push_sent?: boolean | null
+          read_at?: string | null
+          recipient_id?: string
+          sent_at?: string | null
+          sms_sent?: boolean | null
+          timecard_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timecard_notifications_timecard_id_fkey"
+            columns: ["timecard_id"]
+            isOneToOne: false
+            referencedRelation: "timecards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timecard_payments: {
+        Row: {
+          client_id: string
+          contract_id: string
+          created_at: string | null
+          gross_amount: number
+          id: string
+          nurse_id: string
+          nurse_payment: number
+          payment_method: string | null
+          payment_reference: string | null
+          payment_status: string | null
+          platform_fee: number
+          processed_at: string | null
+          timecard_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_id: string
+          contract_id: string
+          created_at?: string | null
+          gross_amount: number
+          id?: string
+          nurse_id: string
+          nurse_payment: number
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          platform_fee: number
+          processed_at?: string | null
+          timecard_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string
+          contract_id?: string
+          created_at?: string | null
+          gross_amount?: number
+          id?: string
+          nurse_id?: string
+          nurse_payment?: number
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          platform_fee?: number
+          processed_at?: string | null
+          timecard_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timecard_payments_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timecard_payments_timecard_id_fkey"
+            columns: ["timecard_id"]
+            isOneToOne: false
+            referencedRelation: "timecards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       timecards: {
         Row: {
           approval_deadline: string
           approved_by_client: boolean | null
+          auto_approval_triggered: boolean | null
           auto_approved: boolean | null
           break_minutes: number | null
           client_id: string | null
+          contract_id: string | null
           created_at: string | null
+          dispute_id: string | null
           end_time: string
+          final_notice_sent_at: string | null
           id: string
           is_overnight: boolean | null
           job_code: string
+          night_shift_allocation: Json | null
           notes: string | null
           nurse_id: string | null
+          original_submission: Json | null
+          payment_amount: number | null
+          payment_processed: boolean | null
+          platform_fee: number | null
+          rejection_reason: string | null
+          reminder_sent_at: string | null
           rounded_end_time: string
           rounded_start_time: string
           shift_date: string
           start_time: string
-          status: string
+          status: Database["public"]["Enums"]["timecard_status"] | null
           timestamp_approved: string | null
           timestamp_paid: string | null
           timestamp_submitted: string | null
@@ -747,21 +982,32 @@ export type Database = {
         Insert: {
           approval_deadline: string
           approved_by_client?: boolean | null
+          auto_approval_triggered?: boolean | null
           auto_approved?: boolean | null
           break_minutes?: number | null
           client_id?: string | null
+          contract_id?: string | null
           created_at?: string | null
+          dispute_id?: string | null
           end_time: string
+          final_notice_sent_at?: string | null
           id?: string
           is_overnight?: boolean | null
           job_code: string
+          night_shift_allocation?: Json | null
           notes?: string | null
           nurse_id?: string | null
+          original_submission?: Json | null
+          payment_amount?: number | null
+          payment_processed?: boolean | null
+          platform_fee?: number | null
+          rejection_reason?: string | null
+          reminder_sent_at?: string | null
           rounded_end_time: string
           rounded_start_time: string
           shift_date: string
           start_time: string
-          status?: string
+          status?: Database["public"]["Enums"]["timecard_status"] | null
           timestamp_approved?: string | null
           timestamp_paid?: string | null
           timestamp_submitted?: string | null
@@ -773,21 +1019,32 @@ export type Database = {
         Update: {
           approval_deadline?: string
           approved_by_client?: boolean | null
+          auto_approval_triggered?: boolean | null
           auto_approved?: boolean | null
           break_minutes?: number | null
           client_id?: string | null
+          contract_id?: string | null
           created_at?: string | null
+          dispute_id?: string | null
           end_time?: string
+          final_notice_sent_at?: string | null
           id?: string
           is_overnight?: boolean | null
           job_code?: string
+          night_shift_allocation?: Json | null
           notes?: string | null
           nurse_id?: string | null
+          original_submission?: Json | null
+          payment_amount?: number | null
+          payment_processed?: boolean | null
+          platform_fee?: number | null
+          rejection_reason?: string | null
+          reminder_sent_at?: string | null
           rounded_end_time?: string
           rounded_start_time?: string
           shift_date?: string
           start_time?: string
-          status?: string
+          status?: Database["public"]["Enums"]["timecard_status"] | null
           timestamp_approved?: string | null
           timestamp_paid?: string | null
           timestamp_submitted?: string | null
@@ -802,6 +1059,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timecards_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
             referencedColumns: ["id"]
           },
           {
@@ -833,22 +1097,74 @@ export type Database = {
       }
     }
     Views: {
-      admin_dashboard_stats: {
-        Row: {
-          new_applications: number | null
-          open_jobs: number | null
-          pending_client_profiles: number | null
-          pending_nurse_profiles: number | null
-          pending_timecards: number | null
-          pending_verifications: number | null
-        }
-        Relationships: []
-      }
-    }
-    Functions: {
       [_ in never]: never
     }
+    Functions: {
+      auto_approve_expired_timecards: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      auto_approve_overdue_timecards: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          processed_count: number
+          timecard_ids: string[]
+        }[]
+      }
+      calculate_timecard_payment: {
+        Args: { p_timecard_id: string; p_hourly_rate?: number }
+        Returns: Json
+      }
+      can_submit_timecard: {
+        Args: {
+          p_nurse_id: string
+          p_client_id: string
+          p_job_id: string
+          p_shift_date: string
+        }
+        Returns: boolean
+      }
+      get_overdue_timecards: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          timecard_id: string
+          nurse_id: string
+          client_id: string
+          hours_overdue: number
+          nurse_name: string
+          client_name: string
+        }[]
+      }
+      get_timecards_approaching_deadline: {
+        Args: { hours_before_deadline?: number }
+        Returns: {
+          timecard_id: string
+          nurse_id: string
+          client_id: string
+          hours_until_deadline: number
+          nurse_name: string
+          client_name: string
+          client_user_id: string
+        }[]
+      }
+      round_time_to_quarter: {
+        Args: { time_input: string }
+        Returns: string
+      }
+    }
     Enums: {
+      dispute_status:
+        | "pending"
+        | "investigating"
+        | "resolved_client"
+        | "resolved_nurse"
+        | "resolved_admin"
+      timecard_status:
+        | "Submitted"
+        | "Approved"
+        | "Auto-Approved"
+        | "Rejected"
+        | "Paid"
       user_role: "nurse" | "client" | "admin"
     }
     CompositeTypes: {
@@ -965,6 +1281,20 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      dispute_status: [
+        "pending",
+        "investigating",
+        "resolved_client",
+        "resolved_nurse",
+        "resolved_admin",
+      ],
+      timecard_status: [
+        "Submitted",
+        "Approved",
+        "Auto-Approved",
+        "Rejected",
+        "Paid",
+      ],
       user_role: ["nurse", "client", "admin"],
     },
   },

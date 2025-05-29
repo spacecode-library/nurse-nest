@@ -1,7 +1,10 @@
 // src/supabase/api/adminService.ts
+import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
+import axios from 'axios';
 
+const servicekey = import.meta.env.VITE_SUPABASE_SERVICE_KEY;
 /**
  * Admin profile interface
  */
@@ -215,7 +218,7 @@ export async function getAllUsers(
 ) {
   try {
     // First get the auth users to get email and other auth data
-    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers({
+    const { data: authUsers, error: authError } = await adminAuthClient.listUsers({
       page: Math.floor(offset / limit) + 1,
       perPage: limit
     });
@@ -384,6 +387,7 @@ export async function getAllUsers(
     return { data: null, count: null, error: error as PostgrestError };
   }
 }
+
 
 /**
  * Get detailed user information by ID
