@@ -188,11 +188,11 @@ export async function getTimecardById(timecardId: string) {
 
 /**
  * Get all timecards for a nurse
- * 
+ *
  * @param nurseId Nurse ID
  * @param limit Maximum number of records to return
  * @param offset Offset for pagination
- * @returns List of timecards
+ * @returns List of timecards with client profiles
  */
 export async function getNurseTimecards(
   nurseId: string,
@@ -200,22 +200,57 @@ export async function getNurseTimecards(
   offset: number = 0
 ) {
   try {
-    const { data, error, count } = await supabase
+    // First, get the timecards without any joins
+    const { data: timecards, error: timecardsError, count } = await supabase
       .from('timecards')
-      .select(`
-        *,
-        client_profiles!inner(
-          id,
-          first_name,
-          last_name
-        )
-      `, { count: 'exact' })
+      .select('*', { count: 'exact' })
       .eq('nurse_id', nurseId)
       .range(offset, offset + limit - 1)
       .order('shift_date', { ascending: false });
 
-    if (error) throw error;
-    return { data, count, error: null };
+    if (timecardsError) throw timecardsError;
+
+    if (!timecards || timecards.length === 0) {
+      return { data: [], count: 0, error: null };
+    }
+
+    // Extract unique client IDs from the timecards
+    const clientIds = [...new Set(
+      timecards
+        .map(timecard => timecard.client_id)
+        .filter(id => id != null) // Remove null/undefined values
+    )];
+
+    // If no client IDs, return timecards without client profiles
+    if (clientIds.length === 0) {
+      const timecardsWithProfiles = timecards.map(timecard => ({
+        ...timecard,
+        client_profiles: null
+      }));
+      return { data: timecardsWithProfiles, count, error: null };
+    }
+
+    // Get client profiles for those IDs
+    const { data: clientProfiles, error: profilesError } = await supabase
+      .from('client_profiles')
+      .select('id, first_name, last_name')
+      .in('id', clientIds);
+
+    if (profilesError) throw profilesError;
+
+    // Create a map for quick lookup
+    const profilesMap = new Map(
+      (clientProfiles || []).map(profile => [profile.id, profile])
+    );
+
+    // Manually join the data
+    const timecardsWithProfiles = timecards.map(timecard => ({
+      ...timecard,
+      client_profiles: timecard.client_id ? profilesMap.get(timecard.client_id) || null : null
+    }));
+
+    return { data: timecardsWithProfiles, count, error: null };
+
   } catch (error) {
     console.error('Error getting nurse timecards:', error);
     return { data: null, count: null, error: error as PostgrestError };
@@ -716,4 +751,3 @@ export async function getTimecardStats() {
     return { stats: null, error: error as PostgrestError };
   }
 }
-

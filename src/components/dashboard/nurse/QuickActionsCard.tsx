@@ -18,11 +18,11 @@ export default function QuickActionsCard({ nurseId, onRefresh }: QuickActionsCar
     {
       id: 'submit-timecard',
       title: 'Submit Timecard',
-      description: 'Log your hours for this week',
+      description: 'Log your hours for completed shifts',
       icon: Clock,
       color: 'bg-blue-500 hover:bg-blue-600',
       action: () => setShowTimecardForm(true)
-    },
+    },,
     {
       id: 'browse-jobs',
       title: 'Browse Jobs',

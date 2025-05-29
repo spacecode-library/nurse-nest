@@ -31,7 +31,13 @@ import {
   X,
   Loader2,
   AlertCircle,
-  User
+  User,
+  Sparkles,
+  Crown,
+  Zap,
+  Globe,
+  Briefcase,
+  Trophy
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -45,6 +51,9 @@ import {
   type NurseWithDetails,
   type BrowseFilters 
 } from '@/supabase/api/nurseBrowseService';
+
+// Import enhanced date formatting
+import { formatShortPremiumDate, formatRelativeTime } from '@/lib/dateFormatting';
 
 interface BrowseNursesCardProps {
   clientId: string;
@@ -183,8 +192,9 @@ export default function BrowseNursesCard({
       if (error) throw error;
 
       toast({
-        title: "Conversation Started",
-        description: `You can now message ${nurse.first_name} ${nurse.last_name}`
+        title: "✨ Conversation Started!",
+        description: `You can now message ${nurse.first_name} ${nurse.last_name}`,
+        duration: 4000
       });
 
       if (onNurseContact && conversation) {
@@ -223,11 +233,11 @@ export default function BrowseNursesCard({
     const verifiedLicense = licenses.find(l => l.verification_status === 'verified');
     
     if (verifiedLicense) {
-      return { status: 'verified', text: 'Verified License', color: 'bg-green-100 text-green-800' };
+      return { status: 'verified', text: 'Verified License', color: 'bg-gradient-to-r from-green-100 to-emerald-200 text-emerald-800 border-emerald-300' };
     } else if (licenses.length > 0) {
-      return { status: 'pending', text: 'License Pending', color: 'bg-yellow-100 text-yellow-800' };
+      return { status: 'pending', text: 'License Pending', color: 'bg-gradient-to-r from-yellow-100 to-amber-200 text-amber-800 border-amber-300' };
     } else {
-      return { status: 'none', text: 'No License', color: 'bg-red-100 text-red-800' };
+      return { status: 'none', text: 'No License', color: 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-300' };
     }
   };
 
@@ -237,99 +247,149 @@ export default function BrowseNursesCard({
     const licenseStatus = getLicenseStatus(nurse);
     
     return (
-      <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer">
-        <CardContent className="p-6">
-          <div className="flex items-start space-x-4">
-            {/* Profile Photo */}
-            <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-              {nurse.profile_photo_url ? (
-                <img 
-                  src={nurse.profile_photo_url} 
-                  alt={`${nurse.first_name} ${nurse.last_name}`}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white font-medium text-lg">
-                  {nurse.first_name.charAt(0)}{nurse.last_name.charAt(0)}
-                </div>
-              )}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              {/* Header */}
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900 truncate">
-                    {nurse.first_name} {nurse.last_name}
-                  </h3>
-                  <div className="flex items-center text-sm text-gray-600 mb-1">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {nurse.city}, {nurse.state}
-                    {nurse.isLocal && (
-                      <Badge className="ml-2 bg-green-100 text-green-800 text-xs">
-                        Local
-                      </Badge>
-                    )}
+      <Card className="group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border-0 shadow-lg bg-gradient-to-br from-white to-blue-50/30 overflow-hidden">
+        <CardContent className="p-0">
+          {/* Header with Profile Picture */}
+          <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
+            <div className="flex items-start space-x-4">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden ring-4 ring-white shadow-xl flex-shrink-0">
+                {nurse.profile_photo_url ? (
+                  <img 
+                    src={nurse.profile_photo_url} 
+                    alt={`${nurse.first_name} ${nurse.last_name}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center text-white font-bold text-2xl">
+                    {nurse.first_name.charAt(0)}{nurse.last_name.charAt(0)}
                   </div>
+                )}
+                {/* Professional Badge */}
+                <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-full p-2 shadow-lg">
+                  <Star className="h-3 w-3" />
                 </div>
-                <Badge className={`${licenseStatus.color} text-xs`}>
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-xl text-white mb-1 truncate">
+                  {nurse.first_name} {nurse.last_name}
+                </h3>
+                <div className="flex items-center text-blue-100 mb-2">
+                  <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                  <span className="truncate">{nurse.city}, {nurse.state}</span>
+                  {nurse.isLocal && (
+                    <Badge className="ml-2 bg-white/20 text-white border-white/30 text-xs">
+                      Local
+                    </Badge>
+                  )}
+                </div>
+                <Badge className={`${licenseStatus.color} border text-xs`}>
+                  <Shield className="h-3 w-3 mr-1" />
                   {licenseStatus.text}
                 </Badge>
               </div>
+            </div>
+            
+            {/* Decorative Elements */}
+            <div className="absolute top-2 right-2 opacity-20">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <div className="absolute bottom-2 right-4 opacity-10">
+              <Crown className="h-8 w-8" />
+            </div>
+          </div>
 
-              {/* Key Info */}
-              <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {getExperience(nurse)}
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <DollarSign className="h-4 w-4 mr-2" />
-                  {formatHourlyRate(nurse)}
-                </div>
-                <div className="flex items-center text-gray-600 col-span-2">
-                  <Award className="h-4 w-4 mr-2" />
-                  {getSpecializationsText(nurse)}
+          {/* Content Section */}
+          <div className="p-6">
+            {/* Key Info Grid */}
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="flex items-center text-sm bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-3">
+                <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                <div>
+                  <p className="font-medium text-gray-800">Experience</p>
+                  <p className="text-gray-600">{getExperience(nurse)}</p>
                 </div>
               </div>
+              <div className="flex items-center text-sm bg-gradient-to-r from-gray-50 to-green-50 rounded-lg p-3">
+                <DollarSign className="h-4 w-4 mr-2 text-green-600" />
+                <div>
+                  <p className="font-medium text-gray-800">Rate</p>
+                  <p className="text-gray-600">{formatHourlyRate(nurse)}</p>
+                </div>
+              </div>
+            </div>
 
-              {/* Bio Preview */}
-              {nurse.bio && (
-                <p className="text-sm text-gray-700 mb-4 line-clamp-2">
-                  {nurse.bio}
+            {/* Specializations */}
+            <div className="mb-4">
+              <div className="flex items-center text-sm mb-2">
+                <Award className="h-4 w-4 mr-2 text-purple-600" />
+                <span className="font-medium text-gray-800">Specializations</span>
+              </div>
+              <p className="text-gray-600 text-sm bg-gradient-to-r from-purple-50 to-pink-50 p-2 rounded-lg">
+                {getSpecializationsText(nurse)}
+              </p>
+            </div>
+
+            {/* Bio Preview */}
+            {nurse.bio && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-700 line-clamp-2 bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-lg italic">
+                  "{nurse.bio}"
                 </p>
-              )}
-
-              {/* Actions */}
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSelectedNurse(nurse)}
-                  className="flex-1"
-                >
-                  <Eye className="h-4 w-4 mr-1" />
-                  View Profile
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => handleContactNurse(nurse)}
-                  disabled={contactingNurse === nurse.id}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
-                >
-                  {contactingNurse === nurse.id ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                      Contacting...
-                    </>
-                  ) : (
-                    <>
-                      <MessageCircle className="h-4 w-4 mr-1" />
-                      Contact
-                    </>
-                  )}
-                </Button>
               </div>
+            )}
+
+            {/* Premium Features */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {nurse.nurse_certifications && nurse.nurse_certifications.length > 0 && (
+                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                  <Award className="h-3 w-3 mr-1" />
+                  {nurse.nurse_certifications.length} Certification{nurse.nurse_certifications.length !== 1 ? 's' : ''}
+                </Badge>
+              )}
+              {nurse.nurse_licenses && nurse.nurse_licenses.length > 0 && (
+                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                  <Shield className="h-3 w-3 mr-1" />
+                  Licensed
+                </Badge>
+              )}
+              {nurse.nurse_qualifications?.[0]?.years_experience > 5 && (
+                <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                  <Trophy className="h-3 w-3 mr-1" />
+                  Experienced
+                </Badge>
+              )}
+            </div>
+
+            {/* Enhanced Actions */}
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedNurse(nurse)}
+                className="flex-1 hover:bg-blue-50 hover:border-blue-300 transition-all group-hover:shadow-md"
+              >
+                <Eye className="h-4 w-4 mr-1" />
+                View Profile
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => handleContactNurse(nurse)}
+                disabled={contactingNurse === nurse.id}
+                className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-0 shadow-md transition-all"
+              >
+                {contactingNurse === nurse.id ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    Contacting...
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="h-4 w-4 mr-1" />
+                    Contact
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -341,267 +401,357 @@ export default function BrowseNursesCard({
     const licenseStatus = getLicenseStatus(nurse);
     
     return (
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-white to-gray-50/50">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <User className="h-5 w-5 mr-2" />
-            {nurse.first_name} {nurse.last_name}
+          <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center">
+            <Crown className="h-6 w-6 mr-2 text-indigo-600" />
+            Nurse Profile
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
-          {/* Header Section */}
-          <div className="flex items-start space-x-6">
-            <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-              {nurse.profile_photo_url ? (
-                <img 
-                  src={nurse.profile_photo_url} 
-                  alt={`${nurse.first_name} ${nurse.last_name}`}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white font-bold text-2xl">
-                  {nurse.first_name.charAt(0)}{nurse.last_name.charAt(0)}
-                </div>
-              )}
-            </div>
-            
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    {nurse.first_name} {nurse.last_name}
-                  </h2>
-                  <div className="flex items-center text-gray-600 mb-2">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {nurse.street_address}, {nurse.city}, {nurse.state} {nurse.zip_code}
+        <div className="space-y-8">
+          {/* Enhanced Header Section */}
+          <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-8 text-white overflow-hidden">
+            <div className="flex items-start space-x-6 relative z-10">
+              <div className="w-32 h-32 rounded-full overflow-hidden ring-8 ring-white shadow-2xl flex-shrink-0">
+                {nurse.profile_photo_url ? (
+                  <img 
+                    src={nurse.profile_photo_url} 
+                    alt={`${nurse.first_name} ${nurse.last_name}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center text-white font-bold text-4xl">
+                    {nurse.first_name.charAt(0)}{nurse.last_name.charAt(0)}
                   </div>
-                </div>
-                <Badge className={`${licenseStatus.color}`}>
-                  {licenseStatus.text}
-                </Badge>
+                )}
               </div>
               
-              <div className="grid grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span className="font-medium text-gray-900">Experience:</span>
-                  <p className="text-gray-600">{getExperience(nurse)}</p>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-4xl font-bold text-white mb-2">
+                      {nurse.first_name} {nurse.last_name}
+                    </h2>
+                    <div className="flex items-center text-blue-100 mb-3">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      <span className="text-lg">{nurse.street_address}, {nurse.city}, {nurse.state} {nurse.zip_code}</span>
+                    </div>
+                  </div>
+                  <Badge className={`${licenseStatus.color} border text-lg px-4 py-2`}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    {licenseStatus.text}
+                  </Badge>
                 </div>
-                <div>
-                  <span className="font-medium text-gray-900">Rate:</span>
-                  <p className="text-gray-600">{formatHourlyRate(nurse)}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-900">Phone:</span>
-                  <p className="text-gray-600">{nurse.phone_number}</p>
+                
+                <div className="grid grid-cols-3 gap-6 text-center">
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-white">{getExperience(nurse)}</div>
+                    <div className="text-blue-100 text-sm">Experience</div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-white">{formatHourlyRate(nurse)}</div>
+                    <div className="text-blue-100 text-sm">Hourly Rate</div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-white">{nurse.phone_number}</div>
+                    <div className="text-blue-100 text-sm">Phone</div>
+                  </div>
                 </div>
               </div>
+            </div>
+            
+            {/* Decorative background elements */}
+            <div className="absolute top-4 right-4 opacity-20">
+              <Sparkles className="h-12 w-12" />
+            </div>
+            <div className="absolute bottom-4 left-8 opacity-10">
+              <Crown className="h-16 w-16" />
+            </div>
+            <div className="absolute top-1/2 right-8 opacity-5">
+              <Globe className="h-24 w-24" />
             </div>
           </div>
 
-          {/* Bio */}
-          {nurse.bio && (
-            <div>
-              <h3 className="font-semibold text-lg mb-2">About</h3>
-              <p className="text-gray-700">{nurse.bio}</p>
-            </div>
-          )}
+          {/* Enhanced Content Tabs */}
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-5 h-12 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+              <TabsTrigger value="overview" className="rounded-lg font-medium">Overview</TabsTrigger>
+              <TabsTrigger value="qualifications" className="rounded-lg font-medium">Education</TabsTrigger>
+              <TabsTrigger value="licenses" className="rounded-lg font-medium">Licenses</TabsTrigger>
+              <TabsTrigger value="certifications" className="rounded-lg font-medium">Certifications</TabsTrigger>
+              <TabsTrigger value="preferences" className="rounded-lg font-medium">Preferences</TabsTrigger>
+            </TabsList>
 
-          {/* Qualifications */}
-          {nurse.nurse_qualifications && nurse.nurse_qualifications.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-lg mb-3 flex items-center">
-                <BookOpen className="h-5 w-5 mr-2" />
-                Education & Experience
-              </h3>
-              {nurse.nurse_qualifications.map((qual, index) => (
-                <Card key={index} className="mb-3">
-                  <CardContent className="p-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="font-medium">Education:</span>
-                        <p className="text-gray-600">{qual.education_level}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">School:</span>
-                        <p className="text-gray-600">{qual.school_name}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Experience:</span>
-                        <p className="text-gray-600">{qual.years_experience} years</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Graduated:</span>
-                        <p className="text-gray-600">{qual.graduation_year}</p>
-                      </div>
-                    </div>
-                    {qual.specializations && qual.specializations.length > 0 && (
-                      <div className="mt-3">
-                        <span className="font-medium">Specializations:</span>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {qual.specializations.map((spec, i) => (
-                            <Badge key={i} variant="outline" className="text-xs">
-                              {spec}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-
-          {/* Licenses */}
-          {nurse.nurse_licenses && nurse.nurse_licenses.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-lg mb-3 flex items-center">
-                <Shield className="h-5 w-5 mr-2" />
-                Licenses
-              </h3>
-              <div className="grid gap-3">
-                {nurse.nurse_licenses.map((license, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start">
-                        <div className="grid grid-cols-2 gap-4 flex-1">
-                          <div>
-                            <span className="font-medium">Type:</span>
-                            <p className="text-gray-600">{license.license_type}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">State:</span>
-                            <p className="text-gray-600">{license.issuing_state}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Number:</span>
-                            <p className="text-gray-600 font-mono">{license.license_number}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Expires:</span>
-                            <p className="text-gray-600">
-                              {new Date(license.expiration_date).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        <Badge className={
-                          license.verification_status === 'verified' 
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }>
-                          {license.verification_status}
-                        </Badge>
-                      </div>
+            <TabsContent value="overview" className="mt-8">
+              <div className="space-y-6">
+                {/* Bio */}
+                {nurse.bio && (
+                  <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-xl">
+                        <User className="h-5 w-5 mr-2 text-blue-600" />
+                        About {nurse.first_name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700 text-lg leading-relaxed">{nurse.bio}</p>
                     </CardContent>
                   </Card>
-                ))}
+                )}
+
+                {/* Quick Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <BookOpen className="h-6 w-6 text-white" />
+                      </div>
+                      <p className="text-2xl font-bold text-green-700">{nurse.nurse_qualifications?.length || 0}</p>
+                      <p className="text-green-600 font-medium">Qualifications</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Shield className="h-6 w-6 text-white" />
+                      </div>
+                      <p className="text-2xl font-bold text-purple-700">{nurse.nurse_licenses?.length || 0}</p>
+                      <p className="text-purple-600 font-medium">Licenses</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-cyan-50">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Award className="h-6 w-6 text-white" />
+                      </div>
+                      <p className="text-2xl font-bold text-blue-700">{nurse.nurse_certifications?.length || 0}</p>
+                      <p className="text-blue-600 font-medium">Certifications</p>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
-            </div>
-          )}
+            </TabsContent>
 
-          {/* Certifications */}
-          {nurse.nurse_certifications && nurse.nurse_certifications.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-lg mb-3 flex items-center">
-                <Award className="h-5 w-5 mr-2" />
-                Certifications
-              </h3>
-              <div className="grid gap-2">
-                {nurse.nurse_certifications.map((cert, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
-                    <div>
-                      <span className="font-medium">{cert.certification_name}</span>
-                      {cert.is_malpractice_insurance && (
-                        <Badge className="ml-2 bg-blue-100 text-blue-800 text-xs">
-                          Malpractice Insurance
-                        </Badge>
-                      )}
-                    </div>
-                    {cert.expiration_date && (
-                      <span className="text-sm text-gray-600">
-                        Expires: {new Date(cert.expiration_date).toLocaleDateString()}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Preferences */}
-          {nurse.nurse_preferences && nurse.nurse_preferences.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-lg mb-3 flex items-center">
-                <Heart className="h-5 w-5 mr-2" />
-                Work Preferences
-              </h3>
-              {nurse.nurse_preferences.map((pref, index) => (
-                <Card key={index}>
-                  <CardContent className="p-4">
-                    <div className="grid grid-cols-2 gap-4 mb-3">
-                      <div>
-                        <span className="font-medium">Desired Rate:</span>
-                        <p className="text-gray-600">${pref.desired_hourly_rate}/hour</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Travel Radius:</span>
-                        <p className="text-gray-600">{pref.travel_radius} miles</p>
-                      </div>
-                    </div>
-                    
-                    {pref.preferred_shifts && pref.preferred_shifts.length > 0 && (
-                      <div className="mb-3">
-                        <span className="font-medium">Preferred Shifts:</span>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {pref.preferred_shifts.map((shift, i) => (
-                            <Badge key={i} variant="outline" className="text-xs">
-                              {shift}
-                            </Badge>
-                          ))}
+            <TabsContent value="qualifications" className="mt-8">
+              {nurse.nurse_qualifications && nurse.nurse_qualifications.length > 0 ? (
+                <div className="space-y-6">
+                  {nurse.nurse_qualifications.map((qual, index) => (
+                    <Card key={index} className="border-0 shadow-lg bg-gradient-to-br from-white to-blue-50/30">
+                      <CardContent className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Education Level</label>
+                              <p className="text-gray-900 font-medium text-lg">{qual.education_level}</p>
+                            </div>
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Institution</label>
+                              <p className="text-gray-900 font-medium">{qual.school_name}</p>
+                            </div>
+                          </div>
+                          <div className="space-y-4">
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Experience</label>
+                              <p className="text-gray-900 font-medium text-lg">{qual.years_experience} years</p>
+                            </div>
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Graduation Year</label>
+                              <p className="text-gray-900 font-medium">{qual.graduation_year}</p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    
-                    {pref.availability_types && pref.availability_types.length > 0 && (
-                      <div>
-                        <span className="font-medium">Availability:</span>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {pref.availability_types.map((type, i) => (
-                            <Badge key={i} variant="outline" className="text-xs">
-                              {type}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                        
+                        {qual.specializations && qual.specializations.length > 0 && (
+                          <div className="mt-6">
+                            <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3 block">Specializations</label>
+                            <div className="flex flex-wrap gap-2">
+                              {qual.specializations.map((spec, i) => (
+                                <Badge key={i} className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border-purple-200">
+                                  {spec}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No education information available</p>
+                </div>
+              )}
+            </TabsContent>
 
-          {/* Contact Actions */}
-          <div className="flex justify-end space-x-3 pt-4 border-t">
+            <TabsContent value="licenses" className="mt-8">
+              {nurse.nurse_licenses && nurse.nurse_licenses.length > 0 ? (
+                <div className="space-y-6">
+                  {nurse.nurse_licenses.map((license, index) => (
+                    <Card key={index} className="border-0 shadow-lg bg-gradient-to-br from-white to-green-50/30">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">License Type</label>
+                              <p className="text-gray-900 font-medium text-lg">{license.license_type}</p>
+                            </div>
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Issuing State</label>
+                              <p className="text-gray-900 font-medium">{license.issuing_state}</p>
+                            </div>
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">License Number</label>
+                              <p className="text-gray-900 font-mono font-medium">{license.license_number}</p>
+                            </div>
+                            <div>
+                              <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Expires</label>
+                              <p className="text-gray-900 font-medium">
+                                {formatShortPremiumDate(license.expiration_date)}
+                              </p>
+                            </div>
+                          </div>
+                          <Badge className={
+                            license.verification_status === 'verified' 
+                              ? 'bg-gradient-to-r from-green-100 to-emerald-200 text-emerald-800 border-emerald-300'
+                              : 'bg-gradient-to-r from-yellow-100 to-amber-200 text-amber-800 border-amber-300'
+                          }>
+                            <Shield className="h-3 w-3 mr-1" />
+                            {license.verification_status}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Shield className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No license information available</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="certifications" className="mt-8">
+              {nurse.nurse_certifications && nurse.nurse_certifications.length > 0 ? (
+                <div className="grid gap-4">
+                  {nurse.nurse_certifications.map((cert, index) => (
+                    <Card key={index} className="border-0 shadow-lg bg-gradient-to-br from-white to-purple-50/30">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold text-lg text-gray-900">{cert.certification_name}</p>
+                            {cert.is_malpractice_insurance && (
+                              <Badge className="mt-2 bg-gradient-to-r from-blue-100 to-cyan-200 text-blue-800 border-blue-300">
+                                <Shield className="h-3 w-3 mr-1" />
+                                Malpractice Insurance
+                              </Badge>
+                            )}
+                          </div>
+                          {cert.expiration_date && (
+                            <div className="text-right">
+                              <p className="text-sm text-gray-600">Expires</p>
+                              <p className="font-medium text-gray-900">
+                                {formatShortPremiumDate(cert.expiration_date)}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Award className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No certifications available</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="preferences" className="mt-8">
+              {nurse.nurse_preferences && nurse.nurse_preferences.length > 0 ? (
+                <div className="space-y-6">
+                  {nurse.nurse_preferences.map((pref, index) => (
+                    <Card key={index} className="border-0 shadow-lg bg-gradient-to-br from-white to-indigo-50/30">
+                      <CardContent className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                          <div>
+                            <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Desired Rate</label>
+                            <p className="text-gray-900 font-bold text-2xl">${pref.desired_hourly_rate}/hour</p>
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Travel Radius</label>
+                            <p className="text-gray-900 font-medium text-lg">{pref.travel_radius} miles</p>
+                          </div>
+                        </div>
+                        
+                        {pref.preferred_shifts && pref.preferred_shifts.length > 0 && (
+                          <div className="mb-6">
+                            <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3 block">Preferred Shifts</label>
+                            <div className="flex flex-wrap gap-2">
+                              {pref.preferred_shifts.map((shift, i) => (
+                                <Badge key={i} className="bg-gradient-to-r from-blue-100 to-cyan-200 text-blue-800 border-blue-300">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  {shift}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {pref.availability_types && pref.availability_types.length > 0 && (
+                          <div>
+                            <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3 block">Availability</label>
+                            <div className="flex flex-wrap gap-2">
+                              {pref.availability_types.map((type, i) => (
+                                <Badge key={i} className="bg-gradient-to-r from-green-100 to-emerald-200 text-emerald-800 border-emerald-300">
+                                  <Calendar className="h-3 w-3 mr-1" />
+                                  {type}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No preferences information available</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+
+          {/* Enhanced Contact Actions */}
+          <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-8 border-t">
             <Button
               variant="outline"
               onClick={() => setSelectedNurse(null)}
+              className="px-8 h-12"
             >
               Close
             </Button>
             <Button
               onClick={() => handleContactNurse(nurse)}
               disabled={contactingNurse === nurse.id}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="px-8 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-0 shadow-lg"
             >
               {contactingNurse === nurse.id ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                   Contacting...
                 </>
               ) : (
                 <>
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                  <MessageCircle className="h-5 w-5 mr-2" />
                   Contact {nurse.first_name}
                 </>
               )}
@@ -614,11 +764,15 @@ export default function BrowseNursesCard({
 
   if (loading) {
     return (
-      <Card>
+      <Card className="border-0 shadow-xl">
         <CardContent className="p-6">
-          <div className="text-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Finding nurses near you...</p>
+          <div className="text-center py-16">
+            <div className="relative mb-8">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
+              <Users className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-indigo-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Finding nurses near you...</h3>
+            <p className="text-gray-600">Discovering qualified care professionals in your area</p>
           </div>
         </CardContent>
       </Card>
@@ -627,16 +781,25 @@ export default function BrowseNursesCard({
 
   return (
     <>
-      <div className="space-y-6">
-        {/* Header */}
-        <Card>
-          <CardHeader>
+      <div className="space-y-8">
+        {/* Enhanced Header */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent mb-3 flex items-center justify-center">
+            <Crown className="h-8 w-8 mr-3 text-indigo-600" />
+            Discover Premium Care Professionals
+          </h2>
+          <p className="text-gray-600 text-lg">Connect with verified, experienced nurses in your area</p>
+        </div>
+
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-indigo-50/30">
+          <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-lg border-b border-indigo-100">
             <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center">
-                <Users className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-2xl font-bold text-gray-900">
+                <Users className="h-6 w-6 mr-2 text-indigo-600" />
                 Browse Nurses
                 {careLocation && (
-                  <Badge variant="outline" className="ml-3">
+                  <Badge variant="outline" className="ml-3 bg-white text-indigo-700 border-indigo-300">
+                    <MapPin className="h-3 w-3 mr-1" />
                     Near {careLocation.city}, {careLocation.state}
                   </Badge>
                 )}
@@ -645,44 +808,45 @@ export default function BrowseNursesCard({
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
+                className="hover:bg-indigo-50 hover:border-indigo-300"
               >
                 <Filter className="h-4 w-4 mr-2" />
                 Filters
                 {Object.keys(filters).length > 0 && (
-                  <Badge className="ml-2 bg-blue-600 text-white text-xs">
+                  <Badge className="ml-2 bg-indigo-600 text-white text-xs border-0">
                     {Object.keys(filters).length}
                   </Badge>
                 )}
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
-            {/* Search */}
-            <div className="flex gap-3 mb-4">
+          <CardContent className="p-6">
+            {/* Enhanced Search */}
+            <div className="flex gap-3 mb-6">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search by name, location, or specialty..."
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 h-12 text-base bg-white border-gray-200 focus:border-indigo-300 focus:ring-indigo-200"
                 />
               </div>
               {searchLoading && (
                 <div className="flex items-center">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                  <Loader2 className="h-5 w-5 animate-spin text-indigo-600" />
                 </div>
               )}
             </div>
 
-            {/* Filters */}
+            {/* Enhanced Filters */}
             {showFilters && (
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-lg">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 p-6 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl mb-6 border border-indigo-100">
                 <Select
                   value={filters.city || ''}
                   onValueChange={(value) => handleFilterChange({ city: value || undefined })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white">
                     <SelectValue placeholder="City" />
                   </SelectTrigger>
                   <SelectContent>
@@ -699,7 +863,7 @@ export default function BrowseNursesCard({
                     minExperience: value ? parseInt(value) : undefined 
                   })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Min Experience" />
                   </SelectTrigger>
                   <SelectContent>
@@ -717,7 +881,7 @@ export default function BrowseNursesCard({
                     maxHourlyRate: value ? parseInt(value) : undefined 
                   })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Max Rate" />
                   </SelectTrigger>
                   <SelectContent>
@@ -729,21 +893,22 @@ export default function BrowseNursesCard({
                   </SelectContent>
                 </Select>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 bg-white p-3 rounded-lg">
                   <input
                     type="checkbox"
                     id="onlyVerified"
                     checked={filters.onlyVerified || false}
                     onChange={(e) => handleFilterChange({ onlyVerified: e.target.checked || undefined })}
+                    className="rounded"
                   />
-                  <label htmlFor="onlyVerified" className="text-sm">Verified Only</label>
+                  <label htmlFor="onlyVerified" className="text-sm font-medium">Verified Only</label>
                 </div>
 
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={clearFilters}
-                  className="text-red-600"
+                  className="text-red-600 border-red-200 hover:bg-red-50"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Clear
@@ -751,35 +916,37 @@ export default function BrowseNursesCard({
               </div>
             )}
 
-            {/* Results Summary */}
-            <div className="flex justify-between items-center text-sm text-gray-600 mt-4">
-              <span>
-                {totalCount} nurse{totalCount !== 1 ? 's' : ''} found
+            {/* Enhanced Results Summary */}
+            <div className="flex justify-between items-center text-sm text-gray-600 mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+              <span className="font-medium">
+                🎯 {totalCount} qualified nurse{totalCount !== 1 ? 's' : ''} found
                 {careLocation && (
-                  <span className="ml-1">
+                  <span className="ml-2">
                     • Showing results near {careLocation.city}, {careLocation.state}
                   </span>
                 )}
               </span>
-              <span>
+              <span className="font-medium">
                 Page {currentPage} of {totalPages}
               </span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Nurses Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Enhanced Nurses Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {nurses.length === 0 ? (
-            <div className="col-span-full text-center py-12">
-              <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="col-span-full text-center py-16">
+              <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="h-12 w-12 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">
                 No nurses found
               </h3>
-              <p className="text-gray-600 mb-4">
-                Try adjusting your search criteria or filters.
+              <p className="text-gray-600 mb-6 text-lg">
+                Try adjusting your search criteria or filters to find more candidates.
               </p>
-              <Button variant="outline" onClick={clearFilters}>
+              <Button variant="outline" onClick={clearFilters} className="px-8">
                 Clear all filters
               </Button>
             </div>
@@ -790,35 +957,49 @@ export default function BrowseNursesCard({
           )}
         </div>
 
-        {/* Pagination */}
+        {/* Enhanced Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center space-x-2">
+          <div className="flex justify-center items-center space-x-4 py-8">
             <Button
               variant="outline"
-              size="sm"
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
+              className="px-6 h-12"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
             </Button>
             
-            <span className="text-sm text-gray-600">
-              Page {currentPage} of {totalPages}
-            </span>
+            <div className="flex items-center space-x-2">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const page = i + 1;
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-12 h-12 ${currentPage === page ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0' : ''}`}
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
+            </div>
             
             <Button
               variant="outline"
-              size="sm"
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
+              className="px-6 h-12"
             >
-              <ChevronRight className="h-4 w-4" />
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         )}
       </div>
 
-      {/* Nurse Detail Modal */}
+      {/* Enhanced Nurse Detail Modal */}
       {selectedNurse && (
         <Dialog open={!!selectedNurse} onOpenChange={() => setSelectedNurse(null)}>
           <NurseDetailModal nurse={selectedNurse} />

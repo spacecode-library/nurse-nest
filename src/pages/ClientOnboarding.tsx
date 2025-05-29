@@ -46,12 +46,24 @@ const HOME_ENVIRONMENTS = [
 const CARE_TYPES = [
   'Adult Care',
   'Pediatric Care',
-  'Elderly Care',
-  'Postpartum Care',
+  'Newborn Night Nurse',
+  'Post-Partum Care',
+  'Elderly Care', 
+  'Dementia/Alzheimer\'s Care',
+  'Medication Management',
+  'Diabetes Management',
+  'Respiratory Care (Oxygen/Tracheostomy Management)',
+  'IV Therapy',
+  'Feeding Tube Management',
+  'Wound Care',
+  'Post-Surgical Care',
+  'Stroke Recovery Care',
+  'Catheter Care',
+  'Ostomy Care',
+  'Hospice/Palliative Care',
+  'ADL Care (Activities of Daily Living)',
   'Rehabilitation',
-  'Palliative Care',
-  'Special Needs Care',
-  'Post-Surgery Recovery'
+  'Special Needs Care'
 ];
 
 const CARE_SCHEDULES = [
@@ -76,12 +88,19 @@ const SPECIAL_SKILLS = [
   'Pediatric Experience',
   'Neonatal Experience',
   'Physical Therapy',
-  'Occupational Therapy'
+  'Occupational Therapy',
+  'Oxygen Therapy',
+  'Catheter Care',
+  'Ostomy Care',
+  'Diabetes Management',
+  'Stroke Recovery Care',
+  'Hospice/Palliative Care',
+  'ADL Assistance'
 ];
 
 const HEALTH_CONDITIONS = [
   'Diabetes',
-  'Hypertension',
+  'Hypertension', 
   'COPD',
   'Stroke Recovery',
   'Heart Disease',
@@ -92,7 +111,11 @@ const HEALTH_CONDITIONS = [
   'Post-Surgery',
   'Developmental Disability',
   'Mental Health Condition',
-  'Premature Infant'
+  'Premature Infant',
+  'Respiratory Conditions',
+  'Feeding Difficulties',
+  'Catheter/Ostomy Needs',
+  'End-of-Life Care'
 ];
 
 // Define the onboarding steps
