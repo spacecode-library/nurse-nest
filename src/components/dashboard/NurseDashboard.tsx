@@ -240,11 +240,11 @@ export default function NurseDashboard() {
         nextMilestone: completedContracts >= 3 ? 0 : 3 - completedContracts
       }));
 
-      const weekDates = getWeekDates();
+      const weekDates = getWeekDates(Date());
       const { earnings: weeklyEarnings } = await calculateNurseEarnings(
         profile.id,
-        weekDates.start,
-        weekDates.end
+        weekDates.weekStart,
+        weekDates.weekEnd,
       );
 
       const currentMonth = new Date();

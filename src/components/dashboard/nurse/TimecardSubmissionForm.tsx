@@ -131,8 +131,7 @@ export default function TimecardSubmissionForm({
     setLoading(true);
 
     try {
-      const { weekStart, weekEnd } = getWeekDates(new Date(shiftDate));
-      
+      const { weekStart, weekEnd } = getWeekDates(shiftDate);
       // Find the selected contract to get client_id
       const selectedContract = activeContracts.find(
         contract => contract.job_postings.job_code === selectedJobCode

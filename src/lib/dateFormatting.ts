@@ -184,22 +184,24 @@ export const formatPremiumDate = (dateString: string | Date): string => {
     return dateObj >= startOfWeek && dateObj <= endOfWeek;
   };
   
-  export const getWeekDates = (date?: Date): { start: string; end: string } => {
-    const today = date || new Date();
-    const dayOfWeek = today.getDay();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - dayOfWeek);
-    startOfWeek.setHours(0, 0, 0, 0);
-  
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
-  
-    return {
-      start: startOfWeek.toISOString().split('T')[0],
-      end: endOfWeek.toISOString().split('T')[0]
-    };
+  export const getWeekDates = (date: string) => {
+  const shiftDateObj = new Date(date);
+    
+  if (isNaN(shiftDateObj.getTime())) {
+    return { weekStart: null, weekEnd: null };
+  }
+
+  const dayOfWeek = shiftDateObj.getDay();
+  const weekStart = new Date(shiftDateObj);
+  weekStart.setDate(shiftDateObj.getDate() - dayOfWeek);
+
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  return {
+    weekStart: weekStart.toISOString().split('T')[0],
+    weekEnd: weekEnd.toISOString().split('T')[0]
   };
+};
   
   // Legacy function names for backward compatibility
   export const formatDate = formatShortPremiumDate;
