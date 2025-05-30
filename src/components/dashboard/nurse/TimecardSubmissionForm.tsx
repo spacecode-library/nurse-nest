@@ -17,7 +17,6 @@ import {
   Moon, 
   Sun,
   Calculator,
-  Sparkles,
   Timer,
   DollarSign,
   FileText,
@@ -182,17 +181,17 @@ export default function TimecardSubmissionForm({
 
   if (activeContracts.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="w-20 h-20 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertCircle className="h-10 w-10 text-amber-600" />
+      <div className="text-center py-8">
+        <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertCircle className="h-8 w-8 text-amber-600" />
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-3">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
           No Active Contracts
         </h3>
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">
+        <p className="text-gray-600 mb-4 max-w-md mx-auto text-sm">
           You need an active contract to submit timecards. Please apply for jobs and get hired first.
         </p>
-        <Button variant="outline" onClick={onCancel} className="px-8">
+        <Button variant="outline" onClick={onCancel} className="px-6">
           Close
         </Button>
       </div>
@@ -200,284 +199,246 @@ export default function TimecardSubmissionForm({
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Timer className="h-8 w-8 text-white" />
+    <div className="max-h-[80vh] overflow-y-auto">
+      <div className="space-y-4 p-1">
+        {/* Compact Header */}
+        <div className="text-center pb-2">
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <Timer className="h-5 w-5 text-blue-600" />
+            <h2 className="text-lg font-bold text-gray-900">Submit Timecard</h2>
+          </div>
+          <p className="text-sm text-gray-600">Log your hours for completed shifts</p>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Submit Timecard</h2>
-        <p className="text-gray-600">Log your hours for completed shifts</p>
-      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Job Selection */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-blue-50/30">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
-            <CardTitle className="flex items-center text-lg">
-              <FileText className="h-5 w-5 mr-2 text-blue-600" />
-              Contract Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div>
-              <Label htmlFor="jobCode" className="text-base font-semibold mb-3 block">
-                Select Active Contract *
-              </Label>
-              <Select value={selectedJobCode} onValueChange={setSelectedJobCode}>
-                <SelectTrigger className="h-12 text-base">
-                  <SelectValue placeholder="Choose an active contract" />
-                </SelectTrigger>
-                <SelectContent>
-                  {activeContracts.map((contract) => (
-                    <SelectItem key={contract.id} value={contract.job_postings.job_code}>
-                      <div className="flex flex-col items-start">
-                        <span className="font-medium">{contract.job_postings.job_code}</span>
-                        <span className="text-sm text-gray-500">
-                          {contract.job_postings.care_type} • {contract.client_profiles.first_name} {contract.client_profiles.last_name}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Shift Details */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-green-50/30">
-          <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-lg">
-            <CardTitle className="flex items-center text-lg">
-              <Calendar className="h-5 w-5 mr-2 text-green-600" />
-              Shift Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 space-y-6">
-            {/* Shift Date */}
-            <div>
-              <Label htmlFor="shiftDate" className="text-base font-semibold mb-3 block">
-                Shift Date *
-              </Label>
-              <Input
-                id="shiftDate"
-                type="date"
-                value={shiftDate}
-                onChange={(e) => setShiftDate(e.target.value)}
-                max={formatDateForInput(new Date())} // Can't be future date
-                className="h-12 text-base"
-                required
-              />
-              {shiftDate && (
-                <p className="text-sm text-gray-600 mt-2">
-                  📅 {formatShortPremiumDate(shiftDate)}
-                </p>
-              )}
-            </div>
-
-            {/* Time Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Contract & Shift Details - Combined */}
+          <Card className="border shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-base">
+                <FileText className="h-4 w-4 mr-2 text-blue-600" />
+                Contract & Shift Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4">
+              {/* Job Selection */}
               <div>
-                <Label htmlFor="startTime" className="text-base font-semibold mb-3 block">
-                  Start Time *
+                <Label htmlFor="jobCode" className="text-sm font-medium mb-2 block">
+                  Active Contract *
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="startTime"
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className="h-12 text-base pl-12"
-                    required
-                  />
-                  <Sun className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-amber-500" />
-                </div>
+                <Select value={selectedJobCode} onValueChange={setSelectedJobCode}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Choose an active contract" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activeContracts.map((contract) => (
+                      <SelectItem key={contract.id} value={contract.job_postings.job_code}>
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium">{contract.job_postings.job_code}</span>
+                          <span className="text-xs text-gray-500">
+                            {contract.job_postings.care_type} • {contract.client_profiles.first_name} {contract.client_profiles.last_name}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div>
-                <Label htmlFor="endTime" className="text-base font-semibold mb-3 block">
-                  End Time *
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="endTime"
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className="h-12 text-base pl-12"
-                    required
-                  />
-                  {isOvernight ? (
-                    <Moon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                  ) : (
-                    <Sun className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-amber-500" />
-                  )}
-                </div>
-              </div>
-            </div>
 
-            {/* Break and Overnight */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Shift Date */}
               <div>
-                <Label htmlFor="breakMinutes" className="text-base font-semibold mb-3 block">
-                  Break Time (minutes)
+                <Label htmlFor="shiftDate" className="text-sm font-medium mb-2 block">
+                  Shift Date *
                 </Label>
                 <Input
-                  id="breakMinutes"
-                  type="number"
-                  min="0"
-                  max="480"
-                  value={breakMinutes}
-                  onChange={(e) => setBreakMinutes(Number(e.target.value))}
-                  className="h-12 text-base"
+                  id="shiftDate"
+                  type="date"
+                  value={shiftDate}
+                  onChange={(e) => setShiftDate(e.target.value)}
+                  max={formatDateForInput(new Date())}
+                  className="h-10"
+                  required
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Default 30 minutes • Maximum 8 hours
-                </p>
+                {shiftDate && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    📅 {formatShortPremiumDate(shiftDate)}
+                  </p>
+                )}
               </div>
-              <div className="flex flex-col justify-center">
-                <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
-                  <Switch
-                    id="isOvernight"
-                    checked={isOvernight}
-                    onCheckedChange={setIsOvernight}
-                  />
-                  <div className="flex items-center space-x-2">
-                    <Moon className="h-5 w-5 text-indigo-600" />
-                    <Label htmlFor="isOvernight" className="font-medium text-indigo-900">
-                      Overnight Shift
-                    </Label>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  Enable if shift crosses midnight
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Hours Calculation Display */}
-        {calculatedHours > 0 && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center">
-                    <Calculator className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-xl text-emerald-900">
-                      {calculatedHours} hours total
-                    </p>
-                    <p className="text-sm text-emerald-700">
-                      Times rounded to nearest 15 minutes
-                    </p>
+              {/* Time Fields */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="startTime" className="text-sm font-medium mb-2 block">
+                    Start Time *
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="startTime"
+                      type="time"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      className="h-10 pl-10"
+                      required
+                    />
+                    <Sun className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-amber-500" />
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="h-5 w-5 text-emerald-600" />
-                    <span className="text-2xl font-bold text-emerald-800">
-                      ${estimatedEarnings.toLocaleString()}
-                    </span>
+                <div>
+                  <Label htmlFor="endTime" className="text-sm font-medium mb-2 block">
+                    End Time *
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="endTime"
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className="h-10 pl-10"
+                      required
+                    />
+                    {isOvernight ? (
+                      <Moon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-indigo-500" />
+                    ) : (
+                      <Sun className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-amber-500" />
+                    )}
                   </div>
-                  <p className="text-sm text-emerald-600">Estimated earnings</p>
+                </div>
+              </div>
+
+              {/* Break and Overnight */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="breakMinutes" className="text-sm font-medium mb-2 block">
+                    Break Time (minutes)
+                  </Label>
+                  <Input
+                    id="breakMinutes"
+                    type="number"
+                    min="0"
+                    max="480"
+                    value={breakMinutes}
+                    onChange={(e) => setBreakMinutes(Number(e.target.value))}
+                    className="h-10"
+                  />
+                </div>
+                <div className="flex flex-col justify-end">
+                  <div className="flex items-center space-x-3 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <Switch
+                      id="isOvernight"
+                      checked={isOvernight}
+                      onCheckedChange={setIsOvernight}
+                    />
+                    <div className="flex items-center space-x-2">
+                      <Moon className="h-4 w-4 text-indigo-600" />
+                      <Label htmlFor="isOvernight" className="text-sm font-medium text-indigo-900">
+                        Overnight
+                      </Label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        )}
 
-        {/* Notes */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
-          <CardHeader>
-            <CardTitle className="flex items-center text-lg">
-              <FileText className="h-5 w-5 mr-2 text-gray-600" />
-              Additional Notes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div>
-              <Label htmlFor="notes" className="text-base font-semibold mb-3 block">
-                Shift Notes (Optional)
-              </Label>
+          {/* Hours Calculation Display */}
+          {calculatedHours > 0 && (
+            <Card className="border-emerald-200 bg-emerald-50">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+                      <Calculator className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-lg text-emerald-900">
+                        {calculatedHours} hours
+                      </p>
+                      <p className="text-xs text-emerald-700">
+                        Rounded to 15 min
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center space-x-1">
+                      <DollarSign className="h-4 w-4 text-emerald-600" />
+                      <span className="text-lg font-bold text-emerald-800">
+                        ${estimatedEarnings.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-emerald-600">Est. earnings</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Notes */}
+          <Card className="border shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-base">
+                <FileText className="h-4 w-4 mr-2 text-gray-600" />
+                Notes (Optional)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
               <Textarea
                 id="notes"
-                placeholder="Any additional notes about this shift... (e.g., special tasks performed, client updates, etc.)"
+                placeholder="Any additional notes about this shift..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                rows={4}
-                className="text-base resize-none"
+                rows={3}
+                className="resize-none"
               />
-              <p className="text-sm text-gray-500 mt-2">
-                These notes will be visible to the client when reviewing your timecard
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Important Information */}
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
-          <CardContent className="p-6">
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <Info className="h-4 w-4 text-white" />
-              </div>
+          {/* Compact Important Info */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="flex items-start space-x-2">
+              <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold text-blue-900 mb-2">Important Reminders</h4>
-                <ul className="space-y-1 text-sm text-blue-800">
-                  <li className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                    Times are automatically rounded to nearest 15 minutes in your favor
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                    Client has 72 hours to approve (auto-approved after deadline)
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                    Payment processing begins after approval
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                    You'll receive notifications about approval status
-                  </li>
-                </ul>
+                <h4 className="font-medium text-blue-900 text-sm mb-1">Key Points</h4>
+                <p className="text-xs text-blue-800">
+                  Times rounded to 15min • 72hr approval deadline • Auto-approved if overdue • Payment after approval
+                </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </form>
+      </div>
 
-        {/* Submit Buttons */}
-        <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6">
+      {/* Sticky Submit Buttons */}
+      <div className="sticky bottom-0 bg-white border-t pt-4 mt-4">
+        <div className="flex justify-end space-x-3 px-1">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
             disabled={loading}
-            className="h-12 px-8 text-base"
+            className="h-10 px-6"
           >
             Cancel
           </Button>
           <Button
             type="submit"
+            onClick={handleSubmit}
             disabled={loading || calculatedHours <= 0}
-            className="h-12 px-8 text-base bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-0 shadow-lg"
+            className="h-10 px-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
           >
             {loading ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
                 Submitting...
               </>
             ) : (
               <>
-                <Zap className="h-5 w-5 mr-2" />
-                Submit Timecard
+                <Zap className="h-4 w-4 mr-2" />
+                Submit
               </>
             )}
           </Button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

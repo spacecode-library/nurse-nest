@@ -215,13 +215,13 @@ export default function ApplicantReviewCard({
     setFilteredApplications(filtered);
   };
 
-  const handleStatusUpdate = async (applicationId: string, newStatus: 'favorited' | 'hired' | 'declined') => {
+  const handleStatusUpdate = async (applicationId: string, newStatus: 'shortlisted' | 'hired' | 'declined') => {
     try {
       const { error } = await updateApplicationStatus(applicationId, newStatus);
       if (error) throw error;
 
       const statusMessages = {
-        favorited: "Application marked as favorite! ⭐",
+        shortlisted: "Application marked as favorite! ⭐",
         hired: "Nurse hired successfully! 🎉",
         declined: "Application declined"
       };
@@ -309,7 +309,7 @@ export default function ApplicantReviewCard({
     switch (status) {
       case 'new':
         return 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800 border-blue-200';
-      case 'favorited': // Changed from shortlisted
+      case 'shortlisted':
         return 'bg-gradient-to-r from-pink-50 to-rose-100 text-rose-800 border-rose-200';
       case 'hired':
         return 'bg-gradient-to-r from-green-50 to-emerald-100 text-emerald-800 border-emerald-200';
@@ -324,7 +324,7 @@ export default function ApplicantReviewCard({
     switch (status) {
       case 'new':
         return <Clock className="h-4 w-4" />;
-      case 'favorited': // Changed from shortlisted
+      case 'shortlisted':
         return <Heart className="h-4 w-4 fill-current" />;
       case 'hired':
         return <UserCheck className="h-4 w-4" />;
@@ -332,6 +332,15 @@ export default function ApplicantReviewCard({
         return <UserX className="h-4 w-4" />;
       default:
         return <AlertCircle className="h-4 w-4" />;
+    }
+  };
+
+  const getStatusDisplayText = (status: string) => {
+    switch (status) {
+      case 'shortlisted':
+        return 'Favorite';
+      default:
+        return status.charAt(0).toUpperCase() + status.slice(1);
     }
   };
 
@@ -377,7 +386,7 @@ export default function ApplicantReviewCard({
                 <div className="flex items-center space-x-2">
                   <Badge className={`${getStatusColor(application.status)} flex items-center border shadow-sm px-3 py-1`}>
                     {getStatusIcon(application.status)}
-                    <span className="ml-2 capitalize font-medium">{application.status === 'favorited' ? 'Favorite' : application.status}</span>
+                    <span className="ml-2 capitalize font-medium">{getStatusDisplayText(application.status)}</span>
                   </Badge>
                   {application.nurse_profiles.onboarding_completed && (
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-sm">
@@ -428,7 +437,7 @@ export default function ApplicantReviewCard({
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleStatusUpdate(application.id, 'favorited')}
+                      onClick={() => handleStatusUpdate(application.id, 'shortlisted')}
                       className="hover:bg-rose-50 hover:border-rose-300 text-rose-600 transition-all"
                     >
                       <Heart className="h-4 w-4 mr-1" />
@@ -446,7 +455,7 @@ export default function ApplicantReviewCard({
                   </>
                 )}
                 
-                {(application.status === 'favorited') && (
+                {(application.status === 'shortlisted') && (
                   <>
                     <Button
                       size="sm"
@@ -509,17 +518,14 @@ export default function ApplicantReviewCard({
 
   const groupApplicationsByStatus = () => {
     const newApps = filteredApplications.filter(app => app.status === 'new');
-    const favorited = filteredApplications.filter(app => app.status === 'favorited'); // Changed from shortlisted
+    const shortlisted = filteredApplications.filter(app => app.status === 'shortlisted');
     const hired = filteredApplications.filter(app => app.status === 'hired');
     const declined = filteredApplications.filter(app => app.status === 'declined');
 
-    return { newApps, favorited, hired, declined };
+    return { newApps, shortlisted, hired, declined };
   };
 
-  const { newApps, favorited, hired, declined } = groupApplicationsByStatus();
-
-  // Rest of the component remains the same but with updated status references...
-  // [Component continues with same structure but "shortlisted" replaced with "favorited"]
+  const { newApps, shortlisted, hired, declined } = groupApplicationsByStatus();
 
   if (loading) {
     return (
@@ -584,8 +590,8 @@ export default function ApplicantReviewCard({
                       </Badge>
                     )}
                   </TabsTrigger>
-                  <TabsTrigger value="favorited" className="rounded-lg font-medium">
-                    Favorites ({favorited.length})
+                  <TabsTrigger value="shortlisted" className="rounded-lg font-medium">
+                    Favorites ({shortlisted.length})
                   </TabsTrigger>
                   <TabsTrigger value="hired" className="rounded-lg font-medium">
                     Hired ({hired.length})
@@ -627,16 +633,16 @@ export default function ApplicantReviewCard({
                   </div>
                 </TabsContent>
 
-                <TabsContent value="favorited" className="mt-6">
+                <TabsContent value="shortlisted" className="mt-6">
                   <div className="grid gap-6">
-                    {favorited.length === 0 ? (
+                    {shortlisted.length === 0 ? (
                       <div className="text-center py-12">
                         <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                         <p className="text-gray-500 text-lg">No favorite candidates yet</p>
                         <p className="text-gray-400 text-sm mt-2">Mark applications as favorites to see them here</p>
                       </div>
                     ) : (
-                      favorited.map((application) => (
+                      shortlisted.map((application) => (
                         <ApplicationCard key={application.id} application={application} />
                       ))
                     )}
@@ -708,7 +714,7 @@ export default function ApplicantReviewCard({
                     Applied for: {selectedApplicant.job_postings.job_code}
                   </p>
                   <Badge className={getStatusColor(selectedApplicant.status)}>
-                    {selectedApplicant.status === 'favorited' ? 'Favorite' : selectedApplicant.status}
+                    {getStatusDisplayText(selectedApplicant.status)}
                   </Badge>
                 </div>
               </div>
@@ -747,7 +753,7 @@ export default function ApplicantReviewCard({
                   <div className="p-4 bg-white rounded-lg shadow-sm border">
                     <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Status</label>
                     <Badge className={`${getStatusColor(selectedApplicant.status)} mt-1`}>
-                      {selectedApplicant.status === 'favorited' ? 'Favorite' : selectedApplicant.status}
+                      {getStatusDisplayText(selectedApplicant.status)}
                     </Badge>
                   </div>
                 </div>
@@ -781,7 +787,7 @@ export default function ApplicantReviewCard({
                   <>
                     <Button
                       onClick={() => {
-                        handleStatusUpdate(selectedApplicant.id, 'favorited');
+                        handleStatusUpdate(selectedApplicant.id, 'shortlisted');
                         setSelectedApplicant(null);
                       }}
                       className="px-6 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white"
@@ -801,7 +807,7 @@ export default function ApplicantReviewCard({
                     </Button>
                   </>
                 )}
-                {selectedApplicant.status === 'favorited' && (
+                {selectedApplicant.status === 'shortlisted' && (
                   <Button
                     onClick={() => {
                       handleHireAndCreateContract(selectedApplicant);
