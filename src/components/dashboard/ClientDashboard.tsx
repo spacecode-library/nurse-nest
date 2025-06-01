@@ -1,4 +1,4 @@
-// components/dashboard/ClientDashboard.tsx
+// components/dashboard/ClientDashboard.tsx - COMPLETE UPDATED VERSION
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -43,7 +43,9 @@ import {
   CreditCard,
   BarChart3,
   ClipboardCheck,
-  Award
+  Award,
+  Loader2,
+  Receipt
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -62,6 +64,11 @@ import ClientContractsCard from './client/ClientContractsCard';
 import ClientQuickActionsCard from './client/ClientQuickActionsCard';
 import BrowseNursesCard from './client/BrowseNursesCard';
 
+// Import NEW payment components
+import PaymentMethodSetup from './client/PaymentMethodSetup';
+import EnhancedTimecardApprovalCard from './client/EnhancedTimecardApprovalCard';
+import PaymentHistoryCard from './client/PaymentHistoryCard';
+
 import ClientConversationsList from '../ClientConversationList';
 import ContractNotifications from '@/components/ContractNotifications';
 
@@ -71,6 +78,9 @@ import {
   formatShortPremiumDate, 
   formatRelativeTime 
 } from '@/lib/dateFormatting';
+
+// Import payment utilities
+import { formatCurrency } from '@/supabase/api/stripeConnectService';
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -91,7 +101,15 @@ export default function ClientDashboard() {
     monthlySpend: 0,
     newApplicants: 0,
     pendingApprovals: 0,
-    favoritedCandidates: 0
+    favoritedCandidates: 0,
+    // NEW: Payment related stats
+    totalPaid: 0,
+    thisMonthSpend: 0,
+    lastMonthSpend: 0,
+    avgHourlyRate: 0,
+    paymentMethodsCount: 0,
+    paymentSetupComplete: false,
+    instantPaymentsEnabled: true
   });
 
   const [recentJobs, setRecentJobs] = useState<any[]>([]);
@@ -237,20 +255,47 @@ export default function ClientDashboard() {
       // Calculate stats
       const activeJobs = jobs.filter(job => job.status === 'open').length;
       
-      // Calculate monthly spend from recent timecards
+      // Calculate monthly spend from timecards
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
       const monthStart = new Date(currentYear, currentMonth, 1);
       const monthEnd = new Date(currentYear, currentMonth + 1, 0);
+      const lastMonthStart = new Date(currentYear, currentMonth - 1, 1);
+      const lastMonthEnd = new Date(currentYear, currentMonth, 0);
       
-      const { expenses } = await calculateClientExpenses(
+      const { expenses: currentMonthExpenses } = await calculateClientExpenses(
         profile.id,
         monthStart.toISOString().split('T')[0],
         monthEnd.toISOString().split('T')[0]
       );
 
+      const { expenses: lastMonthExpenses } = await calculateClientExpenses(
+        profile.id,
+        lastMonthStart.toISOString().split('T')[0],
+        lastMonthEnd.toISOString().split('T')[0]
+      );
+
+      // Get all-time expenses for total paid
+      const { expenses: allTimeExpenses } = await calculateClientExpenses(
+        profile.id,
+        '2020-01-01', // Far back date to get all expenses
+        new Date().toISOString().split('T')[0]
+      );
+
       // Calculate average response time (mock for now)
       const avgResponseTime = Math.round(Math.random() * 24 + 12); // 12-36 hours
+
+      // Calculate average hourly rate
+      const { data: paidTimecards } = await getClientTimecards(profile.id, 1000, 0);
+      const avgHourlyRate = paidTimecards && paidTimecards.length > 0
+        ? paidTimecards
+            .filter(tc => tc.status === 'Paid' && tc.client_total_amount && tc.total_hours)
+            .reduce((sum, tc, _, arr) => sum + (tc.client_total_amount / tc.total_hours / arr.length), 0)
+        : 0;
+
+      // Check payment method setup
+      const paymentMethodsCount = 0; // We'll update this when we check payment methods
+      const paymentSetupComplete = profile.payment_setup_completed || false;
 
       setStats({
         activeJobs,
@@ -258,10 +303,18 @@ export default function ClientDashboard() {
         pendingTimecards: timecardsResult.count || 0,
         activeContracts: active.length,
         avgResponseTime,
-        monthlySpend: expenses?.total || 0,
+        monthlySpend: currentMonthExpenses?.total || 0,
         newApplicants,
         pendingApprovals: pendingCards.length,
-        favoritedCandidates
+        favoritedCandidates,
+        // NEW: Payment stats
+        totalPaid: allTimeExpenses?.total || 0,
+        thisMonthSpend: currentMonthExpenses?.total || 0,
+        lastMonthSpend: lastMonthExpenses?.total || 0,
+        avgHourlyRate: avgHourlyRate || 0,
+        paymentMethodsCount,
+        paymentSetupComplete,
+        instantPaymentsEnabled: true
       });
 
     } catch (error) {
@@ -394,6 +447,10 @@ export default function ClientDashboard() {
                       Care Dashboard
                     </h1>
                     <Shield className="h-4 w-4 text-medical-success" />
+                    {/* NEW: Payment Status Indicator */}
+                    {stats.paymentSetupComplete && (
+                      <CreditCard className="h-4 w-4 text-medical-success" />
+                    )}
                   </div>
                   <p className="text-sm text-medical-text-secondary">Premium Care Management</p>
                 </div>
@@ -405,6 +462,19 @@ export default function ClientDashboard() {
                   <Crown className="h-3 w-3 mr-1" />
                   {clientProfile?.client_type === 'family' ? 'Family Account' : 'Individual Account'}
                 </Badge>
+                {/* NEW: Payment Setup Status Badge */}
+                {stats.paymentSetupComplete && (
+                  <Badge className="bg-medical-success text-white border-0 shadow-sm">
+                    <CreditCard className="h-3 w-3 mr-1" />
+                    Instant Payment Ready
+                  </Badge>
+                )}
+                {!stats.paymentSetupComplete && (
+                  <Badge className="bg-medical-warning text-white border-0 shadow-sm animate-pulse">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Setup Payment
+                  </Badge>
+                )}
                 {hasNewMessages && (
                   <Badge className="bg-medical-primary text-white border-0 animate-pulse shadow-medical-soft">
                     <MessageCircle className="h-3 w-3 mr-1" />
@@ -494,12 +564,45 @@ export default function ClientDashboard() {
                   <Award className="h-4 w-4 text-medical-accent" />
                   <span className="text-sm font-medium text-medical-text-primary">Verified Care Network</span>
                 </div>
+                {/* NEW: Payment Status Indicator */}
+                {stats.paymentSetupComplete && (
+                  <div className="flex items-center space-x-2 bg-gradient-to-r from-medical-success to-medical-accent rounded-full px-4 py-2 shadow-medical-soft">
+                    <Zap className="h-4 w-4 text-white" />
+                    <span className="text-sm font-medium text-white">Instant Payments</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
           
           {/* Enhanced Alert Cards */}
           <div className="space-y-4">
+            {/* NEW: Payment Setup Alert */}
+            {!stats.paymentSetupComplete && (
+              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-warning/10 to-medical-error/10 border border-medical-warning/20 rounded-xl shadow-medical-soft">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-medical-warning rounded-full flex items-center justify-center">
+                      <CreditCard className="h-5 w-5 text-white animate-pulse" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-medical-warning">
+                        💳 Set up instant payments to approve timecards seamlessly!
+                      </p>
+                      <p className="text-sm text-medical-text-secondary">Add a payment method for automatic timecard processing</p>
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    className="bg-medical-warning hover:bg-medical-warning/90 text-white shadow-medical-soft"
+                    onClick={() => setActiveTab('billing')}
+                  >
+                    Setup Now
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* New message alert */}
             {hasNewMessages && (
               <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 border border-medical-primary/20 rounded-xl shadow-medical-soft">
@@ -556,13 +659,26 @@ export default function ClientDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-medical-warning rounded-full flex items-center justify-center">
-                      <Clock className="h-5 w-5 text-white" />
+                      {stats.paymentSetupComplete ? (
+                        <Zap className="h-5 w-5 text-white" />
+                      ) : (
+                        <Clock className="h-5 w-5 text-white" />
+                      )}
                     </div>
                     <div>
                       <p className="font-semibold text-medical-warning">
-                        ⏰ {stats.pendingApprovals} timecard{stats.pendingApprovals !== 1 ? 's' : ''} need your approval
+                        {stats.paymentSetupComplete ? (
+                          <>⚡ {stats.pendingApprovals} timecard{stats.pendingApprovals !== 1 ? 's' : ''} ready for instant approval!</>
+                        ) : (
+                          <>⏰ {stats.pendingApprovals} timecard{stats.pendingApprovals !== 1 ? 's' : ''} need your approval</>
+                        )}
                       </p>
-                      <p className="text-sm text-medical-text-secondary">Review and approve care hours</p>
+                      <p className="text-sm text-medical-text-secondary">
+                        {stats.paymentSetupComplete 
+                          ? 'Click "Approve & Pay" for instant payment processing'
+                          : 'Review and approve care hours'
+                        }
+                      </p>
                     </div>
                   </div>
                   <Button 
@@ -570,7 +686,7 @@ export default function ClientDashboard() {
                     className="bg-medical-warning hover:bg-medical-warning/90 text-white shadow-medical-soft"
                     onClick={() => setActiveTab('timecards')}
                   >
-                    Review
+                    {stats.paymentSetupComplete ? 'Approve & Pay' : 'Review'}
                   </Button>
                 </div>
               </div>
@@ -586,10 +702,10 @@ export default function ClientDashboard() {
               { title: 'Applications', value: stats.totalApplications, icon: Users, gradient: 'from-medical-purple to-medical-primary', bgColor: 'bg-medical-purple' },
               { title: 'New Today', value: stats.newApplicants, icon: Bell, gradient: 'from-medical-warning to-medical-accent', bgColor: 'bg-medical-warning' },
               { title: 'Messages', value: totalUnreadMessages, icon: MessageCircle, gradient: 'from-medical-success to-medical-accent', bgColor: 'bg-medical-success', pulse: hasNewMessages },
-              { title: 'Pending', value: stats.pendingApprovals, icon: Clock, gradient: 'from-medical-warning to-medical-accent', bgColor: 'bg-medical-warning' },
+              { title: 'Pending', value: stats.pendingApprovals, icon: stats.paymentSetupComplete ? Zap : Clock, gradient: 'from-medical-warning to-medical-accent', bgColor: 'bg-medical-warning' },
               { title: 'Contracts', value: stats.activeContracts, icon: FileText, gradient: 'from-medical-success to-medical-primary', bgColor: 'bg-medical-success' },
-              { title: 'Response Time', value: `${stats.avgResponseTime}h`, icon: Timer, gradient: 'from-medical-primary to-medical-accent', bgColor: 'bg-medical-primary' },
-              { title: 'Monthly Spend', value: `$${Math.round(stats.monthlySpend)}`, icon: DollarSign, gradient: 'from-medical-rose to-medical-accent', bgColor: 'bg-medical-rose' },
+              { title: 'This Month', value: `$${Math.round(stats.thisMonthSpend)}`, icon: TrendingUp, gradient: 'from-medical-primary to-medical-accent', bgColor: 'bg-medical-primary' },
+              { title: 'Total Paid', value: `$${Math.round(stats.totalPaid)}`, icon: DollarSign, gradient: 'from-medical-rose to-medical-accent', bgColor: 'bg-medical-rose' },
             ].map((stat, index) => {
               const Icon = stat.icon;
               return (
@@ -638,7 +754,7 @@ export default function ClientDashboard() {
                 <span className="hidden sm:inline">Timecards</span>
                 <span className="sm:hidden">Time</span>
                 {stats.pendingApprovals > 0 && (
-                  <Badge className="bg-medical-warning text-white text-xs border-0 min-w-[20px] h-5">
+                  <Badge className={`${stats.paymentSetupComplete ? 'bg-medical-success animate-pulse' : 'bg-medical-warning'} text-white text-xs border-0 min-w-[20px] h-5`}>
                     {stats.pendingApprovals}
                   </Badge>
                 )}
@@ -648,7 +764,14 @@ export default function ClientDashboard() {
               Contracts
             </TabsTrigger>
             <TabsTrigger value="billing" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              Billing
+              <span className="flex items-center space-x-1 lg:space-x-2">
+                <span>Billing</span>
+                {!stats.paymentSetupComplete && (
+                  <Badge className="bg-medical-warning text-white text-xs border-0 animate-pulse min-w-[20px] h-5">
+                    !
+                  </Badge>
+                )}
+              </span>
             </TabsTrigger>
           </TabsList>
 
@@ -745,7 +868,9 @@ export default function ClientDashboard() {
               <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-warning/5">
                 <CardHeader className="bg-gradient-to-r from-medical-warning/10 to-medical-accent/10 rounded-t-lg border-b border-medical-border">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-bold text-medical-text-primary">Pending Approvals</CardTitle>
+                    <CardTitle className="text-xl font-bold text-medical-text-primary">
+                      {stats.paymentSetupComplete ? 'Instant Payment Center' : 'Pending Approvals'}
+                    </CardTitle>
                     <Button 
                       variant="ghost" 
                       size="sm" 
@@ -774,7 +899,7 @@ export default function ClientDashboard() {
                             <div className="text-right">
                               <p className="font-bold text-lg text-medical-text-primary">{timecard.total_hours} hrs</p>
                               <p className="text-sm text-medical-text-secondary">
-                                ${(timecard.total_hours * 50 * 1.15).toFixed(2)}
+                                {formatCurrency((timecard.total_hours * 50 * 1.15))}
                               </p>
                             </div>
                           </div>
@@ -785,9 +910,16 @@ export default function ClientDashboard() {
                             </span>
                           </div>
                           <div className="flex space-x-2">
-                            <Button size="sm" className="flex-1 bg-medical-success hover:bg-medical-success/90 text-white border-0 shadow-medical-soft">
-                              Quick Approve
-                            </Button>
+                            {stats.paymentSetupComplete ? (
+                              <Button size="sm" className="flex-1 bg-gradient-to-r from-medical-success to-medical-accent hover:from-medical-success/90 hover:to-medical-accent/90 text-white border-0 shadow-medical-soft">
+                                <Zap className="h-4 w-4 mr-1" />
+                                Approve & Pay
+                              </Button>
+                            ) : (
+                              <Button size="sm" className="flex-1 bg-medical-success hover:bg-medical-success/90 text-white border-0 shadow-medical-soft">
+                                Quick Approve
+                              </Button>
+                            )}
                             <Button size="sm" variant="outline" className="hover:bg-white border-medical-border">
                               Review
                             </Button>
@@ -831,7 +963,8 @@ export default function ClientDashboard() {
           </TabsContent>
 
           <TabsContent value="timecards">
-            <TimecardApprovalCard 
+            {/* Use Enhanced Timecard Approval Card with payment integration */}
+            <EnhancedTimecardApprovalCard 
               clientId={clientProfile?.id || ''} 
               onTimecardAction={handleRefresh}
             />
@@ -845,75 +978,109 @@ export default function ClientDashboard() {
           </TabsContent>
 
           <TabsContent value="billing">
-            <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-primary/5">
-              <CardHeader className="bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 rounded-t-lg border-b border-medical-border">
-                <CardTitle className="text-xl font-bold text-medical-text-primary flex items-center">
-                  <CreditCard className="h-5 w-5 mr-2 text-medical-primary" />
-                  Billing & Payments
-                </CardTitle>
-                <CardDescription>Manage your payments and billing information</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 lg:p-8">
-                {/* Enhanced Billing Summary */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-success/5 to-medical-success/10">
-                    <CardContent className="p-6 text-center">
-                      <div className="w-12 h-12 bg-medical-success rounded-full flex items-center justify-center mx-auto mb-3">
-                        <BarChart3 className="h-6 w-6 text-white" />
-                      </div>
-                      <p className="text-sm text-medical-success font-medium mb-2">This Month</p>
-                      <p className="text-3xl font-bold text-medical-success">${Math.round(stats.monthlySpend)}</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-primary/5 to-medical-primary/10">
-                    <CardContent className="p-6 text-center">
-                      <div className="w-12 h-12 bg-medical-primary rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Building2 className="h-6 w-6 text-white" />
-                      </div>
-                      <p className="text-sm text-medical-primary font-medium mb-2">Platform Fee (15%)</p>
-                      <p className="text-3xl font-bold text-medical-primary">${Math.round(stats.monthlySpend * 0.15)}</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-purple/5 to-medical-purple/10">
-                    <CardContent className="p-6 text-center">
-                      <div className="w-12 h-12 bg-medical-purple rounded-full flex items-center justify-center mx-auto mb-3">
-                        <HeartHandshake className="h-6 w-6 text-white" />
-                      </div>
-                      <p className="text-sm text-medical-purple font-medium mb-2">Nurse Payments (85%)</p>
-                      <p className="text-3xl font-bold text-medical-purple">${Math.round(stats.monthlySpend * 0.85)}</p>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                {/* Enhanced Coming Soon Section */}
-                <div className="text-center text-medical-text-secondary py-12">
-                  <div className="relative">
-                    <div className="w-20 h-20 bg-gradient-to-br from-medical-primary/10 to-medical-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <CreditCard className="h-10 w-10 text-medical-primary" />
-                    </div>
-                    <Sparkles className="absolute top-2 right-6 h-4 w-4 text-medical-accent" />
+            <div className="space-y-8">
+              {/* Payment Method Setup */}
+              <PaymentMethodSetup
+                clientId={clientProfile?.id || ''}
+                clientEmail={user?.email || ''}
+                clientName={`${clientProfile?.first_name} ${clientProfile?.last_name}`}
+                onPaymentMethodAdded={handleRefresh}
+              />
+
+              {/* Payment History */}
+              <PaymentHistoryCard
+                clientId={clientProfile?.id || ''}
+              />
+
+              {/* Enhanced Billing Summary Card */}
+              <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-primary/5">
+                <CardHeader className="bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 rounded-t-lg border-b border-medical-border">
+                  <CardTitle className="text-xl font-bold text-medical-text-primary flex items-center">
+                    <BarChart3 className="h-5 w-5 mr-2 text-medical-primary" />
+                    Billing Analytics
+                  </CardTitle>
+                  <CardDescription>Your spending patterns and cost analysis</CardDescription>
+                </CardHeader>
+                <CardContent className="p-6 lg:p-8">
+                  {/* Enhanced Billing Summary */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-success/5 to-medical-success/10">
+                      <CardContent className="p-6 text-center">
+                        <div className="w-12 h-12 bg-medical-success rounded-full flex items-center justify-center mx-auto mb-3">
+                          <TrendingUp className="h-6 w-6 text-white" />
+                        </div>
+                        <p className="text-sm text-medical-success font-medium mb-2">This Month</p>
+                        <p className="text-3xl font-bold text-medical-success">{formatCurrency(stats.thisMonthSpend)}</p>
+                        {stats.lastMonthSpend > 0 && (
+                          <p className="text-xs text-medical-success/70 mt-1">
+                            {stats.thisMonthSpend > stats.lastMonthSpend ? '+' : ''}
+                            {(((stats.thisMonthSpend - stats.lastMonthSpend) / stats.lastMonthSpend) * 100).toFixed(1)}% vs last month
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                    <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-primary/5 to-medical-primary/10">
+                      <CardContent className="p-6 text-center">
+                        <div className="w-12 h-12 bg-medical-primary rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Building2 className="h-6 w-6 text-white" />
+                        </div>
+                        <p className="text-sm text-medical-primary font-medium mb-2">Platform Fee (15%)</p>
+                        <p className="text-3xl font-bold text-medical-primary">{formatCurrency(stats.thisMonthSpend * 0.15)}</p>
+                        <p className="text-xs text-medical-primary/70 mt-1">Includes processing & support</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-purple/5 to-medical-purple/10">
+                      <CardContent className="p-6 text-center">
+                        <div className="w-12 h-12 bg-medical-purple rounded-full flex items-center justify-center mx-auto mb-3">
+                          <HeartHandshake className="h-6 w-6 text-white" />
+                        </div>
+                        <p className="text-sm text-medical-purple font-medium mb-2">Nurse Payments (85%)</p>
+                        <p className="text-3xl font-bold text-medical-purple">{formatCurrency(stats.thisMonthSpend * 0.85)}</p>
+                        <p className="text-xs text-medical-purple/70 mt-1">Direct to caregivers</p>
+                      </CardContent>
+                    </Card>
                   </div>
-                  <h3 className="text-xl font-semibold text-medical-text-primary mb-2">Enhanced Billing Coming Soon</h3>
-                  <p className="text-medical-text-secondary max-w-md mx-auto">
-                    Detailed breakdowns, payment history, automated billing, and advanced analytics for better care management
-                  </p>
-                  <div className="flex items-center justify-center space-x-6 mt-6 text-sm text-medical-text-secondary">
-                    <div className="flex items-center space-x-2">
-                      <ClipboardCheck className="h-4 w-4 text-medical-success" />
-                      <span>Automated Invoicing</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <BarChart3 className="h-4 w-4 text-medical-primary" />
-                      <span>Cost Analytics</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Shield className="h-4 w-4 text-medical-accent" />
-                      <span>Secure Payments</span>
+                  
+                  {/* Enhanced Benefits Section */}
+                  <div className="bg-gradient-to-r from-medical-accent/10 to-medical-primary/10 border border-medical-accent/20 rounded-xl p-6">
+                    <h4 className="font-semibold text-medical-accent mb-4 flex items-center text-lg">
+                      <Sparkles className="h-5 w-5 mr-2" />
+                      Platform Benefits
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <Zap className="h-4 w-4 text-medical-success" />
+                          <span className="text-medical-text-primary">Instant payment processing</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Shield className="h-4 w-4 text-medical-primary" />
+                          <span className="text-medical-text-primary">HIPAA compliant security</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Award className="h-4 w-4 text-medical-accent" />
+                          <span className="text-medical-text-primary">Licensed professional verification</span>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <MessageCircle className="h-4 w-4 text-medical-purple" />
+                          <span className="text-medical-text-primary">24/7 communication platform</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Clock className="h-4 w-4 text-medical-warning" />
+                          <span className="text-medical-text-primary">Automated timecard management</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Receipt className="h-4 w-4 text-medical-rose" />
+                          <span className="text-medical-text-primary">Detailed billing & receipts</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </main>

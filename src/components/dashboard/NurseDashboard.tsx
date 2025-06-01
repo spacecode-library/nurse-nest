@@ -1,4 +1,4 @@
-// components/dashboard/NurseDashboard.tsx
+// components/dashboard/NurseDashboard.tsx - COMPLETE UPDATED VERSION
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,7 +41,9 @@ import {
   Stethoscope,
   UserCheck,
   HeartHandshake,
-  Building2
+  Building2,
+  CreditCard,
+  Loader2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -58,6 +60,11 @@ import TimecardsCard from './nurse/TimecardsCard';
 import ContractsCard from './nurse/ContractsCard';
 import QuickActionsCard from './nurse/QuickActionsCard';
 import NotificationsCard from './nurse/NotificationsCard';
+
+// Import NEW payment components
+import StripeOnboardingCard from './nurse/StripeOnboardingCard';
+import EnhancedTimecardSubmissionForm from './nurse/EnhancedTimecardSubmissionForm';
+
 import ConversationsList from '@/components/ConversationList';
 import { supabase } from '@/integrations/supabase/client';
 import ContractNotifications from '@/components/ContractNotifications';
@@ -71,6 +78,9 @@ import {
   getWeekDates 
 } from '@/lib/dateFormatting';
 
+// Import payment utilities
+import { formatCurrency } from '@/supabase/api/stripeConnectService';
+
 export default function NurseDashboard() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -81,6 +91,7 @@ export default function NurseDashboard() {
   // Add state for messages view
   const [showMessagesPage, setShowMessagesPage] = useState(false);
   const [showProfileUpload, setShowProfileUpload] = useState(false);
+  const [showEnhancedTimecardForm, setShowEnhancedTimecardForm] = useState(false);
 
   const [eliteProgress, setEliteProgress] = useState({
     completedContracts: 0,
@@ -98,7 +109,12 @@ export default function NurseDashboard() {
     totalHours: 0,
     newJobMatches: 0,
     profileViews: 0,
-    responseRate: 0
+    responseRate: 0,
+    // NEW: Payment related stats
+    pendingPayments: 0,
+    totalEarningsThisMonth: 0,
+    averageHourlyRate: 0,
+    paymentAccountStatus: 'not_started'
   });
 
   const [availableJobs, setAvailableJobs] = useState<any[]>([]);
@@ -227,6 +243,7 @@ export default function NurseDashboard() {
       const timecards = timecardsResult.data || [];
       setRecentTimecards(timecards);
       const pendingTimecards = timecards.filter(tc => tc.status === 'Submitted').length;
+      const pendingPayments = timecards.filter(tc => tc.status === 'Approved' || tc.status === 'Auto-Approved').length;
 
       const contracts = contractsResult.data || [];
       const active = contracts.filter(c => c.status === 'active');
@@ -240,7 +257,7 @@ export default function NurseDashboard() {
         nextMilestone: completedContracts >= 3 ? 0 : 3 - completedContracts
       }));
 
-      const weekDates = getWeekDates(Date());
+      const weekDates = getWeekDates(new Date().toISOString());
       const { earnings: weeklyEarnings } = await calculateNurseEarnings(
         profile.id,
         weekDates.weekStart,
@@ -262,6 +279,12 @@ export default function NurseDashboard() {
       ).length;
       const responseRate = totalApplications > 0 ? Math.round((respondedApps / totalApplications) * 100) : 0;
 
+      // Calculate average hourly rate from recent timecards
+      const paidTimecards = timecards.filter(tc => tc.status === 'Paid' && tc.nurse_net_amount && tc.total_hours);
+      const avgHourlyRate = paidTimecards.length > 0 
+        ? paidTimecards.reduce((sum, tc) => sum + (tc.nurse_net_amount / tc.total_hours), 0) / paidTimecards.length
+        : 0;
+
       setStats({
         activeApplications: activeApps,
         activeContracts: active.length,
@@ -271,7 +294,12 @@ export default function NurseDashboard() {
         totalHours: monthlyEarnings?.totalHours || 0,
         newJobMatches: newJobs.length,
         profileViews: Math.floor(Math.random() * 50) + 10,
-        responseRate
+        responseRate,
+        // NEW: Payment stats
+        pendingPayments,
+        totalEarningsThisMonth: monthlyEarnings?.totalEarnings || 0,
+        averageHourlyRate: avgHourlyRate,
+        paymentAccountStatus: profile.stripe_account_status || 'not_started'
       });
 
     } catch (error) {
@@ -411,6 +439,10 @@ export default function NurseDashboard() {
                       Welcome, {nurseProfile?.first_name}
                     </h1>
                     <Shield className="h-4 w-4 text-medical-success" />
+                    {/* NEW: Payment Status Indicator */}
+                    {stats.paymentAccountStatus === 'active' && (
+                      <DollarSign className="h-4 w-4 text-medical-success" />
+                    )}
                   </div>
                   <p className="text-sm text-medical-text-secondary">Professional Care Dashboard</p>
                 </div>
@@ -422,6 +454,19 @@ export default function NurseDashboard() {
                   <Badge className="bg-gradient-to-r from-medical-accent to-medical-warning text-white border-0 shadow-sm">
                     <Trophy className="h-3 w-3 mr-1" />
                     Elite Nurse
+                  </Badge>
+                )}
+                {/* NEW: Payment Account Status Badge */}
+                {stats.paymentAccountStatus === 'active' && (
+                  <Badge className="bg-medical-success text-white border-0 shadow-sm">
+                    <CreditCard className="h-3 w-3 mr-1" />
+                    Payment Ready
+                  </Badge>
+                )}
+                {stats.paymentAccountStatus !== 'active' && (
+                  <Badge className="bg-medical-warning text-white border-0 shadow-sm animate-pulse">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Setup Payment
                   </Badge>
                 )}
                 {stats.newJobMatches > 0 && (
@@ -518,6 +563,13 @@ export default function NurseDashboard() {
                   <HeartHandshake className="h-4 w-4 text-medical-primary" />
                   <span className="text-sm font-medium text-medical-text-primary">HIPAA Compliant</span>
                 </div>
+                {/* NEW: Payment Status Indicator */}
+                {stats.paymentAccountStatus === 'active' && (
+                  <div className="flex items-center space-x-2 bg-gradient-to-r from-medical-success to-medical-accent rounded-full px-4 py-2 shadow-medical-soft">
+                    <DollarSign className="h-4 w-4 text-white" />
+                    <span className="text-sm font-medium text-white">Payment Ready</span>
+                  </div>
+                )}
                 {eliteProgress.isElite && (
                   <div className="flex items-center space-x-2 bg-gradient-to-r from-medical-accent to-medical-warning rounded-full px-4 py-2 shadow-medical-soft">
                     <Trophy className="h-4 w-4 text-white" />
@@ -542,6 +594,60 @@ export default function NurseDashboard() {
 
           {/* Enhanced Alert Cards */}
           <div className="mt-6 lg:mt-8 space-y-4">
+            {/* NEW: Payment Setup Alert */}
+            {stats.paymentAccountStatus !== 'active' && (
+              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-warning/10 to-medical-error/10 border border-medical-warning/20 rounded-xl shadow-medical-soft">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-medical-warning rounded-full flex items-center justify-center">
+                      <CreditCard className="h-5 w-5 text-white animate-pulse" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-medical-warning">
+                        💳 Complete your payment setup to receive earnings!
+                      </p>
+                      <p className="text-sm text-medical-text-secondary">
+                        Set up your bank account to get paid instantly when timecards are approved
+                      </p>
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    className="bg-medical-warning hover:bg-medical-warning/90 text-white shadow-medical-soft"
+                    onClick={() => setActiveTab('payment')}
+                  >
+                    Setup Now
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* NEW: Pending Payments Alert */}
+            {stats.pendingPayments > 0 && (
+              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-success/10 to-medical-accent/10 border border-medical-success/20 rounded-xl shadow-medical-soft">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-medical-success rounded-full flex items-center justify-center">
+                      <DollarSign className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-medical-success">
+                        💰 You have {stats.pendingPayments} approved timecard{stats.pendingPayments !== 1 ? 's' : ''} ready for payment!
+                      </p>
+                      <p className="text-sm text-medical-text-secondary">Money will be transferred as soon as client approves</p>
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    className="bg-medical-success hover:bg-medical-success/90 text-white shadow-medical-soft"
+                    onClick={() => setActiveTab('timecards')}
+                  >
+                    View Status
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {hasNewMessages && (
               <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 border border-medical-primary/20 rounded-xl shadow-medical-soft">
                 <div className="flex items-center justify-between">
@@ -670,7 +776,7 @@ export default function NurseDashboard() {
               { title: 'Weekly', value: `$${stats.weeklyEarnings}`, icon: DollarSign, gradient: 'from-medical-success to-medical-primary', bgColor: 'bg-medical-success' },
               { title: 'Monthly', value: `$${stats.monthlyEarnings}`, icon: TrendingUp, gradient: 'from-medical-primary to-medical-accent', bgColor: 'bg-medical-primary' },
               { title: 'Hours', value: `${stats.totalHours}h`, icon: Timer, gradient: 'from-medical-accent to-medical-primary', bgColor: 'bg-medical-accent' },
-              { title: 'Success Rate', value: `${stats.responseRate}%`, icon: Star, gradient: 'from-medical-rose to-medical-accent', bgColor: 'bg-medical-rose' },
+              { title: 'Avg Rate', value: `$${stats.averageHourlyRate.toFixed(0)}/hr`, icon: Star, gradient: 'from-medical-rose to-medical-accent', bgColor: 'bg-medical-rose' },
             ].map((stat, index) => {
               const Icon = stat.icon;
               return (
@@ -694,9 +800,21 @@ export default function NurseDashboard() {
 
         {/* Enhanced Medical-Grade Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-5 h-12 lg:h-14 bg-white/80 backdrop-blur-sm rounded-xl shadow-medical-soft border border-medical-border">
+          <TabsList className="grid w-full grid-cols-6 h-12 lg:h-14 bg-white/80 backdrop-blur-sm rounded-xl shadow-medical-soft border border-medical-border">
             <TabsTrigger value="overview" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
               Overview
+            </TabsTrigger>
+            {/* NEW: Payment Tab */}
+            <TabsTrigger value="payment" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
+              <span className="flex items-center space-x-2">
+                <span className="hidden sm:inline">Payment</span>
+                <span className="sm:hidden">💳</span>
+                {stats.paymentAccountStatus !== 'active' && (
+                  <Badge className="bg-medical-warning text-white text-xs border-0 animate-pulse min-w-[20px] h-5">
+                    !
+                  </Badge>
+                )}
+              </span>
             </TabsTrigger>
             <TabsTrigger value="jobs" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
               <span className="flex items-center space-x-2">
@@ -887,6 +1005,17 @@ export default function NurseDashboard() {
             </div>
           </TabsContent>
 
+          {/* NEW: Payment Tab */}
+          <TabsContent value="payment">
+            <StripeOnboardingCard
+              nurseId={nurseProfile?.id || ''}
+              nurseEmail={user?.email || ''}
+              currentAccountId={nurseProfile?.stripe_account_id}
+              currentStatus={nurseProfile?.stripe_account_status}
+              onStatusUpdate={handleRefresh}
+            />
+          </TabsContent>
+
           <TabsContent value="jobs">
             <JobApplicationsCard
               nurseId={nurseProfile?.id || ''}
@@ -906,6 +1035,8 @@ export default function NurseDashboard() {
             <TimecardsCard
               nurseId={nurseProfile?.id || ''}
               onTimecardSubmitted={handleRefresh}
+              // NEW: Pass payment status to timecard component
+              stripeAccountStatus={nurseProfile?.stripe_account_status}
             />
           </TabsContent>
 
@@ -932,6 +1063,23 @@ export default function NurseDashboard() {
                 setAppliedJobIds(prev => new Set([...prev, selectedJob.id]));
                 handleRefresh();
               }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Enhanced Timecard Submission Modal */}
+      {showEnhancedTimecardForm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-medical-elevated max-h-[90vh] overflow-y-auto">
+            <EnhancedTimecardSubmissionForm
+              nurseId={nurseProfile?.id || ''}
+              stripeAccountStatus={nurseProfile?.stripe_account_status}
+              onSubmitted={() => {
+                setShowEnhancedTimecardForm(false);
+                handleRefresh();
+              }}
+              onCancel={() => setShowEnhancedTimecardForm(false)}
             />
           </div>
         </div>
