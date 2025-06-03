@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import ClickwrapAgreement from './ClickwrapAgreement';
+import { ArrowLeft } from 'lucide-react';
 
 export default function ClientApplicationSection() {
   const navigate = useNavigate();
@@ -508,6 +509,7 @@ export default function ClientApplicationSection() {
               variant="outline"
               onClick={prevStep}
             >
+              <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
           )}

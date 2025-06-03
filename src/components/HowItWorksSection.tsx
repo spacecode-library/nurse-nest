@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Check, Search, Lock, MessageSquare, ClipboardCheck, CreditCard } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Search, UserCheck, MessageSquare, HandHeart, CreditCard, Shield } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
@@ -55,43 +54,48 @@ export default function HowItWorksSection() {
   const steps = [
     {
       number: 1,
-      title: "Create Your Custom Request",
-      description: "Start by submitting a quick care request tailored to your needs. Just tell us the type of nurse, your location, timeline, and preferences. From there, our smart matching engine begins sourcing the best-fit nurses—curated just for you.",
+      title: "Post Your Care Request",
+      description: "Create a detailed request specifying your nursing needs, location, schedule, and budget. Our smart matching system immediately starts identifying qualified professionals in your area.",
       icon: <Search className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/119a6708-a3cb-400b-ac7b-c2437a103499.png",
-      imageAlt: "Gloved & elderly hand"
+      imageAlt: "Care request creation",
+      gradient: "from-blue-500 to-cyan-500"
     },
     {
       number: 2,
-      title: "Unlock Full Platform Access",
-      description: "Begin your nurse search with a fully refundable $100 concierge fee. This gives you instant access to Nurse Nest's secure messaging center, customizable vetting options, and built-in video/phone calling—right from your dashboard. Everything happens on our HIPAA-compliant, privacy-first platform.",
-      icon: <Lock className="h-6 w-6" />,
+      title: "Get Verified Nurse Profiles",
+      description: "Receive curated profiles of licensed nurses who match your criteria. Each profile includes credentials, experience, specializations, reviews, and availability—all verified by our platform.",
+      icon: <UserCheck className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/f66fe8ea-d702-495f-8720-47b3cb6adcdc.png",
-      imageAlt: "Nurse parachuting to home"
+      imageAlt: "Verified nurse profiles",
+      gradient: "from-green-500 to-emerald-500"
     },
     {
       number: 3,
-      title: "Let Us Curate the Best Matches",
-      description: "We broadcast your job across our private network and nurse-facing platforms. Every applicant is screened with both AI and human review for licensure, specialty, experience, and proximity. Only top-tier candidates reach your inbox—saving you time and ensuring peace of mind.",
+      title: "Connect & Interview",
+      description: "Use our secure messaging and video calling features to communicate with potential nurses. Ask questions, discuss requirements, and ensure they're the right fit for your needs.",
       icon: <MessageSquare className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/0ecf2c8e-3915-4487-bb58-3e25ada5cf81.png",
-      imageAlt: "Nurse with elderly man outdoors"
+      imageAlt: "Nurse client communication",
+      gradient: "from-purple-500 to-pink-500"
     },
     {
       number: 4,
-      title: "Review, Connect, and Customize Vetting",
-      description: "Explore nurse profiles featuring summaries, work history, and certifications. From your dashboard, securely message candidates or jump on a video call—no external apps needed. You decide which vetting services to run: background check, drug screen, license verification, or all of the above.",
-      icon: <ClipboardCheck className="h-6 w-6" />,
+      title: "Select & Customize Vetting",
+      description: "Choose your preferred nurse and customize additional verification services. Background checks, drug screenings, and reference verification are available for added peace of mind.",
+      icon: <HandHeart className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/77ddc10d-2117-4745-8bba-2347c09f1bb7.png",
-      imageAlt: "Family reviewing nurses"
+      imageAlt: "Nurse selection and vetting",
+      gradient: "from-rose-500 to-orange-500"
     },
     {
       number: 5,
-      title: "Hire with Confidence & Pay Seamlessly",
-      description: "Once you've chosen your nurse, they'll log hours on the platform. You approve the timecard, and Stripe handles the rest—automatically paying your nurse while Nurse Nest collects a 15% fee. It's transparent, trackable, and completely paperless. One platform. Total control.",
+      title: "Secure Care & Payment",
+      description: "Your nurse provides professional care while logging hours through our platform. You review and approve time worked, then our secure payment system handles everything automatically.",
       icon: <CreditCard className="h-6 w-6" />,
       imageSrc: "/lovable-uploads/24d6dd5c-dd41-4a60-88eb-f70d46f03ae9.png",
-      imageAlt: "Nurse emerging from gift box"
+      imageAlt: "Secure payment and care delivery",
+      gradient: "from-teal-500 to-blue-500"
     }
   ];
 
@@ -108,48 +112,59 @@ export default function HowItWorksSection() {
 
   return (
     <section className="py-20 md:py-32 bg-white relative overflow-hidden" id="how-it-works">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-32 left-16 w-64 h-64 bg-gradient-to-br from-blue-400/5 to-teal-400/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-16 right-20 w-48 h-48 bg-gradient-to-tr from-green-400/5 to-blue-400/5 rounded-full blur-2xl"></div>
+      </div>
+
       <div className="container mx-auto px-4 relative z-10">
-        <AnimatedSection animation="fade-up" className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            How It <span className="text-primary-500">Works</span>
+        <AnimatedSection animation="fade-up" className="text-center mb-16">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full text-blue-700 text-sm font-medium mb-6">
+            <Shield className="h-4 w-4 mr-2" />
+            Simple, Secure, Professional
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-blue-700 to-teal-700 bg-clip-text text-transparent">
+            How It Works
           </h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            From request to payment—your seamless path to expert in-home care.
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            From posting your request to receiving professional care—our platform makes it simple to connect with qualified nurses.
           </p>
         </AnimatedSection>
         
         {/* Progress Indicator - Only for desktop */}
         {!isMobile && (
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center space-x-3">
+          <div className="flex justify-center mb-12">
+            <div className="flex items-center space-x-2">
               {steps.map((step, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentStep(index)}
-                  className="flex items-center justify-center"
+                  className="flex items-center justify-center group"
                   aria-label={`Go to step ${index + 1}`}
                 >
                   <div 
                     className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2",
+                      "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 border-2 relative overflow-hidden",
                       currentStep === index 
-                        ? "bg-primary-500 text-white border-primary-500" 
+                        ? `bg-gradient-to-r ${step.gradient} text-white border-transparent shadow-lg` 
                         : index < currentStep
-                          ? "bg-primary-100 border-primary-500 text-primary-500"
-                          : "bg-gray-100 border-gray-200 text-gray-500"
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500 border-transparent text-white"
+                          : "bg-white border-slate-200 text-slate-400 hover:border-blue-300"
                     )}
                   >
                     {index < currentStep ? (
-                      <Check className="h-5 w-5" />
+                      <Check className="h-6 w-6" />
                     ) : (
-                      <span className="font-bold">{index + 1}</span>
+                      <span className="font-bold text-lg">{index + 1}</span>
                     )}
                   </div>
                   {index < steps.length - 1 && (
                     <div 
                       className={cn(
-                        "h-0.5 w-6 mx-1", 
-                        index < currentStep ? "bg-primary-500" : "bg-gray-200"
+                        "h-1 w-8 mx-2 rounded-full transition-all duration-300", 
+                        index < currentStep ? "bg-gradient-to-r from-green-500 to-emerald-500" : "bg-slate-200"
                       )}
                     />
                   )}
@@ -173,7 +188,7 @@ export default function HowItWorksSection() {
               <CarouselContent>
                 {steps.map((step, index) => (
                   <CarouselItem key={index} className="pl-0">
-                    <div className="w-full rounded-xl shadow-lg overflow-hidden bg-[#F9FAFB]">
+                    <div className="w-full rounded-3xl shadow-xl overflow-hidden bg-white border border-slate-200/50">
                       {/* Image */}
                       <div className="w-full">
                         <AspectRatio ratio={16/9}>
@@ -188,14 +203,14 @@ export default function HowItWorksSection() {
                       {/* Content */}
                       <div className="p-6 space-y-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-500">
+                          <div className={`flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white shadow-lg`}>
                             {step.icon}
                           </div>
-                          <h3 className="text-xl font-semibold text-primary-500">
+                          <h3 className="text-xl font-bold text-slate-800">
                             {step.title}
                           </h3>
                         </div>
-                        <p className="text-gray-700">
+                        <p className="text-slate-600 leading-relaxed">
                           {step.description}
                         </p>
                       </div>
@@ -203,13 +218,13 @@ export default function HowItWorksSection() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <div className="flex justify-center mt-4 gap-2">
+              <div className="flex justify-center mt-6 gap-2">
                 {steps.map((_, i) => (
                   <button 
                     key={i}
                     onClick={() => setCurrentStep(i)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all ${
-                      i === currentStep ? "bg-primary-500 scale-110" : "bg-gray-300"
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      i === currentStep ? "bg-blue-600 scale-110" : "bg-slate-300"
                     }`}
                     aria-label={`Go to step ${i + 1}`}
                   />
@@ -219,14 +234,14 @@ export default function HowItWorksSection() {
           </div>
         ) : (
           /* Desktop View */
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div 
-              className="relative overflow-hidden rounded-xl shadow-lg"
+              className="relative overflow-hidden rounded-3xl shadow-2xl border border-slate-200/50"
               style={{ minHeight: "500px" }}
             >
               {/* Step content with animations */}
               <div 
-                className="transition-all duration-500 ease-out flex"
+                className="transition-all duration-700 ease-out flex"
                 style={{ 
                   transform: `translateX(-${currentStep * 100}%)`,
                 }}
@@ -234,12 +249,12 @@ export default function HowItWorksSection() {
                 {steps.map((step, index) => (
                   <div 
                     key={index}
-                    className="w-full flex-shrink-0 px-6 md:px-10 py-12 flex flex-col md:flex-row gap-8 items-center bg-[#F9FAFB]"
+                    className="w-full flex-shrink-0 px-8 md:px-12 py-12 flex flex-col md:flex-row gap-12 items-center bg-gradient-to-br from-slate-50 to-white"
                     aria-hidden={currentStep !== index}
                   >
                     {/* Image */}
                     <div className="md:w-1/2">
-                      <div className="rounded-lg overflow-hidden shadow-md transform transition-all duration-500">
+                      <div className="rounded-2xl overflow-hidden shadow-xl transform transition-all duration-500 hover:scale-105">
                         <AspectRatio ratio={16/9}>
                           <img 
                             src={step.imageSrc} 
@@ -251,16 +266,21 @@ export default function HowItWorksSection() {
                     </div>
                     
                     {/* Content */}
-                    <div className="md:w-1/2 space-y-6">
+                    <div className="md:w-1/2 space-y-8">
                       <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-primary-500">
+                        <div className={`flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white shadow-xl`}>
                           {step.icon}
                         </div>
-                        <h3 className="text-2xl font-bold text-primary-500">
-                          {step.title}
-                        </h3>
+                        <div>
+                          <div className="text-sm font-semibold text-slate-500 uppercase tracking-wide">
+                            Step {step.number}
+                          </div>
+                          <h3 className="text-3xl font-bold text-slate-800">
+                            {step.title}
+                          </h3>
+                        </div>
                       </div>
-                      <p className="text-gray-700 text-lg">
+                      <p className="text-slate-600 text-lg leading-relaxed">
                         {step.description}
                       </p>
                     </div>
@@ -269,12 +289,12 @@ export default function HowItWorksSection() {
               </div>
               
               {/* Navigation buttons */}
-              <div className="absolute bottom-6 right-6 flex gap-3">
+              <div className="absolute bottom-8 right-8 flex gap-3">
                 <Button
                   variant="outline"
                   onClick={prevStep}
                   disabled={currentStep === 0}
-                  className="rounded-full h-10 w-10 p-0 flex items-center justify-center"
+                  className="rounded-full h-12 w-12 p-0 flex items-center justify-center border-slate-300 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
                   aria-label="Previous step"
                 >
                   <ArrowLeft className="h-5 w-5" />
@@ -282,7 +302,7 @@ export default function HowItWorksSection() {
                 {!isLastStep ? (
                   <Button
                     onClick={nextStep}
-                    className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-primary-500 hover:bg-primary-600"
+                    className="rounded-full h-12 w-12 p-0 flex items-center justify-center bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300"
                     aria-label="Next step"
                   >
                     <ArrowRight className="h-5 w-5" />
@@ -297,13 +317,26 @@ export default function HowItWorksSection() {
         
         {/* Final CTA Button - only show on last step */}
         {isLastStep && (
-          <AnimatedSection animation="fade-up" delay={300} className="mt-12 text-center">
-            <Link to="/apply">
-              <Button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white py-6 px-8 text-lg rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1">
-                Start Your Nurse Search
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+          <AnimatedSection animation="fade-up" delay={300} className="mt-16 text-center">
+            <div className="bg-gradient-to-r from-blue-600 to-teal-600 rounded-3xl p-8 md:p-12 text-white">
+              <h3 className="text-3xl font-bold mb-4">Ready to Get Started?</h3>
+              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                Join thousands of families and healthcare facilities who trust NurseNest for their nursing needs.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/apply">
+                  <Button className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                    Find a Nurse Now
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg rounded-xl backdrop-blur-sm transition-all duration-300">
+                    Join as a Nurse
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </AnimatedSection>
         )}
       </div>
