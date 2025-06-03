@@ -8,7 +8,6 @@ import { useScrollToSection } from '@/hooks/use-scroll-to-section';
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Pricing', path: '/pricing' },
-  { name: 'Pay Calculator', path: '/salary-calculator' },
   { name: 'Contact', path: '/contact' },
 ];
 

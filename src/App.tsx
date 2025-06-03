@@ -32,6 +32,7 @@ import EnhancedAdminPortal from "./components/admin/EnhancedAdminPortal";
 import NurseDashboard from "./components/dashboard/NurseDashboard";
 import DashboardRouter from "./components/DashboardRouter";
 import ClientDashboard from "./components/dashboard/ClientDashboard";
+import PendingApprovalPage from "./components/PendingApprovalPage";
 
 export default function App() {
   return (
@@ -61,6 +62,7 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardRouter />} />
               <Route path="/dashboard/nurse" element={<NurseDashboard />} />
               <Route path="/dashboard/client" element={<ClientDashboard />} />
+              <Route path="/pending-approval" element={<PendingApprovalPage />} />
               
               <Route path="/vetting-options" element={<VettingOptions />} />
               <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
