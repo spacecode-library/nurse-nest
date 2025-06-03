@@ -10,9 +10,11 @@ import ClientDashboard from "@/components/dashboard/ClientDashboard";
 import NurseDashboard from "@/components/dashboard/NurseDashboard";
 import AccountSettings from "@/components/dashboard/AccountSettings";
 import { UserProfile } from "@/types/dashboard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<"nurse" | "client" | null>(null);
@@ -30,23 +32,59 @@ export default function Dashboard() {
       if (!user) return;
       
       try {
-        const { data, error } = await supabase
-          .from('profiles')
+        // Fetch from nurse_profiles first
+        const { data: nurseProfile, error: nurseError } = await supabase
+          .from('nurse_profiles')
           .select('*')
-          .eq('id', user.id)
+          .eq('user_id', user.id)
           .single();
           
-        if (error) throw error;
+        if (nurseProfile) {
+          setUserRole('nurse');
+          setProfile({
+            id: user.id,
+            first_name: nurseProfile.first_name,
+            last_name: nurseProfile.last_name,
+            email: user.email || '',
+            role: 'nurse',
+            bio: nurseProfile.bio || '' // Use the bio field if available
+          });
+          return;
+        }
         
-        // For demo, we'll set a role based on email
-        // In a real app, this would come from your database
-        const role = data.email?.includes('nurse') ? 'nurse' : 'client';
-        setUserRole(role);
-        setProfile({
-          ...data,
-          role: role
-        });
+        // If not a nurse, check if client
+        const { data: clientProfile, error: clientError } = await supabase
+          .from('client_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+          
+        if (clientProfile) {
+          setUserRole('client');
+          setProfile({
+            id: user.id,
+            first_name: clientProfile.first_name,
+            last_name: clientProfile.last_name,
+            email: user.email || '',
+            role: 'client',
+            bio: '' // Clients might not have bio field
+          });
+          return;
+        }
         
+        // Fallback for demo purposes if no profile exists yet
+        // In a real app, you might want to redirect to a profile creation page
+        if (!nurseProfile && !clientProfile) {
+          setUserRole(user.email?.includes('nurse') ? 'nurse' : 'client');
+          setProfile({
+            id: user.id,
+            first_name: 'Demo',
+            last_name: 'User',
+            email: user.email || '',
+            role: user.email?.includes('nurse') ? 'nurse' : 'client',
+            bio: '' // Default empty bio
+          });
+        }
       } catch (error) {
         console.error('Error fetching profile:', error);
       }
