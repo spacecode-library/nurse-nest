@@ -28,6 +28,7 @@ import TaxTips from "./pages/TaxTips";
 import NurseOnboarding from "./pages/NurseOnboarding";
 import ClientOnboarding from "./pages/ClientOnboarding";
 import AdminPortal from "./components/AdminPortal";
+import EnhancedAdminPortal from "./components/admin/EnhancedAdminPortal";
 import NurseDashboard from "./components/dashboard/NurseDashboard";
 import DashboardRouter from "./components/DashboardRouter";
 import ClientDashboard from "./components/dashboard/ClientDashboard";
@@ -64,7 +65,7 @@ export default function App() {
               <Route path="/vetting-options" element={<VettingOptions />} />
               <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
               <Route path="/onboarding/client" element={<ClientOnboarding />} />
-              <Route path="/admin" element={<AdminPortal />} />
+              <Route path="/admin" element={<EnhancedAdminPortal />} />
               
               {/* Nurse Resources Routes */}
               <Route path="/nurse-application" element={<NurseApplication />} />

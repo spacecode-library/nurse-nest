@@ -32,6 +32,12 @@ export interface AdminUser {
   created_at?: string;
   last_login?: string;
   profile_data?: {
+    care_recipients: any;
+    relationship_to_recipient: any;
+    relationship_to_recipient: ReactNode;
+    care_recipients: any;
+    care_recipients: boolean;
+    care_recipients: any;
     id?: string;
     first_name?: string;
     last_name?: string;

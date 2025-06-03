@@ -258,12 +258,12 @@ export async function getNurseTimecards(
 }
 
 /**
- * Get all timecards for a client
+ * Get all timecards for a client with enhanced nurse payment status and preferences
  * 
  * @param clientId Client ID
  * @param limit Maximum number of records to return
  * @param offset Offset for pagination
- * @returns List of timecards
+ * @returns List of timecards with nurse payment readiness and hourly rates
  */
 export async function getClientTimecards(
   clientId: string,
@@ -275,10 +275,19 @@ export async function getClientTimecards(
       .from('timecards')
       .select(`
         *,
-        nurse_profiles!inner(
+        nurse_profiles!timecards_nurse_id_fkey(
           id,
           first_name,
-          last_name
+          last_name,
+          stripe_account_id,
+          stripe_account_status,
+          stripe_charges_enabled,
+          stripe_payouts_enabled,
+          stripe_onboarding_completed_at
+        ),
+        client_profiles!timecards_client_id_fkey(
+          id,
+          stripe_customer_id
         )
       `, { count: 'exact' })
       .eq('client_id', clientId)
@@ -286,7 +295,36 @@ export async function getClientTimecards(
       .order('shift_date', { ascending: false });
 
     if (error) throw error;
-    return { data, count, error: null };
+
+    // Fetch nurse preferences for all nurses in the timecards
+    const nurseIds = [...new Set(data?.map(tc => tc.nurse_id).filter(Boolean))];
+    
+    let nursePreferences: any[] = [];
+    if (nurseIds.length > 0) {
+      const { data: preferences, error: preferencesError } = await supabase
+        .from('nurse_preferences')
+        .select('nurse_id, desired_hourly_rate')
+        .in('nurse_id', nurseIds);
+      
+      if (preferencesError) {
+        console.warn('Error fetching nurse preferences:', preferencesError);
+      } else {
+        nursePreferences = preferences || [];
+      }
+    }
+
+    // Create a map for quick nurse preference lookup
+    const preferencesMap = new Map(
+      nursePreferences.map(pref => [pref.nurse_id, pref.desired_hourly_rate])
+    );
+
+    // Add nurse hourly rates to the data
+    const enhancedData = data?.map(timecard => ({
+      ...timecard,
+      nurse_hourly_rate: preferencesMap.get(timecard.nurse_id) || 50 // Default to $50 if no preference found
+    }));
+
+    return { data: enhancedData, count, error: null };
   } catch (error) {
     console.error('Error getting client timecards:', error);
     return { data: null, count: null, error: error as PostgrestError };
@@ -311,7 +349,7 @@ export async function getPendingTimecards(
       .from('timecards')
       .select(`
         *,
-        nurse_profiles!inner(
+        nurse_profiles!timecards_nurse_id_fkey(
           id,
           first_name,
           last_name
@@ -516,14 +554,6 @@ export async function markTimecardAsPaid(timecardId: string) {
   }
 }
 
-/**
- * Get timecards by status
- * 
- * @param status Status to filter by
- * @param limit Maximum number of records to return
- * @param offset Offset for pagination
- * @returns Matching timecards
- */
 export async function getTimecardsByStatus(
   status: TimecardStatus,
   limit: number = 10,
@@ -534,12 +564,12 @@ export async function getTimecardsByStatus(
       .from('timecards')
       .select(`
         *,
-        nurse_profiles!inner(
+        nurse_profiles!timecards_nurse_id_fkey(
           id,
           first_name,
           last_name
         ),
-        client_profiles!inner(
+        client_profiles!timecards_client_id_fkey(
           id,
           first_name,
           last_name
@@ -620,21 +650,22 @@ export async function calculateNurseEarnings(nurseId: string, startDate: string,
 }
 
 /**
- * Calculate client expenses for a given period
+ * Calculate client expenses for a given period using actual nurse hourly rates
  * 
  * @param clientId Client ID
  * @param startDate Start date (YYYY-MM-DD)
  * @param endDate End date (YYYY-MM-DD)
- * @returns Expenses data
+ * @returns Expenses data with individual nurse rates
  */
 export async function calculateClientExpenses(clientId: string, startDate: string, endDate: string) {
   try {
     // Get all approved or paid timecards for the client within the date range
+    // Include nurse preferences to get their hourly rate
     const { data: timecards, error } = await supabase
       .from('timecards')
       .select(`
         *,
-        nurse_profiles!inner(
+        nurse_profiles!timecards_nurse_id_fkey(
           id,
           first_name,
           last_name
@@ -649,15 +680,46 @@ export async function calculateClientExpenses(clientId: string, startDate: strin
     
     if (!timecards || timecards.length === 0) {
       return { 
-        expenses: { totalHours: 0, subtotal: 0, platformFee: 0, total: 0, timecards: [] }, 
+        expenses: { 
+          totalHours: 0, 
+          subtotal: 0, 
+          platformFee: 0, 
+          total: 0, 
+          timecards: [],
+          averageHourlyRate: 0
+        }, 
         error: null 
       };
     }
+
+    // Get unique nurse IDs to fetch their hourly rates
+    const uniqueNurseIds = [...new Set(timecards.map(tc => tc.nurse_id))];
     
-    // Calculate total hours and expenses
+    // Fetch nurse preferences to get hourly rates
+    const { data: nursePreferences, error: preferencesError } = await supabase
+      .from('nurse_preferences')
+      .select('nurse_id, desired_hourly_rate')
+      .in('nurse_id', uniqueNurseIds);
+
+    if (preferencesError) {
+      console.warn('Could not fetch nurse preferences, using default rate:', preferencesError);
+    }
+
+    // Create a map of nurse_id to hourly_rate for quick lookup
+    const nurseRatesMap = new Map(
+      (nursePreferences || []).map(pref => [pref.nurse_id, pref.desired_hourly_rate])
+    );
+
+    // Calculate total hours and expenses using individual nurse rates
     let totalHours = 0;
+    let totalSubtotal = 0;
     const simplifiedTimecards = timecards.map(tc => {
       totalHours += tc.total_hours;
+      
+      // Get the nurse's hourly rate, fallback to $50 if not found
+      const nurseHourlyRate = nurseRatesMap.get(tc.nurse_id) || 50;
+      const timecardSubtotal = tc.total_hours * nurseHourlyRate;
+      totalSubtotal += timecardSubtotal;
       
       return {
         id: tc.id,
@@ -665,24 +727,26 @@ export async function calculateClientExpenses(clientId: string, startDate: strin
         hours: tc.total_hours,
         status: tc.status,
         jobCode: tc.job_code,
-        nurseName: `${tc.nurse_profiles.first_name} ${tc.nurse_profiles.last_name}`
+        nurseName: `${tc.nurse_profiles.first_name} ${tc.nurse_profiles.last_name}`,
+        hourlyRate: nurseHourlyRate,
+        subtotal: timecardSubtotal
       };
     });
+
+    // Calculate platform fee (15% of subtotal)
+    const platformFee = totalSubtotal * 0.15;
+    const total = totalSubtotal + platformFee;
     
-    // For this example, we're using a placeholder hourly rate of $50
-    // In a real app, you'd get the rate from the contract or user settings
-    const hourlyRate = 50;
-    const subtotal = totalHours * hourlyRate;
-    const platformFee = subtotal * 0.15; // 15% platform fee
-    const total = subtotal + platformFee;
+    // Calculate average hourly rate across all timecards
+    const averageHourlyRate = totalHours > 0 ? totalSubtotal / totalHours : 0;
     
     return {
       expenses: {
         totalHours,
-        hourlyRate,
-        subtotal,
-        platformFee,
-        total,
+        averageHourlyRate: Math.round(averageHourlyRate * 100) / 100, // Round to 2 decimal places
+        subtotal: Math.round(totalSubtotal * 100) / 100,
+        platformFee: Math.round(platformFee * 100) / 100,
+        total: Math.round(total * 100) / 100,
         timecards: simplifiedTimecards
       },
       error: null

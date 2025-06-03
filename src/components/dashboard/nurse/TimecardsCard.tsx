@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Clock, 
@@ -482,11 +482,14 @@ export default function TimecardsCard({
       </div>
 
       {/* Timecard Details Dialog */}
-      <Dialog open={!!selectedTimecard} onOpenChange={() => setSelectedTimecard(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Timecard Details</DialogTitle>
-          </DialogHeader>
+          <Dialog open={!!selectedTimecard} onOpenChange={() => setSelectedTimecard(null)}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Timecard Details</DialogTitle>
+          <DialogDescription>
+            Review your submitted timecard information and payment status
+          </DialogDescription>
+        </DialogHeader>
           {selectedTimecard && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -594,10 +597,13 @@ export default function TimecardsCard({
 
       {/* Enhanced Timecard Submission Dialog */}
       <Dialog open={showSubmissionForm} onOpenChange={setShowSubmissionForm}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Submit New Timecard</DialogTitle>
-          </DialogHeader>
+  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+    <DialogHeader>
+      <DialogTitle>Submit New Timecard</DialogTitle>
+      <DialogDescription>
+        Log your completed shift hours for client approval and payment
+      </DialogDescription>
+    </DialogHeader>
           <EnhancedTimecardSubmissionForm
             nurseId={nurseId}
             stripeAccountStatus={stripeAccountStatus}

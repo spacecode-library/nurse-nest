@@ -1,4 +1,4 @@
-// src/components/dashboard/nurse/StripeOnboardingCard.tsx
+// src/components/dashboard/nurse/StripeOnboardingCard.tsx - FIXED VERSION
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,10 +23,12 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { 
   createNurseStripeAccount, 
+  createAccountLink,
   updateNurseStripeStatus,
   formatCurrency 
 } from '@/supabase/api/stripeConnectService';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface StripeOnboardingCardProps {
   nurseId: string;
@@ -40,18 +42,65 @@ export default function StripeOnboardingCard({
   nurseId, 
   nurseEmail, 
   currentAccountId,
-  currentStatus = 'not_started',
+  currentStatus,
   onStatusUpdate 
 }: StripeOnboardingCardProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [accountId, setAccountId] = useState(currentAccountId);
-  const [accountStatus, setAccountStatus] = useState(currentStatus);
   const [onboardingUrl, setOnboardingUrl] = useState<string | null>(null);
+  
+  // Fix: Properly handle null/undefined status and normalize it
+  const normalizeStatus = (status?: string) => {
+    if (!status || status === 'null' || status === 'undefined') {
+      return 'not_started';
+    }
+    // Handle Stripe's "not_submitted" status
+    if (status === 'not_submitted') {
+      return 'not_submitted';
+    }
+    return status;
+  };
+
+  const [accountStatus, setAccountStatus] = useState(normalizeStatus(currentStatus));
+
+  // Update status when props change and load existing onboarding URL
+  useEffect(() => {
+    setAccountStatus(normalizeStatus(currentStatus));
+    setAccountId(currentAccountId);
+    
+    // Try to load existing onboarding URL from nurse profile if account exists
+    if (currentAccountId && !onboardingUrl) {
+      loadExistingOnboardingUrl();
+    }
+  }, [currentStatus, currentAccountId]);
+
+  const loadExistingOnboardingUrl = async () => {
+    try {
+      // Get the current nurse profile to check for existing onboarding URL
+      const { data: profile, error } = await supabase
+        .from('nurse_profiles')
+        .select('stripe_onboarding_url')
+        .eq('id', nurseId)
+        .single();
+
+      if (error) {
+        console.error('Error loading nurse profile:', error);
+        return;
+      }
+
+      if (profile?.stripe_onboarding_url) {
+        console.log('Found existing onboarding URL:', profile.stripe_onboarding_url);
+        setOnboardingUrl(profile.stripe_onboarding_url);
+      }
+    } catch (error) {
+      console.error('Error loading existing onboarding URL:', error);
+    }
+  };
 
   useEffect(() => {
-    if (accountId && accountStatus === 'onboarding') {
+    if (accountId && (accountStatus === 'onboarding' || accountStatus === 'requirements_due')) {
       // Auto-check status every 30 seconds if onboarding
       const interval = setInterval(checkAccountStatus, 30000);
       return () => clearInterval(interval);
@@ -59,32 +108,79 @@ export default function StripeOnboardingCard({
   }, [accountId, accountStatus]);
 
   const handleCreateAccount = async () => {
+    if (!nurseId || !nurseEmail) {
+      toast({
+        title: "Missing Information",
+        description: "Nurse ID and email are required to create an account",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       
-      const result = await createNurseStripeAccount(nurseId, nurseEmail);
+      console.log('Setting up Stripe account for:', { nurseId, nurseEmail, existingAccountId: accountId, currentStatus: accountStatus });
       
-      if (result.error) {
-        throw result.error;
+      // If we already have an account ID but status is not_submitted, 
+      // we need to create a new onboarding link
+      if (accountId && (accountStatus === 'not_submitted' || accountStatus === 'requirements_due' || accountStatus === 'onboarding')) {
+        console.log('Account exists but not completed, creating new onboarding link');
+        
+        // Create new account link for existing account
+        const result = await createAccountLink(nurseId, accountId);
+        
+        if (result.error) {
+          console.error('Onboarding link creation error:', result.error);
+          throw result.error;
+        }
+        
+        console.log('Account link creation result:', result);
+        
+        if (result.onboardingUrl) {
+          setOnboardingUrl(result.onboardingUrl);
+          setAccountStatus('onboarding');
+          
+          onStatusUpdate?.('onboarding');
+          
+          toast({
+            title: "🎉 Onboarding Link Created!",
+            description: "Click 'Complete Setup' to finish your payment account configuration",
+            duration: 5000
+          });
+        } else {
+          throw new Error('No onboarding URL returned from Stripe');
+        }
+      } else {
+        // Create new account
+        console.log('Creating new Stripe account');
+        const result = await createNurseStripeAccount(nurseId, nurseEmail);
+        
+        if (result.error) {
+          console.error('Account creation error:', result.error);
+          throw result.error;
+        }
+        
+        console.log('Account creation result:', result);
+        
+        setAccountId(result.accountId);
+        setOnboardingUrl(result.onboardingUrl);
+        setAccountStatus('onboarding');
+        
+        onStatusUpdate?.('onboarding');
+        
+        toast({
+          title: "🎉 Payment Account Created!",
+          description: "Click 'Complete Setup' to finish your payment account configuration",
+          duration: 5000
+        });
       }
       
-      setAccountId(result.accountId);
-      setOnboardingUrl(result.onboardingUrl);
-      setAccountStatus('onboarding');
-      
-      onStatusUpdate?.('onboarding');
-      
-      toast({
-        title: "🎉 Payment Account Created!",
-        description: "Click 'Complete Setup' to finish your payment account configuration",
-        duration: 5000
-      });
-      
     } catch (error) {
-      console.error('Error creating Stripe account:', error);
+      console.error('Error setting up Stripe account:', error);
       toast({
         title: "Setup Failed",
-        description: (error as Error).message || "Failed to create payment account",
+        description: (error as Error).message || "Failed to set up payment account. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -93,24 +189,41 @@ export default function StripeOnboardingCard({
   };
 
   const checkAccountStatus = async () => {
-    if (!accountId) return;
+    if (!accountId) {
+      console.log('No account ID available for status check');
+      return;
+    }
     
     try {
       setCheckingStatus(true);
       
+      console.log('Checking account status for:', accountId);
+      
       const result = await updateNurseStripeStatus(nurseId, accountId);
       
       if (result.error) {
+        console.error('Status check error:', result.error);
         throw result.error;
       }
       
+      console.log('Status check result:', result);
+      
+      // Update local state with the new status
       setAccountStatus(result.status);
       onStatusUpdate?.(result.status);
       
+      // Clear onboarding URL when account becomes active
       if (result.status === 'active') {
+        setOnboardingUrl(null);
         toast({
           title: "🎉 Payment Account Active!",
-          description: "You're now ready to receive payments from clients",
+          description: "You're now ready to receive payments from clients. Your account setup is complete!",
+          duration: 6000
+        });
+      } else if (result.status === 'requirements_due') {
+        toast({
+          title: "⚠️ Additional Information Required",
+          description: "Please complete the remaining requirements in your Stripe account",
           duration: 5000
         });
       }
@@ -119,7 +232,7 @@ export default function StripeOnboardingCard({
       console.error('Error checking account status:', error);
       toast({
         title: "Status Check Failed",
-        description: "Unable to check account status",
+        description: "Unable to check account status. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -130,12 +243,23 @@ export default function StripeOnboardingCard({
   const getStatusInfo = () => {
     switch (accountStatus) {
       case 'not_started':
+      case null:
+      case undefined:
+      case '':
         return {
-          color: 'gray',
-          text: 'Not Started',
-          icon: Clock,
-          description: 'Set up your payment account to receive earnings',
+          color: 'orange',
+          text: 'Setup Required',
+          icon: AlertCircle,
+          description: 'Set up your payment account to receive earnings from completed work',
           progress: 0
+        };
+      case 'not_submitted':
+        return {
+          color: 'orange',
+          text: 'Complete Setup Required',
+          icon: AlertCircle,
+          description: 'Complete your Stripe onboarding to start receiving payments',
+          progress: 25
         };
       case 'onboarding':
         return {
@@ -158,15 +282,17 @@ export default function StripeOnboardingCard({
           color: 'green',
           text: 'Ready to Receive Payments',
           icon: CheckCircle,
-          description: 'Your payment account is active and ready',
+          description: 'Your payment account is active and ready to receive earnings',
           progress: 100
         };
       default:
+        // Fallback for any unexpected status
+        console.warn('Unexpected account status:', accountStatus);
         return {
-          color: 'gray',
-          text: 'Unknown Status',
+          color: 'orange',
+          text: 'Setup Required',
           icon: AlertCircle,
-          description: 'Unable to determine account status',
+          description: 'Set up your payment account to receive earnings',
           progress: 0
         };
     }
@@ -197,6 +323,13 @@ export default function StripeOnboardingCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
+        {/* Debug Info (remove in production) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
+            <strong>Debug:</strong> Status: "{accountStatus}", Account ID: {accountId || 'none'}, Onboarding URL: {onboardingUrl ? 'present' : 'none'}
+          </div>
+        )}
+
         {/* Progress Bar */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
@@ -279,8 +412,8 @@ export default function StripeOnboardingCard({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-green-700">Example Earnings:</p>
-                <p className="font-bold text-green-900">$40/hr × 8hrs = $320</p>
-                <p className="text-xs text-green-600">You receive: $304 (after 5% fee)</p>
+                <p className="font-bold text-green-900">$50/hr × 8hrs = $400</p>
+                <p className="text-xs text-green-600">You receive: $380 (after 5% fee)</p>
               </div>
               <div>
                 <p className="text-green-700">Payout Schedule:</p>
@@ -293,27 +426,30 @@ export default function StripeOnboardingCard({
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          {accountStatus === 'not_started' && (
+          {/* Create Account or Generate New Link Button */}
+          {(accountStatus === 'not_started' || 
+            (accountId && !onboardingUrl && (accountStatus === 'not_submitted' || accountStatus === 'requirements_due' || accountStatus === 'onboarding'))) && (
             <Button
               onClick={handleCreateAccount}
-              disabled={loading}
+              disabled={loading || !nurseId || !nurseEmail}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0 shadow-lg h-12"
             >
               {loading ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Creating Account...
+                  {accountId ? 'Creating Link...' : 'Creating Account...'}
                 </>
               ) : (
                 <>
                   <Zap className="h-4 w-4 mr-2" />
-                  Set Up Payment Account
+                  {accountId ? 'Generate Setup Link' : 'Set Up Payment Account'}
                 </>
               )}
             </Button>
           )}
 
-          {(accountStatus === 'onboarding' || accountStatus === 'requirements_due') && onboardingUrl && (
+          {/* Complete Setup in Stripe Button - Show when we have an onboarding URL */}
+          {onboardingUrl && (accountStatus === 'onboarding' || accountStatus === 'requirements_due' || accountStatus === 'not_submitted') && (
             <a
               href={onboardingUrl}
               target="_blank"
@@ -325,6 +461,7 @@ export default function StripeOnboardingCard({
             </a>
           )}
 
+          {/* Check Status Button */}
           {accountId && (
             <Button
               onClick={checkAccountStatus}

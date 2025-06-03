@@ -1,4 +1,4 @@
-// components/dashboard/ClientDashboard.tsx - COMPLETE UPDATED VERSION
+// components/dashboard/ClientDashboard.tsx - COMPLETE UPDATED VERSION WITH PAYMENT FIX
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -55,6 +55,9 @@ import { getApplicationsByJob } from '@/supabase/api/applicationService';
 import { getPendingTimecards, getClientTimecards, calculateClientExpenses } from '@/supabase/api/timecardService';
 import { getClientContracts } from '@/supabase/api/contractService';
 import { supabase } from '@/integrations/supabase/client';
+
+// Import payment services
+import { getClientPaymentMethods } from '@/supabase/api/stripeConnectService';
 
 // Import dashboard cards
 import JobManagementCard from './client/JobManagementCard';
@@ -184,6 +187,29 @@ export default function ClientDashboard() {
     return () => subscription.unsubscribe();
   }, [user?.id]);
 
+  // Function to update payment setup status in database
+  const updatePaymentSetupStatus = useCallback(async (profileId: string, isComplete: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('client_profiles')
+        .update({
+          payment_setup_completed: isComplete,
+          payment_setup_completed_at: isComplete ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', profileId);
+
+      if (error) {
+        console.error('Error updating payment setup status:', error);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error updating payment setup status:', error);
+      return false;
+    }
+  }, []);
+
   // Memoized fetch function to prevent unnecessary re-renders
   const fetchDashboardData = useCallback(async () => {
     if (!user?.id) return;
@@ -198,6 +224,38 @@ export default function ClientDashboard() {
         return;
       }
       setClientProfile(profile);
+
+      // Check payment methods if client has stripe customer ID
+      let paymentMethodsCount = 0;
+      let hasValidPaymentMethods = false;
+      
+      if (profile.stripe_customer_id) {
+        try {
+          const { paymentMethods, error: pmError } = await getClientPaymentMethods(profile.stripe_customer_id);
+          if (!pmError && paymentMethods) {
+            paymentMethodsCount = paymentMethods.length;
+            hasValidPaymentMethods = paymentMethods.some(pm => pm.card && pm.card.last4);
+          }
+        } catch (error) {
+          console.warn('Error fetching payment methods:', error);
+        }
+      }
+
+      // Determine payment setup completion status
+      const paymentSetupComplete = hasValidPaymentMethods && (profile.payment_setup_completed || false);
+      
+      // Update payment setup status in database if it has changed
+      if (hasValidPaymentMethods && !profile.payment_setup_completed) {
+        const updateSuccess = await updatePaymentSetupStatus(profile.id, true);
+        if (updateSuccess) {
+          profile.payment_setup_completed = true;
+        }
+      } else if (!hasValidPaymentMethods && profile.payment_setup_completed) {
+        const updateSuccess = await updatePaymentSetupStatus(profile.id, false);
+        if (updateSuccess) {
+          profile.payment_setup_completed = false;
+        }
+      }
 
       // Fetch all data in parallel
       const [jobsResult, timecardsResult, contractsResult] = await Promise.all([
@@ -293,10 +351,6 @@ export default function ClientDashboard() {
             .reduce((sum, tc, _, arr) => sum + (tc.client_total_amount / tc.total_hours / arr.length), 0)
         : 0;
 
-      // Check payment method setup
-      const paymentMethodsCount = 0; // We'll update this when we check payment methods
-      const paymentSetupComplete = profile.payment_setup_completed || false;
-
       setStats({
         activeJobs,
         totalApplications,
@@ -307,13 +361,13 @@ export default function ClientDashboard() {
         newApplicants,
         pendingApprovals: pendingCards.length,
         favoritedCandidates,
-        // NEW: Payment stats
+        // FIXED: Payment stats with actual values
         totalPaid: allTimeExpenses?.total || 0,
         thisMonthSpend: currentMonthExpenses?.total || 0,
         lastMonthSpend: lastMonthExpenses?.total || 0,
         avgHourlyRate: avgHourlyRate || 0,
         paymentMethodsCount,
-        paymentSetupComplete,
+        paymentSetupComplete: hasValidPaymentMethods && (profile.payment_setup_completed || false),
         instantPaymentsEnabled: true
       });
 
@@ -327,7 +381,7 @@ export default function ClientDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, updatePaymentSetupStatus]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -360,6 +414,19 @@ export default function ClientDashboard() {
       fetchUnreadMessages();
     }
   }, [user?.id, fetchUnreadMessages]);
+
+  // Enhanced refresh function for payment updates
+  const handlePaymentMethodAdded = useCallback(() => {
+    // Force immediate refresh when payment method is added
+    setRefreshTrigger(prev => prev + 1);
+    
+    // Show success message
+    toast({
+      title: "Payment Method Added!",
+      description: "You can now approve timecards with instant payment processing.",
+      variant: "default"
+    });
+  }, []);
 
   // Handle nurse contact from browse nurses
   const handleNurseContact = useCallback((nurseId: string, conversationId: string) => {
@@ -462,7 +529,7 @@ export default function ClientDashboard() {
                   <Crown className="h-3 w-3 mr-1" />
                   {clientProfile?.client_type === 'family' ? 'Family Account' : 'Individual Account'}
                 </Badge>
-                {/* NEW: Payment Setup Status Badge */}
+                {/* FIXED: Payment Setup Status Badge */}
                 {stats.paymentSetupComplete && (
                   <Badge className="bg-medical-success text-white border-0 shadow-sm">
                     <CreditCard className="h-3 w-3 mr-1" />
@@ -564,7 +631,7 @@ export default function ClientDashboard() {
                   <Award className="h-4 w-4 text-medical-accent" />
                   <span className="text-sm font-medium text-medical-text-primary">Verified Care Network</span>
                 </div>
-                {/* NEW: Payment Status Indicator */}
+                {/* FIXED: Payment Status Indicator */}
                 {stats.paymentSetupComplete && (
                   <div className="flex items-center space-x-2 bg-gradient-to-r from-medical-success to-medical-accent rounded-full px-4 py-2 shadow-medical-soft">
                     <Zap className="h-4 w-4 text-white" />
@@ -577,7 +644,7 @@ export default function ClientDashboard() {
           
           {/* Enhanced Alert Cards */}
           <div className="space-y-4">
-            {/* NEW: Payment Setup Alert */}
+            {/* FIXED: Payment Setup Alert - Only shows when payment is NOT set up */}
             {!stats.paymentSetupComplete && (
               <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-warning/10 to-medical-error/10 border border-medical-warning/20 rounded-xl shadow-medical-soft">
                 <div className="flex items-center justify-between">
@@ -979,12 +1046,12 @@ export default function ClientDashboard() {
 
           <TabsContent value="billing">
             <div className="space-y-8">
-              {/* Payment Method Setup */}
+              {/* FIXED: Payment Method Setup with enhanced callback */}
               <PaymentMethodSetup
                 clientId={clientProfile?.id || ''}
                 clientEmail={user?.email || ''}
                 clientName={`${clientProfile?.first_name} ${clientProfile?.last_name}`}
-                onPaymentMethodAdded={handleRefresh}
+                onPaymentMethodAdded={handlePaymentMethodAdded}
               />
 
               {/* Payment History */}

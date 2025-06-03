@@ -2,7 +2,7 @@
 import Stripe from 'stripe';
 import { supabase } from '@/integrations/supabase/client';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY, {
   apiVersion: '2025-05-28.basil',
 });
 
@@ -41,8 +41,8 @@ export async function createNurseStripeAccount(nurseId: string, email: string) {
     // Create onboarding link
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `${process.env.NEXT_PUBLIC_APP_URL}/nurse/stripe-refresh`,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/nurse/stripe-success`,
+      refresh_url: `${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/nurse/stripe-refresh`,
+      return_url: `${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/nurse/stripe-success`,
       type: 'account_onboarding',
     });
 
@@ -75,11 +75,68 @@ export async function createNurseStripeAccount(nurseId: string, email: string) {
 }
 
 /**
- * Check and update nurse Stripe account status
+ * Create new account link for existing Stripe account
+ */
+export async function createAccountLink(nurseId: string, accountId: string) {
+  try {
+    console.log('Creating account link for:', { nurseId, accountId });
+    
+    // Create new onboarding link for existing account
+    const accountLink = await stripe.accountLinks.create({
+      account: accountId,
+      refresh_url: `${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/nurse/stripe-refresh`,
+      return_url: `${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/nurse/stripe-success`,
+      type: 'account_onboarding',
+    });
+
+    console.log('Stripe account link created:', accountLink.url);
+
+    // Update nurse profile with new onboarding URL
+    const { error } = await supabase
+      .from('nurse_profiles')
+      .update({
+        stripe_onboarding_url: accountLink.url,
+        stripe_account_status: 'onboarding',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', nurseId);
+
+    if (error) {
+      console.error('Error updating nurse profile:', error);
+      throw error;
+    }
+
+    console.log('Nurse profile updated with new onboarding URL');
+
+    return {
+      onboardingUrl: accountLink.url,
+      error: null,
+    };
+  } catch (error) {
+    console.error('Error creating account link:', error);
+    return {
+      onboardingUrl: null,
+      error: error as Error,
+    };
+  }
+}
+
+/**
+ * Check and update nurse Stripe account status with full sync
  */
 export async function updateNurseStripeStatus(nurseId: string, accountId: string) {
   try {
+    console.log('Updating nurse Stripe status for:', { nurseId, accountId });
+    
     const account = await stripe.accounts.retrieve(accountId);
+    
+    console.log('Retrieved Stripe account:', {
+      id: account.id,
+      charges_enabled: account.charges_enabled,
+      payouts_enabled: account.payouts_enabled,
+      details_submitted: account.details_submitted,
+      currently_due: account.requirements?.currently_due?.length || 0
+    });
     
     let status = 'onboarding';
     if (account.charges_enabled && account.payouts_enabled) {
@@ -90,18 +147,51 @@ export async function updateNurseStripeStatus(nurseId: string, accountId: string
       status = 'requirements_due';
     }
 
-    // Update nurse profile with current status
+    // Prepare update data with all Stripe fields
+    const updateData: any = {
+      stripe_account_status: status,
+      stripe_charges_enabled: account.charges_enabled,
+      stripe_payouts_enabled: account.payouts_enabled,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Set onboarding completion timestamp when account becomes active
+    if (account.charges_enabled && account.payouts_enabled) {
+      updateData.stripe_onboarding_completed_at = new Date().toISOString();
+      console.log('Account is fully active, setting onboarding completion timestamp');
+    }
+
+    // Update requirements due (convert to array of strings)
+    if (account.requirements?.currently_due) {
+      updateData.stripe_requirements_due = account.requirements.currently_due;
+    } else {
+      updateData.stripe_requirements_due = [];
+    }
+
+    console.log('Updating nurse profile with:', updateData);
+
+    // Update nurse profile with all current Stripe data
     const { error } = await supabase
       .from('nurse_profiles')
-      .update({
-        stripe_account_status: status,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', nurseId);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error updating nurse profile:', error);
+      throw error;
+    }
 
-    return { status, error: null };
+    console.log('Successfully updated nurse profile with Stripe status:', status);
+
+    return { 
+      status, 
+      accountData: {
+        charges_enabled: account.charges_enabled,
+        payouts_enabled: account.payouts_enabled,
+        onboarding_completed: account.charges_enabled && account.payouts_enabled
+      },
+      error: null 
+    };
   } catch (error) {
     console.error('Error updating Stripe status:', error);
     return { status: 'error', error: error as Error };
@@ -245,6 +335,7 @@ export function calculatePaymentAmounts(nurseHourlyRate: number, totalHours: num
 export async function processTimecardPayment(
   timecardId: string,
   nurseStripeAccountId: string,
+  clientCustomerId: string,        // NEW: Required for Stripe
   clientPaymentMethodId: string,
   nurseHourlyRate: number,
   totalHours: number
@@ -263,10 +354,21 @@ export async function processTimecardPayment(
       throw new Error('Nurse account is not ready to receive payments');
     }
 
-    // Create payment intent with automatic transfer (based on successful test)
+    console.log('Processing payment:', {
+      timecardId,
+      nurseAccount: nurseStripeAccountId,
+      clientCustomer: clientCustomerId,        // NEW: Log customer ID
+      clientPaymentMethod: clientPaymentMethodId,
+      amount: amounts.clientTotalAmount,
+      rate: nurseHourlyRate,
+      hours: totalHours
+    });
+
+    // Create payment intent with proper configuration including customer
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amounts.clientTotalAmount * 100), // Convert to cents
       currency: 'usd',
+      customer: clientCustomerId,              // NEW: Include customer parameter
       payment_method: clientPaymentMethodId,
       confirm: true,
       
@@ -277,6 +379,15 @@ export async function processTimecardPayment(
       transfer_data: {
         destination: nurseStripeAccountId,
       },
+      
+      // Configure automatic payment methods to avoid redirect issues
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: 'never'
+      },
+      
+      // Use off_session for server-side payments
+      off_session: true,
       
       metadata: {
         timecard_id: timecardId,
@@ -289,6 +400,12 @@ export async function processTimecardPayment(
       },
     });
 
+    console.log('Payment intent created successfully:', {
+      id: paymentIntent.id,
+      status: paymentIntent.status,
+      amount: paymentIntent.amount
+    });
+
     // Update timecard with payment details
     const { error: updateError } = await supabase
       .from('timecards')
@@ -297,6 +414,7 @@ export async function processTimecardPayment(
         nurse_net_amount: amounts.nurseNetAmount,
         client_total_amount: amounts.clientTotalAmount,
         platform_fee_amount: amounts.platformTotalFee,
+        hourly_rate_at_time: nurseHourlyRate,    // NEW: Store the rate used
         status: 'Paid',
         timestamp_paid: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -305,6 +423,8 @@ export async function processTimecardPayment(
 
     if (updateError) throw updateError;
 
+    console.log('Timecard updated successfully with payment details');
+
     return {
       paymentIntent,
       amounts,
@@ -312,6 +432,16 @@ export async function processTimecardPayment(
     };
   } catch (error) {
     console.error('Error processing payment:', error);
+    
+    // Enhanced error logging
+    if (error instanceof Error) {
+      console.error('Payment error details:', {
+        message: error.message,
+        type: (error as any).type,
+        code: (error as any).code,
+        decline_code: (error as any).decline_code
+      });
+    }
     
     // Update timecard with payment failure
     await supabase
@@ -335,7 +465,7 @@ export async function processTimecardPayment(
  */
 export async function retryTimecardPayment(timecardId: string) {
   try {
-    // Get timecard details
+    // Get timecard details with nurse and client info
     const { data: timecard, error: timecardError } = await supabase
       .from('timecards')
       .select(`
@@ -350,6 +480,19 @@ export async function retryTimecardPayment(timecardId: string) {
       throw new Error('Timecard not found');
     }
 
+    // Get nurse's actual hourly rate from preferences
+    const { data: nursePreferences, error: preferencesError } = await supabase
+      .from('nurse_preferences')
+      .select('desired_hourly_rate')
+      .eq('nurse_id', timecard.nurse_id)
+      .single();
+
+    if (preferencesError) {
+      console.warn('Error fetching nurse preferences for retry:', preferencesError);
+    }
+
+    const nurseHourlyRate = nursePreferences?.desired_hourly_rate || 50; // Fallback to $50
+
     // Get client's default payment method
     const { paymentMethods } = await getClientPaymentMethods(timecard.client_profiles.stripe_customer_id);
     
@@ -360,12 +503,22 @@ export async function retryTimecardPayment(timecardId: string) {
     // Use the default payment method (first one)
     const defaultPaymentMethod = paymentMethods[0];
 
-    // Retry payment with same parameters
+    console.log('Retrying payment with:', {
+      timecardId,
+      nurseAccount: timecard.nurse_profiles.stripe_account_id,
+      clientCustomer: timecard.client_profiles.stripe_customer_id,
+      paymentMethod: defaultPaymentMethod.id,
+      nurseHourlyRate,
+      totalHours: timecard.total_hours
+    });
+
+    // Retry payment with updated signature and actual nurse rate
     return await processTimecardPayment(
       timecardId,
       timecard.nurse_profiles.stripe_account_id,
+      timecard.client_profiles.stripe_customer_id,  // NEW: clientCustomerId parameter
       defaultPaymentMethod.id,
-      50, // You'll need to get this from your contract/rate system
+      nurseHourlyRate, // Use actual nurse rate instead of hardcoded 50
       timecard.total_hours
     );
   } catch (error) {
@@ -375,6 +528,41 @@ export async function retryTimecardPayment(timecardId: string) {
       amounts: null,
       error: error as Error,
     };
+  }
+}
+
+/**
+ * Check if nurse is ready to receive payments
+ */
+export async function isNurseReadyForPayments(nurseId: string): Promise<{ ready: boolean; reason?: string }> {
+  try {
+    const { data: nurseProfile, error } = await supabase
+      .from('nurse_profiles')
+      .select('stripe_account_id, stripe_account_status, stripe_charges_enabled, stripe_payouts_enabled')
+      .eq('id', nurseId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching nurse profile:', error);
+      return { ready: false, reason: 'Unable to verify nurse payment setup' };
+    }
+
+    if (!nurseProfile.stripe_account_id) {
+      return { ready: false, reason: 'No payment account found' };
+    }
+
+    if (nurseProfile.stripe_account_status !== 'active') {
+      return { ready: false, reason: 'Payment account not active' };
+    }
+
+    if (!nurseProfile.stripe_charges_enabled || !nurseProfile.stripe_payouts_enabled) {
+      return { ready: false, reason: 'Payment account not fully enabled' };
+    }
+
+    return { ready: true };
+  } catch (error) {
+    console.error('Error checking nurse payment readiness:', error);
+    return { ready: false, reason: 'Error checking payment setup' };
   }
 }
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { 
   CreditCard, 
   Plus, 
@@ -25,8 +25,13 @@ import {
   formatCurrency 
 } from '@/supabase/api/stripeConnectService';
 import { loadStripe } from '@stripe/stripe-js';
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements} from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(import.meta.env.VITE_NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface PaymentMethod {
   id: string;
@@ -46,6 +51,168 @@ interface PaymentMethodSetupProps {
   clientName: string;
   onPaymentMethodAdded?: () => void;
 }
+
+// Card form component that uses Stripe Elements
+const CardSetupForm = ({ 
+  setupIntent, 
+  onSuccess, 
+  onError, 
+  onCancel 
+}: {
+  setupIntent: string;
+  onSuccess: () => void;
+  onError: (error: string) => void;
+  onCancel: () => void;
+}) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+  const [cardError, setCardError] = useState<string | null>(null);
+  const [cardComplete, setCardComplete] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      onError('Stripe has not loaded yet. Please try again.');
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      onError('Card element not found. Please refresh and try again.');
+      return;
+    }
+
+    setLoading(true);
+    setCardError(null);
+
+    try {
+      // Confirm the setup intent with the card element using confirmCardSetup
+      const result = await stripe.confirmCardSetup(setupIntent, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            // You can add billing details here if needed
+            // name: 'Customer Name',
+            // email: 'customer@example.com',
+          },
+        },
+      });
+
+      // Check for error first
+      if (result.error) {
+        // Show error to customer (e.g., insufficient funds)
+        setCardError(result.error.message || 'An error occurred while setting up your payment method.');
+        onError(result.error.message || 'Setup failed');
+        return;
+      }
+
+      // Check if we have a setupIntent (success case)
+      if ('setupIntent' in result && result.setupIntent) {
+        // The setup has succeeded
+        console.log('Setup succeeded:', result.setupIntent);
+        onSuccess();
+        return;
+      }
+
+      // Unexpected state
+      onError('Setup completed but status is unclear. Please refresh and check your payment methods.');
+    } catch (err) {
+      console.error('Error confirming setup:', err);
+      onError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCardChange = (event: any) => {
+    setCardError(event.error ? event.error.message : null);
+    setCardComplete(event.complete);
+  };
+
+  const cardElementOptions = {
+    style: {
+      base: {
+        fontSize: '16px',
+        color: '#424770',
+        '::placeholder': {
+          color: '#aab7c4',
+        },
+        padding: '12px',
+      },
+      invalid: {
+        color: '#9e2146',
+      },
+    },
+    hidePostalCode: false,
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Card Element */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-700">
+          Card Information
+        </label>
+        <div className="p-3 border border-gray-300 rounded-md bg-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+          <CardElement
+            options={cardElementOptions}
+            onChange={handleCardChange}
+          />
+        </div>
+        {cardError && (
+          <div className="flex items-center space-x-2 text-red-600 text-sm">
+            <AlertCircle className="h-4 w-4" />
+            <span>{cardError}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Security Notice */}
+      <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+        <div className="flex items-start">
+          <Shield className="h-4 w-4 text-green-600 mr-2 mt-0.5" />
+          <div>
+            <p className="text-sm text-green-800">
+              <strong>Secure:</strong> Your card information is encrypted and processed securely by Stripe. We never store your card details.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Form Actions */}
+      <div className="flex space-x-3 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={loading}
+          className="flex-1"
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          disabled={!stripe || !cardComplete || loading}
+          className="flex-1 bg-blue-600 hover:bg-blue-700"
+        >
+          {loading ? (
+            <>
+              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              Adding...
+            </>
+          ) : (
+            <>
+              <Lock className="h-4 w-4 mr-2" />
+              Add Payment Method
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+};
 
 export default function PaymentMethodSetup({ 
   clientId, 
@@ -140,25 +307,8 @@ export default function PaymentMethodSetup({
     }
   };
 
-  const handleStripeSetup = async () => {
-    if (!setupIntent) return;
-    
+  const handleSetupSuccess = async () => {
     try {
-      const stripe = await stripePromise;
-      if (!stripe) throw new Error('Stripe not loaded');
-      
-      const { error } = await stripe.confirmSetup({
-        elements: null, // We'll use the payment element
-        clientSecret: setupIntent,
-        confirmParams: {
-          return_url: window.location.origin + '/dashboard',
-        },
-      });
-      
-      if (error) {
-        throw error;
-      }
-      
       // Reload payment methods
       if (customerId) {
         await loadPaymentMethods(customerId);
@@ -168,19 +318,28 @@ export default function PaymentMethodSetup({
       setSetupIntent(null);
       
       toast({
-        title: "Payment Method Added",
-        description: "Your payment method has been successfully added.",
+        title: "✅ Payment Method Added!",
+        description: "Your payment method has been successfully added and is ready for use.",
+        duration: 5000,
       });
       
       onPaymentMethodAdded?.();
     } catch (error) {
-      console.error('Error setting up payment method:', error);
+      console.error('Error reloading payment methods:', error);
       toast({
-        title: "Setup Failed",
-        description: (error as Error).message || "Failed to add payment method.",
+        title: "Warning",
+        description: "Payment method added but failed to refresh list. Please refresh the page.",
         variant: "destructive"
       });
     }
+  };
+
+  const handleSetupError = (errorMessage: string) => {
+    toast({
+      title: "Setup Failed",
+      description: errorMessage,
+      variant: "destructive"
+    });
   };
 
   const getCardBrandIcon = (brand: string) => {
@@ -337,7 +496,7 @@ export default function PaymentMethodSetup({
         </CardContent>
       </Card>
 
-      {/* Add Payment Method Modal */}
+      {/* Add Payment Method Modal with Stripe Elements */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -345,49 +504,27 @@ export default function PaymentMethodSetup({
               <Lock className="h-5 w-5 mr-2 text-blue-600" />
               Add Payment Method
             </DialogTitle>
+            <DialogDescription>
+              Add a secure payment method to enable automatic timecard payments
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-center h-32">
-                <div className="text-center">
-                  <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">
-                    Stripe payment form will load here
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    This is a simplified implementation
-                  </p>
-                </div>
+            {setupIntent ? (
+              <Elements stripe={stripePromise}>
+                <CardSetupForm
+                  setupIntent={setupIntent}
+                  onSuccess={handleSetupSuccess}
+                  onError={handleSetupError}
+                  onCancel={() => setShowAddModal(false)}
+                />
+              </Elements>
+            ) : (
+              <div className="text-center py-8">
+                <RefreshCw className="h-8 w-8 text-gray-400 mx-auto mb-2 animate-spin" />
+                <p className="text-gray-600">Preparing secure form...</p>
               </div>
-            </div>
-            
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <div className="flex items-start">
-                <Shield className="h-4 w-4 text-green-600 mr-2 mt-0.5" />
-                <div>
-                  <p className="text-sm text-green-800">
-                    <strong>Secure:</strong> All payment data is encrypted and processed by Stripe
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex space-x-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowAddModal(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleStripeSetup}
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
-              >
-                Add Card
-              </Button>
-            </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

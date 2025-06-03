@@ -23,12 +23,14 @@ import {
   Zap,
   Shield,
   CreditCard,
-  TrendingUp
+  TrendingUp,
+  RefreshCw
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { submitTimecard, calculateTotalHours } from '@/supabase/api/timecardService';
 import { getNurseContracts } from '@/supabase/api/contractService';
 import { calculatePaymentAmounts, formatCurrency } from '@/supabase/api/stripeConnectService';
+import { supabase } from '@/integrations/supabase/client';
 
 // Import enhanced date formatting
 import { 
@@ -64,6 +66,7 @@ export default function EnhancedTimecardSubmissionForm({
   stripeAccountStatus = 'not_started'
 }: TimecardSubmissionFormProps) {
   const [loading, setLoading] = useState(false);
+  const [loadingRate, setLoadingRate] = useState(true);
   const [activeContracts, setActiveContracts] = useState<ActiveContract[]>([]);
   const [selectedJobCode, setSelectedJobCode] = useState('');
   const [selectedContract, setSelectedContract] = useState<ActiveContract | null>(null);
@@ -75,9 +78,11 @@ export default function EnhancedTimecardSubmissionForm({
   const [notes, setNotes] = useState('');
   const [calculatedHours, setCalculatedHours] = useState(0);
   const [paymentPreview, setPaymentPreview] = useState<any>(null);
+  const [nurseHourlyRate, setNurseHourlyRate] = useState(50); // NEW: Dynamic hourly rate
 
   useEffect(() => {
     loadActiveContracts();
+    loadNurseHourlyRate();
   }, [nurseId]);
 
   useEffect(() => {
@@ -86,12 +91,11 @@ export default function EnhancedTimecardSubmissionForm({
       const hours = calculateTotalHours(startTime, endTime, isOvernight, breakMinutes);
       setCalculatedHours(hours);
       
-      // Calculate payment amounts (assuming $50/hr base rate)
-      const nurseRate = 50;
-      const amounts = calculatePaymentAmounts(nurseRate, hours);
+      // Calculate payment amounts using actual nurse rate
+      const amounts = calculatePaymentAmounts(nurseHourlyRate, hours);
       setPaymentPreview(amounts);
     }
-  }, [startTime, endTime, isOvernight, breakMinutes]);
+  }, [startTime, endTime, isOvernight, breakMinutes, nurseHourlyRate]);
 
   useEffect(() => {
     // Update selected contract when job code changes
@@ -100,6 +104,35 @@ export default function EnhancedTimecardSubmissionForm({
       setSelectedContract(contract || null);
     }
   }, [selectedJobCode, activeContracts]);
+
+  // NEW: Load nurse's actual hourly rate from preferences
+  const loadNurseHourlyRate = async () => {
+    try {
+      setLoadingRate(true);
+      
+      const { data: preferences, error } = await supabase
+        .from('nurse_preferences')
+        .select('desired_hourly_rate')
+        .eq('nurse_id', nurseId)
+        .single();
+
+      if (error) {
+        console.warn('Error fetching nurse preferences:', error);
+        // Keep default rate of $50 if preferences not found
+        return;
+      }
+
+      if (preferences?.desired_hourly_rate) {
+        setNurseHourlyRate(preferences.desired_hourly_rate);
+        console.log('Loaded nurse hourly rate:', preferences.desired_hourly_rate);
+      }
+    } catch (error) {
+      console.error('Error loading nurse hourly rate:', error);
+      // Keep default rate of $50 on error
+    } finally {
+      setLoadingRate(false);
+    }
+  };
 
   const loadActiveContracts = async () => {
     try {
@@ -190,7 +223,7 @@ export default function EnhancedTimecardSubmissionForm({
           <div className="space-y-1">
             <p>Your timecard for {calculatedHours} hours has been submitted</p>
             <p className="text-sm">
-              💰 Expected earnings: {formatCurrency(paymentPreview?.nurseNetAmount || 0)}
+              💰 Expected earnings: {formatCurrency(paymentPreview?.nurseNetAmount || 0)} at {formatCurrency(nurseHourlyRate)}/hr
             </p>
           </div>
         ),
@@ -240,8 +273,8 @@ export default function EnhancedTimecardSubmissionForm({
           </div>
           <p className="text-sm text-gray-600">Log your hours for completed shifts</p>
           
-          {/* Payment Status Indicator */}
-          <div className="mt-3">
+          {/* Payment Status and Rate Indicator */}
+          <div className="mt-3 flex items-center justify-center space-x-2">
             {stripeAccountStatus === 'active' ? (
               <Badge className="bg-green-100 text-green-800 border-green-300">
                 <Shield className="h-3 w-3 mr-1" />
@@ -253,6 +286,21 @@ export default function EnhancedTimecardSubmissionForm({
                 Payment Setup Required
               </Badge>
             )}
+            
+            {/* NEW: Display actual hourly rate */}
+            <Badge className="bg-blue-100 text-blue-800 border-blue-300">
+              {loadingRate ? (
+                <>
+                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                  Loading rate...
+                </>
+              ) : (
+                <>
+                  <DollarSign className="h-3 w-3 mr-1" />
+                  {formatCurrency(nurseHourlyRate)}/hr
+                </>
+              )}
+            </Badge>
           </div>
         </div>
 
@@ -402,12 +450,12 @@ export default function EnhancedTimecardSubmissionForm({
           </Card>
 
           {/* Enhanced Hours & Earnings Preview */}
-          {calculatedHours > 0 && paymentPreview && (
+          {calculatedHours > 0 && paymentPreview && !loadingRate && (
             <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center text-base text-green-900">
                   <TrendingUp className="h-4 w-4 mr-2" />
-                  Earnings Preview
+                  Earnings Preview - {formatCurrency(nurseHourlyRate)}/hr × {calculatedHours}h
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
@@ -429,7 +477,7 @@ export default function EnhancedTimecardSubmissionForm({
                       {formatCurrency(paymentPreview.nurseGrossAmount)}
                     </p>
                     <p className="text-sm text-blue-700">Base Earnings</p>
-                    <p className="text-xs text-blue-600">$50/hr rate</p>
+                    <p className="text-xs text-blue-600">{formatCurrency(nurseHourlyRate)}/hr rate</p>
                   </div>
                   
                   <div className="text-center">
@@ -451,8 +499,29 @@ export default function EnhancedTimecardSubmissionForm({
                       {formatCurrency(paymentPreview.nurseFee)}
                     </span>
                   </div>
-                  <div className="mt-1 text-xs text-green-600">
+                  <div className="flex items-center justify-between text-sm mt-1">
+                    <span className="text-green-700">Client Pays (rate + 10% fee):</span>
+                    <span className="font-medium text-green-800">
+                      {formatCurrency(paymentPreview.clientTotalAmount)}
+                    </span>
+                  </div>
+                  <div className="mt-2 text-xs text-green-600">
                     💰 Payment processed instantly when client approves
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Loading Rate Indicator */}
+          {loadingRate && (
+            <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <RefreshCw className="h-5 w-5 text-blue-600 animate-spin" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">Loading your hourly rate...</p>
+                    <p className="text-xs text-blue-700">Fetching rate from your preferences</p>
                   </div>
                 </div>
               </CardContent>
@@ -506,10 +575,11 @@ export default function EnhancedTimecardSubmissionForm({
               <div>
                 <h4 className="font-medium text-blue-900 text-sm mb-1">💡 How It Works</h4>
                 <ul className="text-xs text-blue-800 space-y-1">
-                  <li>• Times automatically rounded to 15min intervals</li>
+                  <li>• Times automatically rounded to 15min intervals (in your favor)</li>
                   <li>• Client has 72 hours to approve (then auto-approved)</li>
                   <li>• Payment processed instantly upon approval</li>
                   <li>• Money deposited to your bank every Friday</li>
+                  <li>• Your rate: {formatCurrency(nurseHourlyRate)}/hr (from your preferences)</li>
                 </ul>
               </div>
             </div>
@@ -532,7 +602,7 @@ export default function EnhancedTimecardSubmissionForm({
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={loading || calculatedHours <= 0 || stripeAccountStatus !== 'active'}
+            disabled={loading || calculatedHours <= 0 || stripeAccountStatus !== 'active' || loadingRate}
             className="h-10 px-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
           >
             {loading ? (
