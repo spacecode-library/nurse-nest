@@ -231,7 +231,7 @@ export const getUserDetails = async (userId: string) => {
           ...detailedProfile,
           ...nurseProfile,
           role: 'nurse',
-          specializations: nurseProfile.specializations || [],
+          specializations: nurseProfile.specialization ? [nurseProfile.specialization] : [],
           experience_years: Number(nurseProfile.years_of_experience) || 0,
           hourly_rate: Number(nurseProfile.desired_hourly_rate) || 0,
           bio: nurseProfile.bio,
