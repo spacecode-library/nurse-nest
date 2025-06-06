@@ -195,11 +195,11 @@ export default function Auth() {
           </div>
 
           {/* Right Side - Login Form (40% on desktop, full width on mobile) */}
-          <div className="w-full lg:w-2/5 bg-[#f0f9ff] flex items-center justify-center relative">
-            <div className="w-full max-w-md mx-auto px-8 py-12">
+          <div className="w-full lg:w-2/5 bg-[#f0f9ff] flex items-center justify-start relative">
+            <div className="w-full max-w-md ml-8 lg:ml-12 mr-8 py-12">
               
               {/* Header Section */}
-              <div className="text-center mb-8">
+              <div className="text-left mb-8">
                 <h1 className="text-4xl font-light text-[#1e293b] mb-2">
                   Healthcare Reimagined
                 </h1>
@@ -421,7 +421,7 @@ export default function Auth() {
               </form>
               
               {/* Footer Links */}
-              <div className="mt-6 text-center">
+              <div className="mt-6 text-left">
                 {isLogin ? (
                   <p className="text-[#64748b]">
                     Don't have an account?{' '}
@@ -470,7 +470,7 @@ export default function Auth() {
               )}
 
               {/* Security Badge */}
-              <div className="mt-8 text-center">
+              <div className="mt-8 text-left">
                 <div className="inline-flex items-center space-x-2 text-sm text-[#64748b]">
                   <CheckCircle className="h-4 w-4 text-[#10b981]" />
                   <span>SSL Secured</span>
