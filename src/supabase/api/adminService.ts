@@ -114,7 +114,7 @@ export interface DashboardStats {
   open_jobs?: number;
 }
 
-export const getAllUsers = async (page = 1, perPage = 50, filter = '', sortBy = 'created_at') => {
+export const getAllUsers = async (page: number = 1, perPage: number = 50, filter = '', sortBy = 'created_at') => {
   try {
     const { data, error } = await adminAuthClient.listUsers({
       page,
@@ -231,9 +231,9 @@ export const getUserDetails = async (userId: string) => {
           ...detailedProfile,
           ...nurseProfile,
           role: 'nurse',
-          specializations: nurseProfile.area_of_focus ? [nurseProfile.area_of_focus] : [],
-          experience_years: nurseProfile.experience_level || 0,
-          hourly_rate: nurseProfile.hourly_rate || 0,
+          specializations: nurseProfile.specialization ? [nurseProfile.specialization] : [],
+          experience_years: Number(nurseProfile.years_of_experience) || 0,
+          hourly_rate: Number(nurseProfile.rate_per_hour) || 0,
           bio: nurseProfile.bio,
           licenses: nurseProfile.nurse_licenses,
           certifications: nurseProfile.nurse_certifications,
