@@ -8,10 +8,10 @@ import AnimatedSection from './AnimatedSection';
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Desktop Background - Full Canva Image */}
+      {/* Desktop Background - New Hero Image */}
       <div className="hidden md:block absolute inset-0">
         <img 
-          src="/lovable-uploads/74400556-f2a0-450a-9bbc-ad462e3d20c7.png" 
+          src="/lovable-uploads/d26f2a2e-9eb9-4d20-87e7-979b6954da43.png" 
           alt="Need a nurse? We make it easy." 
           className="w-full h-full object-cover"
         />
