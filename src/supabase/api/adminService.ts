@@ -3,7 +3,6 @@ import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 import axios from 'axios';
-import { ReactNode } from 'react';
 
 const servicekey = import.meta.env.VITE_SUPABASE_SERVICE_KEY;
 /**
