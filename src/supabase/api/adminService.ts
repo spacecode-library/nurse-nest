@@ -52,6 +52,7 @@ export interface AdminUser {
     };
     care_needs?: any;
     care_location?: any;
+    care_recipients?: any;
     relationship_to_recipient?: string;
   };
 }
@@ -503,12 +504,14 @@ export async function getUserDetails(userId: string) {
       }
     }
 
+    const result = {
+      authUser: authUser.user,
+      metadata,
+      ...(detailedProfile && typeof detailedProfile === 'object' ? detailedProfile : {})
+    };
+
     return {
-      data: {
-        authUser: authUser.user,
-        metadata,
-        ...(detailedProfile || {})
-      },
+      data: result,
       error: null
     };
   } catch (error) {
