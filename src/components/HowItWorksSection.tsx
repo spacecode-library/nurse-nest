@@ -40,7 +40,7 @@ export default function HowItWorksSection() {
       className="relative py-20 md:py-32" 
       id="how-it-works"
       style={{
-        background: 'linear-gradient(180deg, rgba(155, 203, 255, 0.08) 0%, #f1f5f9 40%, #ffffff 100%)'
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f1f5f9 100%)'
       }}
     >
       {/* Subtle decorative elements */}
