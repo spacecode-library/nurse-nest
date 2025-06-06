@@ -168,7 +168,7 @@ export default function Auth() {
           {/* Left Side - Artistic Background (65% on desktop to show more of the graphic) */}
           <div className="hidden lg:flex lg:w-[65%] relative overflow-hidden">
             {/* Artistic Healthcare Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-[#f0f9ff]">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white">
               {/* Main Healthcare Professional Image - positioned to show full left side */}
               <div className="absolute inset-0 flex items-center justify-start">
                 <img 
@@ -179,7 +179,7 @@ export default function Auth() {
               </div>
               
               {/* Ethereal Particle Effects Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#f0f9ff]/70"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
               
               {/* Digital Network Effects */}
               <div className="absolute inset-0 opacity-30">
@@ -194,8 +194,8 @@ export default function Auth() {
           </div>
 
           {/* Right Side - Login Form (35% on desktop, positioned to start near center) */}
-          <div className="w-full lg:w-[35%] bg-[#f0f9ff] flex items-center justify-center relative">
-            <div className="w-full max-w-md px-6 lg:px-8 py-12">
+          <div className="w-full lg:w-[35%] bg-transparent flex items-center justify-center relative">
+            <div className="w-full max-w-md px-6 lg:px-8 py-12 bg-white/90 backdrop-blur-sm rounded-l-2xl lg:rounded-l-none lg:bg-white/95 lg:backdrop-blur-none">
               
               {/* Header Section */}
               <div className="text-left mb-8">
