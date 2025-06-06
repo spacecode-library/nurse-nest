@@ -8,7 +8,6 @@ import NavLinks from './navbar/NavLinks';
 import NurseDropdown from './navbar/NurseDropdown';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
-import FloatingCta from './navbar/FloatingCta';
 
 interface NavbarProps {
   isHomePage?: boolean;
@@ -29,9 +28,6 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
                      location.pathname === '/llc-setup-help' ||
                      location.pathname === '/1099-tax-tips';
   
-  // Text color should be dark on non-home pages or when scrolled
-  const shouldUseDarkText = !isHomePageRoute || isScrolled;
-  
   useEffect(() => {
     const handleScroll = () => {
       // Only consider as scrolled if we're beyond certain height
@@ -41,7 +37,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial check
     
-    // Always set isScrolled to true for non-home pages to show dark text on light background
+    // For non-home pages, always show white background
     if (!isHomePageRoute) {
       setIsScrolled(true);
     }
@@ -53,11 +49,6 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
     setIsOpen(false);
     navigate(path);
     window.scrollTo(0, 0);
-  };
-
-  const handleRequestNurse = () => {
-    navigate('/apply');
-    window.scrollTo(0, 0); // Scroll to top when navigating
   };
 
   const handleApplyNowClick = () => {
@@ -76,40 +67,44 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         isScrolled 
           ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200 py-3 mx-4 mt-4 rounded-2xl' 
-          : 'bg-white py-4'
+          : isHomePageRoute
+            ? 'bg-transparent py-4'
+            : 'bg-white py-4'
       )}>
         <div className="container mx-auto px-6 flex items-center justify-between">
           {/* Logo with NurseNest styling */}
           <div className="flex items-center">
             <span className="text-2xl font-bold">
-              <span className="text-gray-800">Nurse</span>
+              <span className={cn(
+                isScrolled || !isHomePageRoute ? "text-gray-800" : "text-white"
+              )}>Nurse</span>
               <span className="text-brand-primary">Nest</span>
             </span>
           </div>
           
           {/* Desktop Navigation - centered */}
           <nav className="hidden lg:flex items-center space-x-10 flex-grow justify-center">
-            <NavLinks shouldUseDarkText={shouldUseDarkText} />
+            <NavLinks shouldUseDarkText={isScrolled || !isHomePageRoute} />
 
             {/* For Nurses Dropdown */}
             <NurseDropdown 
-              shouldUseDarkText={shouldUseDarkText} 
+              shouldUseDarkText={isScrolled || !isHomePageRoute} 
               handleApplyNowClick={handleApplyNowClick} 
             />
           </nav>
           
           {/* Authentication - Desktop */}
           <div className="hidden lg:flex items-center ml-auto">
-            <UserMenu shouldUseDarkText={shouldUseDarkText} />
+            <UserMenu shouldUseDarkText={isScrolled || !isHomePageRoute} />
           </div>
           
           {/* Mobile Menu Button */}
           <button 
             className={cn(
               "lg:hidden focus:outline-none p-2 rounded-xl transition-all duration-300",
-              shouldUseDarkText 
+              isScrolled || !isHomePageRoute
                 ? "text-brand-navy hover:bg-neutral-light" 
-                : "text-gray-800 hover:bg-gray-100"
+                : "text-white hover:bg-white/10"
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
@@ -123,12 +118,9 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           setIsOpen={setIsOpen} 
           isNursePage={isNursePage}
           handleApplyNowClick={handleApplyNowClick}
-          handleRequestNurse={handleRequestNurse}
+          handleRequestNurse={() => navigate('/apply')}
         />
       </header>
-      
-      {/* Floating CTA Button - Only show if not on the home page */}
-      {!isHomePage && <FloatingCta onClick={handleRequestNurse} />}
     </>
   );
 }

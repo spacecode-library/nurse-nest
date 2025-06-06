@@ -11,7 +11,7 @@ import TabFaqSection from "@/components/TabFaqSection";
 export default function Index() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Pass isHomePage prop to Navbar to prevent the FloatingCta from showing on home page */}
+      {/* Pass isHomePage prop to Navbar */}
       <Navbar isHomePage={true} />
       
       <main className="flex-1">
