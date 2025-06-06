@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -172,14 +173,14 @@ export default function Auth() {
               {/* Main Healthcare Professional Image */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/1ea98134-906e-4232-831b-87e324a5e09d.png" 
+                  src="/lovable-uploads/6edc164f-0d68-412d-b0bb-3c6714f5618a.png" 
                   alt="Healthcare Professional" 
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-contain object-center"
                 />
               </div>
               
               {/* Ethereal Particle Effects Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b]/60 via-transparent to-[#f0f9ff]/90"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b]/20 via-transparent to-[#f0f9ff]/30"></div>
               
               {/* Digital Network Effects */}
               <div className="absolute inset-0 opacity-30">
