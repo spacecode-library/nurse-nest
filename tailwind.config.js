@@ -15,34 +15,34 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-          50: "#F0F7FF",
-          100: "#E0EFFF",
-          200: "#B9DDFF",
-          300: "#8BC9FF",
-          400: "#57ADFF",
-          500: "#1E88E5", // Main primary color
-          600: "#1A6FC4",
-          700: "#155293",
-          800: "#0F3B6B",  // Using this darker blue for footer
-          900: "#0A2647",
+          DEFAULT: "#9bcbff", // Sky Blue - Primary Brand Color
+          foreground: "#1e293b", // Professional Navy for text on primary
+          50: "#f0f8ff",
+          100: "#e0f1ff",
+          200: "#c9e6ff",
+          300: "#9bcbff", // Main Primary Brand Color
+          400: "#6bb0ff",
+          500: "#3b95ff",
+          600: "#1a7fff",
+          700: "#0066ff",
+          800: "#0052d6",
+          900: "#1e293b", // Professional Navy
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#ef4444", // Error Red
+          foreground: "#ffffff",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#f1f5f9", // Light Neutral (Clean Slate)
+          foreground: "#475569", // Dark Neutral (Professional Gray)
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#3b82f6", // Trust Blue - Accent Color
+          foreground: "#ffffff",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -52,17 +52,46 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Brand Colors
+        brand: {
+          primary: "#9bcbff", // Sky Blue
+          navy: "#1e293b", // Professional Navy
+          blue: "#3b82f6", // Trust Blue
+        },
+        // Supporting Colors
+        success: "#10b981", // Success Green
+        warning: "#f59e0b", // Warning Amber
+        error: "#ef4444", // Error Red
+        // Neutrals
+        neutral: {
+          light: "#f1f5f9", // Clean Slate
+          dark: "#475569", // Professional Gray
+        },
+        // Legacy nurse colors (maintaining compatibility)
         nurse: {
-          light: "#E3F2FD", // Light blue - representing care and trust (This is the FAQ section background color)
-          medium: "#90CAF9", // Medium blue - calming
-          dark: "#1E88E5", // Dark blue - professionalism and reliability
-          accent: "#FF6B6B", // Warm accent - compassion
+          light: "#f1f5f9", // Clean Slate
+          medium: "#9bcbff", // Sky Blue
+          dark: "#1e293b", // Professional Navy
+          accent: "#ef4444", // Error Red for accent
         },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ['Avenir', 'Helvetica', 'Arial', 'sans-serif'], // AvenirHelvetica font family
+        heading: ['Avenir', 'Helvetica', 'Arial', 'sans-serif'],
+      },
+      fontWeight: {
+        'light': '200', // Primary Heading weight
+        'normal': '400', // Secondary Heading and Body Text weight
+      },
+      spacing: {
+        'section': '6rem', // 96px for major section spacing
+        'section-sm': '4rem', // 64px for smaller section spacing
+        'section-lg': '8rem', // 128px for large section spacing
       },
       keyframes: {
         "accordion-down": {
@@ -93,12 +122,15 @@ export default {
         "fade-in-right": "fade-in-right 0.8s ease-out forwards",
         "slide-in-bottom": "slide-in-bottom 0.8s ease-out forwards"
       },
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        heading: ['Montserrat', 'sans-serif'],
-      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'brand-gradient': 'linear-gradient(135deg, #9bcbff 0%, #3b82f6 100%)', // Primary Brand Gradient
+        'professional-gradient': 'linear-gradient(135deg, #1e293b 0%, #475569 100%)', // Professional Dark Gradient
+        'subtle-gradient': 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', // Subtle Light Gradient
+      },
+      boxShadow: {
+        'brand': '0 4px 6px -1px rgba(155, 203, 255, 0.1), 0 2px 4px -1px rgba(155, 203, 255, 0.06)',
+        'professional': '0 10px 15px -3px rgba(30, 41, 59, 0.1), 0 4px 6px -2px rgba(30, 41, 59, 0.05)',
       }
     },
   },

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -18,16 +19,24 @@ export default function Index() {
         <HeroSection />
         
         {/* How It Works - Platform process */}
-        <HowItWorksSection />
+        <section className="py-section bg-neutral-light">
+          <HowItWorksSection />
+        </section>
         
         {/* Who We Help - Service categories */}
-        <WhoWeHelpSection />
+        <section className="py-section bg-white">
+          <WhoWeHelpSection />
+        </section>
         
         {/* About the Founder */}
-        <AboutMeSection />
+        <section className="py-section bg-neutral-light">
+          <AboutMeSection />
+        </section>
         
         {/* FAQ Section */}
-        <TabFaqSection />
+        <section className="py-section bg-white">
+          <TabFaqSection />
+        </section>
       </main>
       
       <Footer />

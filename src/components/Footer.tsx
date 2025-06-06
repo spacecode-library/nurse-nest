@@ -14,17 +14,29 @@ export default function Footer() {
   };
   
   return (
-    <footer className="bg-primary-800 py-8 text-white">
-      <div className="container-custom">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+    <footer className="bg-brand-navy py-section text-white">
+      <div className="container mx-auto px-6">
+        {/* Logo Section */}
+        <div className="mb-12 text-center">
+          <img 
+            src="/lovable-uploads/f3b33d4c-f4e9-4a9b-9390-96cc49376903.png"
+            alt="Nurse Nest"
+            className="h-12 w-auto mx-auto mb-4"
+          />
+          <p className="text-white/80 max-w-md mx-auto">
+            Connecting compassionate nurses with families in need through our trusted healthcare marketplace.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Company Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-white">Company</h4>
-            <ul className="space-y-3">
+            <h4 className="text-lg font-normal mb-8 text-white">Company</h4>
+            <ul className="space-y-4">
               <li>
                 <button 
                   onClick={() => handleNavigation('/about')} 
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
                 >
                   About Us
                 </button>
@@ -32,7 +44,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/pricing')}
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
                 >
                   Pricing
                 </button>
@@ -40,7 +52,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/blog')}
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
                 >
                   Blog
                 </button>
@@ -50,12 +62,12 @@ export default function Footer() {
           
           {/* Support Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-white">Support</h4>
-            <ul className="space-y-3">
+            <h4 className="text-lg font-normal mb-8 text-white">Support</h4>
+            <ul className="space-y-4">
               <li>
                 <button 
                   onClick={() => handleNavigation('/terms')}
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
                 >
                   Terms of Service
                 </button>
@@ -63,7 +75,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/privacy')}
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
                 >
                   Privacy Policy
                 </button>
@@ -71,7 +83,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/disclaimer')}
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
                 >
                   Disclaimer
                 </button>
@@ -81,17 +93,17 @@ export default function Footer() {
 
           {/* Contact Information */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-white">Contact Us</h4>
-            <ul className="space-y-3">
+            <h4 className="text-lg font-normal mb-8 text-white">Contact Us</h4>
+            <ul className="space-y-4">
               <li className="flex items-start">
-                <Mail className="h-5 w-5 text-primary-300 mr-2 mt-0.5" />
-                <a href="mailto:contact@nursenest.us" className="text-white/80 hover:text-white transition-colors">
+                <Mail className="h-5 w-5 text-brand-primary mr-3 mt-0.5" />
+                <a href="mailto:contact@nursenest.us" className="text-white/80 hover:text-brand-primary transition-colors duration-300">
                   contact@nursenest.us
                 </a>
               </li>
               <li className="flex items-start">
-                <Phone className="h-5 w-5 text-primary-300 mr-2 mt-0.5" />
-                <a href="tel:4259543381" className="text-white/80 hover:text-white transition-colors">
+                <Phone className="h-5 w-5 text-brand-primary mr-3 mt-0.5" />
+                <a href="tel:4259543381" className="text-white/80 hover:text-brand-primary transition-colors duration-300">
                   (425) 954-3381
                 </a>
               </li>
@@ -100,7 +112,7 @@ export default function Footer() {
         </div>
         
         {/* Bottom Area */}
-        <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-white/20 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-white/60 text-sm">
             &copy; {currentYear} Nurse Nest. All rights reserved.
           </p>

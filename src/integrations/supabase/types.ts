@@ -1038,15 +1038,7 @@ export type Database = {
           id?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "nurse_qualifications_nurse_id_fkey"
-            columns: ["nurse_id"]
-            isOneToOne: false
-            referencedRelation: "nurse_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       stripe_webhook_events: {
         Row: {
