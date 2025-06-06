@@ -406,7 +406,6 @@ export default function JobApplicationsCard({
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="font-semibold text-lg text-gray-900">{job.care_type}</h3>
-            <p className="text-blue-600 font-medium text-base">Job Code: {job.job_code}</p>
           </div>
           <Badge variant="outline" className="bg-green-50 text-green-700">
             {job.status}
@@ -423,10 +422,11 @@ export default function JobApplicationsCard({
             Duration: {job.duration} | Time: {job.preferred_time}
           </div>
           {job.benefits && (
-            <div className="flex items-center text-sm text-gray-600">
+            <><div className="flex items-center text-sm text-gray-600">
               <DollarSign className="h-4 w-4 mr-2" />
               Benefits: {job.benefits}
-            </div>
+            </div><p className="text-blue-600 font-medium text-base">Job Code: {job.job_code}</p></>
+
           )}
         </div>
 

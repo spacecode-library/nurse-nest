@@ -1,5 +1,6 @@
 // components/dashboard/NurseDashboard.tsx - REDESIGNED WITH SIDEBAR LAYOUT
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -63,6 +64,7 @@ import JobApplicationsCard from './nurse/JobApplicationsCard';
 import TimecardsCard from './nurse/TimecardsCard';
 import QuickActionsCard from './nurse/QuickActionsCard';
 import NotificationsCard from './nurse/NotificationsCard';
+import QuickApplyWidget from './nurse/QuickApplyWidget';
 
 // Import NEW payment components
 import StripeOnboardingCard from './nurse/StripeOnboardingCard';
@@ -84,7 +86,8 @@ import {
 import { formatCurrency } from '@/supabase/api/stripeConnectService';
 
 export default function NurseDashboard() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [nurseProfile, setNurseProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -132,6 +135,18 @@ export default function NurseDashboard() {
   // Chat/Message related states
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [hasNewMessages, setHasNewMessages] = useState(false);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      // Still navigate even if there's an error
+      navigate('/');
+    }
+  };
 
   // Fetch unread messages count
   const fetchUnreadMessages = useCallback(async () => {
@@ -445,11 +460,11 @@ export default function NurseDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
-      {/* Enhanced Sidebar */}
-      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 relative flex flex-col`}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Fixed Sidebar */}
+      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 fixed left-0 top-0 h-full z-30 flex flex-col`}>
         {/* Logo and Brand */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className={`flex items-center space-x-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
@@ -486,7 +501,7 @@ export default function NurseDashboard() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -521,8 +536,8 @@ export default function NurseDashboard() {
           })}
         </nav>
 
-        {/* User Profile Section */}
-        <div className="p-4 border-t border-gray-200">
+        {/* Fixed User Profile Section at Bottom */}
+        <div className="p-4 border-t border-gray-200 flex-shrink-0">
           {!sidebarCollapsed ? (
             <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
@@ -575,10 +590,13 @@ export default function NurseDashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+      {/* Main Content Container */}
+      <div className={`${sidebarCollapsed ? 'ml-20' : 'ml-64'} transition-all duration-300 min-h-screen flex flex-col`}>
+        {/* Fixed Top Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 fixed top-0 right-0 left-0 z-20" style={{ 
+          left: sidebarCollapsed ? '5rem' : '16rem',
+          transition: 'left 300ms'
+        }}>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
@@ -620,13 +638,7 @@ export default function NurseDashboard() {
                 variant="outline"
                 size="sm" 
                 className="hover:bg-red-50 hover:border-red-300 text-gray-700 transition-all duration-300" 
-                onClick={() => {
-                  // Handle logout logic here
-                  if (confirm('Are you sure you want to log out?')) {
-                    // Add your logout function here
-                    window.location.href = '/auth/logout';
-                  }
-                }}
+                onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -635,8 +647,8 @@ export default function NurseDashboard() {
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-6 overflow-auto">
+        {/* Main Content Area with Top Padding */}
+        <main className="flex-1 p-6 mt-24 overflow-auto">
           {activeTab === 'overview' && (
             <div className="space-y-8">
               {/* Alert Cards */}
@@ -721,6 +733,12 @@ export default function NurseDashboard() {
                   </div>
                 )}
               </div>
+
+              {/* Quick Apply Widget */}
+              <QuickApplyWidget 
+                nurseId={nurseProfile?.id || ''} 
+                onApplicationSubmitted={handleRefresh}
+              />
 
               {/* Enhanced Elite Progress Card */}
               {!eliteProgress.isElite && (
