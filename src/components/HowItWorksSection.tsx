@@ -42,8 +42,8 @@ export default function HowItWorksSection() {
 
   return (
     <section className="relative overflow-hidden" id="how-it-works">
-      {/* Blue gradient background section with hard cut */}
-      <div className="bg-gradient-to-b from-[#87CEEB] to-[#4A90E2] py-20 md:py-32">
+      {/* Blue gradient background section - covers title and top half of cards */}
+      <div className="bg-gradient-to-b from-[#87CEEB] to-[#4A90E2] py-20 md:py-32 pb-32 md:pb-40">
         <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection animation="fade-up" className="text-center mb-16">
             <h2 className="text-4xl md:text-6xl font-light mb-6 text-white">
@@ -54,8 +54,8 @@ export default function HowItWorksSection() {
             </p>
           </AnimatedSection>
           
-          {/* 4-column grid for desktop, stacked for mobile */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          {/* 4-column grid for desktop, stacked for mobile - positioned to span the color boundary */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto relative -mb-16 md:-mb-20">
             {steps.map((step, index) => (
               <AnimatedSection 
                 key={index}
@@ -63,8 +63,8 @@ export default function HowItWorksSection() {
                 delay={index * 200}
                 className="relative"
               >
-                {/* White card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg h-full flex flex-col relative">
+                {/* White card - extends into white section below */}
+                <div className="bg-white rounded-2xl p-8 shadow-lg h-full flex flex-col relative min-h-[400px]">
                   {/* Numbered circle at top */}
                   <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
                     <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-[#4A90E2]">
@@ -93,8 +93,8 @@ export default function HowItWorksSection() {
         </div>
       </div>
       
-      {/* HARD CUT to white background - no transition */}
-      <div className="bg-white py-16">
+      {/* White background section - continues from the cards */}
+      <div className="bg-white pt-16 md:pt-20 pb-16">
         <div className="container mx-auto px-4 text-center">
           <AnimatedSection animation="fade-up" delay={300}>
             <Link to="/apply">
