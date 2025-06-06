@@ -1,5 +1,6 @@
 // components/dashboard/ClientDashboard.tsx - REDESIGNED WITH SIDEBAR LAYOUT
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -82,7 +83,8 @@ import {
 import { formatCurrency } from '@/supabase/api/stripeConnectService';
 
 export default function ClientDashboard() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [clientProfile, setClientProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -115,6 +117,18 @@ export default function ClientDashboard() {
   // Chat/Message related states
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [hasNewMessages, setHasNewMessages] = useState(false);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      // Still navigate even if there's an error
+      navigate('/');
+    }
+  };
 
   // Fetch unread messages count
   const fetchUnreadMessages = useCallback(async () => {
@@ -415,18 +429,18 @@ export default function ClientDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return 'bg-medical-success/10 text-medical-success border-medical-success/20';
-      case 'filled': return 'bg-medical-primary/10 text-medical-primary border-medical-primary/20';
-      case 'expired': return 'bg-medical-neutral-100 text-medical-neutral-600 border-medical-neutral-300';
-      case 'new': return 'bg-medical-blue-50 text-medical-blue-700 border-medical-blue-200';
-      case 'favorited': return 'bg-medical-rose-50 text-medical-rose-700 border-medical-rose-200';
-      case 'hired': return 'bg-medical-success-50 text-medical-success-700 border-medical-success-200';
-      case 'declined': return 'bg-medical-error-50 text-medical-error-700 border-medical-error-200';
-      case 'Submitted': return 'bg-medical-blue-50 text-medical-blue-700 border-medical-blue-200';
-      case 'Approved': return 'bg-medical-success-50 text-medical-success-700 border-medical-success-200';
-      case 'Rejected': return 'bg-medical-error-50 text-medical-error-700 border-medical-error-200';
-      case 'Paid': return 'bg-medical-purple-50 text-medical-purple-700 border-medical-purple-200';
-      default: return 'bg-medical-neutral-100 text-medical-neutral-600 border-medical-neutral-300';
+      case 'open': return 'bg-green-50 text-green-700 border-green-200';
+      case 'filled': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'expired': return 'bg-gray-100 text-gray-600 border-gray-300';
+      case 'new': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'favorited': return 'bg-rose-50 text-rose-700 border-rose-200';
+      case 'hired': return 'bg-green-50 text-green-700 border-green-200';
+      case 'declined': return 'bg-red-50 text-red-700 border-red-200';
+      case 'Submitted': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'Approved': return 'bg-green-50 text-green-700 border-green-200';
+      case 'Rejected': return 'bg-red-50 text-red-700 border-red-200';
+      case 'Paid': return 'bg-purple-50 text-purple-700 border-purple-200';
+      default: return 'bg-gray-100 text-gray-600 border-gray-300';
     }
   };
 
@@ -517,11 +531,11 @@ export default function ClientDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
-      {/* Enhanced Sidebar */}
-      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 relative flex flex-col`}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Fixed Sidebar */}
+      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 fixed left-0 top-0 h-full z-30 flex flex-col`}>
         {/* Logo and Brand */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className={`flex items-center space-x-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
@@ -558,7 +572,7 @@ export default function ClientDashboard() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -593,8 +607,8 @@ export default function ClientDashboard() {
           })}
         </nav>
 
-        {/* User Profile Section */}
-        <div className="p-4 border-t border-gray-200">
+        {/* Fixed User Profile Section at Bottom */}
+        <div className="p-4 border-t border-gray-200 flex-shrink-0">
           {!sidebarCollapsed ? (
             <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
@@ -623,10 +637,13 @@ export default function ClientDashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+      {/* Main Content Container */}
+      <div className={`${sidebarCollapsed ? 'ml-20' : 'ml-64'} transition-all duration-300 min-h-screen flex flex-col`}>
+        {/* Fixed Top Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 fixed top-0 right-0 left-0 z-20" style={{ 
+          left: sidebarCollapsed ? '5rem' : '16rem',
+          transition: 'left 300ms'
+        }}>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
@@ -670,11 +687,7 @@ export default function ClientDashboard() {
                 variant="outline"
                 size="sm" 
                 className="hover:bg-red-50 hover:border-red-300 text-gray-700 transition-all duration-300" 
-                onClick={() => {
-                  // Handle logout logic here
-                    // Add your logout function here
-                    window.location.href = '/';
-                }}
+                onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -683,8 +696,8 @@ export default function ClientDashboard() {
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-6 overflow-auto">
+        {/* Main Content Area with Top Padding */}
+        <main className="flex-1 p-6 mt-24 overflow-auto">
           {activeTab === 'overview' && (
             <div className="space-y-8">
               {/* Alert Cards */}
