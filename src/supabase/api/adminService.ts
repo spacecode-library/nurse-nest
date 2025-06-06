@@ -1,4 +1,3 @@
-
 // src/supabase/api/adminService.ts
 import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
@@ -393,7 +392,7 @@ export async function getUserDetails(userId: string) {
 
     if (metadataError) throw metadataError;
 
-    let detailedProfile: any = {};
+    let detailedProfile: Record<string, any> = {};
 
     if (metadata.user_type === 'nurse') {
       // Get comprehensive nurse data
@@ -507,7 +506,7 @@ export async function getUserDetails(userId: string) {
     const result = {
       authUser: authUser.user,
       metadata,
-      ...(detailedProfile && typeof detailedProfile === 'object' ? detailedProfile : {})
+      ...detailedProfile
     };
 
     return {
