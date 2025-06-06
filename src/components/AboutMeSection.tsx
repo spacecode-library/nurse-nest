@@ -8,17 +8,14 @@ export default function AboutMeSection() {
       className="relative py-20 md:py-32" 
       id="about-me"
       style={{
-        background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f1f5f9 100%)'
+        background: 'linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%)'
       }}
     >
-      {/* Subtle decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#9bcbff] to-transparent opacity-30"></div>
-      
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <AnimatedSection animation="fade-up" className="text-center mb-16">
           <h2 
-            className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-wide leading-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide leading-tight"
             style={{ 
               fontFamily: 'Arial, Helvetica, sans-serif',
               background: 'linear-gradient(135deg, #1e293b 0%, #3b82f6 100%)',
@@ -37,9 +34,9 @@ export default function AboutMeSection() {
         <AnimatedSection animation="fade-up" delay={150}>
           <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl p-8 md:p-12 lg:p-16 max-w-5xl mx-auto border border-white/50 backdrop-blur-sm">
             <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
-              {/* Profile Image - moved up to be by the name */}
+              {/* Profile Image - much bigger */}
               <div className="flex-shrink-0">
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-blue-100 shadow-lg">
+                <div className="w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden border-4 border-blue-100 shadow-lg">
                   <img
                     src="/lovable-uploads/9daccab5-730e-4656-81e6-a31931f7d3f6.png"
                     alt="Jayson M."
@@ -110,15 +107,15 @@ export default function AboutMeSection() {
               </p>
             </div>
             
-            {/* Signature - aligned to the left with text */}
-            <div className="mt-12">
+            {/* Signature - bigger and left aligned with reduced padding */}
+            <div className="mt-6">
               <img 
                 src="/lovable-uploads/16f8aab2-52ef-4d03-a067-775c04042d1f.png"
                 alt="Jayson Hinagawa Signature"
-                className="h-16 md:h-20 w-auto opacity-70"
+                className="h-24 md:h-32 w-auto opacity-70"
                 style={{
                   filter: 'brightness(0.3)',
-                  maxWidth: '200px'
+                  maxWidth: '300px'
                 }}
               />
             </div>
