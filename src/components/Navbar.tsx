@@ -59,21 +59,22 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
   return (
     <>
       <header className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out',
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200 py-3 mx-4 mt-4 rounded-2xl' 
+          ? 'bg-white/95 backdrop-blur-xl shadow-lg border border-gray-200/50 py-3 mx-4 mt-4 rounded-2xl' 
           : isHomePageRoute
-            ? 'bg-transparent py-6'
-            : 'bg-white py-4'
+            ? 'bg-transparent border-transparent py-6 mx-4 mt-4'
+            : 'bg-white border-transparent py-4 mx-4'
       )}>
         <div className="container mx-auto px-6 flex items-center justify-between">
           {/* Logo with NurseNest styling */}
           <div className="flex items-center">
             <span className="text-2xl font-bold">
               <span className={cn(
+                "transition-colors duration-300 ease-in-out",
                 isScrolled || !isHomePageRoute ? "text-gray-800" : "text-white"
               )}>Nurse</span>
-              <span className="text-[#9bcbff]">Nest</span>
+              <span className="text-[#9bcbff] transition-colors duration-300 ease-in-out">Nest</span>
             </span>
           </div>
           
@@ -96,7 +97,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           {/* Mobile Menu Button */}
           <button 
             className={cn(
-              "lg:hidden focus:outline-none p-2 rounded-xl transition-all duration-300",
+              "lg:hidden focus:outline-none p-2 rounded-xl transition-all duration-300 ease-in-out",
               isScrolled || !isHomePageRoute
                 ? "text-brand-navy hover:bg-neutral-light" 
                 : "text-white hover:bg-white/10"
