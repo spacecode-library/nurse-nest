@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -24,6 +23,7 @@ import {
   updateOnboardingProgress 
 } from '@/supabase/api/nurseProfileService';
 import { supabase } from '@/integrations/supabase/client';
+import { AmericanDateInput, DateUtils } from '@/components/ui/american-date-input';
 
 // Constants for form options
 const LICENSE_TYPES = [
@@ -89,11 +89,11 @@ const ONBOARDING_STEPS = [
   'Review & Submit'
 ];
 
-// Validation helper function for license expiry
+// Validation helper function for license expiry (updated for American format)
 const validateLicenseExpiry = (expiryDate: string): boolean => {
   if (!expiryDate) return false;
   
-  const expiry = new Date(expiryDate);
+  const expiry = new Date(expiryDate + 'T00:00:00');
   const today = new Date();
   
   // License should not be expired and should be valid for at least 30 days
@@ -125,30 +125,26 @@ export default function NurseOnboarding() {
   const [licenseType, setLicenseType] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
   const [licenseState, setLicenseState] = useState('');
-  const [licenseExpiryDate, setLicenseExpiryDate] = useState('');
+  const [licenseExpiryDate, setLicenseExpiryDate] = useState(''); // Now stores YYYY-MM-DD format
   const [specialty, setSpecialty] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('');
   const [certifications, setCertifications] = useState<string[]>([]);
   const [customCertification, setCustomCertification] = useState('');
 
-  // Work Preferences (Step 3)
-  const [availabilityStartDate, setAvailabilityStartDate] = useState('');
+  // Work Preferences (Step 3) - Removed workLocationType
+  const [availabilityStartDate, setAvailabilityStartDate] = useState(''); // Now stores YYYY-MM-DD format
   const [preferredShifts, setPreferredShifts] = useState<string[]>([]);
-  const [workLocationType, setWorkLocationType] = useState('');
   const [travelDistance, setTravelDistance] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
   const [bio, setBio] = useState('');
 
-  // Documents (Step 4)
-  const [licenseFile, setLicenseFile] = useState<File | null>(null);
-  const [licenseFileName, setLicenseFileName] = useState('');
+  // Documents (Step 4) - Removed license file upload, kept resume as required
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeFileName, setResumeFileName] = useState('');
   const [certFile, setCertFile] = useState<File | null>(null);
   const [certFileName, setCertFileName] = useState('');
 
-  // Document upload status (for Step 5)
-  const [hasLicenseUploaded, setHasLicenseUploaded] = useState(false);
+  // Document upload status (for Step 5) - Removed license upload status
   const [hasResumeUploaded, setHasResumeUploaded] = useState(false);
   const [hasCertificationsUploaded, setHasCertificationsUploaded] = useState(false);
 
@@ -202,7 +198,7 @@ export default function NurseOnboarding() {
                 
                 const { data: licenseData } = await supabase
                   .from('nurse_licenses')
-                  .select('license_type, license_number, issuing_state, expiration_date, license_photo_url')
+                  .select('license_type, license_number, issuing_state, expiration_date')
                   .eq('nurse_id', profileData.id)
                   .single();
                 
@@ -211,7 +207,6 @@ export default function NurseOnboarding() {
                   setLicenseNumber(licenseData.license_number || '');
                   setLicenseState(licenseData.issuing_state || '');
                   setLicenseExpiryDate(licenseData.expiration_date || '');
-                  setHasLicenseUploaded(!!licenseData.license_photo_url);
                 }
                 
                 const { data: certData } = await supabase
@@ -234,9 +229,9 @@ export default function NurseOnboarding() {
                 
                 if (preferencesData) {
                   setPreferredShifts(preferencesData.preferred_shifts || []);
-                  setWorkLocationType(preferencesData.location_preferences[0] || '');
                   setTravelDistance(preferencesData.travel_radius?.toString() || '');
                   setHourlyRate(preferencesData.desired_hourly_rate?.toString() || '');
+                  // Note: availability_start_date would need to be added to the preferences table if needed
                 }
                 
                 if (profileData.bio) {
@@ -403,11 +398,12 @@ export default function NurseOnboarding() {
         case 2:
           if (!nurseProfileId) throw new Error("Nurse profile not found");
           
+          // Always set location_preferences to ['on-site'] since we removed the work location selection
           await saveNursePreferences({
             nurse_id: nurseProfileId,
             availability_types: ['full-time'],
             preferred_shifts: preferredShifts,
-            location_preferences: [workLocationType],
+            location_preferences: ['on-site'], // Always on-site
             travel_radius: parseInt(travelDistance) || 0,
             desired_hourly_rate: parseFloat(hourlyRate) || 0
           });
@@ -422,27 +418,10 @@ export default function NurseOnboarding() {
         case 3:
           if (!nurseProfileId) throw new Error("Nurse profile not found");
           
-          let licenseFilePath = '';
           let resumeFilePath = '';
           let certFilePath = '';
           
-          if (licenseFile) {
-            licenseFilePath = await uploadFile(licenseFile, 'licenses');
-            const { data: licenseData } = await supabase
-              .from('nurse_licenses')
-              .select('id')
-              .eq('nurse_id', nurseProfileId)
-              .single();
-              
-            if (licenseData) {
-              await supabase
-                .from('nurse_licenses')
-                .update({ license_photo_url: licenseFilePath })
-                .eq('id', licenseData.id);
-              setHasLicenseUploaded(true);
-            }
-          }
-          
+          // Resume upload (now required)
           if (resumeFile) {
             resumeFilePath = await uploadFile(resumeFile, 'resumes');
             const { data: qualData } = await supabase
@@ -460,6 +439,7 @@ export default function NurseOnboarding() {
             }
           }
           
+          // Certification upload (optional)
           if (certFile) {
             certFilePath = await uploadFile(certFile, 'certifications');
             await supabase
@@ -534,10 +514,10 @@ export default function NurseOnboarding() {
         return true;
       
       case 2:
-        if (preferredShifts.length === 0 || !workLocationType) {
+        if (preferredShifts.length === 0) {
           toast({
             title: "Required fields missing",
-            description: "Please select at least one shift type and work location preference",
+            description: "Please select at least one shift type",
             variant: "destructive"
           });
           return false;
@@ -545,10 +525,11 @@ export default function NurseOnboarding() {
         return true;
       
       case 3:
-        if (!licenseFile && !hasLicenseUploaded) {
+        // Resume is now required
+        if (!resumeFile && !hasResumeUploaded) {
           toast({
             title: "Required document missing",
-            description: "Please upload your nursing license",
+            description: "Please upload your resume or CV",
             variant: "destructive"
           });
           return false;
@@ -581,14 +562,6 @@ export default function NurseOnboarding() {
         ? prev.filter(s => s !== shift) 
         : [...prev, shift]
     );
-  };
-
-  const handleLicenseUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setLicenseFile(file);
-      setLicenseFileName(file.name);
-    }
   };
 
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -705,9 +678,6 @@ export default function NurseOnboarding() {
             {/* Header */}
             <div className="text-center mb-12">
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-medical-primary to-medical-accent rounded-full flex items-center justify-center shadow-medical-elevated">
-                  <Stethoscope className="h-10 w-10 text-white" />
-                </div>
               </div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-medical-text-primary via-medical-primary to-medical-accent bg-clip-text text-transparent mb-4">
                 Professional Nurse Onboarding
@@ -740,23 +710,8 @@ export default function NurseOnboarding() {
                     }`}>
                       {step}
                     </span>
-                    {index < ONBOARDING_STEPS.length - 1 && (
-                      <div className={`absolute h-0.5 w-full mt-6 transition-colors duration-300 ${
-                        currentStep > index ? 'bg-medical-success' : 'bg-medical-border'
-                      }`} style={{ 
-                        left: `${(100 / ONBOARDING_STEPS.length) * (index + 0.5)}%`,
-                        width: `${100 / ONBOARDING_STEPS.length}%`
-                      }} />
-                    )}
                   </div>
                 ))}
-              </div>
-              <div className="relative">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-medical-border rounded-full"></div>
-                <div 
-                  className="absolute top-0 left-0 h-1 bg-gradient-to-r from-medical-primary to-medical-accent rounded-full transition-all duration-500"
-                  style={{ width: `${(currentStep / (ONBOARDING_STEPS.length - 1)) * 100}%` }}
-                ></div>
               </div>
             </div>
             
@@ -931,32 +886,22 @@ export default function NurseOnboarding() {
                           required
                         />
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <Label htmlFor="licenseExpiryDate" className="text-medical-text-primary font-medium">
-                            Expiration Date <span className="text-medical-error">*</span>
-                          </Label>
-                          <div className="flex items-center group relative ml-2">
-                            <HelpCircle className="h-4 w-4 text-medical-text-secondary cursor-help" />
-                            <span className="absolute hidden group-hover:block bg-medical-text-primary text-white text-xs rounded p-2 -mt-14 ml-6 min-w-[200px] z-10">
-                              License must be valid for at least 30 days from today
-                            </span>
-                          </div>
-                        </div>
-                        <Input
+                      <div>
+                        <AmericanDateInput
                           id="licenseExpiryDate"
-                          type="date"
+                          label="Expiration Date"
                           value={licenseExpiryDate}
-                          onChange={(e) => setLicenseExpiryDate(e.target.value)}
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
+                          onChange={setLicenseExpiryDate}
+                          required={true}
+                          error={licenseExpiryDate && !validateLicenseExpiry(licenseExpiryDate) ? 
+                            "License must be valid for at least 30 days from today" : undefined}
                         />
-                        {licenseExpiryDate && !validateLicenseExpiry(licenseExpiryDate) && (
-                          <div className="mt-2 text-medical-error text-sm flex items-center p-3 bg-medical-error/10 border border-medical-error/20 rounded-lg">
-                            <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                            Your license expiration date must be at least 30 days in the future
-                          </div>
-                        )}
+                        <div className="flex items-center group relative ml-2 mt-1">
+                          <HelpCircle className="h-4 w-4 text-medical-text-secondary cursor-help" />
+                          <span className="absolute hidden group-hover:block bg-medical-text-primary text-white text-xs rounded p-2 -mt-14 ml-6 min-w-[200px] z-10">
+                            License must be valid for at least 30 days from today
+                          </span>
+                        </div>
                       </div>
                     </div>
                     
@@ -1087,19 +1032,12 @@ export default function NurseOnboarding() {
                       <p className="text-medical-text-secondary">Tell us about your availability and work preferences</p>
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor="availabilityStartDate" className="text-medical-text-primary font-medium">
-                        Availability Start Date
-                      </Label>
-                      <Input
-                        id="availabilityStartDate"
-                        type="date"
-                        value={availabilityStartDate}
-                        onChange={(e) => setAvailabilityStartDate(e.target.value)}
-                        className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                      />
-                      <p className="text-xs text-medical-text-secondary">When are you available to start working?</p>
-                    </div>
+                    <AmericanDateInput
+                      id="availabilityStartDate"
+                      label="Availability Start Date"
+                      value={availabilityStartDate}
+                      onChange={setAvailabilityStartDate}
+                    />
                     
                     <div className="space-y-4">
                       <Label className="text-medical-text-primary font-medium">
@@ -1124,30 +1062,6 @@ export default function NurseOnboarding() {
                       </div>
                     </div>
                     
-                    <div className="space-y-4">
-                      <Label className="text-medical-text-primary font-medium">
-                        Work Location Preference <span className="text-medical-error">*</span>
-                      </Label>
-                      <RadioGroup value={workLocationType} onValueChange={setWorkLocationType} className="grid grid-cols-1 gap-3">
-                        <div className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-primary/5 transition-colors">
-                          <RadioGroupItem value="on-site" id="on-site" className="border-medical-border" />
-                          <Label htmlFor="on-site" className="flex-1 cursor-pointer text-medical-text-primary">On-site only</Label>
-                        </div>
-                        <div className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-primary/5 transition-colors">
-                          <RadioGroupItem value="remote" id="remote" className="border-medical-border" />
-                          <Label htmlFor="remote" className="flex-1 cursor-pointer text-medical-text-primary">Remote only</Label>
-                        </div>
-                        <div className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-primary/5 transition-colors">
-                          <RadioGroupItem value="hybrid" id="hybrid" className="border-medical-border" />
-                          <Label htmlFor="hybrid" className="flex-1 cursor-pointer text-medical-text-primary">Hybrid (both on-site and remote)</Label>
-                        </div>
-                        <div className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-primary/5 transition-colors">
-                          <RadioGroupItem value="travel" id="travel" className="border-medical-border" />
-                          <Label htmlFor="travel" className="flex-1 cursor-pointer text-medical-text-primary">Travel nursing</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="travelDistance" className="text-medical-text-primary font-medium">
@@ -1162,7 +1076,7 @@ export default function NurseOnboarding() {
                           placeholder="Distance willing to travel"
                           className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
                         />
-                        <p className="text-xs text-medical-text-secondary">For on-site work, how far are you willing to travel?</p>
+                        <p className="text-xs text-medical-text-secondary">How far are you willing to travel for on-site work?</p>
                       </div>
                       
                       <div className="space-y-2">
@@ -1195,6 +1109,18 @@ export default function NurseOnboarding() {
                       />
                       <p className="text-xs text-medical-text-secondary">This will be visible on your public profile</p>
                     </div>
+
+                    <div className="p-4 bg-medical-primary/5 border border-medical-primary/20 rounded-xl">
+                      <div className="flex">
+                        <Shield className="h-5 w-5 text-medical-primary mr-3 flex-shrink-0 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-semibold text-medical-primary mb-1">Work Location</p>
+                          <p className="text-medical-text-secondary">
+                            All nursing positions are on-site at client locations. This ensures the highest quality of personalized care for our clients.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
                 
@@ -1212,65 +1138,21 @@ export default function NurseOnboarding() {
                           <p className="font-semibold text-medical-warning mb-1">Important Information</p>
                           <p className="text-medical-text-secondary">
                             All documents are securely stored and will only be used for verification purposes. 
-                            Your license and certifications will be verified before you can start accepting assignments.
+                            Your qualifications will be verified before you can start accepting assignments.
                           </p>
                         </div>
                       </div>
                     </div>
                     
+                    {/* Resume Upload - Now Required */}
                     <div className="border-2 border-medical-border rounded-xl p-6 bg-medical-primary/5">
                       <h3 className="font-semibold text-medical-text-primary mb-2 flex items-center">
                         <Shield className="h-5 w-5 mr-2 text-medical-primary" />
-                        Nursing License <span className="text-medical-error ml-1">*</span>
+                        Resume or CV <span className="text-medical-error ml-1">*</span>
                       </h3>
-                      <p className="text-sm text-medical-text-secondary mb-4">Upload a clear copy of your current nursing license</p>
+                      <p className="text-sm text-medical-text-secondary mb-4">Upload your current resume or CV (Required)</p>
                       
                       <div className="flex items-center justify-center border-2 border-dashed border-medical-border rounded-lg p-8 bg-white hover:border-medical-primary transition-colors">
-                        <div className="text-center">
-                          <Upload className="h-12 w-12 text-medical-text-secondary mx-auto mb-3" />
-                          
-                          {licenseFileName ? (
-                            <div>
-                              <p className="text-medical-primary text-sm font-medium mb-1">
-                                {licenseFileName}
-                              </p>
-                              <p className="text-xs text-medical-success mb-2 flex items-center justify-center">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                File selected
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="text-sm text-medical-text-secondary mb-3">
-                              Drag & drop your license document or click to browse
-                            </p>
-                          )}
-                          
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => document.getElementById('licenseFileUpload')?.click()}
-                            className="border-medical-primary text-medical-primary hover:bg-medical-primary hover:text-white"
-                          >
-                            {licenseFileName ? 'Replace File' : 'Browse Files'}
-                          </Button>
-                          <input
-                            type="file"
-                            id="licenseFileUpload"
-                            className="hidden"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={handleLicenseUpload}
-                          />
-                          <p className="text-xs text-medical-text-secondary mt-2">PDF, JPG, PNG (max 10MB)</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="border-2 border-medical-border rounded-xl p-6 bg-white">
-                      <h3 className="font-semibold text-medical-text-primary mb-2">Resume or CV</h3>
-                      <p className="text-sm text-medical-text-secondary mb-4">Upload your current resume or CV for potential employers</p>
-                      
-                      <div className="flex items-center justify-center border-2 border-dashed border-medical-border rounded-lg p-8 hover:border-medical-primary transition-colors">
                         <div className="text-center">
                           <Upload className="h-12 w-12 text-medical-text-secondary mx-auto mb-3" />
                           
@@ -1311,9 +1193,10 @@ export default function NurseOnboarding() {
                       </div>
                     </div>
                     
+                    {/* Certification Documents Upload - Optional */}
                     <div className="border-2 border-medical-border rounded-xl p-6 bg-white">
                       <h3 className="font-semibold text-medical-text-primary mb-2">Certification Documents</h3>
-                      <p className="text-sm text-medical-text-secondary mb-4">Upload copies of your professional certifications</p>
+                      <p className="text-sm text-medical-text-secondary mb-4">Upload copies of your professional certifications (Optional)</p>
                       
                       <div className="flex items-center justify-center border-2 border-dashed border-medical-border rounded-lg p-8 hover:border-medical-primary transition-colors">
                         <div className="text-center">
@@ -1419,6 +1302,12 @@ export default function NurseOnboarding() {
                               <p className="font-medium text-medical-text-primary">{licenseNumber || 'Not provided'}</p>
                             </div>
                             <div>
+                              <p className="text-sm text-medical-text-secondary">Expiration Date</p>
+                              <p className="font-medium text-medical-text-primary">
+                                {licenseExpiryDate ? DateUtils.isoToAmerican(licenseExpiryDate) : 'Not provided'}
+                              </p>
+                            </div>
+                            <div>
                               <p className="text-sm text-medical-text-secondary">Primary Specialty</p>
                               <p className="font-medium text-medical-text-primary">{specialty || 'Not provided'}</p>
                             </div>
@@ -1446,16 +1335,12 @@ export default function NurseOnboarding() {
                         <div className="p-6">
                           <div className="space-y-3">
                             <div className="flex items-center">
-                              <div className={`h-5 w-5 rounded-full ${hasLicenseUploaded ? 'bg-medical-success' : 'bg-medical-error'} mr-3`}></div>
-                              <p className="font-medium text-medical-text-primary">Nursing License: {hasLicenseUploaded ? 'Uploaded' : 'Not uploaded'}</p>
+                              <div className={`h-5 w-5 rounded-full ${hasResumeUploaded || resumeFile ? 'bg-medical-success' : 'bg-medical-error'} mr-3`}></div>
+                              <p className="font-medium text-medical-text-primary">Resume/CV: {hasResumeUploaded || resumeFile ? 'Uploaded' : 'Required - Not uploaded'}</p>
                             </div>
                             <div className="flex items-center">
-                              <div className={`h-5 w-5 rounded-full ${hasResumeUploaded ? 'bg-medical-success' : 'bg-medical-neutral-300'} mr-3`}></div>
-                              <p className="font-medium text-medical-text-primary">Resume: {hasResumeUploaded ? 'Uploaded' : 'Not uploaded'}</p>
-                            </div>
-                            <div className="flex items-center">
-                              <div className={`h-5 w-5 rounded-full ${hasCertificationsUploaded ? 'bg-medical-success' : 'bg-medical-neutral-300'} mr-3`}></div>
-                              <p className="font-medium text-medical-text-primary">Certifications: {hasCertificationsUploaded ? 'Uploaded' : 'Not uploaded'}</p>
+                              <div className={`h-5 w-5 rounded-full ${hasCertificationsUploaded || certFile ? 'bg-medical-success' : 'bg-medical-neutral-300'} mr-3`}></div>
+                              <p className="font-medium text-medical-text-primary">Certifications: {hasCertificationsUploaded || certFile ? 'Uploaded' : 'Not uploaded (Optional)'}</p>
                             </div>
                           </div>
                         </div>
@@ -1470,11 +1355,13 @@ export default function NurseOnboarding() {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <p className="text-sm text-medical-text-secondary">Available From</p>
-                              <p className="font-medium text-medical-text-primary">{availabilityStartDate || 'Not specified'}</p>
+                              <p className="font-medium text-medical-text-primary">
+                                {availabilityStartDate ? DateUtils.isoToAmerican(availabilityStartDate) : 'Not specified'}
+                              </p>
                             </div>
                             <div>
                               <p className="text-sm text-medical-text-secondary">Work Location</p>
-                              <p className="font-medium text-medical-text-primary">{workLocationType || 'Not specified'}</p>
+                              <p className="font-medium text-medical-text-primary">On-site only</p>
                             </div>
                             <div>
                               <p className="text-sm text-medical-text-secondary">Desired Hourly Rate</p>

@@ -340,15 +340,22 @@ export default function Auth() {
                             </Label>
                             <RadioGroup 
                               value={userType} 
-                              onValueChange={(val) => setUserType(val as 'nurse' | 'client' | 'admin')}
+                              onValueChange={(value: string) => {
+                                console.log('RadioGroup changed to:', value);
+                                setUserType(value as 'nurse' | 'client' | 'admin');
+                              }}
                               className="space-y-3"
                             >
-                              <div className="relative group">
-                                <RadioGroupItem value="client" id="client" className="peer sr-only" />
-                                <Label 
-                                  htmlFor="client" 
-                                  className="flex items-center space-x-4 p-4 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 group-hover:shadow-lg"
-                                >
+                              <div className="relative">
+                                <div className={`flex items-center space-x-4 p-4 border-2 rounded-2xl cursor-pointer transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-lg ${
+                                  userType === 'client' 
+                                    ? 'border-blue-500 bg-blue-50 shadow-md' 
+                                    : 'border-slate-200'
+                                }`} onClick={() => {
+                                  console.log('Client option clicked');
+                                  setUserType('client');
+                                }}>
+                                  <RadioGroupItem value="client" id="client" className="text-blue-600" />
                                   <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center">
                                     <Building2 className="h-6 w-6 text-green-600" />
                                   </div>
@@ -356,15 +363,19 @@ export default function Auth() {
                                     <div className="font-semibold text-slate-800">Client</div>
                                     <div className="text-sm text-slate-600">I need nursing care services</div>
                                   </div>
-                                </Label>
+                                </div>
                               </div>
                               
-                              <div className="relative group">
-                                <RadioGroupItem value="nurse" id="nurse" className="peer sr-only" />
-                                <Label 
-                                  htmlFor="nurse" 
-                                  className="flex items-center space-x-4 p-4 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 group-hover:shadow-lg"
-                                >
+                              <div className="relative">
+                                <div className={`flex items-center space-x-4 p-4 border-2 rounded-2xl cursor-pointer transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-lg ${
+                                  userType === 'nurse' 
+                                    ? 'border-blue-500 bg-blue-50 shadow-md' 
+                                    : 'border-slate-200'
+                                }`} onClick={() => {
+                                  console.log('Nurse option clicked');
+                                  setUserType('nurse');
+                                }}>
+                                  <RadioGroupItem value="nurse" id="nurse" className="text-blue-600" />
                                   <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
                                     <Stethoscope className="h-6 w-6 text-blue-600" />
                                   </div>
@@ -372,15 +383,19 @@ export default function Auth() {
                                     <div className="font-semibold text-slate-800">Healthcare Professional</div>
                                     <div className="text-sm text-slate-600">I provide nursing care services</div>
                                   </div>
-                                </Label>
+                                </div>
                               </div>
                               
-                              <div className="relative group">
-                                <RadioGroupItem value="admin" id="admin" className="peer sr-only" />
-                                <Label 
-                                  htmlFor="admin" 
-                                  className="flex items-center space-x-4 p-4 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 group-hover:shadow-lg"
-                                >
+                              <div className="relative">
+                                <div className={`flex items-center space-x-4 p-4 border-2 rounded-2xl cursor-pointer transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-lg ${
+                                  userType === 'admin' 
+                                    ? 'border-blue-500 bg-blue-50 shadow-md' 
+                                    : 'border-slate-200'
+                                }`} onClick={() => {
+                                  console.log('Admin option clicked');
+                                  setUserType('admin');
+                                }}>
+                                  <RadioGroupItem value="admin" id="admin" className="text-blue-600" />
                                   <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center">
                                     <Shield className="h-6 w-6 text-purple-600" />
                                   </div>
@@ -391,7 +406,7 @@ export default function Auth() {
                                     </div>
                                     <div className="text-sm text-slate-600">Platform administration</div>
                                   </div>
-                                </Label>
+                                </div>
                               </div>
                             </RadioGroup>
                           </div>

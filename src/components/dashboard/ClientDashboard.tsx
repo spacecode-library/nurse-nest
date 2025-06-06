@@ -1,9 +1,9 @@
-// components/dashboard/ClientDashboard.tsx - COMPLETE UPDATED VERSION WITH PAYMENT FIX
+// components/dashboard/ClientDashboard.tsx - REDESIGNED WITH SIDEBAR LAYOUT
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Briefcase, 
   Clock, 
@@ -45,7 +45,9 @@ import {
   ClipboardCheck,
   Award,
   Loader2,
-  Receipt
+  Receipt,
+  Menu,
+  LogOut
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -53,7 +55,6 @@ import { getClientProfileByUserId } from '@/supabase/api/clientProfileService';
 import { getClientJobPostings } from '@/supabase/api/jobPostingService';
 import { getApplicationsByJob } from '@/supabase/api/applicationService';
 import { getPendingTimecards, getClientTimecards, calculateClientExpenses } from '@/supabase/api/timecardService';
-import { getClientContracts } from '@/supabase/api/contractService';
 import { supabase } from '@/integrations/supabase/client';
 
 // Import payment services
@@ -62,9 +63,6 @@ import { getClientPaymentMethods } from '@/supabase/api/stripeConnectService';
 // Import dashboard cards
 import JobManagementCard from './client/JobManagementCard';
 import ApplicantReviewCard from './client/ApplicantReviewCard';
-import TimecardApprovalCard from './client/TimecardApprovalCard';
-import ClientContractsCard from './client/ClientContractsCard';
-import ClientQuickActionsCard from './client/ClientQuickActionsCard';
 import BrowseNursesCard from './client/BrowseNursesCard';
 
 // Import NEW payment components
@@ -73,7 +71,6 @@ import EnhancedTimecardApprovalCard from './client/EnhancedTimecardApprovalCard'
 import PaymentHistoryCard from './client/PaymentHistoryCard';
 
 import ClientConversationsList from '../ClientConversationList';
-import ContractNotifications from '@/components/ContractNotifications';
 
 // Import enhanced date formatting
 import { 
@@ -86,11 +83,13 @@ import {
 import { formatCurrency } from '@/supabase/api/stripeConnectService';
 
 export default function ClientDashboard() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [clientProfile, setClientProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   // Add state for messages page
   const [showMessagesPage, setShowMessagesPage] = useState(false);
@@ -98,14 +97,10 @@ export default function ClientDashboard() {
   const [stats, setStats] = useState({
     activeJobs: 0,
     totalApplications: 0,
-    pendingTimecards: 0,
-    activeContracts: 0,
-    avgResponseTime: 0,
-    monthlySpend: 0,
+    pendingInvoices: 0,
     newApplicants: 0,
     pendingApprovals: 0,
     favoritedCandidates: 0,
-    // NEW: Payment related stats
     totalPaid: 0,
     thisMonthSpend: 0,
     lastMonthSpend: 0,
@@ -116,13 +111,24 @@ export default function ClientDashboard() {
   });
 
   const [recentJobs, setRecentJobs] = useState<any[]>([]);
-  const [pendingTimecards, setPendingTimecards] = useState<any[]>([]);
+  const [pendingInvoices, setPendingInvoices] = useState<any[]>([]);
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
-  const [activeContracts, setActiveContracts] = useState<any[]>([]);
 
   // Chat/Message related states
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [hasNewMessages, setHasNewMessages] = useState(false);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      // Still navigate even if there's an error
+      navigate('/');
+    }
+  };
 
   // Fetch unread messages count
   const fetchUnreadMessages = useCallback(async () => {
@@ -258,10 +264,9 @@ export default function ClientDashboard() {
       }
 
       // Fetch all data in parallel
-      const [jobsResult, timecardsResult, contractsResult] = await Promise.all([
+      const [jobsResult, invoicesResult] = await Promise.all([
         getClientJobPostings(profile.id, 20, 0),
         getPendingTimecards(profile.id, 10, 0),
-        getClientContracts(profile.id, 20, 0)
       ]);
 
       // Process jobs data
@@ -301,19 +306,14 @@ export default function ClientDashboard() {
         .slice(0, 10);
       setRecentApplications(sortedApplications);
 
-      // Process timecards
-      const pendingCards = timecardsResult.data || [];
-      setPendingTimecards(pendingCards);
-
-      // Process contracts
-      const contracts = contractsResult.data || [];
-      const active = contracts.filter(c => c.status === 'active');
-      setActiveContracts(active);
+      // Process invoices
+      const pendingCards = invoicesResult.data || [];
+      setPendingInvoices(pendingCards);
 
       // Calculate stats
       const activeJobs = jobs.filter(job => job.status === 'open').length;
       
-      // Calculate monthly spend from timecards
+      // Calculate monthly spend from invoices
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
       const monthStart = new Date(currentYear, currentMonth, 1);
@@ -336,17 +336,14 @@ export default function ClientDashboard() {
       // Get all-time expenses for total paid
       const { expenses: allTimeExpenses } = await calculateClientExpenses(
         profile.id,
-        '2020-01-01', // Far back date to get all expenses
+        '2020-01-01',
         new Date().toISOString().split('T')[0]
       );
 
-      // Calculate average response time (mock for now)
-      const avgResponseTime = Math.round(Math.random() * 24 + 12); // 12-36 hours
-
       // Calculate average hourly rate
-      const { data: paidTimecards } = await getClientTimecards(profile.id, 1000, 0);
-      const avgHourlyRate = paidTimecards && paidTimecards.length > 0
-        ? paidTimecards
+      const { data: paidInvoices } = await getClientTimecards(profile.id, 1000, 0);
+      const avgHourlyRate = paidInvoices && paidInvoices.length > 0
+        ? paidInvoices
             .filter(tc => tc.status === 'Paid' && tc.client_total_amount && tc.total_hours)
             .reduce((sum, tc, _, arr) => sum + (tc.client_total_amount / tc.total_hours / arr.length), 0)
         : 0;
@@ -354,14 +351,10 @@ export default function ClientDashboard() {
       setStats({
         activeJobs,
         totalApplications,
-        pendingTimecards: timecardsResult.count || 0,
-        activeContracts: active.length,
-        avgResponseTime,
-        monthlySpend: currentMonthExpenses?.total || 0,
+        pendingInvoices: invoicesResult.count || 0,
         newApplicants,
         pendingApprovals: pendingCards.length,
         favoritedCandidates,
-        // FIXED: Payment stats with actual values
         totalPaid: allTimeExpenses?.total || 0,
         thisMonthSpend: currentMonthExpenses?.total || 0,
         lastMonthSpend: lastMonthExpenses?.total || 0,
@@ -409,7 +402,6 @@ export default function ClientDashboard() {
   // Function to trigger dashboard refresh
   const handleRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
-    // Also refresh message count
     if (user?.id) {
       fetchUnreadMessages();
     }
@@ -417,20 +409,17 @@ export default function ClientDashboard() {
 
   // Enhanced refresh function for payment updates
   const handlePaymentMethodAdded = useCallback(() => {
-    // Force immediate refresh when payment method is added
     setRefreshTrigger(prev => prev + 1);
     
-    // Show success message
     toast({
       title: "Payment Method Added!",
-      description: "You can now approve timecards with instant payment processing.",
+      description: "You can now approve invoices with instant payment processing.",
       variant: "default"
     });
   }, []);
 
   // Handle nurse contact from browse nurses
   const handleNurseContact = useCallback((nurseId: string, conversationId: string) => {
-    // Show messages page when a nurse is contacted
     setShowMessagesPage(true);
     toast({
       title: "Conversation Started",
@@ -440,37 +429,87 @@ export default function ClientDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return 'bg-medical-success/10 text-medical-success border-medical-success/20';
-      case 'filled': return 'bg-medical-primary/10 text-medical-primary border-medical-primary/20';
-      case 'expired': return 'bg-medical-neutral-100 text-medical-neutral-600 border-medical-neutral-300';
-      case 'new': return 'bg-medical-blue-50 text-medical-blue-700 border-medical-blue-200';
-      case 'favorited': return 'bg-medical-rose-50 text-medical-rose-700 border-medical-rose-200';
-      case 'hired': return 'bg-medical-success-50 text-medical-success-700 border-medical-success-200';
-      case 'declined': return 'bg-medical-error-50 text-medical-error-700 border-medical-error-200';
-      case 'Submitted': return 'bg-medical-blue-50 text-medical-blue-700 border-medical-blue-200';
-      case 'Approved': return 'bg-medical-success-50 text-medical-success-700 border-medical-success-200';
-      case 'Rejected': return 'bg-medical-error-50 text-medical-error-700 border-medical-error-200';
-      case 'Paid': return 'bg-medical-purple-50 text-medical-purple-700 border-medical-purple-200';
-      default: return 'bg-medical-neutral-100 text-medical-neutral-600 border-medical-neutral-300';
+      case 'open': return 'bg-green-50 text-green-700 border-green-200';
+      case 'filled': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'expired': return 'bg-gray-100 text-gray-600 border-gray-300';
+      case 'new': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'favorited': return 'bg-rose-50 text-rose-700 border-rose-200';
+      case 'hired': return 'bg-green-50 text-green-700 border-green-200';
+      case 'declined': return 'bg-red-50 text-red-700 border-red-200';
+      case 'Submitted': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'Approved': return 'bg-green-50 text-green-700 border-green-200';
+      case 'Rejected': return 'bg-red-50 text-red-700 border-red-200';
+      case 'Paid': return 'bg-purple-50 text-purple-700 border-purple-200';
+      default: return 'bg-gray-100 text-gray-600 border-gray-300';
     }
   };
 
+  // Sidebar navigation items
+  const navigationItems = [
+    {
+      id: 'overview',
+      label: 'Overview',
+      icon: Home,
+      isActive: activeTab === 'overview',
+      badge: null
+    },
+    {
+      id: 'jobs',
+      label: 'Jobs',
+      icon: Briefcase,
+      isActive: activeTab === 'jobs',
+      badge: recentJobs.filter(job => job.status === 'open').length > 0 ? recentJobs.filter(job => job.status === 'open').length : null,
+      badgeColor: 'bg-blue-500'
+    },
+    {
+      id: 'browse',
+      label: 'Browse Nurses',
+      icon: Search,
+      isActive: activeTab === 'browse',
+      badge: null
+    },
+    {
+      id: 'applicants',
+      label: 'Applicants',
+      icon: Users,
+      isActive: activeTab === 'applicants',
+      badge: stats.newApplicants > 0 ? stats.newApplicants : null,
+      badgeColor: 'bg-green-500'
+    },
+    {
+      id: 'invoicing',
+      label: 'Invoicing',
+      icon: ClipboardCheck,
+      isActive: activeTab === 'invoicing',
+      badge: stats.pendingApprovals > 0 ? stats.pendingApprovals : null,
+      badgeColor: stats.paymentSetupComplete ? 'bg-emerald-500' : 'bg-orange-500'
+    },
+    {
+      id: 'billing',
+      label: 'Billing',
+      icon: CreditCard,
+      isActive: activeTab === 'billing',
+      badge: !stats.paymentSetupComplete ? '!' : null,
+      badgeColor: 'bg-red-500'
+    }
+  ];
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-medical-gradient-primary">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center space-y-6">
             <div className="relative">
-              <div className="w-20 h-20 bg-white rounded-full shadow-medical-soft mx-auto flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-3 border-medical-primary border-t-transparent rounded-full"></div>
+              <div className="w-20 h-20 bg-white rounded-full shadow-lg mx-auto flex items-center justify-center">
+                <div className="animate-spin w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full"></div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <HeartHandshake className="w-6 h-6 text-medical-primary animate-pulse" />
+                <HeartHandshake className="w-6 h-6 text-blue-600 animate-pulse" />
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-medical-text-primary">Loading your dashboard...</h3>
-              <p className="text-medical-text-secondary">Preparing your care management center</p>
+              <h3 className="text-xl font-semibold text-gray-900">Loading your dashboard...</h3>
+              <p className="text-gray-600">Preparing your care management center</p>
             </div>
           </div>
         </div>
@@ -481,7 +520,7 @@ export default function ClientDashboard() {
   // Show Messages Page if showMessagesPage is true
   if (showMessagesPage) {
     return (
-      <div className="min-h-screen bg-medical-gradient-primary">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <ClientConversationsList 
           clientId={clientProfile?.id}
           userId={user?.id}
@@ -492,561 +531,566 @@ export default function ClientDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-medical-gradient-primary">
-      {/* Enhanced Medical-Grade Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-medical-border shadow-medical-soft">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Brand & Profile Section */}
-            <div className="flex items-center space-x-4 lg:space-x-6">
-              <div className="flex items-center space-x-3 lg:space-x-4">
-                <div className="relative group">
-                  <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-medical-primary to-medical-accent shadow-medical-soft ring-2 ring-white flex items-center justify-center">
-                    <Crown className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-medical-success to-medical-accent rounded-full flex items-center justify-center shadow-sm">
-                    <Shield className="h-3 w-3 text-white" />
-                  </div>
-                </div>
-                <div className="hidden sm:block">
-                  <div className="flex items-center space-x-2">
-                    <h1 className="text-lg lg:text-xl font-semibold text-medical-text-primary">
-                      Care Dashboard
-                    </h1>
-                    <Shield className="h-4 w-4 text-medical-success" />
-                    {/* NEW: Payment Status Indicator */}
-                    {stats.paymentSetupComplete && (
-                      <CreditCard className="h-4 w-4 text-medical-success" />
-                    )}
-                  </div>
-                  <p className="text-sm text-medical-text-secondary">Premium Care Management</p>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Fixed Sidebar */}
+      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 fixed left-0 top-0 h-full z-30 flex flex-col`}>
+        {/* Logo and Brand */}
+        <div className="p-6 border-b border-gray-200 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div className={`flex items-center space-x-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
+                <HeartHandshake className="h-6 w-6 text-white" />
               </div>
-              
-              {/* Status Badges */}
-              <div className="hidden md:flex items-center space-x-3">
-                <Badge variant="outline" className="bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 text-medical-primary border-medical-primary/20">
-                  <Crown className="h-3 w-3 mr-1" />
+              {!sidebarCollapsed && (
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Nurse Nest</h1>
+                  <p className="text-sm text-gray-500">Premium Care Management</p>
+                </div>
+              )}
+            </div>
+            {!sidebarCollapsed && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCollapsed(true)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            )}
+            {sidebarCollapsed && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCollapsed(false)}
+                className="absolute -right-3 top-6 bg-white shadow-lg rounded-full p-1 border"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Button
+                key={item.id}
+                variant={item.isActive ? "default" : "ghost"}
+                className={`w-full justify-start h-12 ${
+                  item.isActive 
+                    ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${sidebarCollapsed ? 'px-3' : 'px-4'} transition-all duration-200`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
+                {!sidebarCollapsed && (
+                  <>
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {item.badge && (
+                      <Badge className={`${item.badgeColor || 'bg-gray-500'} text-white text-xs border-0 shadow-sm ml-2`}>
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </>
+                )}
+                {sidebarCollapsed && item.badge && (
+                  <div className={`absolute -top-1 -right-1 w-5 h-5 ${item.badgeColor || 'bg-gray-500'} rounded-full flex items-center justify-center`}>
+                    <span className="text-xs text-white font-semibold">{item.badge}</span>
+                  </div>
+                )}
+              </Button>
+            );
+          })}
+        </nav>
+
+        {/* Fixed User Profile Section at Bottom */}
+        <div className="p-4 border-t border-gray-200 flex-shrink-0">
+          {!sidebarCollapsed ? (
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">
+                  {clientProfile?.first_name?.charAt(0)}{clientProfile?.last_name?.charAt(0)}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {clientProfile?.first_name} {clientProfile?.last_name}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
                   {clientProfile?.client_type === 'family' ? 'Family Account' : 'Individual Account'}
-                </Badge>
-                {/* FIXED: Payment Setup Status Badge */}
-                {stats.paymentSetupComplete && (
-                  <Badge className="bg-medical-success text-white border-0 shadow-sm">
-                    <CreditCard className="h-3 w-3 mr-1" />
-                    Instant Payment Ready
-                  </Badge>
-                )}
-                {!stats.paymentSetupComplete && (
-                  <Badge className="bg-medical-warning text-white border-0 shadow-sm animate-pulse">
-                    <AlertCircle className="h-3 w-3 mr-1" />
-                    Setup Payment
-                  </Badge>
-                )}
-                {hasNewMessages && (
-                  <Badge className="bg-medical-primary text-white border-0 animate-pulse shadow-medical-soft">
-                    <MessageCircle className="h-3 w-3 mr-1" />
-                    {totalUnreadMessages} Message{totalUnreadMessages !== 1 ? 's' : ''}
-                  </Badge>
-                )}
+                </p>
               </div>
             </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-2 lg:space-x-4">
+          ) : (
+            <div className="flex justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">
+                  {clientProfile?.first_name?.charAt(0)}{clientProfile?.last_name?.charAt(0)}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Content Container */}
+      <div className={`${sidebarCollapsed ? 'ml-20' : 'ml-64'} transition-all duration-300 min-h-screen flex flex-col`}>
+        {/* Fixed Top Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 fixed top-0 right-0 left-0 z-20" style={{ 
+          left: sidebarCollapsed ? '5rem' : '16rem',
+          transition: 'left 300ms'
+        }}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {activeTab === 'overview' && 'Dashboard Overview'}
+                {activeTab === 'jobs' && 'Job Management'}
+                {activeTab === 'browse' && 'Browse Nurses'}
+                {activeTab === 'applicants' && 'Review Applicants'}
+                {activeTab === 'invoicing' && 'Invoice Management'}
+                {activeTab === 'billing' && 'Billing & Payments'}
+              </h1>
+              <p className="text-gray-600 mt-1">
+                {activeTab === 'overview' && 'Your premium care management command center'}
+                {activeTab === 'jobs' && 'Create and manage your job postings'}
+                {activeTab === 'browse' && 'Find qualified healthcare professionals'}
+                {activeTab === 'applicants' && 'Review and manage applications'}
+                {activeTab === 'invoicing' && 'Review and approve invoices'}
+                {activeTab === 'billing' && 'Manage payments and billing'}
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
               {/* Messages Button */}
               <Button 
                 variant={hasNewMessages ? "default" : "outline"} 
                 size="sm" 
                 onClick={() => setShowMessagesPage(true)}
                 className={`${hasNewMessages 
-                  ? "bg-medical-primary hover:bg-medical-primary/90 text-white border-0 animate-pulse shadow-medical-soft" 
-                  : "hover:bg-medical-primary/5 hover:border-medical-primary/30 text-medical-text-primary"
+                  ? "bg-blue-600 hover:bg-blue-700 text-white border-0 animate-pulse shadow-lg" 
+                  : "hover:bg-blue-50 hover:border-blue-300 text-gray-700"
                 } transition-all duration-300`}
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Messages</span>
+                Messages
                 {totalUnreadMessages > 0 && (
-                  <Badge className="ml-2 bg-medical-error text-white text-xs border-0 min-w-[20px] h-5">
+                  <Badge className="ml-2 bg-red-500 text-white text-xs border-0 min-w-[20px] h-5">
                     {totalUnreadMessages}
                   </Badge>
                 )}
               </Button>
               
               <Button 
-                variant="outline" 
+                variant="outline"
                 size="sm" 
-                onClick={handleRefresh}
-                className="hidden lg:inline-flex hover:bg-medical-primary/5 hover:border-medical-primary/30 transition-all duration-300"
+                className="hover:bg-red-50 hover:border-red-300 text-gray-700 transition-all duration-300" 
+                onClick={handleLogout}
               >
-                <Activity className="h-4 w-4 mr-2" />
-                Refresh
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
               </Button>
-              
-              <Button 
-                size="sm" 
-                className="bg-medical-primary hover:bg-medical-primary/90 text-white border-0 shadow-medical-soft transition-all duration-300" 
-                onClick={() => setActiveTab('jobs')}
-              >
-                <Plus className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Post Job</span>
-              </Button>
-              
-              <ContractNotifications 
-                userId={user?.id}
-                userType="client"
-                profileId={clientProfile?.id}
-                onNotificationClick={(contractId) => {
-                  setActiveTab('contracts');
-                }}
-              />
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        {/* Enhanced Welcome Section */}
-        <div className="mb-8 lg:mb-12">
-          <div className="text-center mb-6 lg:mb-8">
-            <div className="space-y-3 lg:space-y-4">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-medical-text-primary via-medical-primary to-medical-accent bg-clip-text text-transparent">
-                Welcome back, {clientProfile?.first_name}! ✨
-              </h2>
-              <p className="text-lg text-medical-text-secondary max-w-3xl mx-auto">
-                Your premium care management command center
-              </p>
-              
-              {/* Professional Trust Indicators */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-                <div className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-medical-soft border border-medical-border">
-                  <Shield className="h-4 w-4 text-medical-success" />
-                  <span className="text-sm font-medium text-medical-text-primary">HIPAA Secure</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-medical-soft border border-medical-border">
-                  <HeartHandshake className="h-4 w-4 text-medical-primary" />
-                  <span className="text-sm font-medium text-medical-text-primary">Licensed Professionals</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-medical-soft border border-medical-border">
-                  <Award className="h-4 w-4 text-medical-accent" />
-                  <span className="text-sm font-medium text-medical-text-primary">Verified Care Network</span>
-                </div>
-                {/* FIXED: Payment Status Indicator */}
-                {stats.paymentSetupComplete && (
-                  <div className="flex items-center space-x-2 bg-gradient-to-r from-medical-success to-medical-accent rounded-full px-4 py-2 shadow-medical-soft">
-                    <Zap className="h-4 w-4 text-white" />
-                    <span className="text-sm font-medium text-white">Instant Payments</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          
-          {/* Enhanced Alert Cards */}
-          <div className="space-y-4">
-            {/* FIXED: Payment Setup Alert - Only shows when payment is NOT set up */}
-            {!stats.paymentSetupComplete && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-warning/10 to-medical-error/10 border border-medical-warning/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-warning rounded-full flex items-center justify-center">
-                      <CreditCard className="h-5 w-5 text-white animate-pulse" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-warning">
-                        💳 Set up instant payments to approve timecards seamlessly!
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">Add a payment method for automatic timecard processing</p>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="bg-medical-warning hover:bg-medical-warning/90 text-white shadow-medical-soft"
-                    onClick={() => setActiveTab('billing')}
-                  >
-                    Setup Now
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* New message alert */}
-            {hasNewMessages && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 border border-medical-primary/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-primary rounded-full flex items-center justify-center">
-                      <MessageCircle className="h-5 w-5 text-white animate-pulse" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-primary">
-                        💬 You have {totalUnreadMessages} new message{totalUnreadMessages !== 1 ? 's' : ''} from nurses!
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">Stay connected with your care team</p>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="bg-medical-primary hover:bg-medical-primary/90 text-white shadow-medical-soft"
-                    onClick={() => setShowMessagesPage(true)}
-                  >
-                    View Messages
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {stats.newApplicants > 0 && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-success/10 to-medical-accent/10 border border-medical-success/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-success rounded-full flex items-center justify-center">
-                      <Bell className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-success">
-                        🎉 You have {stats.newApplicants} new applicant{stats.newApplicants !== 1 ? 's' : ''} to review!
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">Quality professionals ready to provide care</p>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="bg-medical-success hover:bg-medical-success/90 text-white shadow-medical-soft"
-                    onClick={() => setActiveTab('applicants')}
-                  >
-                    Review Now
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {stats.pendingApprovals > 0 && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-warning/10 to-medical-accent/10 border border-medical-warning/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-warning rounded-full flex items-center justify-center">
-                      {stats.paymentSetupComplete ? (
-                        <Zap className="h-5 w-5 text-white" />
-                      ) : (
-                        <Clock className="h-5 w-5 text-white" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-warning">
-                        {stats.paymentSetupComplete ? (
-                          <>⚡ {stats.pendingApprovals} timecard{stats.pendingApprovals !== 1 ? 's' : ''} ready for instant approval!</>
-                        ) : (
-                          <>⏰ {stats.pendingApprovals} timecard{stats.pendingApprovals !== 1 ? 's' : ''} need your approval</>
-                        )}
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">
-                        {stats.paymentSetupComplete 
-                          ? 'Click "Approve & Pay" for instant payment processing'
-                          : 'Review and approve care hours'
-                        }
-                      </p>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="bg-medical-warning hover:bg-medical-warning/90 text-white shadow-medical-soft"
-                    onClick={() => setActiveTab('timecards')}
-                  >
-                    {stats.paymentSetupComplete ? 'Approve & Pay' : 'Review'}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Enhanced Stats Grid */}
-        <div className="mb-8 lg:mb-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 lg:gap-6">
-            {[
-              { title: 'Active Jobs', value: stats.activeJobs, icon: Briefcase, gradient: 'from-medical-primary to-medical-accent', bgColor: 'bg-medical-primary' },
-              { title: 'Applications', value: stats.totalApplications, icon: Users, gradient: 'from-medical-purple to-medical-primary', bgColor: 'bg-medical-purple' },
-              { title: 'New Today', value: stats.newApplicants, icon: Bell, gradient: 'from-medical-warning to-medical-accent', bgColor: 'bg-medical-warning' },
-              { title: 'Messages', value: totalUnreadMessages, icon: MessageCircle, gradient: 'from-medical-success to-medical-accent', bgColor: 'bg-medical-success', pulse: hasNewMessages },
-              { title: 'Pending', value: stats.pendingApprovals, icon: stats.paymentSetupComplete ? Zap : Clock, gradient: 'from-medical-warning to-medical-accent', bgColor: 'bg-medical-warning' },
-              { title: 'Contracts', value: stats.activeContracts, icon: FileText, gradient: 'from-medical-success to-medical-primary', bgColor: 'bg-medical-success' },
-              { title: 'This Month', value: `$${Math.round(stats.thisMonthSpend)}`, icon: TrendingUp, gradient: 'from-medical-primary to-medical-accent', bgColor: 'bg-medical-primary' },
-              { title: 'Total Paid', value: `$${Math.round(stats.totalPaid)}`, icon: DollarSign, gradient: 'from-medical-rose to-medical-accent', bgColor: 'bg-medical-rose' },
-            ].map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <Card key={index} className={`border-0 shadow-medical-soft bg-white hover:shadow-medical-elevated transition-all duration-300 transform hover:-translate-y-1 ${stat.pulse ? 'animate-pulse ring-2 ring-medical-primary/20' : ''}`}>
-                  <CardContent className="p-4 lg:p-6">
-                    <div className="flex flex-col items-center text-center space-y-3">
-                      <div className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full ${stat.bgColor} flex items-center justify-center shadow-medical-soft`}>
-                        <Icon className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-2xl lg:text-3xl font-bold text-medical-text-primary mb-1">{stat.value}</p>
-                        <p className="text-xs lg:text-sm font-medium text-medical-text-secondary">{stat.title}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Enhanced Medical-Grade Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-7 h-12 lg:h-14 bg-white/80 backdrop-blur-sm rounded-xl shadow-medical-soft border border-medical-border overflow-x-auto">
-            <TabsTrigger value="overview" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft whitespace-nowrap">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="browse" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft whitespace-nowrap">
-              Browse Nurses
-            </TabsTrigger>
-            <TabsTrigger value="jobs" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              Jobs
-            </TabsTrigger>
-            <TabsTrigger value="applicants" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              <span className="flex items-center space-x-1 lg:space-x-2">
-                <span>Applicants</span>
-                {stats.newApplicants > 0 && (
-                  <Badge className="bg-medical-success text-white text-xs border-0 animate-pulse min-w-[20px] h-5">
-                    {stats.newApplicants}
-                  </Badge>
-                )}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="timecards" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              <span className="flex items-center space-x-1 lg:space-x-2">
-                <span className="hidden sm:inline">Timecards</span>
-                <span className="sm:hidden">Time</span>
-                {stats.pendingApprovals > 0 && (
-                  <Badge className={`${stats.paymentSetupComplete ? 'bg-medical-success animate-pulse' : 'bg-medical-warning'} text-white text-xs border-0 min-w-[20px] h-5`}>
-                    {stats.pendingApprovals}
-                  </Badge>
-                )}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="contracts" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              Contracts
-            </TabsTrigger>
-            <TabsTrigger value="billing" className="rounded-lg font-medium text-xs lg:text-sm transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              <span className="flex items-center space-x-1 lg:space-x-2">
-                <span>Billing</span>
+        {/* Main Content Area with Top Padding */}
+        <main className="flex-1 p-6 mt-24 overflow-auto">
+          {activeTab === 'overview' && (
+            <div className="space-y-8">
+              {/* Alert Cards */}
+              <div className="space-y-4">
                 {!stats.paymentSetupComplete && (
-                  <Badge className="bg-medical-warning text-white text-xs border-0 animate-pulse min-w-[20px] h-5">
-                    !
-                  </Badge>
-                )}
-              </span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-8">
-            {/* Quick Actions */}
-            <ClientQuickActionsCard 
-              clientId={clientProfile?.id || ''} 
-              onRefresh={handleRefresh}
-            />
-
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-              {/* Enhanced Recent Applications */}
-              <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-purple/5">
-                <CardHeader className="bg-gradient-to-r from-medical-purple/10 to-medical-rose/10 rounded-t-lg border-b border-medical-border">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center text-xl font-bold text-medical-text-primary">
-                      Recent Applications
-                      {hasNewMessages && (
-                        <Badge className="ml-2 bg-medical-primary text-white border-0 animate-pulse">
-                          {totalUnreadMessages} new
-                        </Badge>
-                      )}
-                    </CardTitle>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => setActiveTab('applicants')}
-                      className="text-medical-purple hover:bg-medical-purple/10"
-                    >
-                      View All
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  {recentApplications.length > 0 ? (
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                      {recentApplications.slice(0, 5).map((app) => (
-                        <div key={app.id} className="flex items-center justify-between p-4 rounded-xl border border-medical-border hover:bg-gradient-to-r hover:from-medical-purple/5 hover:to-medical-rose/5 transition-all group">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-medical-purple to-medical-primary flex items-center justify-center flex-shrink-0 shadow-medical-soft">
-                              {app.nurse_profiles?.profile_photo_url ? (
-                                <img 
-                                  src={app.nurse_profiles.profile_photo_url} 
-                                  alt="Nurse" 
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <Users className="h-6 w-6 text-white" />
-                              )}
-                            </div>
-                            <div>
-                              <p className="font-semibold text-medical-text-primary group-hover:text-medical-purple transition-colors">
-                                {app.nurse_profiles?.first_name} {app.nurse_profiles?.last_name}
-                              </p>
-                              <p className="text-sm text-medical-text-secondary">
-                                Applied {formatRelativeTime(app.created_at)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge className={`${getStatusColor(app.status)} border shadow-sm`}>
-                              {app.status === 'favorited' ? 'Favorite' : app.status}
-                              {app.status === 'new' && (
-                                <span className="ml-1 animate-pulse">●</span>
-                              )}
-                            </Badge>
-                            <Button size="sm" variant="ghost" className="hover:bg-white transition-all">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </div>
+                  <div className="p-4 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                          <CreditCard className="h-5 w-5 text-white animate-pulse" />
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-[300px] text-medical-text-secondary">
-                      <div className="w-16 h-16 bg-medical-neutral-100 rounded-full flex items-center justify-center mb-4">
-                        <Users className="h-8 w-8 text-medical-neutral-400" />
+                        <div>
+                          <p className="font-semibold text-orange-900">
+                            💳 Set up instant payments to approve invoices seamlessly!
+                          </p>
+                          <p className="text-sm text-orange-700">Add a payment method for automatic invoice processing</p>
+                        </div>
                       </div>
-                      <p className="text-lg font-medium mb-2">No recent applications</p>
                       <Button 
-                        variant="link" 
-                        onClick={() => setActiveTab('jobs')}
-                        className="text-medical-purple hover:text-medical-purple/80"
+                        size="sm" 
+                        className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm"
+                        onClick={() => setActiveTab('billing')}
                       >
-                        Post a job to get started
+                        Setup Now
                       </Button>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Enhanced Quick Timecard Approvals */}
-              <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-warning/5">
-                <CardHeader className="bg-gradient-to-r from-medical-warning/10 to-medical-accent/10 rounded-t-lg border-b border-medical-border">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-bold text-medical-text-primary">
-                      {stats.paymentSetupComplete ? 'Instant Payment Center' : 'Pending Approvals'}
-                    </CardTitle>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => setActiveTab('timecards')}
-                      className="text-medical-warning hover:bg-medical-warning/10"
-                    >
-                      View All
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
                   </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  {pendingTimecards.length > 0 ? (
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                      {pendingTimecards.slice(0, 3).map((timecard) => (
-                        <div key={timecard.id} className="p-4 rounded-xl border border-medical-border hover:bg-gradient-to-r hover:from-medical-warning/5 hover:to-medical-accent/5 transition-all group">
-                          <div className="flex items-center justify-between mb-3">
-                            <div>
-                              <p className="font-semibold text-medical-text-primary group-hover:text-medical-warning transition-colors">
-                                {timecard.nurse_profiles?.first_name} {timecard.nurse_profiles?.last_name}
-                              </p>
-                              <p className="text-sm text-medical-text-secondary">
-                                {formatShortPremiumDate(timecard.shift_date)}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-bold text-lg text-medical-text-primary">{timecard.total_hours} hrs</p>
-                              <p className="text-sm text-medical-text-secondary">
-                                {formatCurrency((timecard.total_hours * 50 * 1.15))}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between text-xs text-medical-text-secondary mb-3">
-                            <span>Auto-approval in</span>
-                            <span className="font-medium">
-                              {Math.max(0, Math.floor((new Date(timecard.approval_deadline).getTime() - Date.now()) / 3600000))}h
-                            </span>
-                          </div>
-                          <div className="flex space-x-2">
+                )}
+
+                {hasNewMessages && (
+                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                          <MessageCircle className="h-5 w-5 text-white animate-pulse" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-blue-900">
+                            💬 You have {totalUnreadMessages} new message{totalUnreadMessages !== 1 ? 's' : ''} from nurses!
+                          </p>
+                          <p className="text-sm text-blue-700">Stay connected with your care team</p>
+                        </div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
+                        onClick={() => setShowMessagesPage(true)}
+                      >
+                        View Messages
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {stats.pendingApprovals > 0 && (
+                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                          {stats.paymentSetupComplete ? (
+                            <Zap className="h-5 w-5 text-white" />
+                          ) : (
+                            <Clock className="h-5 w-5 text-white" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-green-900">
                             {stats.paymentSetupComplete ? (
-                              <Button size="sm" className="flex-1 bg-gradient-to-r from-medical-success to-medical-accent hover:from-medical-success/90 hover:to-medical-accent/90 text-white border-0 shadow-medical-soft">
-                                <Zap className="h-4 w-4 mr-1" />
-                                Approve & Pay
-                              </Button>
+                              <>⚡ {stats.pendingApprovals} invoice{stats.pendingApprovals !== 1 ? 's' : ''} ready for instant approval!</>
                             ) : (
-                              <Button size="sm" className="flex-1 bg-medical-success hover:bg-medical-success/90 text-white border-0 shadow-medical-soft">
-                                Quick Approve
-                              </Button>
+                              <>⏰ {stats.pendingApprovals} invoice{stats.pendingApprovals !== 1 ? 's' : ''} need your approval</>
                             )}
-                            <Button size="sm" variant="outline" className="hover:bg-white border-medical-border">
-                              Review
-                            </Button>
+                          </p>
+                          <p className="text-sm text-green-700">
+                            {stats.paymentSetupComplete 
+                              ? 'Click "Approve & Pay" for instant payment processing'
+                              : 'Review and approve care hours'
+                            }
+                          </p>
+                        </div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="bg-green-500 hover:bg-green-600 text-white shadow-sm"
+                        onClick={() => setActiveTab('invoicing')}
+                      >
+                        {stats.paymentSetupComplete ? 'Approve & Pay' : 'Review'}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { 
+                    title: 'Active Jobs', 
+                    value: stats.activeJobs, 
+                    icon: Briefcase, 
+                    bgColor: 'bg-blue-500',
+                    textColor: 'text-blue-600',
+                    bgLight: 'bg-blue-50'
+                  },
+                  { 
+                    title: 'Applications', 
+                    value: stats.totalApplications, 
+                    icon: Users, 
+                    bgColor: 'bg-green-500',
+                    textColor: 'text-green-600',
+                    bgLight: 'bg-green-50'
+                  },
+                  { 
+                    title: 'Total Paid', 
+                    value: `$${Math.round(stats.totalPaid)}`, 
+                    icon: DollarSign, 
+                    bgColor: 'bg-purple-500',
+                    textColor: 'text-purple-600',
+                    bgLight: 'bg-purple-50'
+                  },
+                  { 
+                    title: 'Pending Invoices', 
+                    value: stats.pendingApprovals, 
+                    icon: ClipboardCheck, 
+                    bgColor: 'bg-orange-500',
+                    textColor: 'text-orange-600',
+                    bgLight: 'bg-orange-50'
+                  },
+                ].map((stat, index) => {
+                  const Icon = stat.icon;
+                  return (
+                    <Card key={index} className="border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                          </div>
+                          <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center shadow-lg`}>
+                            <Icon className="h-6 w-6 text-white" />
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-[300px] text-medical-text-secondary">
-                      <div className="w-16 h-16 bg-medical-neutral-100 rounded-full flex items-center justify-center mb-4">
-                        <Clock className="h-8 w-8 text-medical-neutral-400" />
-                      </div>
-                      <p className="text-lg font-medium mb-2">No pending timecards</p>
-                      <p className="text-sm">Timecards will appear here for approval</p>
-                    </div>
-                  )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              {/* Quick Actions */}
+              <Card className="border-0 shadow-lg bg-white">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center text-xl font-bold text-gray-900">
+                    <Sparkles className="h-5 w-5 mr-2 text-blue-600" />
+                    Quick Actions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    {[
+                      {
+                        id: 'post-job',
+                        title: 'Post New Job',
+                        description: 'Create a new job posting',
+                        icon: Plus,
+                        color: 'bg-blue-500 hover:bg-blue-600',
+                        action: () => setActiveTab('jobs')
+                      },
+                      {
+                        id: 'browse-nurses',
+                        title: 'Browse Nurses',
+                        description: 'Find qualified nurses',
+                        icon: Search,
+                        color: 'bg-emerald-500 hover:bg-emerald-600',
+                        action: () => setActiveTab('browse')
+                      },
+                      {
+                        id: 'review-applicants',
+                        title: 'Review Applicants',
+                        description: 'Check new applications',
+                        icon: Users,
+                        color: 'bg-green-500 hover:bg-green-600',
+                        action: () => setActiveTab('applicants')
+                      },
+                      {
+                        id: 'verify-invoices',
+                        title: 'Verify Invoices',
+                        description: 'Review pending hours',
+                        icon: ClipboardCheck,
+                        color: 'bg-orange-500 hover:bg-orange-600',
+                        action: () => setActiveTab('invoicing')
+                      },
+                      {
+                        id: 'view-billing',
+                        title: 'View Billing',
+                        description: 'Check payments & invoices',
+                        icon: CreditCard,
+                        color: 'bg-indigo-500 hover:bg-indigo-600',
+                        action: () => setActiveTab('billing')
+                      }
+                    ].map((action) => {
+                      const Icon = action.icon;
+                      return (
+                        <Button
+                          key={action.id}
+                          variant="outline"
+                          className="h-auto p-6 flex flex-col items-center space-y-3 hover:shadow-lg transition-all duration-300 border-gray-200 hover:border-gray-300"
+                          onClick={action.action}
+                        >
+                          <div className={`p-4 rounded-full ${action.color} text-white shadow-lg`}>
+                            <Icon className="h-6 w-6" />
+                          </div>
+                          <div className="text-center">
+                            <p className="font-semibold text-gray-900">{action.title}</p>
+                            <p className="text-sm text-gray-600 mt-1">{action.description}</p>
+                          </div>
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
 
-          <TabsContent value="browse">
+              {/* Two Column Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Recent Applications */}
+                <Card className="border-0 shadow-lg bg-white">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl font-bold text-gray-900">Recent Applications</CardTitle>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setActiveTab('applicants')}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      >
+                        View All
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    {recentApplications.length > 0 ? (
+                      <div className="space-y-4">
+                        {recentApplications.slice(0, 3).map((app) => (
+                          <div key={app.id} className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                {app.nurse_profiles?.profile_photo_url ? (
+                                  <img 
+                                    src={app.nurse_profiles.profile_photo_url} 
+                                    alt="Nurse" 
+                                    className="w-full h-full object-cover rounded-full"
+                                  />
+                                ) : (
+                                  <span className="text-white font-semibold text-sm">
+                                    {app.nurse_profiles?.first_name?.charAt(0)}{app.nurse_profiles?.last_name?.charAt(0)}
+                                  </span>
+                                )}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-900">
+                                  {app.nurse_profiles?.first_name} {app.nurse_profiles?.last_name}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  Applied {formatRelativeTime(app.created_at)}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge className={`${getStatusColor(app.status)} border shadow-sm`}>
+                              {app.status === 'favorited' ? 'Favorite' : app.status}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Users className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Yet</h3>
+                        <p className="text-gray-600 mb-4">Post a job to get started</p>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setActiveTab('jobs')}
+                          className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                        >
+                          Post a Job
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Instant Payment Center */}
+                <Card className="border-0 shadow-lg bg-white">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl font-bold text-gray-900">
+                        {stats.paymentSetupComplete ? 'Instant Payment Center' : 'Pending Invoices'}
+                      </CardTitle>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setActiveTab('invoicing')}
+                        className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                      >
+                        View All
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    {pendingInvoices.length > 0 ? (
+                      <div className="space-y-4">
+                        {pendingInvoices.slice(0, 3).map((invoice) => (
+                          <div key={invoice.id} className="p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                            <div className="flex items-center justify-between mb-3">
+                              <div>
+                                <p className="font-semibold text-gray-900">
+                                  {invoice.nurse_profiles?.first_name} {invoice.nurse_profiles?.last_name}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  {formatShortPremiumDate(invoice.shift_date)}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-lg text-gray-900">{invoice.total_hours} hrs</p>
+                                <p className="text-sm text-gray-500">
+                                  {formatCurrency((invoice.total_hours * 50 * 1.15))}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex space-x-2">
+                              {stats.paymentSetupComplete ? (
+                                <Button size="sm" className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0">
+                                  <Zap className="h-4 w-4 mr-1" />
+                                  Approve & Pay
+                                </Button>
+                              ) : (
+                                <Button size="sm" className="flex-1 bg-green-500 hover:bg-green-600 text-white">
+                                  Quick Approve
+                                </Button>
+                              )}
+                              <Button size="sm" variant="outline" className="border-gray-300">
+                                Review
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <ClipboardCheck className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Pending Invoices</h3>
+                        <p className="text-gray-600">Invoices will appear here for verification</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'browse' && (
             <BrowseNursesCard 
               clientId={clientProfile?.id || ''} 
               onNurseContact={handleNurseContact}
             />
-          </TabsContent>
+          )}
 
-          <TabsContent value="jobs">
+          {activeTab === 'jobs' && (
             <JobManagementCard 
               clientId={clientProfile?.id || ''} 
               onJobCreated={handleRefresh}
             />
-          </TabsContent>
+          )}
 
-          <TabsContent value="applicants">
+          {activeTab === 'applicants' && (
             <ApplicantReviewCard 
               clientId={clientProfile?.id || ''} 
               onApplicationUpdate={handleRefresh}
             />
-          </TabsContent>
+          )}
 
-          <TabsContent value="timecards">
-            {/* Use Enhanced Timecard Approval Card with payment integration */}
+          {activeTab === 'invoicing' && (
             <EnhancedTimecardApprovalCard 
               clientId={clientProfile?.id || ''} 
-              onTimecardAction={handleRefresh}
+              onInvoiceAction={handleRefresh}
             />
-          </TabsContent>
+          )}
 
-          <TabsContent value="contracts">
-            <ClientContractsCard 
-              clientId={clientProfile?.id || ''} 
-              onContractUpdate={handleRefresh}
-            />
-          </TabsContent>
-
-          <TabsContent value="billing">
+          {activeTab === 'billing' && (
             <div className="space-y-8">
-              {/* FIXED: Payment Method Setup with enhanced callback */}
               <PaymentMethodSetup
                 clientId={clientProfile?.id || ''}
                 clientEmail={user?.email || ''}
@@ -1054,103 +1098,54 @@ export default function ClientDashboard() {
                 onPaymentMethodAdded={handlePaymentMethodAdded}
               />
 
-              {/* Payment History */}
               <PaymentHistoryCard
                 clientId={clientProfile?.id || ''}
               />
 
-              {/* Enhanced Billing Summary Card */}
-              <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-primary/5">
-                <CardHeader className="bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 rounded-t-lg border-b border-medical-border">
-                  <CardTitle className="text-xl font-bold text-medical-text-primary flex items-center">
-                    <BarChart3 className="h-5 w-5 mr-2 text-medical-primary" />
+              <Card className="border-0 shadow-lg bg-white">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
+                    <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
                     Billing Analytics
                   </CardTitle>
                   <CardDescription>Your spending patterns and cost analysis</CardDescription>
                 </CardHeader>
-                <CardContent className="p-6 lg:p-8">
-                  {/* Enhanced Billing Summary */}
+                <CardContent className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-success/5 to-medical-success/10">
+                    <Card className="border-0 shadow-sm bg-gradient-to-br from-green-50 to-emerald-50">
                       <CardContent className="p-6 text-center">
-                        <div className="w-12 h-12 bg-medical-success rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
                           <TrendingUp className="h-6 w-6 text-white" />
                         </div>
-                        <p className="text-sm text-medical-success font-medium mb-2">This Month</p>
-                        <p className="text-3xl font-bold text-medical-success">{formatCurrency(stats.thisMonthSpend)}</p>
-                        {stats.lastMonthSpend > 0 && (
-                          <p className="text-xs text-medical-success/70 mt-1">
-                            {stats.thisMonthSpend > stats.lastMonthSpend ? '+' : ''}
-                            {(((stats.thisMonthSpend - stats.lastMonthSpend) / stats.lastMonthSpend) * 100).toFixed(1)}% vs last month
-                          </p>
-                        )}
+                        <p className="text-sm text-green-600 font-medium mb-2">This Month</p>
+                        <p className="text-3xl font-bold text-green-700">{formatCurrency(stats.thisMonthSpend)}</p>
                       </CardContent>
                     </Card>
-                    <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-primary/5 to-medical-primary/10">
+                    <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-indigo-50">
                       <CardContent className="p-6 text-center">
-                        <div className="w-12 h-12 bg-medical-primary rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
                           <Building2 className="h-6 w-6 text-white" />
                         </div>
-                        <p className="text-sm text-medical-primary font-medium mb-2">Platform Fee (15%)</p>
-                        <p className="text-3xl font-bold text-medical-primary">{formatCurrency(stats.thisMonthSpend * 0.15)}</p>
-                        <p className="text-xs text-medical-primary/70 mt-1">Includes processing & support</p>
+                        <p className="text-sm text-blue-600 font-medium mb-2">Platform Fee (15%)</p>
+                        <p className="text-3xl font-bold text-blue-700">{formatCurrency(stats.thisMonthSpend * 0.15)}</p>
                       </CardContent>
                     </Card>
-                    <Card className="border-0 shadow-medical-soft bg-gradient-to-br from-medical-purple/5 to-medical-purple/10">
+                    <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-pink-50">
                       <CardContent className="p-6 text-center">
-                        <div className="w-12 h-12 bg-medical-purple rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
                           <HeartHandshake className="h-6 w-6 text-white" />
                         </div>
-                        <p className="text-sm text-medical-purple font-medium mb-2">Nurse Payments (85%)</p>
-                        <p className="text-3xl font-bold text-medical-purple">{formatCurrency(stats.thisMonthSpend * 0.85)}</p>
-                        <p className="text-xs text-medical-purple/70 mt-1">Direct to caregivers</p>
+                        <p className="text-sm text-purple-600 font-medium mb-2">Nurse Payments (85%)</p>
+                        <p className="text-3xl font-bold text-purple-700">{formatCurrency(stats.thisMonthSpend * 0.85)}</p>
                       </CardContent>
                     </Card>
-                  </div>
-                  
-                  {/* Enhanced Benefits Section */}
-                  <div className="bg-gradient-to-r from-medical-accent/10 to-medical-primary/10 border border-medical-accent/20 rounded-xl p-6">
-                    <h4 className="font-semibold text-medical-accent mb-4 flex items-center text-lg">
-                      <Sparkles className="h-5 w-5 mr-2" />
-                      Platform Benefits
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-3">
-                          <Zap className="h-4 w-4 text-medical-success" />
-                          <span className="text-medical-text-primary">Instant payment processing</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Shield className="h-4 w-4 text-medical-primary" />
-                          <span className="text-medical-text-primary">HIPAA compliant security</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Award className="h-4 w-4 text-medical-accent" />
-                          <span className="text-medical-text-primary">Licensed professional verification</span>
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-3">
-                          <MessageCircle className="h-4 w-4 text-medical-purple" />
-                          <span className="text-medical-text-primary">24/7 communication platform</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Clock className="h-4 w-4 text-medical-warning" />
-                          <span className="text-medical-text-primary">Automated timecard management</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Receipt className="h-4 w-4 text-medical-rose" />
-                          <span className="text-medical-text-primary">Detailed billing & receipts</span>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-        </Tabs>
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

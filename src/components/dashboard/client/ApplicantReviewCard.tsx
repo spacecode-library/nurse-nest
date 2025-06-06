@@ -11,7 +11,7 @@ import {
   Users, 
   Search, 
   Filter, 
-  Heart, // Changed from Star to Heart for favorite
+  Heart,
   Calendar, 
   Phone,
   Mail,
@@ -27,7 +27,7 @@ import {
   CheckCircle,
   Loader2,
   MapPin,
-  Sparkles // Added for premium feel
+  Sparkles
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client.js';
@@ -114,13 +114,16 @@ export default function ApplicantReviewCard({
   const [statusFilter, setStatusFilter] = useState('all');
   const [jobFilter, setJobFilter] = useState('all');
   const [selectedApplicant, setSelectedApplicant] = useState<Application | null>(null);
+  
+  // Updated activeChat state
   const [activeChat, setActiveChat] = useState<{
-    nurse: Application['nurse_profiles'];
-    job: Application['job_postings'];
-    conversationId?: string;
+    conversation: any;
+    otherParticipant: any;
   } | null>(null);
+  
   const [creatingContract, setCreatingContract] = useState(false);
   const [clientProfile, setClientProfile] = useState<any>(null);
+  const [startingChat, setStartingChat] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -213,6 +216,101 @@ export default function ApplicantReviewCard({
     }
 
     setFilteredApplications(filtered);
+  };
+
+  // NEW: Function to start or find existing chat
+  const handleStartChat = async (application: Application) => {
+    try {
+      setStartingChat(true);
+
+      // Check if conversation already exists
+      const { data: existingConvo, error: convoError } = await supabase
+        .from('conversations')
+        .select(`
+          *,
+          job_postings (
+            id,
+            job_code,
+            care_type
+          ),
+          nurse_profiles!conversations_nurse_id_fkey (
+            id,
+            user_id,
+            first_name,
+            last_name,
+            profile_photo_url
+          )
+        `)
+        .eq('client_id', clientId)
+        .eq('nurse_id', application.nurse_profiles.id)
+        .eq('job_id', application.job_postings.id)
+        .single();
+
+      let conversation = existingConvo;
+
+      // If no conversation exists, create one
+      if (convoError || !existingConvo) {
+        console.log('Creating new conversation...');
+        
+        const { data: newConvo, error: createError } = await supabase
+          .from('conversations')
+          .insert({
+            client_id: clientId,
+            nurse_id: application.nurse_profiles.id,
+            job_id: application.job_postings.id,
+            last_message_at: new Date().toISOString()
+          })
+          .select(`
+            *,
+            job_postings (
+              id,
+              job_code,
+              care_type
+            ),
+            nurse_profiles!conversations_nurse_id_fkey (
+              id,
+              user_id,
+              first_name,
+              last_name,
+              profile_photo_url
+            )
+          `)
+          .single();
+
+        if (createError) throw createError;
+        conversation = newConvo;
+        
+        toast({
+          title: "Chat Started",
+          description: `Started conversation with ${application.nurse_profiles.name}`,
+        });
+      }
+
+      // Set up chat state
+      setActiveChat({
+        conversation: {
+          ...conversation,
+          otherParticipant: {
+            ...conversation.nurse_profiles,
+            name: `${conversation.nurse_profiles.first_name} ${conversation.nurse_profiles.last_name}`
+          }
+        },
+        otherParticipant: {
+          ...conversation.nurse_profiles,
+          name: `${conversation.nurse_profiles.first_name} ${conversation.nurse_profiles.last_name}`
+        }
+      });
+
+    } catch (error: any) {
+      console.error('Error starting chat:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start chat. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setStartingChat(false);
+    }
   };
 
   const handleStatusUpdate = async (applicationId: string, newStatus: 'shortlisted' | 'hired' | 'declined') => {
@@ -344,6 +442,33 @@ export default function ApplicantReviewCard({
     }
   };
 
+  // If chat is active, show chat window
+  if (activeChat) {
+    return (
+      <div className="h-screen flex flex-col">
+        <div className="p-4 border-b bg-white flex items-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setActiveChat(null)}
+            className="mr-4"
+          >
+            <X className="h-4 w-4 mr-1" />
+            Back to Applicants
+          </Button>
+          <h2 className="text-lg font-semibold">Chat with {activeChat.otherParticipant?.name}</h2>
+        </div>
+        <div className="flex-1">
+          <ChatWindow
+            conversation={activeChat.conversation}
+            currentUserId={user?.id}
+            userType="client"
+          />
+        </div>
+      </div>
+    );
+  }
+
   const ApplicationCard = ({ application }: { application: Application }) => {
     const hasUnreadMessages = false;
     const hasConversation = false;
@@ -423,13 +548,20 @@ export default function ApplicantReviewCard({
                   View Profile
                 </Button>
 
+                {/* FIXED: Added onClick handler */}
                 <Button
                   variant="outline"
                   size="sm"
+                  onClick={() => handleStartChat(application)}
+                  disabled={startingChat}
                   className="hover:bg-blue-50 hover:border-blue-300 transition-all text-blue-600"
                 >
-                  <MessageCircle className="h-4 w-4 mr-1" />
-                  Chat
+                  {startingChat ? (
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  ) : (
+                    <MessageCircle className="h-4 w-4 mr-1" />
+                  )}
+                  {startingChat ? 'Starting...' : 'Chat'}
                 </Button>
                 
                 {application.status === 'new' && (
@@ -776,13 +908,22 @@ export default function ApplicantReviewCard({
                 >
                   Close
                 </Button>
+                
+                {/* FIXED: Added onClick handler */}
                 <Button
                   variant="outline"
+                  onClick={() => handleStartChat(selectedApplicant)}
+                  disabled={startingChat}
                   className="px-6 text-blue-600 border-blue-300 hover:bg-blue-50"
                 >
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Start Chat
+                  {startingChat ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                  )}
+                  {startingChat ? 'Starting Chat...' : 'Start Chat'}
                 </Button>
+                
                 {selectedApplicant.status === 'new' && (
                   <>
                     <Button
