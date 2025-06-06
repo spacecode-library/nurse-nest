@@ -710,23 +710,8 @@ export default function NurseOnboarding() {
                     }`}>
                       {step}
                     </span>
-                    {index < ONBOARDING_STEPS.length - 1 && (
-                      <div className={`absolute h-0.5 w-full mt-6 transition-colors duration-300 ${
-                        currentStep > index ? 'bg-medical-success' : 'bg-medical-border'
-                      }`} style={{ 
-                        left: `${(100 / ONBOARDING_STEPS.length) * (index + 0.5)}%`,
-                        width: `${100 / ONBOARDING_STEPS.length}%`
-                      }} />
-                    )}
                   </div>
                 ))}
-              </div>
-              <div className="relative">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-medical-border rounded-full"></div>
-                <div 
-                  className="absolute top-0 left-0 h-1 bg-gradient-to-r from-medical-primary to-medical-accent rounded-full transition-all duration-500"
-                  style={{ width: `${(currentStep / (ONBOARDING_STEPS.length - 1)) * 100}%` }}
-                ></div>
               </div>
             </div>
             
