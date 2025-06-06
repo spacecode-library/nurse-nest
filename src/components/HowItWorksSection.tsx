@@ -1,8 +1,6 @@
 
 import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Computer, Smartphone, User, Clipboard } from 'lucide-react';
+import { Computer, Smartphone, User, Clipboard } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -42,8 +40,8 @@ export default function HowItWorksSection() {
 
   return (
     <section className="relative overflow-hidden" id="how-it-works">
-      {/* Blue gradient background section - covers title and top half of cards */}
-      <div className="bg-gradient-to-b from-[#87CEEB] to-[#4A90E2] py-20 md:py-32 pb-32 md:pb-40">
+      {/* Blue gradient background section - covers title and cards */}
+      <div className="bg-gradient-to-b from-[#87CEEB] to-[#4A90E2] py-20 md:py-32">
         <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection animation="fade-up" className="text-center mb-16">
             <h2 className="text-4xl md:text-6xl font-light mb-6 text-white">
@@ -54,8 +52,8 @@ export default function HowItWorksSection() {
             </p>
           </AnimatedSection>
           
-          {/* 4-column grid for desktop, stacked for mobile - positioned to span the color boundary */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto relative -mb-16 md:-mb-20">
+          {/* 4-column grid for desktop, stacked for mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {steps.map((step, index) => (
               <AnimatedSection 
                 key={index}
@@ -63,7 +61,7 @@ export default function HowItWorksSection() {
                 delay={index * 200}
                 className="relative"
               >
-                {/* White card - extends into white section below */}
+                {/* White card */}
                 <div className="bg-white rounded-2xl p-8 shadow-lg h-full flex flex-col relative min-h-[400px]">
                   {/* Numbered circle at top */}
                   <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -90,20 +88,6 @@ export default function HowItWorksSection() {
               </AnimatedSection>
             ))}
           </div>
-        </div>
-      </div>
-      
-      {/* White background section - continues from the cards */}
-      <div className="bg-white pt-16 md:pt-20 pb-16">
-        <div className="container mx-auto px-4 text-center">
-          <AnimatedSection animation="fade-up" delay={300}>
-            <Link to="/apply">
-              <Button className="bg-[#4A90E2] hover:bg-[#357ABD] text-white px-12 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-semibold">
-                Request a Nurse
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-          </AnimatedSection>
         </div>
       </div>
     </section>
