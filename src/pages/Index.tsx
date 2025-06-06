@@ -6,6 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import AboutMeSection from "@/components/AboutMeSection";
+import ComprehensiveFaqSection from "@/components/ComprehensiveFaqSection";
 
 export default function Index() {
   return (
@@ -23,8 +24,11 @@ export default function Index() {
         {/* Statistics Section */}
         <StatisticsSection />
         
-        {/* About the Founder - Remove gray background and padding */}
+        {/* About the Founder */}
         <AboutMeSection />
+        
+        {/* Comprehensive FAQ Section */}
+        <ComprehensiveFaqSection />
       </main>
       
       <Footer />
