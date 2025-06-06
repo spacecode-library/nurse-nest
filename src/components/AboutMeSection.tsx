@@ -87,15 +87,15 @@ export default function AboutMeSection() {
               boxShadow: '0 10px 25px rgba(30, 41, 59, 0.08)'
             }}
           >
-            <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start">
-              {/* Image Column - Left side on desktop */}
+            <div className="grid md:grid-cols-12 gap-8 md:gap-16 items-start">
+              {/* Image Column - Much further left on desktop */}
               <AnimatedSection 
                 animation="fade-up" 
-                className="md:col-span-3 flex justify-center md:justify-start"
+                className="md:col-span-2 flex justify-center md:justify-start"
               >
                 <div className="relative mb-8 md:mb-0">
                   <div 
-                    className="w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105"
+                    className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105"
                     style={{
                       border: '3px solid #9bcbff'
                     }}
@@ -109,13 +109,13 @@ export default function AboutMeSection() {
                 </div>
               </AnimatedSection>
               
-              {/* Content Column - Right side on desktop */}
+              {/* Content Column - More space on desktop */}
               <AnimatedSection 
                 animation="fade-up" 
                 delay={150} 
-                className="md:col-span-9"
+                className="md:col-span-10"
               >
-                <div className="max-w-4xl">
+                <div className="max-w-5xl">
                   <h3 
                     className="text-3xl md:text-4xl font-light mb-1"
                     style={{ 
@@ -185,15 +185,15 @@ export default function AboutMeSection() {
                     </p>
                   </div>
                   
-                  {/* Enhanced Handwritten Signature - Much Larger */}
+                  {/* Very Large Handwritten Signature */}
                   <div className="mt-12" id="signature-animation">
                     <img 
-                      src="/lovable-uploads/e2b60f86-a631-4074-9374-e350c4ea1e3f.png"
+                      src="/lovable-uploads/16f8aab2-52ef-4d03-a067-775c04042d1f.png"
                       alt="Jayson Hinagawa Signature"
-                      className="h-24 md:h-32 w-auto opacity-90"
+                      className="h-32 md:h-48 w-auto opacity-90"
                       style={{
-                        filter: 'brightness(0.2) sepia(1) saturate(5) hue-rotate(200deg)',
-                        textShadow: '0 2px 4px rgba(30, 41, 59, 0.1)'
+                        filter: 'brightness(0.1) sepia(1) saturate(10) hue-rotate(190deg)',
+                        maxWidth: '400px'
                       }}
                     />
                   </div>
