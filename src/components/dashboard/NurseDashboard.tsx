@@ -1,9 +1,8 @@
-// components/dashboard/NurseDashboard.tsx - COMPLETE UPDATED VERSION
+// components/dashboard/NurseDashboard.tsx - REDESIGNED WITH SIDEBAR LAYOUT
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import {
   Briefcase,
@@ -43,7 +42,13 @@ import {
   HeartHandshake,
   Building2,
   CreditCard,
-  Loader2
+  Loader2,
+  Home,
+  LogOut,
+  Menu,
+  Users,
+  ClipboardCheck,
+  Receipt
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -51,13 +56,11 @@ import { getNurseProfileByUserId } from '@/supabase/api/nurseProfileService';
 import { getOpenJobPostings, advancedJobSearch } from '@/supabase/api/jobPostingService';
 import { getApplicationsByNurse, hasApplied } from '@/supabase/api/applicationService';
 import { getNurseTimecards, calculateNurseEarnings } from '@/supabase/api/timecardService';
-import { getNurseContracts } from '@/supabase/api/contractService';
 import JobApplicationForm from '@/components/dashboard/nurse/JobApplicationForm';
 
 // Import dashboard cards
 import JobApplicationsCard from './nurse/JobApplicationsCard';
 import TimecardsCard from './nurse/TimecardsCard';
-import ContractsCard from './nurse/ContractsCard';
 import QuickActionsCard from './nurse/QuickActionsCard';
 import NotificationsCard from './nurse/NotificationsCard';
 
@@ -67,7 +70,6 @@ import EnhancedTimecardSubmissionForm from './nurse/EnhancedTimecardSubmissionFo
 
 import ConversationsList from '@/components/ConversationList';
 import { supabase } from '@/integrations/supabase/client';
-import ContractNotifications from '@/components/ContractNotifications';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 
 // Import enhanced date formatting
@@ -87,6 +89,7 @@ export default function NurseDashboard() {
   const [nurseProfile, setNurseProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   // Add state for messages view
   const [showMessagesPage, setShowMessagesPage] = useState(false);
@@ -102,15 +105,14 @@ export default function NurseDashboard() {
 
   const [stats, setStats] = useState({
     activeApplications: 0,
-    activeContracts: 0,
-    pendingTimecards: 0,
+    pendingInvoices: 0, // Changed from pendingTimecards
     weeklyEarnings: 0,
     monthlyEarnings: 0,
     totalHours: 0,
     newJobMatches: 0,
     profileViews: 0,
     responseRate: 0,
-    // NEW: Payment related stats
+    // Payment related stats
     pendingPayments: 0,
     totalEarningsThisMonth: 0,
     averageHourlyRate: 0,
@@ -119,8 +121,7 @@ export default function NurseDashboard() {
 
   const [availableJobs, setAvailableJobs] = useState<any[]>([]);
   const [myApplications, setMyApplications] = useState<any[]>([]);
-  const [recentTimecards, setRecentTimecards] = useState<any[]>([]);
-  const [activeContracts, setActiveContracts] = useState<any[]>([]);
+  const [recentInvoices, setRecentInvoices] = useState<any[]>([]); // Changed from recentTimecards
   const [appliedJobIds, setAppliedJobIds] = useState<Set<string>>(new Set());
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -208,11 +209,10 @@ export default function NurseDashboard() {
       }
       setNurseProfile(profile);
 
-      const [jobsResult, applicationsResult, timecardsResult, contractsResult] = await Promise.all([
+      const [jobsResult, applicationsResult, invoicesResult] = await Promise.all([
         getOpenJobPostings(50, 0),
         getApplicationsByNurse(profile.id, 50, 0),
-        getNurseTimecards(profile.id, 20, 0),
-        getNurseContracts(profile.id, 20, 0)
+        getNurseTimecards(profile.id, 20, 0), // Still uses timecards API but renamed in UI
       ]);
 
       const jobs = jobsResult.data || [];
@@ -240,21 +240,18 @@ export default function NurseDashboard() {
       yesterday.setDate(yesterday.getDate() - 1);
       const newJobs = jobs.filter(job => new Date(job.created_at) > yesterday);
 
-      const timecards = timecardsResult.data || [];
-      setRecentTimecards(timecards);
-      const pendingTimecards = timecards.filter(tc => tc.status === 'Submitted').length;
-      const pendingPayments = timecards.filter(tc => tc.status === 'Approved' || tc.status === 'Auto-Approved').length;
+      const invoices = invoicesResult.data || [];
+      setRecentInvoices(invoices);
+      const pendingInvoices = invoices.filter(tc => tc.status === 'Submitted').length;
+      const pendingPayments = invoices.filter(tc => tc.status === 'Approved' || tc.status === 'Auto-Approved').length;
 
-      const contracts = contractsResult.data || [];
-      const active = contracts.filter(c => c.status === 'active');
-      setActiveContracts(active);
-
-      const completedContracts = contracts.filter(c => c.status === 'completed').length;
+      // Calculate completed work based on paid invoices instead of contracts
+      const completedWork = invoices.filter(tc => tc.status === 'Paid').length;
       setEliteProgress(prev => ({
         ...prev,
-        completedContracts,
-        isElite: completedContracts >= 3,
-        nextMilestone: completedContracts >= 3 ? 0 : 3 - completedContracts
+        completedContracts: Math.floor(completedWork / 3), // 3 paid invoices = 1 "contract equivalent"
+        isElite: completedWork >= 9, // 9 paid invoices for elite status
+        nextMilestone: completedWork >= 9 ? 0 : Math.ceil((9 - completedWork) / 3)
       }));
 
       const weekDates = getWeekDates(new Date().toISOString());
@@ -279,23 +276,22 @@ export default function NurseDashboard() {
       ).length;
       const responseRate = totalApplications > 0 ? Math.round((respondedApps / totalApplications) * 100) : 0;
 
-      // Calculate average hourly rate from recent timecards
-      const paidTimecards = timecards.filter(tc => tc.status === 'Paid' && tc.nurse_net_amount && tc.total_hours);
-      const avgHourlyRate = paidTimecards.length > 0 
-        ? paidTimecards.reduce((sum, tc) => sum + (tc.nurse_net_amount / tc.total_hours), 0) / paidTimecards.length
+      // Calculate average hourly rate from recent invoices
+      const paidInvoices = invoices.filter(tc => tc.status === 'Paid' && tc.nurse_net_amount && tc.total_hours);
+      const avgHourlyRate = paidInvoices.length > 0 
+        ? paidInvoices.reduce((sum, tc) => sum + (tc.nurse_net_amount / tc.total_hours), 0) / paidInvoices.length
         : 0;
 
       setStats({
         activeApplications: activeApps,
-        activeContracts: active.length,
-        pendingTimecards,
+        pendingInvoices, // Updated terminology
         weeklyEarnings: weeklyEarnings?.totalEarnings || 0,
         monthlyEarnings: monthlyEarnings?.totalEarnings || 0,
         totalHours: monthlyEarnings?.totalHours || 0,
         newJobMatches: newJobs.length,
         profileViews: Math.floor(Math.random() * 50) + 10,
         responseRate,
-        // NEW: Payment stats
+        // Payment stats
         pendingPayments,
         totalEarningsThisMonth: monthlyEarnings?.totalEarnings || 0,
         averageHourlyRate: avgHourlyRate,
@@ -354,36 +350,80 @@ export default function NurseDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'new': return 'bg-medical-blue-50 text-medical-blue-700 border-medical-blue-200';
-      case 'favorited': return 'bg-medical-rose-50 text-medical-rose-700 border-medical-rose-200';
-      case 'hired': return 'bg-medical-success-50 text-medical-success-700 border-medical-success-200';
-      case 'declined': return 'bg-medical-error-50 text-medical-error-700 border-medical-error-200';
-      case 'Submitted': return 'bg-medical-blue-50 text-medical-blue-700 border-medical-blue-200';
-      case 'Approved': return 'bg-medical-success-50 text-medical-success-700 border-medical-success-200';
-      case 'Rejected': return 'bg-medical-error-50 text-medical-error-700 border-medical-error-200';
-      case 'Paid': return 'bg-medical-purple-50 text-medical-purple-700 border-medical-purple-200';
-      case 'open': return 'bg-medical-success-50 text-medical-success-700 border-medical-success-200';
-      case 'filled': return 'bg-medical-neutral-100 text-medical-neutral-700 border-medical-neutral-300';
-      default: return 'bg-medical-neutral-100 text-medical-neutral-700 border-medical-neutral-300';
+      case 'new': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'favorited': return 'bg-rose-50 text-rose-700 border-rose-200';
+      case 'hired': return 'bg-green-50 text-green-700 border-green-200';
+      case 'declined': return 'bg-red-50 text-red-700 border-red-200';
+      case 'Submitted': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'Approved': return 'bg-green-50 text-green-700 border-green-200';
+      case 'Rejected': return 'bg-red-50 text-red-700 border-red-200';
+      case 'Paid': return 'bg-purple-50 text-purple-700 border-purple-200';
+      case 'open': return 'bg-green-50 text-green-700 border-green-200';
+      case 'filled': return 'bg-gray-100 text-gray-700 border-gray-300';
+      default: return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
+  // Sidebar navigation items
+  const navigationItems = [
+    {
+      id: 'overview',
+      label: 'Overview',
+      icon: Home,
+      isActive: activeTab === 'overview',
+      badge: null
+    },
+    {
+      id: 'payment',
+      label: 'Payment',
+      icon: CreditCard,
+      isActive: activeTab === 'payment',
+      badge: stats.paymentAccountStatus !== 'active' ? '!' : null,
+      badgeColor: 'bg-orange-500'
+    },
+    {
+      id: 'jobs',
+      label: 'Jobs',
+      icon: Search,
+      isActive: activeTab === 'jobs',
+      badge: stats.newJobMatches > 0 ? stats.newJobMatches : null,
+      badgeColor: 'bg-green-500'
+    },
+    {
+      id: 'applications',
+      label: 'Applications',
+      icon: Send,
+      isActive: activeTab === 'applications',
+      badge: stats.activeApplications > 0 ? stats.activeApplications : null,
+      badgeColor: 'bg-blue-500'
+    },
+    {
+      id: 'invoicing', // Changed from 'timecards'
+      label: 'Invoicing', // Changed from 'Timecards'
+      icon: ClipboardCheck, // Changed from Clock
+      isActive: activeTab === 'invoicing',
+      badge: stats.pendingInvoices > 0 ? stats.pendingInvoices : null,
+      badgeColor: 'bg-orange-500'
+    }
+    // Removed contracts tab as requested
+  ];
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-medical-gradient-primary">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center space-y-6">
             <div className="relative">
-              <div className="w-20 h-20 bg-white rounded-full shadow-medical-soft mx-auto flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-3 border-medical-primary border-t-transparent rounded-full"></div>
+              <div className="w-20 h-20 bg-white rounded-full shadow-lg mx-auto flex items-center justify-center">
+                <div className="animate-spin w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full"></div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <Stethoscope className="w-6 h-6 text-medical-primary animate-pulse" />
+                <Stethoscope className="w-6 h-6 text-blue-600 animate-pulse" />
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-medical-text-primary">Loading your dashboard...</h3>
-              <p className="text-medical-text-secondary">Setting up your personalized care experience</p>
+              <h3 className="text-xl font-semibold text-gray-900">Loading your dashboard...</h3>
+              <p className="text-gray-600">Setting up your personalized care experience</p>
             </div>
           </div>
         </div>
@@ -394,7 +434,7 @@ export default function NurseDashboard() {
   // Show Messages Page if showMessagesPage is true
   if (showMessagesPage) {
     return (
-      <div className="min-h-screen bg-medical-gradient-primary">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <ConversationsList 
           nurseId={nurseProfile?.id}
           userId={user?.id}
@@ -405,608 +445,537 @@ export default function NurseDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-medical-gradient-primary">
-      {/* Enhanced Medical-Grade Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-medical-border shadow-medical-soft">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Brand & Profile Section */}
-            <div className="flex items-center space-x-4 lg:space-x-6">
-              <div className="flex items-center space-x-3 lg:space-x-4">
-                <div className="relative group">
-                  <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden bg-gradient-to-br from-medical-primary to-medical-accent shadow-medical-soft ring-2 ring-white">
-                    {nurseProfile?.profile_photo_url ? (
-                      <img 
-                        src={nurseProfile.profile_photo_url} 
-                        alt="Profile" 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-medical-primary to-medical-accent flex items-center justify-center">
-                        <UserCircle className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
-                      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
+      {/* Enhanced Sidebar */}
+      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 relative flex flex-col`}>
+        {/* Logo and Brand */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className={`flex items-center space-x-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
+                <Stethoscope className="h-6 w-6 text-white" />
+              </div>
+              {!sidebarCollapsed && (
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Nurse Nest</h1>
+                  <p className="text-sm text-gray-500">Professional Care Dashboard</p>
+                </div>
+              )}
+            </div>
+            {!sidebarCollapsed && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCollapsed(true)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            )}
+            {sidebarCollapsed && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCollapsed(false)}
+                className="absolute -right-3 top-6 bg-white shadow-lg rounded-full p-1 border"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-2">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Button
+                key={item.id}
+                variant={item.isActive ? "default" : "ghost"}
+                className={`w-full justify-start h-12 ${
+                  item.isActive 
+                    ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${sidebarCollapsed ? 'px-3' : 'px-4'} transition-all duration-200`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
+                {!sidebarCollapsed && (
+                  <>
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {item.badge && (
+                      <Badge className={`${item.badgeColor || 'bg-gray-500'} text-white text-xs border-0 shadow-sm ml-2`}>
+                        {item.badge}
+                      </Badge>
                     )}
+                  </>
+                )}
+                {sidebarCollapsed && item.badge && (
+                  <div className={`absolute -top-1 -right-1 w-5 h-5 ${item.badgeColor || 'bg-gray-500'} rounded-full flex items-center justify-center`}>
+                    <span className="text-xs text-white font-semibold">{item.badge}</span>
                   </div>
+                )}
+              </Button>
+            );
+          })}
+        </nav>
+
+        {/* User Profile Section */}
+        <div className="p-4 border-t border-gray-200">
+          {!sidebarCollapsed ? (
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                {nurseProfile?.profile_photo_url ? (
+                  <img 
+                    src={nurseProfile.profile_photo_url} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white font-semibold text-sm">
+                    {nurseProfile?.first_name?.charAt(0)}{nurseProfile?.last_name?.charAt(0)}
+                  </span>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {nurseProfile?.first_name} {nurseProfile?.last_name}
+                </p>
+                <div className="flex items-center space-x-2">
+                  <p className="text-xs text-gray-500 truncate">Licensed Professional</p>
                   {eliteProgress.isElite && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-medical-accent to-medical-warning rounded-full flex items-center justify-center shadow-sm">
-                      <Trophy className="h-3 w-3 text-white" />
-                    </div>
+                    <Trophy className="h-3 w-3 text-yellow-500" />
                   )}
                 </div>
-                <div className="hidden sm:block">
-                  <div className="flex items-center space-x-2">
-                    <h1 className="text-lg lg:text-xl font-semibold text-medical-text-primary">
-                      Welcome, {nurseProfile?.first_name}
-                    </h1>
-                    <Shield className="h-4 w-4 text-medical-success" />
-                    {/* NEW: Payment Status Indicator */}
-                    {stats.paymentAccountStatus === 'active' && (
-                      <DollarSign className="h-4 w-4 text-medical-success" />
-                    )}
-                  </div>
-                  <p className="text-sm text-medical-text-secondary">Professional Care Dashboard</p>
-                </div>
               </div>
-              
-              {/* Status Badges */}
-              <div className="hidden md:flex items-center space-x-3">
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center relative">
+                {nurseProfile?.profile_photo_url ? (
+                  <img 
+                    src={nurseProfile.profile_photo_url} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white font-semibold text-sm">
+                    {nurseProfile?.first_name?.charAt(0)}{nurseProfile?.last_name?.charAt(0)}
+                  </span>
+                )}
                 {eliteProgress.isElite && (
-                  <Badge className="bg-gradient-to-r from-medical-accent to-medical-warning text-white border-0 shadow-sm">
-                    <Trophy className="h-3 w-3 mr-1" />
-                    Elite Nurse
-                  </Badge>
-                )}
-                {/* NEW: Payment Account Status Badge */}
-                {stats.paymentAccountStatus === 'active' && (
-                  <Badge className="bg-medical-success text-white border-0 shadow-sm">
-                    <CreditCard className="h-3 w-3 mr-1" />
-                    Payment Ready
-                  </Badge>
-                )}
-                {stats.paymentAccountStatus !== 'active' && (
-                  <Badge className="bg-medical-warning text-white border-0 shadow-sm animate-pulse">
-                    <AlertCircle className="h-3 w-3 mr-1" />
-                    Setup Payment
-                  </Badge>
-                )}
-                {stats.newJobMatches > 0 && (
-                  <Badge className="bg-medical-success text-white border-0 shadow-sm animate-pulse">
-                    <Briefcase className="h-3 w-3 mr-1" />
-                    {stats.newJobMatches} New Jobs
-                  </Badge>
-                )}
-                {hasNewMessages && (
-                  <Badge className="bg-medical-primary text-white border-0 shadow-sm animate-pulse">
-                    <MessageCircle className="h-3 w-3 mr-1" />
-                    {totalUnreadMessages} Message{totalUnreadMessages !== 1 ? 's' : ''}
-                  </Badge>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
+                    <Trophy className="h-2 w-2 text-white" />
+                  </div>
                 )}
               </div>
             </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-2 lg:space-x-4">
-              <NotificationsCard />
-              
+          )}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Top Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {activeTab === 'overview' && 'Professional Care Hub'}
+                {activeTab === 'payment' && 'Payment Setup'}
+                {activeTab === 'jobs' && 'Available Positions'}
+                {activeTab === 'applications' && 'My Applications'}
+                {activeTab === 'invoicing' && 'Invoice Management'} {/* Updated terminology */}
+              </h1>
+              <p className="text-gray-600 mt-1">
+                {activeTab === 'overview' && 'Manage your applications, track your work, and discover opportunities'}
+                {activeTab === 'payment' && 'Set up your payment account to receive earnings'}
+                {activeTab === 'jobs' && 'Discover and apply for healthcare positions'}
+                {activeTab === 'applications' && 'Track your job applications and responses'}
+                {activeTab === 'invoicing' && 'Submit and track your work invoices'} {/* Updated */}
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
               {/* Messages Button */}
               <Button 
                 variant={hasNewMessages ? "default" : "outline"} 
                 size="sm" 
                 onClick={() => setShowMessagesPage(true)}
                 className={`${hasNewMessages 
-                  ? "bg-medical-primary hover:bg-medical-primary/90 text-white border-0 shadow-medical-soft animate-pulse" 
-                  : "hover:bg-medical-primary/5 hover:border-medical-primary/30 text-medical-text-primary"
+                  ? "bg-blue-600 hover:bg-blue-700 text-white border-0 animate-pulse shadow-lg" 
+                  : "hover:bg-blue-50 hover:border-blue-300 text-gray-700"
                 } transition-all duration-300`}
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Messages</span>
+                Messages
                 {totalUnreadMessages > 0 && (
-                  <Badge className="ml-2 bg-medical-error text-white text-xs border-0 min-w-[20px] h-5">
+                  <Badge className="ml-2 bg-red-500 text-white text-xs border-0 min-w-[20px] h-5">
                     {totalUnreadMessages}
                   </Badge>
                 )}
               </Button>
               
-              <Button
+              <Button 
                 variant="outline"
-                size="sm"
-                onClick={handleRefresh}
-                className="hidden lg:inline-flex hover:bg-medical-primary/5 hover:border-medical-primary/30 transition-all duration-300"
-              >
-                <Activity className="h-4 w-4 mr-2" />
-                Refresh
-              </Button>
-              
-              <Button
-                size="sm"
-                className="bg-medical-primary hover:bg-medical-primary/90 text-white border-0 shadow-medical-soft transition-all duration-300"
-                onClick={() => setActiveTab('jobs')}
-              >
-                <Search className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Find Jobs</span>
-              </Button>
-              
-              <ContractNotifications
-                userId={user?.id} 
-                userType="nurse"
-                profileId={nurseProfile?.id}
-                onNotificationClick={(contractId) => {
-                  setActiveTab('contracts');
+                size="sm" 
+                className="hover:bg-red-50 hover:border-red-300 text-gray-700 transition-all duration-300" 
+                onClick={() => {
+                  // Handle logout logic here
+                  if (confirm('Are you sure you want to log out?')) {
+                    // Add your logout function here
+                    window.location.href = '/auth/logout';
+                  }
                 }}
-              />
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        {/* Enhanced Welcome Section */}
-        <div className="mb-8 lg:mb-12">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 lg:gap-8">
-            <div className="flex-1 space-y-4">
-              <div className="space-y-3">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-medical-text-primary via-medical-primary to-medical-accent bg-clip-text text-transparent">
-                  Your Professional Care Hub
-                </h2>
-                <p className="text-lg text-medical-text-secondary max-w-3xl">
-                  Manage your applications, track contracts, and discover new opportunities in healthcare excellence
-                </p>
-              </div>
-              
-              {/* Professional Credentials */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-medical-soft border border-medical-border">
-                  <Shield className="h-4 w-4 text-medical-success" />
-                  <span className="text-sm font-medium text-medical-text-primary">Licensed Professional</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-medical-soft border border-medical-border">
-                  <HeartHandshake className="h-4 w-4 text-medical-primary" />
-                  <span className="text-sm font-medium text-medical-text-primary">HIPAA Compliant</span>
-                </div>
-                {/* NEW: Payment Status Indicator */}
-                {stats.paymentAccountStatus === 'active' && (
-                  <div className="flex items-center space-x-2 bg-gradient-to-r from-medical-success to-medical-accent rounded-full px-4 py-2 shadow-medical-soft">
-                    <DollarSign className="h-4 w-4 text-white" />
-                    <span className="text-sm font-medium text-white">Payment Ready</span>
-                  </div>
-                )}
-                {eliteProgress.isElite && (
-                  <div className="flex items-center space-x-2 bg-gradient-to-r from-medical-accent to-medical-warning rounded-full px-4 py-2 shadow-medical-soft">
-                    <Trophy className="h-4 w-4 text-white" />
-                    <span className="text-sm font-medium text-white">Elite Status</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Profile Picture Upload Section */}
-            {!nurseProfile?.profile_photo_url && (
-              <div className="w-full lg:w-auto">
-                <ProfilePictureUpload
-                  nurseId={nurseProfile?.id}
-                  currentPhotoUrl={nurseProfile?.profile_photo_url}
-                  onPhotoUpdated={handlePhotoUpdated}
-                  className="max-w-sm mx-auto lg:mx-0"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Enhanced Alert Cards */}
-          <div className="mt-6 lg:mt-8 space-y-4">
-            {/* NEW: Payment Setup Alert */}
-            {stats.paymentAccountStatus !== 'active' && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-warning/10 to-medical-error/10 border border-medical-warning/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-warning rounded-full flex items-center justify-center">
-                      <CreditCard className="h-5 w-5 text-white animate-pulse" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-warning">
-                        💳 Complete your payment setup to receive earnings!
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">
-                        Set up your bank account to get paid instantly when timecards are approved
-                      </p>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="bg-medical-warning hover:bg-medical-warning/90 text-white shadow-medical-soft"
-                    onClick={() => setActiveTab('payment')}
-                  >
-                    Setup Now
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* NEW: Pending Payments Alert */}
-            {stats.pendingPayments > 0 && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-success/10 to-medical-accent/10 border border-medical-success/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-success rounded-full flex items-center justify-center">
-                      <DollarSign className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-success">
-                        💰 You have {stats.pendingPayments} approved timecard{stats.pendingPayments !== 1 ? 's' : ''} ready for payment!
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">Money will be transferred as soon as client approves</p>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="bg-medical-success hover:bg-medical-success/90 text-white shadow-medical-soft"
-                    onClick={() => setActiveTab('timecards')}
-                  >
-                    View Status
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {hasNewMessages && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 border border-medical-primary/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-primary rounded-full flex items-center justify-center">
-                      <MessageCircle className="h-5 w-5 text-white animate-pulse" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-primary">
-                        💬 You have {totalUnreadMessages} new message{totalUnreadMessages !== 1 ? 's' : ''}!
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">Stay connected with your care opportunities</p>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="bg-medical-primary hover:bg-medical-primary/90 text-white shadow-medical-soft"
-                    onClick={() => setShowMessagesPage(true)}
-                  >
-                    View Messages
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {stats.newJobMatches > 0 && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-success/10 to-medical-accent/10 border border-medical-success/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-success rounded-full flex items-center justify-center">
-                      <Briefcase className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-success">
-                        ✨ {stats.newJobMatches} new position{stats.newJobMatches !== 1 ? 's' : ''} match your expertise!
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">Perfect opportunities await your application</p>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="bg-medical-success hover:bg-medical-success/90 text-white shadow-medical-soft"
-                    onClick={() => setActiveTab('jobs')}
-                  >
-                    View Positions
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {stats.pendingTimecards > 0 && (
-              <div className="p-4 lg:p-6 bg-gradient-to-r from-medical-warning/10 to-medical-accent/10 border border-medical-warning/20 rounded-xl shadow-medical-soft">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-medical-warning rounded-full flex items-center justify-center">
-                      <Clock className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-medical-warning">
-                        ⏰ You have {stats.pendingTimecards} timecard{stats.pendingTimecards !== 1 ? 's' : ''} awaiting approval
-                      </p>
-                      <p className="text-sm text-medical-text-secondary">Track your earnings progress</p>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="bg-medical-warning hover:bg-medical-warning/90 text-white shadow-medical-soft"
-                    onClick={() => setActiveTab('timecards')}
-                  >
-                    Check Status
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Enhanced Elite Progress Card */}
-        {!eliteProgress.isElite && (
-          <Card className="mb-8 lg:mb-12 border-0 shadow-medical-elevated bg-gradient-to-br from-medical-accent/5 via-white to-medical-warning/5">
-            <CardContent className="p-6 lg:p-8">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="flex items-center space-x-4 lg:space-x-6">
-                  <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-medical-accent to-medical-warning rounded-full flex items-center justify-center shadow-medical-soft">
-                    <Trophy className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
-                  </div>
-                  <div className="text-center lg:text-left">
-                    <h3 className="font-bold text-xl lg:text-2xl text-medical-warning mb-2">Path to Elite Status</h3>
-                    <p className="text-medical-text-secondary mb-4">
-                      Complete {eliteProgress.nextMilestone} more contract{eliteProgress.nextMilestone !== 1 ? 's' : ''} to unlock Elite benefits
-                    </p>
-                    <div className="flex items-center justify-center lg:justify-start space-x-4 text-sm">
-                      <span className="text-3xl lg:text-4xl font-bold text-medical-accent">
-                        {eliteProgress.completedContracts}/3
-                      </span>
-                      <span className="text-medical-text-secondary">Contracts Completed</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full lg:w-auto lg:min-w-[300px]">
-                  <Progress
-                    value={(eliteProgress.completedContracts / 3) * 100}
-                    className="h-3 lg:h-4 mb-4"
-                  />
-                  <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
-                    {eliteProgress.benefits.map((benefit, index) => (
-                      <Badge key={index} variant="outline" className="bg-white/80 text-medical-accent border-medical-accent/30">
-                        {benefit}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Enhanced Stats Grid */}
-        <div className="mb-8 lg:mb-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 lg:gap-6">
-            {[
-              { title: 'Applications', value: stats.activeApplications, icon: Send, gradient: 'from-medical-purple to-medical-primary', bgColor: 'bg-medical-purple' },
-              { title: 'Contracts', value: stats.activeContracts, icon: FileText, gradient: 'from-medical-success to-medical-accent', bgColor: 'bg-medical-success' },
-              { title: 'Messages', value: totalUnreadMessages, icon: MessageCircle, gradient: 'from-medical-primary to-medical-accent', bgColor: 'bg-medical-primary', pulse: hasNewMessages },
-              { title: 'Pending', value: stats.pendingTimecards, icon: Clock, gradient: 'from-medical-warning to-medical-accent', bgColor: 'bg-medical-warning' },
-              { title: 'Weekly', value: `$${stats.weeklyEarnings}`, icon: DollarSign, gradient: 'from-medical-success to-medical-primary', bgColor: 'bg-medical-success' },
-              { title: 'Monthly', value: `$${stats.monthlyEarnings}`, icon: TrendingUp, gradient: 'from-medical-primary to-medical-accent', bgColor: 'bg-medical-primary' },
-              { title: 'Hours', value: `${stats.totalHours}h`, icon: Timer, gradient: 'from-medical-accent to-medical-primary', bgColor: 'bg-medical-accent' },
-              { title: 'Avg Rate', value: `$${stats.averageHourlyRate.toFixed(0)}/hr`, icon: Star, gradient: 'from-medical-rose to-medical-accent', bgColor: 'bg-medical-rose' },
-            ].map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <Card key={index} className={`border-0 shadow-medical-soft bg-white hover:shadow-medical-elevated transition-all duration-300 transform hover:-translate-y-1 ${stat.pulse ? 'animate-pulse ring-2 ring-medical-primary/20' : ''}`}>
-                  <CardContent className="p-4 lg:p-6">
-                    <div className="flex flex-col items-center text-center space-y-3">
-                      <div className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full ${stat.bgColor} flex items-center justify-center shadow-medical-soft`}>
-                        <Icon className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
+        {/* Main Content Area */}
+        <main className="flex-1 p-6 overflow-auto">
+          {activeTab === 'overview' && (
+            <div className="space-y-8">
+              {/* Alert Cards */}
+              <div className="space-y-4">
+                {/* Payment Setup Alert */}
+                {stats.paymentAccountStatus !== 'active' && (
+                  <div className="p-4 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                          <CreditCard className="h-5 w-5 text-white animate-pulse" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-orange-900">
+                            💳 Complete your payment setup to receive earnings!
+                          </p>
+                          <p className="text-sm text-orange-700">
+                            Set up your bank account to get paid instantly when invoices are approved
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-2xl lg:text-3xl font-bold text-medical-text-primary mb-1">{stat.value}</p>
-                        <p className="text-xs lg:text-sm font-medium text-medical-text-secondary">{stat.title}</p>
+                      <Button 
+                        size="sm" 
+                        className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm"
+                        onClick={() => setActiveTab('payment')}
+                      >
+                        Setup Now
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Pending Payments Alert */}
+                {stats.pendingPayments > 0 && (
+                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                          <DollarSign className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-green-900">
+                            💰 You have {stats.pendingPayments} approved invoice{stats.pendingPayments !== 1 ? 's' : ''} ready for payment!
+                          </p>
+                          <p className="text-sm text-green-700">Money will be transferred as soon as client approves</p>
+                        </div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="bg-green-500 hover:bg-green-600 text-white shadow-sm"
+                        onClick={() => setActiveTab('invoicing')}
+                      >
+                        View Status
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* New Jobs Alert */}
+                {stats.newJobMatches > 0 && (
+                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                          <Briefcase className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-blue-900">
+                            ✨ {stats.newJobMatches} new position{stats.newJobMatches !== 1 ? 's' : ''} match your expertise!
+                          </p>
+                          <p className="text-sm text-blue-700">Perfect opportunities await your application</p>
+                        </div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
+                        onClick={() => setActiveTab('jobs')}
+                      >
+                        View Positions
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Enhanced Elite Progress Card */}
+              {!eliteProgress.isElite && (
+                <Card className="border-0 shadow-lg bg-gradient-to-br from-yellow-50 to-orange-50">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg">
+                          <Trophy className="h-8 w-8 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-xl text-orange-900 mb-2">Path to Elite Status</h3>
+                          <p className="text-orange-700 mb-4">
+                            Complete {eliteProgress.nextMilestone} more work cycle{eliteProgress.nextMilestone !== 1 ? 's' : ''} to unlock Elite benefits
+                          </p>
+                          <div className="flex items-center space-x-4 text-sm">
+                            <span className="text-3xl font-bold text-orange-600">
+                              {eliteProgress.completedContracts}/3
+                            </span>
+                            <span className="text-orange-700">Work Cycles Completed</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="min-w-[300px]">
+                        <Progress
+                          value={(eliteProgress.completedContracts / 3) * 100}
+                          className="h-4 mb-4"
+                        />
+                        <div className="flex flex-wrap gap-2">
+                          {eliteProgress.benefits.map((benefit, index) => (
+                            <Badge key={index} variant="outline" className="bg-white/80 text-orange-600 border-orange-300">
+                              {benefit}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              );
-            })}
-          </div>
-        </div>
+              )}
 
-        {/* Enhanced Medical-Grade Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-6 h-12 lg:h-14 bg-white/80 backdrop-blur-sm rounded-xl shadow-medical-soft border border-medical-border">
-            <TabsTrigger value="overview" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              Overview
-            </TabsTrigger>
-            {/* NEW: Payment Tab */}
-            <TabsTrigger value="payment" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              <span className="flex items-center space-x-2">
-                <span className="hidden sm:inline">Payment</span>
-                <span className="sm:hidden">💳</span>
-                {stats.paymentAccountStatus !== 'active' && (
-                  <Badge className="bg-medical-warning text-white text-xs border-0 animate-pulse min-w-[20px] h-5">
-                    !
-                  </Badge>
-                )}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="jobs" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              <span className="flex items-center space-x-2">
-                <span>Jobs</span>
-                {stats.newJobMatches > 0 && (
-                  <Badge className="bg-medical-success text-white text-xs border-0 animate-pulse min-w-[20px] h-5">
-                    {stats.newJobMatches}
-                  </Badge>
-                )}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="applications" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              Applications
-            </TabsTrigger>
-            <TabsTrigger value="timecards" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              <span className="flex items-center space-x-2">
-                <span className="hidden sm:inline">Timecards</span>
-                <span className="sm:hidden">Time</span>
-                {stats.pendingTimecards > 0 && (
-                  <Badge className="bg-medical-warning text-white text-xs border-0 min-w-[20px] h-5">
-                    {stats.pendingTimecards}
-                  </Badge>
-                )}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="contracts" className="rounded-lg font-medium text-sm lg:text-base transition-all duration-300 data-[state=active]:bg-medical-primary data-[state=active]:text-white data-[state=active]:shadow-medical-soft">
-              Contracts
-            </TabsTrigger>
-          </TabsList>
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { 
+                    title: 'Applications', 
+                    value: stats.activeApplications, 
+                    icon: Send, 
+                    bgColor: 'bg-blue-500',
+                    textColor: 'text-blue-600',
+                    bgLight: 'bg-blue-50'
+                  },
+                  { 
+                    title: 'Messages', 
+                    value: totalUnreadMessages, 
+                    icon: MessageCircle, 
+                    bgColor: 'bg-green-500',
+                    textColor: 'text-green-600',
+                    bgLight: 'bg-green-50',
+                    pulse: hasNewMessages
+                  },
+                  { 
+                    title: 'Weekly', 
+                    value: `$${stats.weeklyEarnings}`, 
+                    icon: DollarSign, 
+                    bgColor: 'bg-purple-500',
+                    textColor: 'text-purple-600',
+                    bgLight: 'bg-purple-50'
+                  },
+                  { 
+                    title: 'Pending Invoices', // Updated terminology
+                    value: stats.pendingInvoices, 
+                    icon: ClipboardCheck, // Updated icon
+                    bgColor: 'bg-orange-500',
+                    textColor: 'text-orange-600',
+                    bgLight: 'bg-orange-50'
+                  },
+                ].map((stat, index) => {
+                  const Icon = stat.icon;
+                  return (
+                    <Card key={index} className={`border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${stat.pulse ? 'animate-pulse ring-2 ring-blue-500/20' : ''}`}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                          </div>
+                          <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center shadow-lg`}>
+                            <Icon className="h-6 w-6 text-white" />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
 
-          <TabsContent value="overview" className="space-y-8">
-            <QuickActionsCard
-              nurseId={nurseProfile?.id || ''}
-              onRefresh={handleRefresh}
-            />
-
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-              {/* Enhanced Recommended Jobs Card */}
-              <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-primary/5">
-                <CardHeader className="bg-gradient-to-r from-medical-primary/10 to-medical-accent/10 rounded-t-lg border-b border-medical-border">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center text-xl font-bold text-medical-text-primary">
-                      <Sparkles className="h-5 w-5 mr-2 text-medical-primary" />
-                      Recommended Positions
-                    </CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setActiveTab('jobs')}
-                      className="text-medical-primary hover:bg-medical-primary/10"
-                    >
-                      View All
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  {availableJobs.length > 0 ? (
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                      {availableJobs.slice(0, 3).map((job) => (
-                        <div key={job.id} className="p-4 rounded-xl border border-medical-border hover:bg-gradient-to-r hover:from-medical-primary/5 hover:to-medical-accent/5 transition-all group cursor-pointer">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h4 className="font-semibold text-medical-text-primary group-hover:text-medical-primary transition-colors">{job.care_type}</h4>
-                              <p className="text-sm text-medical-text-secondary flex items-center mt-1">
-                                <Building2 className="h-3 w-3 mr-1" />
-                                {job.client_profiles?.first_name} {job.client_profiles?.last_name}
-                              </p>
+              {/* Two Column Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Recommended Jobs */}
+                <Card className="border-0 shadow-lg bg-white">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
+                        <Sparkles className="h-5 w-5 mr-2 text-blue-600" />
+                        Recommended Positions
+                      </CardTitle>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setActiveTab('jobs')}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      >
+                        View All
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    {availableJobs.length > 0 ? (
+                      <div className="space-y-4">
+                        {availableJobs.slice(0, 3).map((job) => (
+                          <div key={job.id} className="p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <div className="flex items-start justify-between mb-3">
+                              <div>
+                                <h4 className="font-semibold text-gray-900">{job.care_type}</h4>
+                                <p className="text-sm text-gray-500 flex items-center mt-1">
+                                  <Building2 className="h-3 w-3 mr-1" />
+                                  {job.client_profiles?.first_name} {job.client_profiles?.last_name}
+                                </p>
+                              </div>
+                              <Badge className={`${getStatusColor(job.status)} border shadow-sm`}>
+                                {job.status}
+                              </Badge>
                             </div>
-                            <Badge className={`${getStatusColor(job.status)} border shadow-sm`}>
-                              {job.status}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center space-x-4 text-xs text-medical-text-secondary mb-3">
-                            <span className="flex items-center">
-                              <Calendar className="h-3 w-3 mr-1" />
-                              {job.duration}
-                            </span>
-                            <span className="flex items-center">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {job.preferred_time}
-                            </span>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setSelectedJob(job);
-                                setShowApplicationModal(true);
-                              }}
-                              className="group-hover:bg-white transition-all hover:border-medical-primary hover:text-medical-primary"
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              View Details
-                            </Button>
-                            {appliedJobIds.has(job.id) ? (
-                              <Button size="sm" variant="outline" disabled className="bg-medical-success/10 text-medical-success border-medical-success/30">
-                                <CheckCircle className="h-4 w-4 mr-1" />
-                                Applied
-                              </Button>
-                            ) : (
+                            <div className="flex items-center space-x-4 text-xs text-gray-500 mb-3">
+                              <span className="flex items-center">
+                                <Calendar className="h-3 w-3 mr-1" />
+                                {job.duration}
+                              </span>
+                              <span className="flex items-center">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {job.preferred_time}
+                              </span>
+                            </div>
+                            <div className="flex space-x-2">
                               <Button
                                 size="sm"
+                                variant="outline"
                                 onClick={() => {
                                   setSelectedJob(job);
                                   setShowApplicationModal(true);
                                 }}
-                                className="bg-medical-primary hover:bg-medical-primary/90 text-white border-0 shadow-medical-soft"
+                                className="border-gray-300"
                               >
-                                <Send className="h-4 w-4 mr-1" />
-                                Apply
+                                <Eye className="h-4 w-4 mr-1" />
+                                View Details
                               </Button>
-                            )}
+                              {appliedJobIds.has(job.id) ? (
+                                <Button size="sm" variant="outline" disabled className="bg-green-50 text-green-600 border-green-300">
+                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                  Applied
+                                </Button>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedJob(job);
+                                    setShowApplicationModal(true);
+                                  }}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                >
+                                  <Send className="h-4 w-4 mr-1" />
+                                  Apply
+                                </Button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-[300px] text-medical-text-secondary">
-                      <div className="w-16 h-16 bg-medical-neutral-100 rounded-full flex items-center justify-center mb-4">
-                        <Briefcase className="h-8 w-8 text-medical-neutral-400" />
+                        ))}
                       </div>
-                      <p className="text-lg font-medium mb-2">No positions available</p>
-                      <Button variant="link" onClick={() => setActiveTab('jobs')} className="text-medical-primary hover:text-medical-primary/80">
-                        Browse all opportunities
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Briefcase className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Positions Available</h3>
+                        <p className="text-gray-600 mb-4">Check back later for new opportunities</p>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setActiveTab('jobs')}
+                          className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                        >
+                          Browse All Jobs
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
 
-              {/* Enhanced My Applications Card */}
-              <Card className="border-0 shadow-medical-elevated bg-gradient-to-br from-white to-medical-purple/5">
-                <CardHeader className="bg-gradient-to-r from-medical-purple/10 to-medical-rose/10 rounded-t-lg border-b border-medical-border">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center text-xl font-bold text-medical-text-primary">
-                      My Applications
-                      {hasNewMessages && (
-                        <Badge className="ml-2 bg-medical-primary text-white border-0 animate-pulse">
-                          {totalUnreadMessages} new
-                        </Badge>
-                      )}
-                    </CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setActiveTab('applications')}
-                      className="text-medical-purple hover:bg-medical-purple/10"
-                    >
-                      View All
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  {myApplications.length > 0 ? (
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                      {myApplications.slice(0, 5).map((app) => (
-                        <div key={app.id} className="flex items-center justify-between p-4 rounded-xl border border-medical-border hover:bg-gradient-to-r hover:from-medical-purple/5 hover:to-medical-rose/5 transition-all group">
-                          <div className="flex-1">
-                            <p className="font-medium text-medical-text-primary group-hover:text-medical-purple transition-colors">
-                              {app.job_postings?.care_type}
-                            </p>
-                            <p className="text-sm text-medical-text-secondary">
-                              Applied {formatRelativeTime(app.created_at)}
-                            </p>
-                          </div>
-                          <Badge className={`${getStatusColor(app.status)} border shadow-sm`}>
-                            {app.status === 'favorited' ? 'Favorite' : app.status}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-[300px] text-medical-text-secondary">
-                      <div className="w-16 h-16 bg-medical-neutral-100 rounded-full flex items-center justify-center mb-4">
-                        <Send className="h-8 w-8 text-medical-neutral-400" />
-                      </div>
-                      <p className="text-lg font-medium mb-2">No applications yet</p>
-                      <Button variant="link" onClick={() => setActiveTab('jobs')} className="text-medical-purple hover:text-medical-purple/80">
-                        Browse available positions
+                {/* My Applications */}
+                <Card className="border-0 shadow-lg bg-white">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl font-bold text-gray-900">My Applications</CardTitle>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setActiveTab('applications')}
+                        className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                      >
+                        View All
                       </Button>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    {myApplications.length > 0 ? (
+                      <div className="space-y-4">
+                        {myApplications.slice(0, 3).map((app) => (
+                          <div key={app.id} className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                            <div>
+                              <p className="font-medium text-gray-900">
+                                {app.job_postings?.care_type}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                Applied {formatRelativeTime(app.created_at)}
+                              </p>
+                            </div>
+                            <Badge className={`${getStatusColor(app.status)} border shadow-sm`}>
+                              {app.status === 'favorited' ? 'Favorite' : app.status}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Send className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Yet</h3>
+                        <p className="text-gray-600 mb-4">Apply to positions to track your progress</p>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setActiveTab('jobs')}
+                          className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                        >
+                          Browse Positions
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </TabsContent>
+          )}
 
-          {/* NEW: Payment Tab */}
-          <TabsContent value="payment">
+          {activeTab === 'payment' && (
             <StripeOnboardingCard
               nurseId={nurseProfile?.id || ''}
               nurseEmail={user?.email || ''}
@@ -1014,44 +983,37 @@ export default function NurseDashboard() {
               currentStatus={nurseProfile?.stripe_account_status}
               onStatusUpdate={handleRefresh}
             />
-          </TabsContent>
+          )}
 
-          <TabsContent value="jobs">
+          {activeTab === 'jobs' && (
             <JobApplicationsCard
               nurseId={nurseProfile?.id || ''}
               onApplicationSubmitted={handleRefresh}
             />
-          </TabsContent>
+          )}
 
-          <TabsContent value="applications">
+          {activeTab === 'applications' && (
             <JobApplicationsCard
               nurseId={nurseProfile?.id || ''}
               onApplicationSubmitted={handleRefresh}
               showMyApplications={true}
             />
-          </TabsContent>
+          )}
 
-          <TabsContent value="timecards">
+          {activeTab === 'invoicing' && ( // Changed from 'timecards'
             <TimecardsCard
               nurseId={nurseProfile?.id || ''}
               onTimecardSubmitted={handleRefresh}
-              // NEW: Pass payment status to timecard component
               stripeAccountStatus={nurseProfile?.stripe_account_status}
             />
-          </TabsContent>
-
-          <TabsContent value="contracts">
-            <ContractsCard
-              nurseId={nurseProfile?.id || ''}
-            />
-          </TabsContent>
-        </Tabs>
-      </main>
+          )}
+        </main>
+      </div>
 
       {/* Enhanced Application Modal */}
       {showApplicationModal && selectedJob && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-medical-elevated max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
             <JobApplicationForm
               job={selectedJob}
               nurseId={nurseProfile.id}
@@ -1068,10 +1030,10 @@ export default function NurseDashboard() {
         </div>
       )}
 
-      {/* NEW: Enhanced Timecard Submission Modal */}
+      {/* Enhanced Invoice Submission Modal */}
       {showEnhancedTimecardForm && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-medical-elevated max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
             <EnhancedTimecardSubmissionForm
               nurseId={nurseProfile?.id || ''}
               stripeAccountStatus={nurseProfile?.stripe_account_status}

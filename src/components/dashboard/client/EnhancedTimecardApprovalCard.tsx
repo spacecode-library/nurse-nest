@@ -1,4 +1,4 @@
-// src/components/dashboard/client/EnhancedTimecardApprovalCard.tsx - WITH RECEIPT DOWNLOAD
+// src/components/dashboard/client/EnhancedInvoiceApprovalCard.tsx - UPDATED TERMINOLOGY
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,8 @@ import {
   Download,
   Receipt,
   FileText,
-  Building2
+  Building2,
+  ClipboardCheck
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { getClientTimecards, approveTimecard, rejectTimecard } from '@/supabase/api/timecardService';
@@ -48,7 +49,7 @@ import {
 } from '@/lib/dateFormatting';
 import { supabase } from '@/integrations/supabase/client';
 
-interface Timecard {
+interface Invoice {
   updated_at: string;
   id: string;
   job_code: string;
@@ -85,18 +86,18 @@ interface Timecard {
   };
 }
 
-interface EnhancedTimecardApprovalProps {
+interface EnhancedInvoiceApprovalProps {
   clientId: string;
-  onTimecardAction: () => void;
+  onInvoiceAction: () => void;
 }
 
-export default function EnhancedTimecardApprovalCard({ 
+export default function EnhancedInvoiceApprovalCard({ 
   clientId, 
-  onTimecardAction 
-}: EnhancedTimecardApprovalProps) {
-  const [timecards, setTimecards] = useState<Timecard[]>([]);
+  onInvoiceAction 
+}: EnhancedInvoiceApprovalProps) {
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTimecard, setSelectedTimecard] = useState<Timecard | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
@@ -104,7 +105,7 @@ export default function EnhancedTimecardApprovalCard({
   const [clientProfile, setClientProfile] = useState<any>(null);
 
   useEffect(() => {
-    loadTimecards();
+    loadInvoices();
     loadPaymentMethods();
     loadClientProfile();
   }, [clientId]);
@@ -124,17 +125,17 @@ export default function EnhancedTimecardApprovalCard({
     }
   };
 
-  const loadTimecards = async () => {
+  const loadInvoices = async () => {
     try {
       setLoading(true);
-      const { data: timecardsData, error } = await getClientTimecards(clientId, 100, 0);
+      const { data: invoicesData, error } = await getClientTimecards(clientId, 100, 0);
       if (error) throw error;
-      setTimecards(timecardsData || []);
+      setInvoices(invoicesData || []);
     } catch (error: any) {
-      console.error('Error loading timecards:', error);
+      console.error('Error loading invoices:', error);
       toast({
         title: "Error",
-        description: "Failed to load timecards",
+        description: "Failed to load invoices",
         variant: "destructive"
       });
     } finally {
@@ -160,12 +161,12 @@ export default function EnhancedTimecardApprovalCard({
   };
 
   // Enhanced receipt generation function
-  const generateAndDownloadReceipt = async (timecard: Timecard) => {
+  const generateAndDownloadReceipt = async (invoice: Invoice) => {
     try {
-      if (timecard.status !== 'Paid' || !timecard.client_total_amount) {
+      if (invoice.status !== 'Paid' || !invoice.client_total_amount) {
         toast({
           title: "Receipt Not Available",
-          description: "Receipt is only available for paid timecards",
+          description: "Receipt is only available for paid invoices",
           variant: "destructive"
         });
         return;
@@ -180,31 +181,31 @@ export default function EnhancedTimecardApprovalCard({
         companyWebsite: 'www.nursenest.com',
         
         // Receipt Information
-        receiptNumber: timecard.stripe_payment_intent_id || `NN-${timecard.id.substring(0, 8).toUpperCase()}`,
-        paymentDate: formatPremiumDate(timecard.timestamp_paid || timecard.updated_at),
+        receiptNumber: invoice.stripe_payment_intent_id || `NN-${invoice.id.substring(0, 8).toUpperCase()}`,
+        paymentDate: formatPremiumDate(invoice.timestamp_paid || invoice.updated_at),
         
         // Client Information
         clientName: clientProfile ? `${clientProfile.first_name} ${clientProfile.last_name}` : 'Client',
         clientType: clientProfile?.client_type || 'Individual',
         
         // Service Information
-        nurseName: `${timecard.nurse_profiles.first_name} ${timecard.nurse_profiles.last_name}`,
-        jobCode: timecard.job_code,
-        shiftDate: formatPremiumDate(timecard.shift_date),
-        shiftTime: `${timecard.rounded_start_time} - ${timecard.rounded_end_time}`,
-        isOvernight: timecard.is_overnight,
-        totalHours: timecard.total_hours,
-        breakMinutes: timecard.break_minutes,
+        nurseName: `${invoice.nurse_profiles.first_name} ${invoice.nurse_profiles.last_name}`,
+        jobCode: invoice.job_code,
+        shiftDate: formatPremiumDate(invoice.shift_date),
+        shiftTime: `${invoice.rounded_start_time} - ${invoice.rounded_end_time}`,
+        isOvernight: invoice.is_overnight,
+        totalHours: invoice.total_hours,
+        breakMinutes: invoice.break_minutes,
         
         // Payment Breakdown
-        hourlyRate: timecard.nurse_hourly_rate,
-        nurseEarnings: timecard.nurse_net_amount || 0,
-        platformFee: timecard.platform_fee_amount || 0,
-        totalAmount: timecard.client_total_amount || 0,
+        hourlyRate: invoice.nurse_hourly_rate,
+        nurseEarnings: invoice.nurse_net_amount || 0,
+        platformFee: invoice.platform_fee_amount || 0,
+        totalAmount: invoice.client_total_amount || 0,
         
         // Additional Information
-        notes: timecard.notes,
-        submittedDate: formatPremiumDate(timecard.timestamp_submitted),
+        notes: invoice.notes,
+        submittedDate: formatPremiumDate(invoice.timestamp_submitted),
         paymentMethod: 'Credit Card (Stripe)',
       };
 
@@ -263,7 +264,7 @@ Transaction ID: ${receiptData.receiptNumber}
 
 ADMINISTRATIVE DETAILS:
 ────────────────────────────────────────────────────────────────
-Timecard Submitted: ${receiptData.submittedDate}
+Invoice Submitted: ${receiptData.submittedDate}
 Payment Processed: ${receiptData.paymentDate}
 Service Category: Healthcare Staffing
 Tax Classification: Professional Services
@@ -318,7 +319,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
   };
 
   // Enhanced function to check if nurse is ready for payments
-  const isNurseReadyForPayments = (nurseProfile: Timecard['nurse_profiles']): { ready: boolean; reason: string } => {
+  const isNurseReadyForPayments = (nurseProfile: Invoice['nurse_profiles']): { ready: boolean; reason: string } => {
     if (!nurseProfile.stripe_account_id) {
       return { ready: false, reason: 'No payment account found' };
     }
@@ -334,17 +335,17 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
     return { ready: true, reason: 'Ready for payments' };
   };
 
-  const handleApproveWithPayment = async (timecardId: string, timecard: Timecard) => {
+  const handleApproveWithPayment = async (invoiceId: string, invoice: Invoice) => {
     if (paymentMethods.length === 0) {
       toast({
         title: "Payment Method Required",
-        description: "Please add a payment method before approving timecards.",
+        description: "Please add a payment method before approving invoices.",
         variant: "destructive"
       });
       return;
     }
 
-    if (!timecard.client_profiles.stripe_customer_id) {
+    if (!invoice.client_profiles.stripe_customer_id) {
       toast({
         title: "Client Setup Error",
         description: "Client Stripe customer not found. Please contact support.",
@@ -353,7 +354,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
       return;
     }
 
-    const { ready, reason } = isNurseReadyForPayments(timecard.nurse_profiles);
+    const { ready, reason } = isNurseReadyForPayments(invoice.nurse_profiles);
     
     if (!ready) {
       toast({
@@ -369,34 +370,34 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
       setActionLoading(true);
       setPaymentProcessing(true);
 
-      const { error: approvalError } = await approveTimecard(timecardId, clientId);
+      const { error: approvalError } = await approveTimecard(invoiceId, clientId);
       if (approvalError) throw approvalError;
 
-      const nurseRate = timecard.nurse_hourly_rate || 50;
-      const amounts = calculatePaymentAmounts(nurseRate, timecard.total_hours);
+      const nurseRate = invoice.nurse_hourly_rate || 50;
+      const amounts = calculatePaymentAmounts(nurseRate, invoice.total_hours);
 
       const paymentResult = await processTimecardPayment(
-        timecardId,
-        timecard.nurse_profiles.stripe_account_id!,
-        timecard.client_profiles.stripe_customer_id,
+        invoiceId,
+        invoice.nurse_profiles.stripe_account_id!,
+        invoice.client_profiles.stripe_customer_id,
         paymentMethods[0].id,
         nurseRate,
-        timecard.total_hours
+        invoice.total_hours
       );
 
       if (paymentResult.error) {
         toast({
-          title: "⚠️ Timecard Approved, Payment Processing Failed",
-          description: `Timecard approved but payment failed: ${paymentResult.error.message}`,
+          title: "⚠️ Invoice Approved, Payment Processing Failed",
+          description: `Invoice approved but payment failed: ${paymentResult.error.message}`,
           variant: "destructive",
           duration: 8000
         });
       } else {
         toast({
-          title: "✅ Timecard Approved & Payment Processed!",
+          title: "✅ Invoice Approved & Payment Processed!",
           description: (
             <div className="space-y-1">
-              <p>Timecard approved and payment processed successfully</p>
+              <p>Invoice approved and payment processed successfully</p>
               <p className="text-sm">
                 💳 Charged: {formatCurrency(amounts.clientTotalAmount)} | 
                 👩‍⚕️ Nurse receives: {formatCurrency(amounts.nurseNetAmount)} | 
@@ -408,15 +409,15 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
         });
       }
 
-      loadTimecards();
-      setSelectedTimecard(null);
-      onTimecardAction();
+      loadInvoices();
+      setSelectedInvoice(null);
+      onInvoiceAction();
 
     } catch (error: any) {
       console.error('Error in approval/payment process:', error);
       toast({
         title: "Process Failed",
-        description: error.message || "Failed to approve timecard and process payment",
+        description: error.message || "Failed to approve invoice and process payment",
         variant: "destructive"
       });
     } finally {
@@ -425,11 +426,11 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
     }
   };
 
-  const handleReject = async (timecardId: string, reason: string) => {
+  const handleReject = async (invoiceId: string, reason: string) => {
     if (!reason.trim()) {
       toast({
         title: "Rejection Reason Required",
-        description: "Please provide a reason for rejecting this timecard",
+        description: "Please provide a reason for rejecting this invoice",
         variant: "destructive"
       });
       return;
@@ -437,23 +438,23 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
 
     try {
       setActionLoading(true);
-      const { error } = await rejectTimecard(timecardId, clientId, reason);
+      const { error } = await rejectTimecard(invoiceId, clientId, reason);
       if (error) throw error;
 
       toast({
-        title: "Timecard Rejected",
+        title: "Invoice Rejected",
         description: "The nurse has been notified of the rejection",
         duration: 4000
       });
 
-      loadTimecards();
-      setSelectedTimecard(null);
+      loadInvoices();
+      setSelectedInvoice(null);
       setRejectionReason('');
-      onTimecardAction();
+      onInvoiceAction();
     } catch (error: any) {
       toast({
         title: "Rejection Failed",
-        description: error.message || "Failed to reject timecard",
+        description: error.message || "Failed to reject invoice",
         variant: "destructive"
       });
     } finally {
@@ -488,26 +489,26 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
     }
   };
 
-  const TimecardCard = ({ timecard }: { timecard: Timecard }) => {
-    const nurseRate = timecard.nurse_hourly_rate || 50;
-    const amounts = calculatePaymentAmounts(nurseRate, timecard.total_hours);
-    const { ready: nursePaymentReady, reason: nursePaymentReason } = isNurseReadyForPayments(timecard.nurse_profiles);
+  const InvoiceCard = ({ invoice }: { invoice: Invoice }) => {
+    const nurseRate = invoice.nurse_hourly_rate || 50;
+    const amounts = calculatePaymentAmounts(nurseRate, invoice.total_hours);
+    const { ready: nursePaymentReady, reason: nursePaymentReason } = isNurseReadyForPayments(invoice.nurse_profiles);
     
     return (
-      <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50/50">
+      <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50/50">
         <CardContent className="p-6">
           <div className="flex items-start space-x-4">
             {/* Enhanced Profile Picture with Payment Status Indicator */}
             <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-white shadow-lg">
-              {timecard.nurse_profiles.profile_photo_url ? (
+              {invoice.nurse_profiles.profile_photo_url ? (
                 <img 
-                  src={timecard.nurse_profiles.profile_photo_url} 
+                  src={invoice.nurse_profiles.profile_photo_url} 
                   alt="Nurse" 
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg">
-                  {timecard.nurse_profiles.first_name.charAt(0)}{timecard.nurse_profiles.last_name.charAt(0)}
+                  {invoice.nurse_profiles.first_name.charAt(0)}{invoice.nurse_profiles.last_name.charAt(0)}
                 </div>
               )}
               {/* Payment Status Indicator */}
@@ -527,9 +528,9 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="font-bold text-xl text-gray-900 group-hover:text-blue-900 transition-colors">
-                    {timecard.nurse_profiles.first_name} {timecard.nurse_profiles.last_name}
+                    {invoice.nurse_profiles.first_name} {invoice.nurse_profiles.last_name}
                   </h3>
-                  <p className="text-gray-600 font-medium">{timecard.job_code}</p>
+                  <p className="text-gray-600 font-medium">{invoice.job_code}</p>
                   {/* Payment Status and Rate Indicator */}
                   <div className="flex items-center mt-1 space-x-2">
                     {nursePaymentReady ? (
@@ -549,15 +550,15 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   </div>
                 </div>
                 <div className="text-right">
-                  <Badge className={`${getStatusColor(timecard.status)} flex items-center border shadow-sm mb-2`}>
-                    {getStatusIcon(timecard.status)}
-                    <span className="ml-2 font-medium">{timecard.status}</span>
+                  <Badge className={`${getStatusColor(invoice.status)} flex items-center border shadow-sm mb-2`}>
+                    {getStatusIcon(invoice.status)}
+                    <span className="ml-2 font-medium">{invoice.status}</span>
                   </Badge>
                 </div>
               </div>
 
               {/* Payment Warning for nurses not ready */}
-              {!nursePaymentReady && timecard.status === 'Submitted' && (
+              {!nursePaymentReady && invoice.status === 'Submitted' && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
                   <div className="flex items-center">
                     <AlertCircle className="h-4 w-4 text-red-600 mr-2" />
@@ -570,11 +571,11 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
               )}
 
               {/* Enhanced Payment Preview */}
-              {timecard.status === 'Submitted' && nursePaymentReady && (
+              {invoice.status === 'Submitted' && nursePaymentReady && (
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-4">
                   <h4 className="font-semibold text-green-900 mb-2 flex items-center">
                     <DollarSign className="h-4 w-4 mr-2" />
-                    Payment Preview - {formatCurrency(nurseRate)}/hr × {timecard.total_hours}h
+                    Payment Preview - {formatCurrency(nurseRate)}/hr × {invoice.total_hours}h
                   </h4>
                   <div className="grid grid-cols-3 gap-3 text-sm">
                     <div className="text-center">
@@ -597,30 +598,30 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
               )}
 
               {/* PAID STATUS: Show Receipt Download Option */}
-              {timecard.status === 'Paid' && timecard.client_total_amount && (
+              {invoice.status === 'Paid' && invoice.client_total_amount && (
                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4 mb-4">
                   <h4 className="font-semibold text-purple-900 mb-2 flex items-center">
                     <Receipt className="h-4 w-4 mr-2" />
-                    Payment Completed - {formatPremiumDate(timecard.timestamp_paid || timecard.updated_at)}
+                    Payment Completed - {formatPremiumDate(invoice.timestamp_paid || invoice.updated_at)}
                   </h4>
                   <div className="grid grid-cols-3 gap-3 text-sm mb-3">
                     <div className="text-center">
                       <p className="text-purple-700">Total Paid</p>
-                      <p className="font-bold text-purple-900">{formatCurrency(timecard.client_total_amount)}</p>
+                      <p className="font-bold text-purple-900">{formatCurrency(invoice.client_total_amount)}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-purple-700">Nurse Received</p>
-                      <p className="font-bold text-purple-900">{formatCurrency(timecard.nurse_net_amount || 0)}</p>
+                      <p className="font-bold text-purple-900">{formatCurrency(invoice.nurse_net_amount || 0)}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-purple-700">Service Fee</p>
-                      <p className="font-bold text-purple-900">{formatCurrency(timecard.platform_fee_amount || 0)}</p>
+                      <p className="font-bold text-purple-900">{formatCurrency(invoice.platform_fee_amount || 0)}</p>
                     </div>
                   </div>
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => generateAndDownloadReceipt(timecard)}
+                    onClick={() => generateAndDownloadReceipt(invoice)}
                     className="w-full border-purple-300 text-purple-700 hover:bg-purple-50"
                   >
                     <Download className="h-4 w-4 mr-2" />
@@ -636,24 +637,24 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                     <Calendar className="h-4 w-4 mr-2 text-blue-500" />
                     <div>
                       <p className="font-medium text-gray-800">Shift Date</p>
-                      <p className="text-gray-600">{formatShortPremiumDate(timecard.shift_date)}</p>
+                      <p className="text-gray-600">{formatShortPremiumDate(invoice.shift_date)}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center text-sm bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center mr-2">
-                      {timecard.is_overnight ? 
+                      {invoice.is_overnight ? 
                         <Moon className="h-4 w-4 text-indigo-500" /> : 
                         <Sun className="h-4 w-4 text-amber-500" />
                       }
                     </div>
                     <div>
                       <p className="font-medium text-gray-800">
-                        {timecard.rounded_start_time} - {timecard.rounded_end_time}
+                        {invoice.rounded_start_time} - {invoice.rounded_end_time}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {timecard.total_hours} hours
-                        {timecard.break_minutes > 0 && ` (${timecard.break_minutes}min break)`}
+                        {invoice.total_hours} hours
+                        {invoice.break_minutes > 0 && ` (${invoice.break_minutes}min break)`}
                       </p>
                     </div>
                   </div>
@@ -661,10 +662,10 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
               </div>
 
               {/* Notes */}
-              {timecard.notes && (
+              {invoice.notes && (
                 <div className="mb-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
                   <p className="text-sm font-medium text-indigo-900 mb-1">Shift Notes:</p>
-                  <p className="text-sm text-indigo-800 italic">"{timecard.notes}"</p>
+                  <p className="text-sm text-indigo-800 italic">"{invoice.notes}"</p>
                 </div>
               )}
 
@@ -673,7 +674,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setSelectedTimecard(timecard)}
+                  onClick={() => setSelectedInvoice(invoice)}
                   className="hover:bg-blue-50 hover:border-blue-300 transition-all"
                 >
                   <Eye className="h-4 w-4 mr-1" />
@@ -681,11 +682,11 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                 </Button>
                 
                 {/* PAID STATUS: Show Receipt Download Button */}
-                {timecard.status === 'Paid' && timecard.client_total_amount && (
+                {invoice.status === 'Paid' && invoice.client_total_amount && (
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => generateAndDownloadReceipt(timecard)}
+                    onClick={() => generateAndDownloadReceipt(invoice)}
                     className="border-purple-300 text-purple-700 hover:bg-purple-50 transition-all"
                   >
                     <Receipt className="h-4 w-4 mr-1" />
@@ -693,12 +694,12 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   </Button>
                 )}
                 
-                {timecard.status === 'Submitted' && (
+                {invoice.status === 'Submitted' && (
                   <>
                     {nursePaymentReady ? (
                       <Button
                         size="sm"
-                        onClick={() => handleApproveWithPayment(timecard.id, timecard)}
+                        onClick={() => handleApproveWithPayment(invoice.id, invoice)}
                         disabled={actionLoading || paymentProcessing || paymentMethods.length === 0}
                         className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0 shadow-md transition-all min-w-[140px]"
                       >
@@ -728,7 +729,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => setSelectedTimecard(timecard)}
+                      onClick={() => setSelectedInvoice(invoice)}
                       className="text-red-600 border-red-300 hover:bg-red-50 transition-all"
                     >
                       <XCircle className="h-4 w-4 mr-1" />
@@ -744,13 +745,13 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
     );
   };
 
-  const pendingTimecards = timecards.filter(tc => tc.status === 'Submitted');
-  const approvedTimecards = timecards.filter(tc => tc.status === 'Approved' || tc.status === 'Auto-Approved');
-  const paidTimecards = timecards.filter(tc => tc.status === 'Paid');
-  const rejectedTimecards = timecards.filter(tc => tc.status === 'Rejected');
+  const pendingInvoices = invoices.filter(tc => tc.status === 'Submitted');
+  const approvedInvoices = invoices.filter(tc => tc.status === 'Approved' || tc.status === 'Auto-Approved');
+  const paidInvoices = invoices.filter(tc => tc.status === 'Paid');
+  const rejectedInvoices = invoices.filter(tc => tc.status === 'Rejected');
 
   // Count nurses ready for payments
-  const nursesReadyForPayment = pendingTimecards.filter(tc => 
+  const nursesReadyForPayment = pendingInvoices.filter(tc => 
     isNurseReadyForPayments(tc.nurse_profiles).ready
   ).length;
 
@@ -761,9 +762,9 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
           <div className="text-center py-12">
             <div className="relative mb-6">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
-              <Clock className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-5 w-5 text-indigo-600" />
+              <ClipboardCheck className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-5 w-5 text-indigo-600" />
             </div>
-            <p className="text-gray-600 font-medium">Loading timecards...</p>
+            <p className="text-gray-600 font-medium">Loading invoices...</p>
           </div>
         </CardContent>
       </Card>
@@ -791,7 +792,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   <CreditCard className="h-5 w-5 text-orange-600 mr-2" />
                   <div>
                     <p className="font-semibold text-orange-900">💳 Payment Method Required</p>
-                    <p className="text-sm text-orange-700">Add a payment method to enable instant payments when approving timecards</p>
+                    <p className="text-sm text-orange-700">Add a payment method to enable instant payments when approving invoices</p>
                   </div>
                 </div>
               </div>
@@ -803,9 +804,9 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Timer className="h-6 w-6 text-white" />
                   </div>
-                  <p className="text-3xl font-bold text-blue-700 mb-1">{pendingTimecards.length}</p>
+                  <p className="text-3xl font-bold text-blue-700 mb-1">{pendingInvoices.length}</p>
                   <p className="text-sm font-medium text-blue-600">Pending Approval</p>
-                  {pendingTimecards.length > 0 && (
+                  {pendingInvoices.length > 0 && (
                     <p className="text-xs text-blue-500 mt-1">
                       {nursesReadyForPayment} ready for instant payment
                     </p>
@@ -818,7 +819,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
                     <CheckCircle className="h-6 w-6 text-white" />
                   </div>
-                  <p className="text-3xl font-bold text-green-700 mb-1">{approvedTimecards.length}</p>
+                  <p className="text-3xl font-bold text-green-700 mb-1">{approvedInvoices.length}</p>
                   <p className="text-sm font-medium text-green-600">Approved</p>
                 </CardContent>
               </Card>
@@ -828,11 +829,11 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
                     <DollarSign className="h-6 w-6 text-white" />
                   </div>
-                  <p className="text-3xl font-bold text-purple-700 mb-1">{paidTimecards.length}</p>
+                  <p className="text-3xl font-bold text-purple-700 mb-1">{paidInvoices.length}</p>
                   <p className="text-sm font-medium text-purple-600">Paid</p>
-                  {paidTimecards.length > 0 && (
+                  {paidInvoices.length > 0 && (
                     <p className="text-xs text-purple-500 mt-1">
-                      {paidTimecards.length} receipt{paidTimecards.length !== 1 ? 's' : ''} available
+                      {paidInvoices.length} receipt{paidInvoices.length !== 1 ? 's' : ''} available
                     </p>
                   )}
                 </CardContent>
@@ -843,7 +844,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
                     <XCircle className="h-6 w-6 text-white" />
                   </div>
-                  <p className="text-3xl font-bold text-red-700 mb-1">{rejectedTimecards.length}</p>
+                  <p className="text-3xl font-bold text-red-700 mb-1">{rejectedInvoices.length}</p>
                   <p className="text-sm font-medium text-red-600">Disputed</p>
                 </CardContent>
               </Card>
@@ -856,7 +857,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   <div>
                     <p className="font-semibold text-blue-900">⚡ Instant Payment Ready</p>
                     <p className="text-sm text-blue-700">
-                      {nursesReadyForPayment} timecard{nursesReadyForPayment !== 1 ? 's' : ''} ready for instant approval and payment processing!
+                      {nursesReadyForPayment} invoice{nursesReadyForPayment !== 1 ? 's' : ''} ready for instant approval and payment processing!
                     </p>
                   </div>
                 </div>
@@ -865,41 +866,41 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
           </CardContent>
         </Card>
 
-        {/* Enhanced Timecards List */}
+        {/* Enhanced Invoices List */}
         <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/30">
           <CardHeader className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-t-lg border-b border-gray-100">
-            <CardTitle className="text-xl font-bold text-gray-900">Timecard History</CardTitle>
+            <CardTitle className="text-xl font-bold text-gray-900">Invoice History</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            {timecards.length === 0 ? (
+            {invoices.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Clock className="h-12 w-12 text-gray-400" />
+                  <ClipboardCheck className="h-12 w-12 text-gray-400" />
                 </div>
                 <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-                  No Timecards Yet
+                  No Invoices Yet
                 </h3>
                 <p className="text-gray-600 text-lg">
-                  When your nurses submit timecards, they will appear here for instant approval and payment.
+                  When your nurses submit invoices, they will appear here for instant approval and payment.
                 </p>
               </div>
             ) : (
               <Tabs defaultValue="pending" className="w-full">
                 <TabsList className="grid w-full grid-cols-4 mb-8 h-12 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-1">
                   <TabsTrigger value="pending" className="rounded-lg font-medium">
-                    Pending ({pendingTimecards.length})
-                    {pendingTimecards.length > 0 && (
+                    Pending ({pendingInvoices.length})
+                    {pendingInvoices.length > 0 && (
                       <Badge className="ml-2 bg-blue-600 text-white text-xs animate-pulse">
                         {nursesReadyForPayment} ready
                       </Badge>
                     )}
                   </TabsTrigger>
                   <TabsTrigger value="approved" className="rounded-lg font-medium">
-                    Approved ({approvedTimecards.length})
+                    Approved ({approvedInvoices.length})
                   </TabsTrigger>
                   <TabsTrigger value="paid" className="rounded-lg font-medium">
-                    Paid ({paidTimecards.length})
-                    {paidTimecards.length > 0 && (
+                    Paid ({paidInvoices.length})
+                    {paidInvoices.length > 0 && (
                       <Badge className="ml-2 bg-purple-600 text-white text-xs">
                         <Receipt className="h-3 w-3 mr-1" />
                         Receipts
@@ -907,20 +908,20 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                     )}
                   </TabsTrigger>
                   <TabsTrigger value="rejected" className="rounded-lg font-medium">
-                    Disputed ({rejectedTimecards.length})
+                    Disputed ({rejectedInvoices.length})
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="pending" className="mt-6">
                   <div className="space-y-6">
-                    {pendingTimecards.length === 0 ? (
+                    {pendingInvoices.length === 0 ? (
                       <div className="text-center py-12">
                         <Timer className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500 text-lg">No pending timecards</p>
+                        <p className="text-gray-500 text-lg">No pending invoices</p>
                       </div>
                     ) : (
-                      pendingTimecards.map((timecard) => (
-                        <TimecardCard key={timecard.id} timecard={timecard} />
+                      pendingInvoices.map((invoice) => (
+                        <InvoiceCard key={invoice.id} invoice={invoice} />
                       ))
                     )}
                   </div>
@@ -928,27 +929,27 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
 
                 <TabsContent value="approved" className="mt-6">
                   <div className="space-y-6">
-                    {approvedTimecards.length === 0 ? (
+                    {approvedInvoices.length === 0 ? (
                       <div className="text-center py-12">
                         <CheckCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500 text-lg">No approved timecards</p>
+                        <p className="text-gray-500 text-lg">No approved invoices</p>
                       </div>
                     ) : (
-                      approvedTimecards.map((timecard) => (
-                        <TimecardCard key={timecard.id} timecard={timecard} />
+                      approvedInvoices.map((invoice) => (
+                        <InvoiceCard key={invoice.id} invoice={invoice} />
                       ))
                     )}
                   </div>
                 </TabsContent>
 
                 <TabsContent value="paid" className="mt-6">
-                  {paidTimecards.length > 0 && (
+                  {paidInvoices.length > 0 && (
                     <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <Receipt className="h-5 w-5 text-purple-600 mr-2" />
                           <span className="font-semibold text-purple-900">
-                            {paidTimecards.length} paid timecard{paidTimecards.length !== 1 ? 's' : ''}
+                            {paidInvoices.length} paid invoice{paidInvoices.length !== 1 ? 's' : ''}
                           </span>
                         </div>
                         <Badge className="bg-purple-600 text-white">
@@ -959,14 +960,14 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                     </div>
                   )}
                   <div className="space-y-6">
-                    {paidTimecards.length === 0 ? (
+                    {paidInvoices.length === 0 ? (
                       <div className="text-center py-12">
                         <DollarSign className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500 text-lg">No paid timecards</p>
+                        <p className="text-gray-500 text-lg">No paid invoices</p>
                       </div>
                     ) : (
-                      paidTimecards.map((timecard) => (
-                        <TimecardCard key={timecard.id} timecard={timecard} />
+                      paidInvoices.map((invoice) => (
+                        <InvoiceCard key={invoice.id} invoice={invoice} />
                       ))
                     )}
                   </div>
@@ -974,14 +975,14 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
 
                 <TabsContent value="rejected" className="mt-6">
                   <div className="space-y-6">
-                    {rejectedTimecards.length === 0 ? (
+                    {rejectedInvoices.length === 0 ? (
                       <div className="text-center py-12">
                         <XCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500 text-lg">No disputed timecards</p>
+                        <p className="text-gray-500 text-lg">No disputed invoices</p>
                       </div>
                     ) : (
-                      rejectedTimecards.map((timecard) => (
-                        <TimecardCard key={timecard.id} timecard={timecard} />
+                      rejectedInvoices.map((invoice) => (
+                        <InvoiceCard key={invoice.id} invoice={invoice} />
                       ))
                     )}
                   </div>
@@ -992,9 +993,9 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
         </Card>
       </div>
 
-      {/* Enhanced Timecard Details Dialog WITH RECEIPT DOWNLOAD */}
-      <Dialog open={!!selectedTimecard} onOpenChange={() => {
-        setSelectedTimecard(null);
+      {/* Enhanced Invoice Details Dialog WITH RECEIPT DOWNLOAD */}
+      <Dialog open={!!selectedInvoice} onOpenChange={() => {
+        setSelectedInvoice(null);
         setRejectionReason('');
         }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-white to-gray-50/50">
@@ -1004,10 +1005,10 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                 Instant Payment Review
             </DialogTitle>
             <DialogDescription>
-                Review timecard details and process instant payment approval
+                Review invoice details and process instant payment approval
             </DialogDescription>
             </DialogHeader>
-          {selectedTimecard && (
+          {selectedInvoice && (
             <div className="space-y-6">
               {/* Payment processing notice if processing */}
               {paymentProcessing && (
@@ -1016,14 +1017,14 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                     <Loader2 className="h-5 w-5 text-blue-600 mr-2 animate-spin" />
                     <div>
                       <p className="font-semibold text-blue-900">Processing Payment...</p>
-                      <p className="text-sm text-blue-700">Approving timecard and processing payment automatically</p>
+                      <p className="text-sm text-blue-700">Approving invoice and processing payment automatically</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* PAID TIMECARD: Receipt Download Section */}
-              {selectedTimecard.status === 'Paid' && selectedTimecard.client_total_amount && (
+              {/* PAID INVOICE: Receipt Download Section */}
+              {selectedInvoice.status === 'Paid' && selectedInvoice.client_total_amount && (
                 <Card className="border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -1040,27 +1041,27 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                     <div className="grid grid-cols-3 gap-4 mb-4 text-center">
                       <div className="bg-white/50 rounded-lg p-3">
                         <p className="text-sm text-purple-700 font-medium">Total Paid</p>
-                        <p className="text-lg font-bold text-purple-900">{formatCurrency(selectedTimecard.client_total_amount)}</p>
+                        <p className="text-lg font-bold text-purple-900">{formatCurrency(selectedInvoice.client_total_amount)}</p>
                       </div>
                       <div className="bg-white/50 rounded-lg p-3">
                         <p className="text-sm text-purple-700 font-medium">Payment Date</p>
                         <p className="text-sm font-bold text-purple-900">
-                          {formatShortPremiumDate(selectedTimecard.timestamp_paid || selectedTimecard.updated_at)}
+                          {formatShortPremiumDate(selectedInvoice.timestamp_paid || selectedInvoice.updated_at)}
                         </p>
                       </div>
                       <div className="bg-white/50 rounded-lg p-3">
                         <p className="text-sm text-purple-700 font-medium">Receipt ID</p>
                         <p className="text-xs font-mono font-bold text-purple-900">
-                          {selectedTimecard.stripe_payment_intent_id 
-                            ? selectedTimecard.stripe_payment_intent_id.substring(0, 12) + '...'
-                            : `NN-${selectedTimecard.id.substring(0, 8).toUpperCase()}`
+                          {selectedInvoice.stripe_payment_intent_id 
+                            ? selectedInvoice.stripe_payment_intent_id.substring(0, 12) + '...'
+                            : `NN-${selectedInvoice.id.substring(0, 8).toUpperCase()}`
                           }
                         </p>
                       </div>
                     </div>
                     
                     <Button
-                      onClick={() => generateAndDownloadReceipt(selectedTimecard)}
+                      onClick={() => generateAndDownloadReceipt(selectedInvoice)}
                       className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white border-0 shadow-lg h-12"
                     >
                       <Download className="h-5 w-5 mr-2" />
@@ -1075,14 +1076,14 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
               )}
 
               {/* Payment Status Section */}
-              {selectedTimecard.status === 'Submitted' && (
-                <Card className={`border ${isNurseReadyForPayments(selectedTimecard.nurse_profiles).ready ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+              {selectedInvoice.status === 'Submitted' && (
+                <Card className={`border ${isNurseReadyForPayments(selectedInvoice.nurse_profiles).ready ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
                   <CardContent className="p-4">
                     <h4 className="font-semibold mb-2 flex items-center">
                       <DollarSign className="h-4 w-4 mr-2" />
                       Payment Status
                     </h4>
-                    {isNurseReadyForPayments(selectedTimecard.nurse_profiles).ready ? (
+                    {isNurseReadyForPayments(selectedInvoice.nurse_profiles).ready ? (
                       <div className="text-green-800">
                         <p className="font-medium">✅ Ready for instant payment</p>
                         <p className="text-sm">This nurse can receive payments immediately upon approval</p>
@@ -1090,15 +1091,15 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                     ) : (
                       <div className="text-red-800">
                         <p className="font-medium">⚠️ Payment setup required</p>
-                        <p className="text-sm">{isNurseReadyForPayments(selectedTimecard.nurse_profiles).reason}</p>
+                        <p className="text-sm">{isNurseReadyForPayments(selectedInvoice.nurse_profiles).reason}</p>
                       </div>
                     )}
                   </CardContent>
                 </Card>
               )}
 
-              {/* Dispute Section for pending timecards */}
-              {selectedTimecard.status === 'Submitted' && (
+              {/* Dispute Section for pending invoices */}
+              {selectedInvoice.status === 'Submitted' && (
                 <Card className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200">
                   <CardContent className="p-6">
                     <div>
@@ -1106,7 +1107,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                         Dispute Reason (if rejecting)
                       </label>
                       <Textarea
-                        placeholder="Explain why you're disputing this timecard... (e.g., incorrect hours, unauthorized break time, etc.)"
+                        placeholder="Explain why you're disputing this invoice... (e.g., incorrect hours, unauthorized break time, etc.)"
                         value={rejectionReason}
                         onChange={(e) => setRejectionReason(e.target.value)}
                         rows={4}
@@ -1122,7 +1123,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setSelectedTimecard(null);
+                    setSelectedInvoice(null);
                     setRejectionReason('');
                   }}
                   className="px-8 h-12"
@@ -1130,11 +1131,11 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   Close
                 </Button>
                 
-                {/* PAID TIMECARD: Additional Receipt Download Button */}
-                {selectedTimecard.status === 'Paid' && selectedTimecard.client_total_amount && (
+                {/* PAID INVOICE: Additional Receipt Download Button */}
+                {selectedInvoice.status === 'Paid' && selectedInvoice.client_total_amount && (
                   <Button
                     variant="outline"
-                    onClick={() => generateAndDownloadReceipt(selectedTimecard)}
+                    onClick={() => generateAndDownloadReceipt(selectedInvoice)}
                     className="px-8 h-12 border-purple-300 text-purple-700 hover:bg-purple-50"
                   >
                     <Receipt className="h-5 w-5 mr-2" />
@@ -1142,19 +1143,19 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                   </Button>
                 )}
                 
-                {selectedTimecard.status === 'Submitted' && (
+                {selectedInvoice.status === 'Submitted' && (
                   <>
                     <Button
                       variant="outline"
-                      onClick={() => handleReject(selectedTimecard.id, rejectionReason)}
+                      onClick={() => handleReject(selectedInvoice.id, rejectionReason)}
                       disabled={actionLoading}
                       className="px-8 h-12 text-red-600 border-red-300 hover:bg-red-50"
                     >
-                      {actionLoading ? 'Disputing...' : 'Dispute Timecard'}
+                      {actionLoading ? 'Disputing...' : 'Dispute Invoice'}
                     </Button>
-                    {isNurseReadyForPayments(selectedTimecard.nurse_profiles).ready ? (
+                    {isNurseReadyForPayments(selectedInvoice.nurse_profiles).ready ? (
                       <Button
-                        onClick={() => handleApproveWithPayment(selectedTimecard.id, selectedTimecard)}
+                        onClick={() => handleApproveWithPayment(selectedInvoice.id, selectedInvoice)}
                         disabled={actionLoading || paymentProcessing || paymentMethods.length === 0}
                         className="px-8 h-12 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0 shadow-lg min-w-[180px]"
                       >
@@ -1174,7 +1175,7 @@ Receipt Format: Professional Healthcare Services Receipt v2.0
                       <Button
                         disabled
                         className="px-8 h-12 bg-gray-300 text-gray-500 cursor-not-allowed min-w-[180px]"
-                        title={`Cannot process payment: ${isNurseReadyForPayments(selectedTimecard.nurse_profiles).reason}`}
+                        title={`Cannot process payment: ${isNurseReadyForPayments(selectedInvoice.nurse_profiles).reason}`}
                       >
                         <AlertCircle className="h-5 w-5 mr-2" />
                         Payment Setup Required

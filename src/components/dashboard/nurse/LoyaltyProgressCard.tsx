@@ -48,13 +48,6 @@ export default function LoyaltyProgressCard({
       icon: Gift,
       unlocked: isEliteNurse
     },
-    {
-      id: 'fast_track',
-      title: 'Fast-Track Support',
-      description: 'Priority customer service and dispute resolution',
-      icon: Target,
-      unlocked: isEliteNurse
-    }
   ];
 
   const milestones = [
@@ -305,7 +298,6 @@ export default function LoyaltyProgressCard({
                   <li>• Get priority placement in job searches</li>
                   <li>• Access exclusive high-paying positions</li>
                   <li>• Receive quarterly loyalty rewards</li>
-                  <li>• Get fast-track customer support</li>
                 </ul>
               </div>
             </div>
