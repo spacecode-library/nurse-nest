@@ -36,18 +36,43 @@ export default function HowItWorksSection() {
   ];
 
   return (
-    <section className="relative bg-[#f1f5f9] py-20 md:py-32" id="how-it-works">
+    <section 
+      className="relative py-20 md:py-32" 
+      id="how-it-works"
+      style={{
+        background: 'linear-gradient(180deg, rgba(155, 203, 255, 0.08) 0%, #f1f5f9 40%, #ffffff 100%)'
+      }}
+    >
+      {/* Subtle decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#9bcbff] to-transparent opacity-30"></div>
+      
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-light mb-6 text-[#1e293b] tracking-wide" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+          {/* Enhanced title with sophisticated typography */}
+          <h2 
+            className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-wide leading-tight"
+            style={{ 
+              fontFamily: 'Arial, Helvetica, sans-serif',
+              background: 'linear-gradient(135deg, #1e293b 0%, #3b82f6 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              letterSpacing: '1px',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+            }}
+          >
             How it works
           </h2>
+          
+          {/* Decorative accent line */}
+          <div className="w-24 h-1 bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] mx-auto mb-6 rounded-full"></div>
+          
           <p className="text-xl md:text-2xl text-[#475569] max-w-4xl mx-auto leading-relaxed font-normal" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
-            Nurse Nest can help you save on your home-related finances
+            Your trusted pathway to exceptional nursing care
           </p>
         </AnimatedSection>
         
-        {/* 4-column grid for desktop, stacked for mobile */}
+        {/* Enhanced 4-column grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {steps.map((step, index) => (
             <AnimatedSection 
@@ -56,35 +81,85 @@ export default function HowItWorksSection() {
               delay={index * 200}
               className="relative group"
             >
-              {/* Premium white card */}
-              <div className="bg-[#f0f9ff] rounded-2xl p-8 shadow-lg hover:shadow-xl h-full flex flex-col relative min-h-[400px] transition-all duration-300 hover:transform hover:scale-105 border border-white/50">
-                {/* Numbered circle at top */}
+              {/* Premium elevated card design */}
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl h-full flex flex-col relative min-h-[400px] transition-all duration-300 hover:transform hover:scale-105 border border-white/50 backdrop-blur-sm">
+                
+                {/* Enhanced numbered circle with gradient */}
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                  <div className="w-12 h-12 bg-[#3b82f6] rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-white font-semibold text-lg" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>{step.number}</span>
+                  <div 
+                    className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg relative overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, #9bcbff 0%, #3b82f6 100%)'
+                    }}
+                  >
+                    <span className="text-white font-semibold text-lg relative z-10" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+                      {step.number}
+                    </span>
+                    
+                    {/* Subtle glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-full"></div>
                   </div>
                 </div>
                 
-                {/* Icon */}
-                <div className="flex justify-center mb-6 mt-6">
-                  {step.icon}
+                {/* Icon with enhanced styling */}
+                <div className="flex justify-center mb-6 mt-8">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-[#f0f9ff] to-[#e0f2fe] transition-all duration-300 group-hover:scale-110">
+                    {step.icon}
+                  </div>
                 </div>
                 
-                {/* Title */}
-                <h3 className="text-xl font-normal text-[#334155] mb-4 text-center leading-tight" style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '1.8rem' }}>
+                {/* Enhanced title typography */}
+                <h3 
+                  className="text-xl font-medium text-[#1e293b] mb-4 text-center leading-tight"
+                  style={{ 
+                    fontFamily: 'Arial, Helvetica, sans-serif', 
+                    fontSize: '1.5rem',
+                    letterSpacing: '0.5px'
+                  }}
+                >
                   {step.title}
                 </h3>
                 
-                {/* Description */}
-                <p className="text-[#475569] leading-relaxed text-center flex-1" style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '1rem', lineHeight: '1.6' }}>
+                {/* Description with improved readability */}
+                <p 
+                  className="text-[#475569] leading-relaxed text-center flex-1"
+                  style={{ 
+                    fontFamily: 'Arial, Helvetica, sans-serif', 
+                    fontSize: '0.95rem', 
+                    lineHeight: '1.7'
+                  }}
+                >
                   {step.description}
                 </p>
 
-                {/* Hover accent line */}
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-[#3b82f6] rounded-b-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                {/* Enhanced hover accent with gradient */}
+                <div 
+                  className="absolute bottom-0 left-0 w-full h-1 rounded-b-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+                  style={{
+                    background: 'linear-gradient(90deg, #3b82f6 0%, #9bcbff 100%)'
+                  }}
+                ></div>
+                
+                {/* Subtle corner accent */}
+                <div className="absolute top-0 right-0 w-8 h-8 rounded-bl-2xl bg-gradient-to-br from-[#f0f9ff] to-transparent opacity-50"></div>
               </div>
             </AnimatedSection>
           ))}
+        </div>
+        
+        {/* Subtle bottom decorative element */}
+        <div className="mt-16 flex justify-center">
+          <div className="flex space-x-2">
+            {[...Array(4)].map((_, i) => (
+              <div 
+                key={i}
+                className="w-2 h-2 rounded-full bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] opacity-40"
+                style={{
+                  animationDelay: `${i * 0.2}s`
+                }}
+              ></div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
