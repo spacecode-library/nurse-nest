@@ -1,3 +1,4 @@
+
 // src/supabase/api/adminService.ts
 import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
@@ -51,7 +52,6 @@ export interface AdminUser {
     };
     care_needs?: any;
     care_location?: any;
-    care_recipients?: any;
     relationship_to_recipient?: string;
   };
 }
@@ -507,7 +507,7 @@ export async function getUserDetails(userId: string) {
       data: {
         authUser: authUser.user,
         metadata,
-        ...detailedProfile
+        ...(detailedProfile || {})
       },
       error: null
     };
