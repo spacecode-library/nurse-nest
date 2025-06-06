@@ -14,29 +14,30 @@ export default function Footer() {
   };
   
   return (
-    <footer className="bg-brand-navy py-section text-white">
+    <footer className="bg-brand-navy py-12 text-white">
       <div className="container mx-auto px-6">
-        {/* Logo Section */}
-        <div className="mb-12 text-center">
-          <img 
-            src="/lovable-uploads/f3b33d4c-f4e9-4a9b-9390-96cc49376903.png"
-            alt="Nurse Nest"
-            className="h-12 w-auto mx-auto mb-4"
-          />
-          <p className="text-white/80 max-w-md mx-auto">
-            Connecting compassionate nurses with families in need through our trusted healthcare marketplace.
-          </p>
-        </div>
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          {/* Brand Section */}
+          <div className="lg:col-span-1">
+            <img 
+              src="/lovable-uploads/f3b33d4c-f4e9-4a9b-9390-96cc49376903.png"
+              alt="Nurse Nest"
+              className="h-10 w-auto mb-3"
+            />
+            <p className="text-white/70 text-sm leading-relaxed max-w-xs">
+              Connecting compassionate nurses with families in need through our trusted healthcare marketplace.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Company Links */}
           <div>
-            <h4 className="text-lg font-normal mb-8 text-white">Company</h4>
-            <ul className="space-y-4">
+            <h4 className="text-base font-medium mb-4 text-white">Company</h4>
+            <ul className="space-y-3">
               <li>
                 <button 
                   onClick={() => handleNavigation('/about')} 
-                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
+                  className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm"
                 >
                   About Us
                 </button>
@@ -44,7 +45,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/pricing')}
-                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
+                  className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm"
                 >
                   Pricing
                 </button>
@@ -52,7 +53,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/blog')}
-                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
+                  className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm"
                 >
                   Blog
                 </button>
@@ -62,12 +63,12 @@ export default function Footer() {
           
           {/* Support Links */}
           <div>
-            <h4 className="text-lg font-normal mb-8 text-white">Support</h4>
-            <ul className="space-y-4">
+            <h4 className="text-base font-medium mb-4 text-white">Support</h4>
+            <ul className="space-y-3">
               <li>
                 <button 
                   onClick={() => handleNavigation('/terms')}
-                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
+                  className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm"
                 >
                   Terms of Service
                 </button>
@@ -75,7 +76,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/privacy')}
-                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
+                  className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm"
                 >
                   Privacy Policy
                 </button>
@@ -83,7 +84,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => handleNavigation('/disclaimer')}
-                  className="text-white/80 hover:text-brand-primary transition-colors duration-300"
+                  className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm"
                 >
                   Disclaimer
                 </button>
@@ -93,17 +94,17 @@ export default function Footer() {
 
           {/* Contact Information */}
           <div>
-            <h4 className="text-lg font-normal mb-8 text-white">Contact Us</h4>
-            <ul className="space-y-4">
+            <h4 className="text-base font-medium mb-4 text-white">Contact Us</h4>
+            <ul className="space-y-3">
               <li className="flex items-start">
-                <Mail className="h-5 w-5 text-brand-primary mr-3 mt-0.5" />
-                <a href="mailto:contact@nursenest.us" className="text-white/80 hover:text-brand-primary transition-colors duration-300">
+                <Mail className="h-4 w-4 text-brand-primary mr-2 mt-0.5 flex-shrink-0" />
+                <a href="mailto:contact@nursenest.us" className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm">
                   contact@nursenest.us
                 </a>
               </li>
               <li className="flex items-start">
-                <Phone className="h-5 w-5 text-brand-primary mr-3 mt-0.5" />
-                <a href="tel:4259543381" className="text-white/80 hover:text-brand-primary transition-colors duration-300">
+                <Phone className="h-4 w-4 text-brand-primary mr-2 mt-0.5 flex-shrink-0" />
+                <a href="tel:4259543381" className="text-white/70 hover:text-brand-primary transition-colors duration-300 text-sm">
                   (425) 954-3381
                 </a>
               </li>
@@ -111,9 +112,9 @@ export default function Footer() {
           </div>
         </div>
         
-        {/* Bottom Area */}
-        <div className="border-t border-white/20 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-white/60 text-sm">
+        {/* Bottom Copyright */}
+        <div className="border-t border-white/20 pt-6">
+          <p className="text-white/60 text-xs text-center">
             &copy; {currentYear} Nurse Nest. All rights reserved.
           </p>
         </div>
