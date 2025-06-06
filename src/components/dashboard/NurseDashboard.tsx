@@ -72,7 +72,7 @@ import EnhancedTimecardSubmissionForm from './nurse/EnhancedTimecardSubmissionFo
 
 import ConversationsList from '@/components/ConversationList';
 import { supabase } from '@/integrations/supabase/client';
-import ProfilePictureUpload from '@/components/ProfilePictureUpload';
+import ProfilePictureUpload from './nurse/ProfilePictureUpload';
 
 // Import enhanced date formatting
 import { 
@@ -98,6 +98,7 @@ export default function NurseDashboard() {
   const [showMessagesPage, setShowMessagesPage] = useState(false);
   const [showProfileUpload, setShowProfileUpload] = useState(false);
   const [showEnhancedTimecardForm, setShowEnhancedTimecardForm] = useState(false);
+  const [showMandatoryProfilePicture, setShowMandatoryProfilePicture] = useState(false);
 
   const [eliteProgress, setEliteProgress] = useState({
     completedContracts: 0,
@@ -223,6 +224,13 @@ export default function NurseDashboard() {
         return;
       }
       setNurseProfile(profile);
+
+      // Check if profile picture is mandatory and missing
+      if (!profile.profile_photo_url || profile.profile_photo_url.trim() === '') {
+        setShowMandatoryProfilePicture(true);
+        setLoading(false);
+        return; // Don't load dashboard data until profile picture is uploaded
+      }
 
       const [jobsResult, applicationsResult, invoicesResult] = await Promise.all([
         getOpenJobPostings(50, 0),
@@ -360,7 +368,18 @@ export default function NurseDashboard() {
       ...prev,
       profile_photo_url: newPhotoUrl
     }));
+    setShowMandatoryProfilePicture(false);
     handleRefresh();
+  };
+
+  const handleMandatoryPhotoUploaded = (newPhotoUrl: string) => {
+    setNurseProfile(prev => ({
+      ...prev,
+      profile_photo_url: newPhotoUrl
+    }));
+    setShowMandatoryProfilePicture(false);
+    // Now load the dashboard data
+    fetchDashboardData();
   };
 
   const getStatusColor = (status: string) => {
@@ -423,7 +442,7 @@ export default function NurseDashboard() {
     // Removed contracts tab as requested
   ];
 
-  if (loading) {
+  if (loading && !showMandatoryProfilePicture) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex items-center justify-center min-h-screen">
@@ -454,6 +473,38 @@ export default function NurseDashboard() {
           nurseId={nurseProfile?.id}
           userId={user?.id}
           onBack={() => setShowMessagesPage(false)}
+        />
+      </div>
+    );
+  }
+
+  // Show mandatory profile picture upload (this blocks the dashboard)
+  if (showMandatoryProfilePicture && nurseProfile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        {/* Background dashboard preview (blurred) */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 opacity-50">
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-center space-y-6">
+              <div className="relative">
+                <div className="w-20 h-20 bg-white rounded-full shadow-lg mx-auto flex items-center justify-center">
+                  <Stethoscope className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-semibold text-gray-900">Complete Your Profile</h3>
+                <p className="text-gray-600">Add a professional photo to get started</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <ProfilePictureUpload
+          nurseId={nurseProfile.id}
+          userId={user?.id || ''}
+          currentPhotoUrl={nurseProfile.profile_photo_url}
+          onPhotoUploaded={handleMandatoryPhotoUploaded}
+          showSkipOption={false}
         />
       </div>
     );
