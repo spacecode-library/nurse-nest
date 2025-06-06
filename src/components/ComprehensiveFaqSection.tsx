@@ -1,7 +1,8 @@
 
 import { useState } from 'react';
-import { Search, ChevronDown, ChevronUp, ArrowUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, ArrowUp, Menu, X } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Accordion,
   AccordionContent,
@@ -23,40 +24,12 @@ interface FaqCategory {
 
 export default function ComprehensiveFaqSection() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState("getting-started");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
 
+  // Reordered categories with new priority
   const faqCategories: FaqCategory[] = [
-    {
-      id: "physician-orders",
-      title: "Physician Orders & Care Plan Requirements",
-      icon: "📋",
-      faqs: [
-        {
-          question: "Do I need physician orders for nursing care?",
-          answer: "Yes, absolutely. All skilled nursing services require a physician's order and written care plan. This is required by law and protects both you and your nurse."
-        },
-        {
-          question: "What services require a physician's order?",
-          answer: "Your nurse MUST have written orders for:\n\n• Medication administration (unless you can take medications yourself)\n• Wound care and dressing changes\n• Injections (insulin, B12, pain medications, etc.)\n• IV therapy and infusions\n• Medical equipment use (oxygen, catheters, feeding tubes)\n• Blood draws and specimen collection\n• Any medical treatment or intervention\n\nImportant: If you plan to have your nurse give you medications, you need specific medication orders - even for routine pills like blood pressure or diabetes medications."
-        },
-        {
-          question: "How can I get physician orders quickly?",
-          answer: "Option 1: Contact Your Primary Care Physician (PCP)\n• Call your doctor's office and explain you're hiring an independent nurse contractor\n• Request written orders for the specific care you need\n• Ask for a care plan outlining frequency and instructions\n• Usually covered by insurance as part of regular care\n\nOption 2: Use Telehealth (Fast & Convenient)\n\nMost Affordable Options:\n• Sesame Care - $35-60 per visit\n• CallonDoc - $39.99 per visit\n\n24/7 On-Demand Options:\n• Amwell - $79 per visit\n• MDLive - $82-88 per visit\n• Doctor On Demand - $99 per visit\n\nComprehensive Care Options:\n• Teladoc - $75 per visit\n• HealthTap - $129 per visit (includes 90 days of follow-up messaging)\n• QuickMD - $75 per visit"
-        },
-        {
-          question: "What should I tell the doctor when requesting orders?",
-          answer: "When requesting orders, explain:\n• \"I'm hiring an independent contractor nurse for home care\"\n• Specific services you need (wound care, medication help, injections, etc.)\n• How often you need care\n• Any medical conditions requiring attention\n\nThe doctor will provide:\n• Written care plan with specific instructions\n• Medication orders (if applicable)\n• Treatment frequency and duration\n• Any special precautions or monitoring needs"
-        },
-        {
-          question: "What documentation will I receive?",
-          answer: "All telehealth platforms provide:\n• Written visit summary with diagnosis and care plan\n• Specific orders for treatments and medications\n• Downloadable documentation you can share with your nurse\n• Follow-up instructions as needed"
-        },
-        {
-          question: "What are the steps to get proper orders?",
-          answer: "1. Choose your preferred method (PCP or telehealth)\n2. Schedule your consultation\n3. Explain your home nursing needs\n4. Receive written orders and care plan\n5. Share documentation with your Nurse Nest contractor"
-        }
-      ]
-    },
     {
       id: "getting-started",
       title: "Getting Started",
@@ -81,33 +54,6 @@ export default function ComprehensiveFaqSection() {
         {
           question: "Is there a mobile app?",
           answer: "Nurse Nest is designed with a mobile-first approach and works seamlessly on all devices through your web browser. A dedicated mobile app may be available in the future."
-        }
-      ]
-    },
-    {
-      id: "onboarding",
-      title: "Onboarding & Profiles",
-      icon: "👤",
-      faqs: [
-        {
-          question: "Why do I need to upload a resume if licenses are verified?",
-          answer: "Your resume provides clients with comprehensive background information about your experience, specializations, and work history that goes beyond basic license verification. It helps clients make informed hiring decisions."
-        },
-        {
-          question: "Can I edit my profile after onboarding?",
-          answer: "Yes! You can update your profile, preferences, availability, and documents at any time through your dashboard. Keep your information current to receive the best job matches."
-        },
-        {
-          question: "What happens if my nursing license expires?",
-          answer: "You must maintain current, valid licensing to work through our platform. Update your license information immediately upon renewal. Expired licenses will temporarily suspend your ability to receive new job matches."
-        },
-        {
-          question: "Do I need malpractice insurance?",
-          answer: "Malpractice insurance is optional but highly recommended. You can upload proof during onboarding, and many clients prefer nurses with coverage. It's part of running your independent contractor business professionally."
-        },
-        {
-          question: "How does the travel radius affect my matches?",
-          answer: "Our algorithm prioritizes jobs within your specified travel radius. A larger radius increases your job opportunities, while a smaller radius focuses on nearby positions. You can adjust this setting anytime."
         }
       ]
     },
@@ -143,6 +89,33 @@ export default function ComprehensiveFaqSection() {
         {
           question: "Can I hire a nurse directly after matching?",
           answer: "All work arrangements must go through Nurse Nest to ensure proper insurance coverage, payment processing, and platform protections. Direct hiring outside the platform violates our terms of service."
+        }
+      ]
+    },
+    {
+      id: "onboarding",
+      title: "Onboarding & Profiles",
+      icon: "👤",
+      faqs: [
+        {
+          question: "Why do I need to upload a resume if licenses are verified?",
+          answer: "Your resume provides clients with comprehensive background information about your experience, specializations, and work history that goes beyond basic license verification. It helps clients make informed hiring decisions."
+        },
+        {
+          question: "Can I edit my profile after onboarding?",
+          answer: "Yes! You can update your profile, preferences, availability, and documents at any time through your dashboard. Keep your information current to receive the best job matches."
+        },
+        {
+          question: "What happens if my nursing license expires?",
+          answer: "You must maintain current, valid licensing to work through our platform. Update your license information immediately upon renewal. Expired licenses will temporarily suspend your ability to receive new job matches."
+        },
+        {
+          question: "Do I need malpractice insurance?",
+          answer: "Malpractice insurance is optional but highly recommended. You can upload proof during onboarding, and many clients prefer nurses with coverage. It's part of running your independent contractor business professionally."
+        },
+        {
+          question: "How does the travel radius affect my matches?",
+          answer: "Our algorithm prioritizes jobs within your specified travel radius. A larger radius increases your job opportunities, while a smaller radius focuses on nearby positions. You can adjust this setting anytime."
         }
       ]
     },
@@ -326,6 +299,37 @@ export default function ComprehensiveFaqSection() {
           answer: "Clients can rate their experience after each contract. These ratings help build your reputation and increase your visibility to future clients. Consistently high ratings contribute to your professional standing on the platform."
         }
       ]
+    },
+    {
+      id: "physician-orders",
+      title: "Physician Orders & Care Plan Requirements",
+      icon: "📋",
+      faqs: [
+        {
+          question: "Do I need physician orders for nursing care?",
+          answer: "Yes, absolutely. All skilled nursing services require a physician's order and written care plan. This is required by law and protects both you and your nurse."
+        },
+        {
+          question: "What services require a physician's order?",
+          answer: "Your nurse MUST have written orders for:\n\n• Medication administration (unless you can take medications yourself)\n• Wound care and dressing changes\n• Injections (insulin, B12, pain medications, etc.)\n• IV therapy and infusions\n• Medical equipment use (oxygen, catheters, feeding tubes)\n• Blood draws and specimen collection\n• Any medical treatment or intervention\n\nImportant: If you plan to have your nurse give you medications, you need specific medication orders - even for routine pills like blood pressure or diabetes medications."
+        },
+        {
+          question: "How can I get physician orders quickly?",
+          answer: "Option 1: Contact Your Primary Care Physician (PCP)\n• Call your doctor's office and explain you're hiring an independent nurse contractor\n• Request written orders for the specific care you need\n• Ask for a care plan outlining frequency and instructions\n• Usually covered by insurance as part of regular care\n\nOption 2: Use Telehealth (Fast & Convenient)\n\nMost Affordable Options:\n• Sesame Care - $35-60 per visit\n• CallonDoc - $39.99 per visit\n\n24/7 On-Demand Options:\n• Amwell - $79 per visit\n• MDLive - $82-88 per visit\n• Doctor On Demand - $99 per visit\n\nComprehensive Care Options:\n• Teladoc - $75 per visit\n• HealthTap - $129 per visit (includes 90 days of follow-up messaging)\n• QuickMD - $75 per visit"
+        },
+        {
+          question: "What should I tell the doctor when requesting orders?",
+          answer: "When requesting orders, explain:\n• \"I'm hiring an independent contractor nurse for home care\"\n• Specific services you need (wound care, medication help, injections, etc.)\n• How often you need care\n• Any medical conditions requiring attention\n\nThe doctor will provide:\n• Written care plan with specific instructions\n• Medication orders (if applicable)\n• Treatment frequency and duration\n• Any special precautions or monitoring needs"
+        },
+        {
+          question: "What documentation will I receive?",
+          answer: "All telehealth platforms provide:\n• Written visit summary with diagnosis and care plan\n• Specific orders for treatments and medications\n• Downloadable documentation you can share with your nurse\n• Follow-up instructions as needed"
+        },
+        {
+          question: "What are the steps to get proper orders?",
+          answer: "1. Choose your preferred method (PCP or telehealth)\n2. Schedule your consultation\n3. Explain your home nursing needs\n4. Receive written orders and care plan\n5. Share documentation with your Nurse Nest contractor"
+        }
+      ]
     }
   ];
 
@@ -343,9 +347,17 @@ export default function ComprehensiveFaqSection() {
   };
 
   const filteredCategories = getFilteredCategories();
+  const activeCurrentCategory = faqCategories.find(cat => cat.id === activeCategory);
 
   const scrollToTop = () => {
     document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
   };
 
   return (
@@ -391,130 +403,232 @@ export default function ComprehensiveFaqSection() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
-          {/* Category Quick Navigation */}
-          <div className="flex flex-wrap gap-3 justify-center max-w-5xl mx-auto">
-            {faqCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => {
-                  setActiveCategory(activeCategory === category.id ? null : category.id);
-                  document.getElementById(`category-${category.id}`)?.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                  });
-                }}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-white/50 hover:bg-white hover:shadow-md transition-all duration-300"
-                style={{ 
-                  fontFamily: 'Arial, Helvetica, sans-serif',
-                  fontSize: '14px',
-                  color: '#1e293b'
-                }}
-              >
-                <span className="text-lg">{category.icon}</span>
-                <span>{category.title}</span>
-              </button>
-            ))}
-          </div>
         </AnimatedSection>
 
-        {/* FAQ Content */}
-        <div className="max-w-5xl mx-auto">
-          {filteredCategories.length === 0 ? (
-            <div className="text-center py-16">
-              <p 
-                className="text-xl"
-                style={{ 
-                  fontFamily: 'Arial, Helvetica, sans-serif',
-                  color: '#475569'
-                }}
+        {/* FAQ Layout with Sidebar */}
+        <div className="max-w-7xl mx-auto">
+          <div className="flex gap-8 relative">
+            {/* Mobile Sidebar Toggle */}
+            {isMobile && (
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="fixed top-32 left-4 z-50 lg:hidden bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-white/50"
+                style={{ color: '#3b82f6' }}
               >
-                No results found. Try a different search term.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-12">
-              {filteredCategories.map((category, categoryIndex) => (
-                <AnimatedSection 
-                  key={category.id}
-                  animation="fade-up"
-                  delay={categoryIndex * 100}
+                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            )}
+
+            {/* Sidebar Navigation */}
+            <div className={`
+              ${isMobile ? 'fixed inset-y-0 left-0 z-40 w-80 transform transition-transform duration-300' : 'relative w-80 flex-shrink-0'}
+              ${isMobile && !sidebarOpen ? '-translate-x-full' : 'translate-x-0'}
+              bg-white/90 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg h-fit sticky top-8
+            `}>
+              <div className="p-6">
+                <h3 
+                  className="text-xl font-medium mb-6"
+                  style={{ 
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                    color: '#1e293b'
+                  }}
                 >
-                  <div id={`category-${category.id}`} className="scroll-mt-24">
-                    {/* Category Header */}
-                    <div className="flex items-center gap-4 mb-8">
-                      <div 
-                        className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                        style={{ backgroundColor: '#3b82f6' }}
-                      >
-                        {category.icon}
-                      </div>
-                      <h3 
-                        className="text-2xl md:text-3xl font-normal"
-                        style={{ 
-                          fontFamily: 'Arial, Helvetica, sans-serif',
-                          color: '#1e293b'
-                        }}
+                  Categories
+                </h3>
+                <nav className="space-y-2">
+                  {faqCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategoryClick(category.id)}
+                      className={`
+                        w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
+                        ${activeCategory === category.id 
+                          ? 'bg-blue-50 border-2 border-blue-200' 
+                          : 'hover:bg-gray-50 border-2 border-transparent'
+                        }
+                      `}
+                    >
+                      <span className="text-2xl">{category.icon}</span>
+                      <span 
+                        className={`text-sm font-medium ${
+                          activeCategory === category.id ? 'text-blue-700' : 'text-gray-700'
+                        }`}
+                        style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
                       >
                         {category.title}
-                      </h3>
-                    </div>
-                    
-                    {/* FAQ Items */}
-                    <Accordion type="single" collapsible className="space-y-4">
-                      {category.faqs.map((faq, faqIndex) => (
-                        <AccordionItem 
-                          key={`${category.id}-${faqIndex}`}
-                          value={`${category.id}-${faqIndex}`}
-                          className="bg-white/80 backdrop-blur-sm border border-white/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                        >
-                          <AccordionTrigger className="px-6 py-5 hover:no-underline">
-                            <div className="flex items-start text-left gap-3 w-full">
-                              <span className="text-xl mt-1">{category.icon}</span>
-                              <span 
-                                className="text-lg font-normal leading-relaxed"
-                                style={{ 
-                                  fontFamily: 'Arial, Helvetica, sans-serif',
-                                  color: '#1e293b'
-                                }}
-                              >
-                                {faq.question}
-                              </span>
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="px-6 pb-6 pt-2">
-                            <div className="pl-9">
-                              <p 
-                                className="whitespace-pre-line leading-relaxed"
-                                style={{ 
-                                  fontFamily: 'Arial, Helvetica, sans-serif',
-                                  fontSize: '16px',
-                                  lineHeight: '1.6',
-                                  color: '#475569'
-                                }}
-                              >
-                                {faq.answer}
-                              </p>
-                              <div className="mt-4 pt-4 border-t border-gray-200">
-                                <button 
-                                  onClick={scrollToTop}
-                                  className="flex items-center gap-2 text-sm font-medium transition-colors duration-200"
-                                  style={{ color: '#3b82f6' }}
-                                >
-                                  <ArrowUp className="h-4 w-4" />
-                                  Back to top
-                                </button>
-                              </div>
-                            </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  </div>
-                </AnimatedSection>
-              ))}
+                      </span>
+                    </button>
+                  ))}
+                </nav>
+              </div>
             </div>
-          )}
+
+            {/* Mobile Overlay */}
+            {isMobile && sidebarOpen && (
+              <div 
+                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
+                onClick={() => setSidebarOpen(false)}
+              />
+            )}
+
+            {/* Main Content Area */}
+            <div className="flex-1 min-w-0">
+              {searchTerm ? (
+                // Search Results
+                <div>
+                  {filteredCategories.length === 0 ? (
+                    <div className="text-center py-16">
+                      <p 
+                        className="text-xl"
+                        style={{ 
+                          fontFamily: 'Arial, Helvetica, sans-serif',
+                          color: '#475569'
+                        }}
+                      >
+                        No results found. Try a different search term.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-8">
+                      {filteredCategories.map((category) => (
+                        <div key={category.id}>
+                          <div className="flex items-center gap-4 mb-6">
+                            <div 
+                              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                              style={{ backgroundColor: '#3b82f6' }}
+                            >
+                              {category.icon}
+                            </div>
+                            <h3 
+                              className="text-xl font-medium"
+                              style={{ 
+                                fontFamily: 'Arial, Helvetica, sans-serif',
+                                color: '#1e293b'
+                              }}
+                            >
+                              {category.title}
+                            </h3>
+                          </div>
+                          
+                          <Accordion type="multiple" className="space-y-3">
+                            {category.faqs.map((faq, faqIndex) => (
+                              <AccordionItem 
+                                key={`${category.id}-${faqIndex}`}
+                                value={`${category.id}-${faqIndex}`}
+                                className="bg-white/80 backdrop-blur-sm border border-white/50 rounded-xl overflow-hidden shadow-sm"
+                              >
+                                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                                  <span 
+                                    className="text-left font-medium"
+                                    style={{ 
+                                      fontFamily: 'Arial, Helvetica, sans-serif',
+                                      color: '#1e293b'
+                                    }}
+                                  >
+                                    {faq.question}
+                                  </span>
+                                </AccordionTrigger>
+                                <AccordionContent className="px-6 pb-6 pt-2">
+                                  <p 
+                                    className="whitespace-pre-line leading-relaxed"
+                                    style={{ 
+                                      fontFamily: 'Arial, Helvetica, sans-serif',
+                                      fontSize: '16px',
+                                      lineHeight: '1.6',
+                                      color: '#475569'
+                                    }}
+                                  >
+                                    {faq.answer}
+                                  </p>
+                                </AccordionContent>
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                // Single Category View
+                activeCurrentCategory && (
+                  <AnimatedSection animation="fade-up">
+                    <div>
+                      {/* Category Header */}
+                      <div className="flex items-center gap-4 mb-8">
+                        <div 
+                          className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                          style={{ backgroundColor: '#3b82f6' }}
+                        >
+                          {activeCurrentCategory.icon}
+                        </div>
+                        <h3 
+                          className="text-2xl md:text-3xl font-normal"
+                          style={{ 
+                            fontFamily: 'Arial, Helvetica, sans-serif',
+                            color: '#1e293b'
+                          }}
+                        >
+                          {activeCurrentCategory.title}
+                        </h3>
+                      </div>
+                      
+                      {/* FAQ Items */}
+                      <Accordion type="single" collapsible className="space-y-4">
+                        {activeCurrentCategory.faqs.map((faq, faqIndex) => (
+                          <AccordionItem 
+                            key={`${activeCurrentCategory.id}-${faqIndex}`}
+                            value={`${activeCurrentCategory.id}-${faqIndex}`}
+                            className="bg-white/80 backdrop-blur-sm border border-white/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                          >
+                            <AccordionTrigger className="px-6 py-5 hover:no-underline">
+                              <div className="flex items-start text-left gap-3 w-full">
+                                <span className="text-xl mt-1">{activeCurrentCategory.icon}</span>
+                                <span 
+                                  className="text-lg font-normal leading-relaxed"
+                                  style={{ 
+                                    fontFamily: 'Arial, Helvetica, sans-serif',
+                                    color: '#1e293b'
+                                  }}
+                                >
+                                  {faq.question}
+                                </span>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-6 pb-6 pt-2">
+                              <div className="pl-9">
+                                <p 
+                                  className="whitespace-pre-line leading-relaxed"
+                                  style={{ 
+                                    fontFamily: 'Arial, Helvetica, sans-serif',
+                                    fontSize: '16px',
+                                    lineHeight: '1.6',
+                                    color: '#475569'
+                                  }}
+                                >
+                                  {faq.answer}
+                                </p>
+                                <div className="mt-4 pt-4 border-t border-gray-200">
+                                  <button 
+                                    onClick={scrollToTop}
+                                    className="flex items-center gap-2 text-sm font-medium transition-colors duration-200"
+                                    style={{ color: '#3b82f6' }}
+                                  >
+                                    <ArrowUp className="h-4 w-4" />
+                                    Back to top
+                                  </button>
+                                </div>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    </div>
+                  </AnimatedSection>
+                )
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Contact Information */}

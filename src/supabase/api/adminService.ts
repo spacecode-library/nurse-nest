@@ -1,9 +1,27 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
+export interface DashboardStats {
+  totalUsers: number;
+  totalNurses: number;
+  totalClients: number;
+  totalJobs: number;
+}
+
+export interface AdminUser {
+  user_id: string;
+  account_status: string;
+  created_at: string;
+  profiles: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+}
+
 export const adminService = {
   // User Management
-  async getAllUsers() {
+  async getAllUsers(): Promise<AdminUser[]> {
     const { data, error } = await supabase
       .from('user_metadata')
       .select(`
@@ -30,6 +48,10 @@ export const adminService = {
 
     if (error) throw error;
     return data;
+  },
+
+  async updateUserAccountStatus(userId: string, status: string) {
+    return this.updateUserStatus(userId, status);
   },
 
   // Nurse Management
@@ -110,10 +132,10 @@ export const adminService = {
     return data || [];
   },
 
-  // Application Management
+  // Application Management - Fixed table name
   async getAllApplications() {
     const { data, error } = await supabase
-      .from('job_applications')
+      .from('applications')
       .select(`
         *,
         job_postings!inner (
@@ -140,7 +162,7 @@ export const adminService = {
   },
 
   // Analytics
-  async getPlatformStats() {
+  async getPlatformStats(): Promise<DashboardStats> {
     try {
       const [usersResult, nursesResult, clientsResult, jobsResult] = await Promise.all([
         supabase.from('user_metadata').select('*', { count: 'exact', head: true }),
@@ -164,5 +186,100 @@ export const adminService = {
         totalJobs: 0
       };
     }
+  },
+
+  async getDashboardStats(): Promise<DashboardStats> {
+    return this.getPlatformStats();
+  },
+
+  async checkAdminStatus(userId: string) {
+    const { data, error } = await supabase
+      .from('admin_profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return !!data;
+  },
+
+  async getPendingLicenseVerifications() {
+    const { data, error } = await supabase
+      .from('nurse_licenses')
+      .select(`
+        *,
+        nurse_profiles!inner (
+          profiles!inner (
+            first_name,
+            last_name,
+            email
+          )
+        )
+      `)
+      .eq('verification_status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async updateLicenseVerificationStatus(licenseId: string, status: string) {
+    const { data, error } = await supabase
+      .from('nurse_licenses')
+      .update({ verification_status: status })
+      .eq('id', licenseId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getJobPostingsForReview() {
+    const { data, error } = await supabase
+      .from('job_postings')
+      .select(`
+        *,
+        client_profiles!inner (
+          profiles!inner (
+            first_name,
+            last_name,
+            email
+          )
+        )
+      `)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getTimecardsForAdmin() {
+    const { data, error } = await supabase
+      .from('timecards')
+      .select(`
+        *,
+        nurse_profiles!inner (
+          profiles!inner (
+            first_name,
+            last_name
+          )
+        ),
+        client_profiles!inner (
+          profiles!inner (
+            first_name,
+            last_name
+          )
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getSystemMetrics() {
+    return this.getPlatformStats();
   }
 };
