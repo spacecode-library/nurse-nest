@@ -31,19 +31,14 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
   useEffect(() => {
     const handleScroll = () => {
       // Only consider as scrolled if we're beyond certain height
-      setIsScrolled(window.scrollY > window.innerHeight * 0.1);
+      setIsScrolled(window.scrollY > 100);
     };
     
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial check
     
-    // For non-home pages, always show white background
-    if (!isHomePageRoute) {
-      setIsScrolled(true);
-    }
-    
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isHomePageRoute]);
+  }, []);
 
   const handleNavClick = (path) => {
     setIsOpen(false);
@@ -68,7 +63,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
         isScrolled 
           ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200 py-3 mx-4 mt-4 rounded-2xl' 
           : isHomePageRoute
-            ? 'bg-transparent py-4'
+            ? 'bg-transparent py-6'
             : 'bg-white py-4'
       )}>
         <div className="container mx-auto px-6 flex items-center justify-between">
@@ -78,7 +73,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
               <span className={cn(
                 isScrolled || !isHomePageRoute ? "text-gray-800" : "text-white"
               )}>Nurse</span>
-              <span className="text-brand-primary">Nest</span>
+              <span className="text-[#9bcbff]">Nest</span>
             </span>
           </div>
           

@@ -70,6 +70,8 @@ interface Factor {
 
 export interface AdminUser {
   id?: string;
+  user_id?: string;
+  email?: string;
   first_name?: string;
   last_name?: string;
   phone_number?: string;
@@ -77,6 +79,9 @@ export interface AdminUser {
   onboarding_completion_percentage?: number;
   client_type?: string;
   role?: string;
+  user_type?: string;
+  account_status?: string;
+  created_at?: string;
   specializations?: string[];
   experience_years?: number;
   hourly_rate?: number;
@@ -89,6 +94,13 @@ export interface AdminUser {
   certifications?: any[];
   qualifications?: any[];
   preferences?: any[];
+  profile_data?: {
+    first_name?: string;
+    last_name?: string;
+    phone_number?: string;
+    relationship_to_recipient?: string;
+    [key: string]: any;
+  };
 }
 
 export interface DashboardStats {
@@ -96,17 +108,27 @@ export interface DashboardStats {
   activeNurses: number;
   pendingApplications: number;
   monthlyRevenue: number;
+  pending_nurse_profiles?: number;
+  pending_client_profiles?: number;
+  new_applications?: number;
+  pending_timecards?: number;
+  pending_verifications?: number;
+  open_jobs?: number;
 }
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (page = 1, perPage = 50, filter = '', sortBy = 'created_at') => {
   try {
-    const { data, error } = await adminAuthClient.listUsers();
+    const { data, error } = await adminAuthClient.listUsers({
+      page,
+      perPage
+    });
     if (error) {
       throw error;
     }
     return {
       success: true,
       data: data.users,
+      count: data.users.length,
     };
   } catch (error) {
     console.error('Error listing users:', error);
@@ -182,7 +204,13 @@ export const getUserDetails = async (userId: string) => {
 
     if (metadataError) throw metadataError;
 
-    let detailedProfile: Partial<AdminUser> = {};
+    let detailedProfile: AdminUser = {
+      user_id: userId,
+      email: authUser.user.email,
+      created_at: authUser.user.created_at,
+      user_type: metadata.user_type,
+      account_status: 'active'
+    };
 
     if (metadata.user_type === 'nurse') {
       // Get comprehensive nurse data
@@ -202,6 +230,7 @@ export const getUserDetails = async (userId: string) => {
         console.error('Error fetching nurse profile:', nurseError);
       } else if (nurseProfile) {
         detailedProfile = {
+          ...detailedProfile,
           ...nurseProfile,
           role: 'nurse',
           specializations: nurseProfile.specialty_types || [],
@@ -211,7 +240,12 @@ export const getUserDetails = async (userId: string) => {
           licenses: nurseProfile.nurse_licenses,
           certifications: nurseProfile.nurse_certifications,
           qualifications: nurseProfile.nurse_qualifications,
-          preferences: nurseProfile.nurse_preferences
+          preferences: nurseProfile.nurse_preferences,
+          profile_data: {
+            first_name: nurseProfile.first_name,
+            last_name: nurseProfile.last_name,
+            phone_number: nurseProfile.phone_number
+          }
         };
       }
     } else if (metadata.user_type === 'client') {
@@ -231,11 +265,18 @@ export const getUserDetails = async (userId: string) => {
         console.error('Error fetching client profile:', clientError);
       } else if (clientProfile) {
         detailedProfile = {
+          ...detailedProfile,
           ...clientProfile,
           role: 'client',
           care_recipients: clientProfile.care_recipients || [],
           care_locations: clientProfile.care_locations,
-          care_needs: clientProfile.care_needs
+          care_needs: clientProfile.care_needs,
+          profile_data: {
+            first_name: clientProfile.first_name,
+            last_name: clientProfile.last_name,
+            phone_number: clientProfile.phone_number,
+            relationship_to_recipient: clientProfile.relationship_to_recipient
+          }
         };
       }
     }
@@ -243,7 +284,7 @@ export const getUserDetails = async (userId: string) => {
     const result = {
       authUser: authUser.user,
       metadata,
-      ...(detailedProfile as AdminUser)
+      ...detailedProfile
     };
 
     return {
@@ -302,7 +343,13 @@ export const getDashboardStats = async (): Promise<{ success: boolean; data?: Da
       totalUsers: 0,
       activeNurses: 0,
       pendingApplications: 0,
-      monthlyRevenue: 0
+      monthlyRevenue: 0,
+      pending_nurse_profiles: 0,
+      pending_client_profiles: 0,
+      new_applications: 0,
+      pending_timecards: 0,
+      pending_verifications: 0,
+      open_jobs: 0
     }
   };
 };
