@@ -23,10 +23,8 @@ export default function Index() {
         {/* Statistics Section */}
         <StatisticsSection />
         
-        {/* About the Founder */}
-        <section className="py-section bg-neutral-light">
-          <AboutMeSection />
-        </section>
+        {/* About the Founder - Remove gray background and padding */}
+        <AboutMeSection />
       </main>
       
       <Footer />

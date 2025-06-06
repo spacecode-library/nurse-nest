@@ -91,11 +91,11 @@ export default function AboutMeSection() {
               {/* Image Column - Left side on desktop */}
               <AnimatedSection 
                 animation="fade-up" 
-                className="md:col-span-4 lg:col-span-3 flex justify-center"
+                className="md:col-span-3 flex justify-center md:justify-start"
               >
-                <div className="relative mb-8 md:mb-0 max-w-xs">
+                <div className="relative mb-8 md:mb-0">
                   <div 
-                    className="w-72 h-72 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lg mx-auto transition-transform duration-300 hover:scale-105"
+                    className="w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105"
                     style={{
                       border: '3px solid #9bcbff'
                     }}
@@ -113,9 +113,9 @@ export default function AboutMeSection() {
               <AnimatedSection 
                 animation="fade-up" 
                 delay={150} 
-                className="md:col-span-8 lg:col-span-9"
+                className="md:col-span-9"
               >
-                <div className="max-w-3xl">
+                <div className="max-w-4xl">
                   <h3 
                     className="text-3xl md:text-4xl font-light mb-1"
                     style={{ 
@@ -185,12 +185,12 @@ export default function AboutMeSection() {
                     </p>
                   </div>
                   
-                  {/* Enhanced Handwritten Signature */}
+                  {/* Enhanced Handwritten Signature - Much Larger */}
                   <div className="mt-12" id="signature-animation">
                     <img 
                       src="/lovable-uploads/e2b60f86-a631-4074-9374-e350c4ea1e3f.png"
                       alt="Jayson Hinagawa Signature"
-                      className="h-16 md:h-20 w-auto opacity-90"
+                      className="h-24 md:h-32 w-auto opacity-90"
                       style={{
                         filter: 'brightness(0.2) sepia(1) saturate(5) hue-rotate(200deg)',
                         textShadow: '0 2px 4px rgba(30, 41, 59, 0.1)'
