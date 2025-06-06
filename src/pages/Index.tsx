@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import StatisticsSection from "@/components/StatisticsSection";
 import AboutMeSection from "@/components/AboutMeSection";
 
 export default function Index() {
@@ -18,6 +19,9 @@ export default function Index() {
         
         {/* How It Works - Platform process - no gap */}
         <HowItWorksSection />
+        
+        {/* Statistics Section */}
+        <StatisticsSection />
         
         {/* About the Founder */}
         <section className="py-section bg-neutral-light">
