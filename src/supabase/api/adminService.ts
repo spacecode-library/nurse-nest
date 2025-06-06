@@ -1,4 +1,3 @@
-
 import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -232,9 +231,9 @@ export const getUserDetails = async (userId: string) => {
           ...detailedProfile,
           ...nurseProfile,
           role: 'nurse',
-          specializations: nurseProfile.nursing_specialties || [],
-          experience_years: Number(nurseProfile.experience_years) || 0,
-          hourly_rate: Number(nurseProfile.hourly_rate) || 0,
+          specializations: nurseProfile.specialties || [],
+          experience_years: Number(nurseProfile.years_experience) || 0,
+          hourly_rate: Number(nurseProfile.rate) || 0,
           bio: nurseProfile.bio,
           licenses: nurseProfile.nurse_licenses,
           certifications: nurseProfile.nurse_certifications,

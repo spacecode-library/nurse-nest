@@ -75,31 +75,31 @@ export default function AboutMeSection() {
           >
             Meet the Founder
           </h2>
-          <div className="w-32 h-1.5 bg-brand-primary mx-auto rounded-full mb-6"></div>
-          <p className="text-lg text-neutral-dark font-normal max-w-2xl mx-auto">
+          <div className="w-40 h-2 bg-brand-primary mx-auto rounded-full mb-6"></div>
+          <p className="text-lg text-neutral-dark font-normal max-w-2xl mx-auto leading-relaxed">
             The healthcare professional behind Nurse Nest's mission
           </p>
         </AnimatedSection>
 
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Enhanced content card with better spacing */}
           <div 
-            className="bg-white rounded-3xl p-12 md:p-16 border border-brand-primary/20"
+            className="bg-white rounded-3xl p-16 md:p-20 border border-brand-primary/20"
             style={{
-              boxShadow: '0 20px 40px rgba(30, 41, 59, 0.12)'
+              boxShadow: '0 25px 50px rgba(30, 41, 59, 0.15)'
             }}
           >
-            <div className="flex flex-col lg:flex-row gap-12">
+            <div className="flex flex-col lg:flex-row gap-16 items-start">
               {/* Profile Section - Left Side */}
               <AnimatedSection 
                 animation="fade-up" 
-                className="flex-shrink-0 lg:w-80"
+                className="flex-shrink-0"
               >
                 <div className="text-center">
                   {/* Larger Profile Picture */}
                   <div className="relative mb-8">
                     <div 
-                      className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden shadow-xl transition-transform duration-300 hover:scale-105 mx-auto"
+                      className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden shadow-xl transition-transform duration-300 hover:scale-105 mx-auto"
                       style={{
                         border: '4px solid #9bcbff'
                       }}
@@ -114,7 +114,7 @@ export default function AboutMeSection() {
                   
                   {/* Founder Name and Title - Center aligned under image */}
                   <h3 
-                    className="text-4xl md:text-5xl font-semibold mb-3"
+                    className="text-5xl md:text-6xl font-bold mb-4"
                     style={{ 
                       fontFamily: 'Arial, Helvetica, sans-serif',
                       color: '#1e293b'
@@ -126,14 +126,14 @@ export default function AboutMeSection() {
                     className="text-lg font-medium mb-8"
                     style={{ 
                       fontFamily: 'Arial, Helvetica, sans-serif',
-                      color: '#3b82f6'
+                      color: '#64748b'
                     }}
                   >
                     Founder of Nurse Nest
                   </p>
                   
                   {/* Decorative element */}
-                  <div className="w-20 h-px bg-brand-primary/30 mx-auto"></div>
+                  <div className="w-24 h-px bg-brand-primary/30 mx-auto"></div>
                 </div>
               </AnimatedSection>
               
@@ -155,37 +155,37 @@ export default function AboutMeSection() {
                     Hi, I'm Jayson — Thank you so much for being here.
                   </p>
                   
-                  <div className="w-12 h-px bg-brand-primary/30"></div>
+                  <div className="w-16 h-px bg-brand-primary/30"></div>
                   
-                  <p className="text-lg">
+                  <p className="text-lg leading-relaxed">
                     I started my nursing journey in 2008, and I'll be honest—it didn't start smoothly. I struggled through my first semester of nursing school and seriously questioned whether I could do it. But I kept going, graduated, and began my career in the ICU.
                   </p>
                   
-                  <div className="w-12 h-px bg-brand-primary/30"></div>
+                  <div className="w-16 h-px bg-brand-primary/30"></div>
                   
-                  <p className="text-lg">
+                  <p className="text-lg leading-relaxed">
                     Since then, I've worked in over 10 hospitals and nearly every type of critical care environment. In 2016, I transitioned into travel nursing, where I've continued to grow and learn across a wide variety of clinical settings. My career has also taken me into correctional health, psychiatry, telehealth, and independent contracting.
                   </p>
                   
-                  <div className="w-12 h-px bg-brand-primary/30"></div>
+                  <div className="w-16 h-px bg-brand-primary/30"></div>
                   
-                  <p className="text-lg">
+                  <p className="text-lg leading-relaxed">
                     Along the way, I've seen how challenging it can be for families to find the right in-home nurse—and how difficult it is for nurses to navigate constant credentialing and onboarding with little guidance.
                   </p>
                   
-                  <div className="w-12 h-px bg-brand-primary/30"></div>
+                  <div className="w-16 h-px bg-brand-primary/30"></div>
                   
-                  <p className="text-lg">
+                  <p className="text-lg leading-relaxed">
                     I created Nurse Nest to make things better. This platform exists to simplify the process for both clients and nurses, offering a thoughtful, transparent way to connect with licensed professionals who are ready to help.
                   </p>
                   
-                  <div className="w-12 h-px bg-brand-primary/30"></div>
+                  <div className="w-16 h-px bg-brand-primary/30"></div>
                   
-                  <p className="text-lg">
+                  <p className="text-lg leading-relaxed">
                     Whether you're a new parent, caring for an aging family member, or a clinic in need of support, I'm here to make it easier to get the care you need from someone you can trust.
                   </p>
                   
-                  <div className="w-12 h-px bg-brand-primary/30"></div>
+                  <div className="w-16 h-px bg-brand-primary/30"></div>
                   
                   <p className="text-xl font-semibold" style={{ color: '#1e293b' }}>
                     If you have any questions or just want to connect, I'd love to hear from you.
@@ -194,22 +194,22 @@ export default function AboutMeSection() {
               </AnimatedSection>
             </div>
             
-            {/* Signature Section with enhanced spacing and separator */}
-            <div className="mt-16 pt-12 border-t border-brand-primary/10">
+            {/* Signature Section with reduced padding */}
+            <div className="mt-12 pt-8 border-t border-brand-primary/10">
               <div className="text-center" id="signature-animation">
-                <div className="mb-8">
-                  <div className="w-16 h-px bg-brand-primary/20 mx-auto mb-8"></div>
+                <div className="mb-4">
+                  <div className="w-16 h-px bg-brand-primary/20 mx-auto mb-4"></div>
                 </div>
                 <img 
                   src="/lovable-uploads/16f8aab2-52ef-4d03-a067-775c04042d1f.png"
                   alt="Jayson Hinagawa Signature"
-                  className="h-40 md:h-56 w-auto mx-auto opacity-90"
+                  className="h-40 md:h-48 w-auto mx-auto opacity-90"
                   style={{
                     filter: 'brightness(0.1) sepia(1) saturate(10) hue-rotate(190deg)',
                     maxWidth: '500px'
                   }}
                 />
-                <div className="mt-8">
+                <div className="mt-4">
                   <div className="w-16 h-px bg-brand-primary/20 mx-auto"></div>
                 </div>
               </div>

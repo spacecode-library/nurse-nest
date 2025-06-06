@@ -87,7 +87,7 @@ export default function StatisticsSection() {
       ref={sectionRef}
       className="relative py-16 md:py-20 overflow-hidden"
       style={{
-        backgroundImage: `url('/lovable-uploads/3c7ccbae-084d-4895-9174-abe88a83a047.png')`,
+        backgroundImage: `url('/lovable-uploads/240466de-65e5-4ba7-81c3-a666ac4a35ef.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
