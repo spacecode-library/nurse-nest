@@ -1,3 +1,4 @@
+
 // src/supabase/api/adminService.ts
 import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
@@ -232,9 +233,9 @@ export const getUserDetails = async (userId: string) => {
           ...detailedProfile,
           ...nurseProfile,
           role: 'nurse',
-          specializations: nurseProfile.specialty_area || [],
-          experience_years: nurseProfile.experience_level || 0,
-          hourly_rate: nurseProfile.hourly_rate || 0,
+          specializations: nurseProfile.specialty_areas || [],
+          experience_years: nurseProfile.years_experience || 0,
+          hourly_rate: nurseProfile.preferred_hourly_rate || 0,
           bio: nurseProfile.bio,
           licenses: nurseProfile.nurse_licenses,
           certifications: nurseProfile.nurse_certifications,
@@ -314,7 +315,7 @@ export const updateUserName = async (userId: string, newName: string) => {
     // Update the user's name in the user_metadata table
     const { error: metadataError } = await supabase
       .from('user_metadata')
-      .update({ display_name: newName })
+      .update({ user_type: 'client' })
       .eq('user_id', userId);
 
     if (metadataError) {
