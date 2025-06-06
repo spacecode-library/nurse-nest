@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -126,8 +125,8 @@ export default function Dashboard() {
           </div>
           
           {/* Role-specific content */}
-          {userRole === 'client' && profile && <ClientDashboard profile={profile} />}
-          {userRole === 'nurse' && profile && <NurseDashboard profile={profile} />}
+          {userRole === 'client' && <ClientDashboard />}
+          {userRole === 'nurse' && <NurseDashboard />}
           
           {/* Account Settings - shown for all roles */}
           {profile && userRole && <AccountSettings profile={profile} userRole={userRole} />}
