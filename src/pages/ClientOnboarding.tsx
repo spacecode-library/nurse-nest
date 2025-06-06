@@ -17,6 +17,7 @@ import { createClientProfile, getClientProfileByUserId, updateClientProfile, upd
 import { addCareLocation, getCareLocations, updateCareLocation } from '@/supabase/api/careLocationService';
 import { addCareNeeds, getCareNeeds, updateCareNeeds } from '@/supabase/api/careNeedsService';
 import { supabase } from '@/integrations/supabase/client';
+import { AmericanDateInput, DateUtils } from '@/components/ui/american-date-input';
 
 // Constants for form options
 const CLIENT_TYPES = [
@@ -168,6 +169,7 @@ export default function ClientOnboarding() {
   const [specialSkills, setSpecialSkills] = useState<string[]>([]);
   const [healthConditions, setHealthConditions] = useState<string[]>([]);
   const [additionalNotes, setAdditionalNotes] = useState('');
+  const [careStartDate, setCareStartDate] = useState(''); // New field for care start date
 
   // Payment (Step 4)
   const [paymentMethod, setPaymentMethod] = useState('credit_card');
@@ -188,6 +190,7 @@ export default function ClientOnboarding() {
         if (data?.user) {
           const userId = data.user.id;
           setUserId(userId);
+          setEmail(data.user.email || '');
           
           const { data: profileData, error } = await getClientProfileByUserId(userId);
           
@@ -257,6 +260,8 @@ export default function ClientOnboarding() {
                   setSpecialSkills(needsData.special_skills || []);
                   setHealthConditions(needsData.health_conditions || []);
                   setAdditionalNotes(needsData.additional_notes || '');
+                  // If there's a care_start_date field in your schema, uncomment this:
+                  // setCareStartDate(needsData.care_start_date || '');
                 }
               }
               
@@ -419,6 +424,8 @@ export default function ClientOnboarding() {
               special_skills: specialSkills,
               health_conditions: healthConditions,
               additional_notes: additionalNotes
+              // If you have a care_start_date field, uncomment this:
+              // care_start_date: careStartDate
             });
           } else {
             const { data } = await addCareNeeds({
@@ -429,6 +436,8 @@ export default function ClientOnboarding() {
               special_skills: specialSkills,
               health_conditions: healthConditions,
               additional_notes: additionalNotes
+              // If you have a care_start_date field, uncomment this:
+              // care_start_date: careStartDate
             });
             
             if (data) {
@@ -958,6 +967,14 @@ export default function ClientOnboarding() {
                         required
                       />
                     </div>
+
+                    {/* Care Start Date */}
+                    <AmericanDateInput
+                      id="careStartDate"
+                      label="Preferred Care Start Date"
+                      value={careStartDate}
+                      onChange={setCareStartDate}
+                    />
                     
                     <div className="space-y-3">
                       <Label>Required Special Skills</Label>
@@ -1189,6 +1206,12 @@ export default function ClientOnboarding() {
                           <div>
                             <p className="text-sm text-gray-500">Hours Per Week</p>
                             <p className="font-medium">{hoursPerWeek || 'Not specified'}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Preferred Start Date</p>
+                            <p className="font-medium">
+                              {careStartDate ? DateUtils.isoToAmerican(careStartDate) : 'Not specified'}
+                            </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-500">Required Skills</p>
