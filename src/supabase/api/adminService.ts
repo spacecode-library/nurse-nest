@@ -3,6 +3,7 @@ import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 import axios from 'axios';
+import { ReactNode } from 'react';
 
 const servicekey = import.meta.env.VITE_SUPABASE_SERVICE_KEY;
 /**
@@ -32,12 +33,6 @@ export interface AdminUser {
   created_at?: string;
   last_login?: string;
   profile_data?: {
-    care_recipients: any;
-    relationship_to_recipient: any;
-    relationship_to_recipient: ReactNode;
-    care_recipients: any;
-    care_recipients: boolean;
-    care_recipients: any;
     id?: string;
     first_name?: string;
     last_name?: string;
@@ -57,6 +52,8 @@ export interface AdminUser {
     };
     care_needs?: any;
     care_location?: any;
+    care_recipients?: any;
+    relationship_to_recipient?: string;
   };
 }
 
@@ -90,38 +87,22 @@ export interface AdminTask {
 }
 
 /**
- * Create admin profile using raw SQL
+ * Create admin profile using direct insert
  */
 export async function createAdminProfile(profileData: Omit<AdminProfile, 'id' | 'created_at' | 'updated_at'>) {
   try {
-    const { data, error } = await supabase.rpc('create_admin_profile', {
-      p_user_id: profileData.user_id,
-      p_first_name: profileData.first_name,
-      p_last_name: profileData.last_name,
-      p_email: profileData.email,
-      p_phone_number: profileData.phone_number || null,
-      p_role: profileData.role,
-      p_permissions: profileData.permissions
-    });
+    // Use direct insert instead of RPC function
+    const { data, error } = await supabase
+      .from('admin_profiles')
+      .insert(profileData)
+      .select()
+      .single();
 
     if (error) throw error;
     return { data, error: null };
   } catch (error) {
     console.error('Error creating admin profile:', error);
-    
-    // Fallback to direct SQL query
-    try {
-      const { data, error: sqlError } = await supabase
-        .from('admin_profiles' as any)
-        .insert(profileData)
-        .select()
-        .single();
-
-      if (sqlError) throw sqlError;
-      return { data, error: null };
-    } catch (fallbackError) {
-      return { data: null, error: fallbackError as PostgrestError };
-    }
+    return { data: null, error: error as PostgrestError };
   }
 }
 
@@ -393,7 +374,6 @@ export async function getAllUsers(
     return { data: null, count: null, error: error as PostgrestError };
   }
 }
-
 
 /**
  * Get detailed user information by ID

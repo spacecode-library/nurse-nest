@@ -126,11 +126,11 @@ export default function Dashboard() {
           </div>
           
           {/* Role-specific content */}
-          {userRole === 'client' && <ClientDashboard profile={profile} />}
-          {userRole === 'nurse' && <NurseDashboard profile={profile} />}
+          {userRole === 'client' && profile && <ClientDashboard profile={profile} />}
+          {userRole === 'nurse' && profile && <NurseDashboard profile={profile} />}
           
           {/* Account Settings - shown for all roles */}
-          <AccountSettings profile={profile} userRole={userRole} />
+          {profile && userRole && <AccountSettings profile={profile} userRole={userRole} />}
         </div>
       </main>
       

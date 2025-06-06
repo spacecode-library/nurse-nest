@@ -37,8 +37,7 @@ export async function signUp(
       email,
       password,
       options: {
-        data: fullMetadata,
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        data: fullMetadata
       }
     });
 
@@ -196,7 +195,12 @@ async function createInitialNurseProfile(userId: string, metadata: any = {}) {
         phone_number: '',  // Will be filled during onboarding
         profile_photo_url: '',  // Will be filled during onboarding
         onboarding_completed: false,
-        onboarding_completion_percentage: 0
+        onboarding_completion_percentage: 0,
+        // Add required fields with default values
+        street_address: '',
+        city: '',
+        state: '',
+        zip_code: ''
       });
     
     if (error) throw error;

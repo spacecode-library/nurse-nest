@@ -66,7 +66,9 @@ export default function ContractNotifications({
       )
       .subscribe();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [profileId, userType]);
 
   const handleContractUpdate = async (payload: any) => {
