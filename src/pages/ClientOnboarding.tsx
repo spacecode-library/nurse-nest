@@ -677,13 +677,6 @@ export default function ClientOnboarding() {
                   </div>
                 ))}
               </div>
-              <div className="relative mt-2">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200"></div>
-                <div 
-                  className="absolute top-0 left-0 h-1 bg-primary-600 transition-all duration-300"
-                  style={{ width: `${(currentStep / (ONBOARDING_STEPS.length - 1)) * 100}%` }}
-                ></div>
-              </div>
             </div>
             
             <Card>
