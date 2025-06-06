@@ -1,5 +1,3 @@
-
-// src/supabase/api/adminService.ts
 import { adminAuthClient } from '@/integrations/supabase/admin';
 import { supabase } from '@/integrations/supabase/client';
 

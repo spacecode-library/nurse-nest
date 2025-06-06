@@ -196,7 +196,7 @@ export default function Auth() {
 
           {/* Right Side - Login Form (40% on desktop, full width on mobile) */}
           <div className="w-full lg:w-2/5 bg-[#f0f9ff] flex items-center justify-start relative">
-            <div className="w-full max-w-md ml-8 lg:ml-12 mr-8 py-12">
+            <div className="w-full max-w-md ml-4 lg:ml-6 mr-8 py-12">
               
               {/* Header Section */}
               <div className="text-left mb-8">
