@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Computer, Mobile, User, Clipboard } from 'lucide-react';
+import { ArrowRight, Computer, Smartphone, User, Clipboard } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -24,7 +24,7 @@ export default function HowItWorksSection() {
       number: 2,
       title: "Multi-Platform Nurse Sourcing & Matching", 
       description: "Our dedicated concierge team sources qualified nurses across multiple platforms and leverages our extensive nationwide network of licensed professionals. We utilize advanced matching algorithms to identify candidates who perfectly align with your specific care requirements, location preferences, and specialized nursing skills.",
-      icon: <Mobile className="h-16 w-16 text-blue-600" />
+      icon: <Smartphone className="h-16 w-16 text-blue-600" />
     },
     {
       number: 3,
