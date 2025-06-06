@@ -23,6 +23,7 @@ import {
   updateOnboardingProgress 
 } from '@/supabase/api/nurseProfileService';
 import { supabase } from '@/integrations/supabase/client';
+import { AmericanDateInput, DateUtils } from '@/components/ui/american-date-input';
 
 // Constants for form options
 const LICENSE_TYPES = [
@@ -88,11 +89,11 @@ const ONBOARDING_STEPS = [
   'Review & Submit'
 ];
 
-// Validation helper function for license expiry
+// Validation helper function for license expiry (updated for American format)
 const validateLicenseExpiry = (expiryDate: string): boolean => {
   if (!expiryDate) return false;
   
-  const expiry = new Date(expiryDate);
+  const expiry = new Date(expiryDate + 'T00:00:00');
   const today = new Date();
   
   // License should not be expired and should be valid for at least 30 days
@@ -124,14 +125,14 @@ export default function NurseOnboarding() {
   const [licenseType, setLicenseType] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
   const [licenseState, setLicenseState] = useState('');
-  const [licenseExpiryDate, setLicenseExpiryDate] = useState('');
+  const [licenseExpiryDate, setLicenseExpiryDate] = useState(''); // Now stores YYYY-MM-DD format
   const [specialty, setSpecialty] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('');
   const [certifications, setCertifications] = useState<string[]>([]);
   const [customCertification, setCustomCertification] = useState('');
 
   // Work Preferences (Step 3) - Removed workLocationType
-  const [availabilityStartDate, setAvailabilityStartDate] = useState('');
+  const [availabilityStartDate, setAvailabilityStartDate] = useState(''); // Now stores YYYY-MM-DD format
   const [preferredShifts, setPreferredShifts] = useState<string[]>([]);
   const [travelDistance, setTravelDistance] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
@@ -230,6 +231,7 @@ export default function NurseOnboarding() {
                   setPreferredShifts(preferencesData.preferred_shifts || []);
                   setTravelDistance(preferencesData.travel_radius?.toString() || '');
                   setHourlyRate(preferencesData.desired_hourly_rate?.toString() || '');
+                  // Note: availability_start_date would need to be added to the preferences table if needed
                 }
                 
                 if (profileData.bio) {
@@ -676,9 +678,6 @@ export default function NurseOnboarding() {
             {/* Header */}
             <div className="text-center mb-12">
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-medical-primary to-medical-accent rounded-full flex items-center justify-center shadow-medical-elevated">
-                  <Stethoscope className="h-10 w-10 text-white" />
-                </div>
               </div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-medical-text-primary via-medical-primary to-medical-accent bg-clip-text text-transparent mb-4">
                 Professional Nurse Onboarding
@@ -902,32 +901,22 @@ export default function NurseOnboarding() {
                           required
                         />
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <Label htmlFor="licenseExpiryDate" className="text-medical-text-primary font-medium">
-                            Expiration Date <span className="text-medical-error">*</span>
-                          </Label>
-                          <div className="flex items-center group relative ml-2">
-                            <HelpCircle className="h-4 w-4 text-medical-text-secondary cursor-help" />
-                            <span className="absolute hidden group-hover:block bg-medical-text-primary text-white text-xs rounded p-2 -mt-14 ml-6 min-w-[200px] z-10">
-                              License must be valid for at least 30 days from today
-                            </span>
-                          </div>
-                        </div>
-                        <Input
+                      <div>
+                        <AmericanDateInput
                           id="licenseExpiryDate"
-                          type="date"
+                          label="Expiration Date"
                           value={licenseExpiryDate}
-                          onChange={(e) => setLicenseExpiryDate(e.target.value)}
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
+                          onChange={setLicenseExpiryDate}
+                          required={true}
+                          error={licenseExpiryDate && !validateLicenseExpiry(licenseExpiryDate) ? 
+                            "License must be valid for at least 30 days from today" : undefined}
                         />
-                        {licenseExpiryDate && !validateLicenseExpiry(licenseExpiryDate) && (
-                          <div className="mt-2 text-medical-error text-sm flex items-center p-3 bg-medical-error/10 border border-medical-error/20 rounded-lg">
-                            <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                            Your license expiration date must be at least 30 days in the future
-                          </div>
-                        )}
+                        <div className="flex items-center group relative ml-2 mt-1">
+                          <HelpCircle className="h-4 w-4 text-medical-text-secondary cursor-help" />
+                          <span className="absolute hidden group-hover:block bg-medical-text-primary text-white text-xs rounded p-2 -mt-14 ml-6 min-w-[200px] z-10">
+                            License must be valid for at least 30 days from today
+                          </span>
+                        </div>
                       </div>
                     </div>
                     
@@ -1058,19 +1047,12 @@ export default function NurseOnboarding() {
                       <p className="text-medical-text-secondary">Tell us about your availability and work preferences</p>
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor="availabilityStartDate" className="text-medical-text-primary font-medium">
-                        Availability Start Date
-                      </Label>
-                      <Input
-                        id="availabilityStartDate"
-                        type="date"
-                        value={availabilityStartDate}
-                        onChange={(e) => setAvailabilityStartDate(e.target.value)}
-                        className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                      />
-                      <p className="text-xs text-medical-text-secondary">When are you available to start working?</p>
-                    </div>
+                    <AmericanDateInput
+                      id="availabilityStartDate"
+                      label="Availability Start Date"
+                      value={availabilityStartDate}
+                      onChange={setAvailabilityStartDate}
+                    />
                     
                     <div className="space-y-4">
                       <Label className="text-medical-text-primary font-medium">
@@ -1094,8 +1076,6 @@ export default function NurseOnboarding() {
                         ))}
                       </div>
                     </div>
-                    
-                    {/* Removed Work Location Preference section - all work is on-site only */}
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
@@ -1145,7 +1125,6 @@ export default function NurseOnboarding() {
                       <p className="text-xs text-medical-text-secondary">This will be visible on your public profile</p>
                     </div>
 
-                    {/* Information box about work location */}
                     <div className="p-4 bg-medical-primary/5 border border-medical-primary/20 rounded-xl">
                       <div className="flex">
                         <Shield className="h-5 w-5 text-medical-primary mr-3 flex-shrink-0 mt-0.5" />
@@ -1338,6 +1317,12 @@ export default function NurseOnboarding() {
                               <p className="font-medium text-medical-text-primary">{licenseNumber || 'Not provided'}</p>
                             </div>
                             <div>
+                              <p className="text-sm text-medical-text-secondary">Expiration Date</p>
+                              <p className="font-medium text-medical-text-primary">
+                                {licenseExpiryDate ? DateUtils.isoToAmerican(licenseExpiryDate) : 'Not provided'}
+                              </p>
+                            </div>
+                            <div>
                               <p className="text-sm text-medical-text-secondary">Primary Specialty</p>
                               <p className="font-medium text-medical-text-primary">{specialty || 'Not provided'}</p>
                             </div>
@@ -1357,7 +1342,7 @@ export default function NurseOnboarding() {
                         </div>
                       </div>
 
-                      {/* Documents Summary - Updated to show resume as required, removed license */}
+                      {/* Documents Summary */}
                       <div className="border border-medical-border rounded-xl overflow-hidden">
                         <div className="bg-medical-primary/5 px-6 py-4 border-b border-medical-border">
                           <h3 className="font-semibold text-medical-text-primary">Documents</h3>
@@ -1376,7 +1361,7 @@ export default function NurseOnboarding() {
                         </div>
                       </div>
 
-                      {/* Work Preferences Summary - Updated to show on-site only */}
+                      {/* Work Preferences Summary */}
                       <div className="border border-medical-border rounded-xl overflow-hidden">
                         <div className="bg-medical-primary/5 px-6 py-4 border-b border-medical-border">
                           <h3 className="font-semibold text-medical-text-primary">Work Preferences</h3>
@@ -1385,7 +1370,9 @@ export default function NurseOnboarding() {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <p className="text-sm text-medical-text-secondary">Available From</p>
-                              <p className="font-medium text-medical-text-primary">{availabilityStartDate || 'Not specified'}</p>
+                              <p className="font-medium text-medical-text-primary">
+                                {availabilityStartDate ? DateUtils.isoToAmerican(availabilityStartDate) : 'Not specified'}
+                              </p>
                             </div>
                             <div>
                               <p className="text-sm text-medical-text-secondary">Work Location</p>
