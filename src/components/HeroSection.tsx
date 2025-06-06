@@ -91,25 +91,29 @@ export default function HeroSection() {
             </AnimatedSection>
           </div>
         </div>
-        
-        {/* Trust Indicators */}
-        <AnimatedSection animation="fade-up" delay={400} className="mt-16">
-          <div className="flex flex-wrap items-center justify-center gap-8 text-white/70">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-blue-300" />
-              <span className="text-sm">HIPAA Compliant</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-green-300" />
-              <span className="text-sm">Licensed Professionals</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Star className="h-5 w-5 text-yellow-300" />
-              <span className="text-sm">Verified Reviews</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="h-5 w-5 text-teal-300" />
-              <span className="text-sm">24/7 Support</span>
+      </div>
+      
+      {/* Trust Indicators - Moved much lower on the page */}
+      <div className="absolute bottom-8 left-0 right-0 hidden md:block">
+        <AnimatedSection animation="fade-up" delay={400}>
+          <div className="container mx-auto px-4">
+            <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-5 w-5 text-blue-300" />
+                <span className="text-sm">HIPAA Compliant</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Users className="h-5 w-5 text-green-300" />
+                <span className="text-sm">Licensed Professionals</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Star className="h-5 w-5 text-yellow-300" />
+                <span className="text-sm">Verified Reviews</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock className="h-5 w-5 text-teal-300" />
+                <span className="text-sm">24/7 Support</span>
+              </div>
             </div>
           </div>
         </AnimatedSection>
