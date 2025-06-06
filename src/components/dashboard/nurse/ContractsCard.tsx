@@ -449,7 +449,7 @@ export default function ContractsCard({ nurseId }: ContractsCardProps) {
                   <div className="flex-1">
                     <p className="font-medium text-yellow-900">🎉 Congratulations! You're an Elite Nurse!</p>
                     <p className="text-sm text-yellow-700">
-                      You now have access to priority matching, higher rates, and fast-track verification.
+                      You now have access to priority matching and higher rates.
                     </p>
                   </div>
                 </div>

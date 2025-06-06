@@ -30,6 +30,29 @@ interface PreviousJob {
   created_at: string;
 }
 
+const CARE_TYPES = [
+  'Adult Care',
+  'Pediatric Care',
+  'Newborn Night Nurse',
+  'Post-Partum Care',
+  'Elderly Care', 
+  'Dementia/Alzheimer\'s Care',
+  'Medication Management',
+  'Diabetes Management',
+  'Respiratory Care (Oxygen/Tracheostomy Management)',
+  'IV Therapy',
+  'Feeding Tube Management',
+  'Wound Care',
+  'Post-Surgical Care',
+  'Stroke Recovery Care',
+  'Catheter Care',
+  'Ostomy Care',
+  'Hospice/Palliative Care',
+  'ADL Care (Activities of Daily Living)',
+  'Rehabilitation',
+  'Special Needs Care'
+];
+
 export default function JobPostingForm({ 
   clientId, 
   templateJob,
@@ -177,7 +200,6 @@ export default function JobPostingForm({
         specialRequirements ? `Special Requirements: ${specialRequirements}` : '',
         `Start Date: ${new Date(startDate).toLocaleDateString()}`,
         `Application Deadline: ${new Date(applicationDeadline).toLocaleDateString()}`,
-        urgentHiring ? 'URGENT HIRING - Fast-track process available' : ''
       ].filter(Boolean).join(' | ');
 
       const jobData = {
@@ -302,15 +324,11 @@ export default function JobPostingForm({
                 <SelectValue placeholder="Select care type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Adult Care">Adult Care</SelectItem>
-                <SelectItem value="Pediatric Care">Pediatric Care</SelectItem>
-                <SelectItem value="Elderly Care">Elderly Care</SelectItem>
-                <SelectItem value="Postpartum Care">Postpartum Care</SelectItem>
-                <SelectItem value="Special Needs Care">Special Needs Care</SelectItem>
-                <SelectItem value="Overnight Care">Overnight Care</SelectItem>
-                <SelectItem value="Respite Care">Respite Care</SelectItem>
-                <SelectItem value="Post-Surgery Care">Post-Surgery Care</SelectItem>
-                <SelectItem value="Chronic Care Management">Chronic Care Management</SelectItem>
+                {CARE_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             {errors.careType && (
@@ -383,25 +401,13 @@ export default function JobPostingForm({
               )}
             </div>
 
-            <div className="flex items-center space-x-2 pt-6">
-              <input
-                type="checkbox"
-                id="urgentHiring"
-                checked={urgentHiring}
-                onChange={(e) => setUrgentHiring(e.target.checked)}
-                className="rounded"
-              />
-              <Label htmlFor="urgentHiring" className="text-sm">
-                Urgent Hiring (Fast-track process)
-              </Label>
-            </div>
           </div>
 
           <div>
             <Label htmlFor="benefits">Benefits & General Requirements</Label>
             <Textarea
               id="benefits"
-              placeholder="e.g., Health insurance support, flexible scheduling, travel reimbursement..."
+              placeholder="e.g., flexible scheduling, travel reimbursement..."
               value={benefits}
               onChange={(e) => setBenefits(e.target.value)}
               rows={3}
@@ -412,7 +418,7 @@ export default function JobPostingForm({
             <Label htmlFor="specialRequirements">Special Skills & Certifications Required</Label>
             <Textarea
               id="specialRequirements"
-              placeholder="e.g., CPR certification required, IV therapy experience preferred, dementia care training..."
+              placeholder="e.g., CPR certification required, IV therapy experience preferred.."
               value={specialRequirements}
               onChange={(e) => setSpecialRequirements(e.target.value)}
               rows={2}
