@@ -42,7 +42,7 @@ export default function HowItWorksSection() {
 
   return (
     <section className="relative overflow-hidden" id="how-it-works">
-      {/* Blue gradient background section */}
+      {/* Blue gradient background section with hard cut */}
       <div className="bg-gradient-to-b from-[#87CEEB] to-[#4A90E2] py-20 md:py-32">
         <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection animation="fade-up" className="text-center mb-16">
@@ -93,7 +93,7 @@ export default function HowItWorksSection() {
         </div>
       </div>
       
-      {/* Hard cut to white background */}
+      {/* HARD CUT to white background - no transition */}
       <div className="bg-white py-16">
         <div className="container mx-auto px-4 text-center">
           <AnimatedSection animation="fade-up" delay={300}>
