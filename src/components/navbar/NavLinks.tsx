@@ -4,10 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useScrollToSection } from '@/hooks/use-scroll-to-section';
 
-// Navigation links data moved from Navbar component
+// Navigation links data with Pay Calculator added
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Pricing', path: '/pricing' },
+  { name: 'Pay Calculator', path: '/salary-calculator' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -40,12 +41,12 @@ export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavCli
           }}
           className={cn(
             isMobile 
-              ? "font-medium text-gray-700 hover:text-primary-500" 
+              ? "font-medium text-gray-700 hover:text-brand-primary" 
               : cn(
                 "font-medium link-underline",
                 shouldUseDarkText
-                  ? "text-gray-700 hover:text-primary-500" 
-                  : "text-white hover:text-primary-100"
+                  ? "text-gray-700 hover:text-brand-primary" 
+                  : "text-gray-800 hover:text-brand-primary"
               )
           )}
         >

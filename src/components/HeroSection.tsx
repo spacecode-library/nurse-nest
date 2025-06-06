@@ -7,51 +7,77 @@ import AnimatedSection from './AnimatedSection';
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Premium Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900">
-        {/* Subtle pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:24px_24px]"></div>
-        </div>
-        
-        {/* Floating elements for depth */}
-        <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-32 left-16 w-48 h-48 bg-gradient-to-tr from-teal-400/20 to-green-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-teal-400/10 rounded-full blur-3xl"></div>
+      {/* Desktop Background - Full Canva Image */}
+      <div className="hidden md:block absolute inset-0">
+        <img 
+          src="/lovable-uploads/74400556-f2a0-450a-9bbc-ad462e3d20c7.png" 
+          alt="Need a nurse? We make it easy." 
+          className="w-full h-full object-cover"
+        />
       </div>
       
-      {/* Hero Content */}
-      <div className="container mx-auto px-4 relative z-10 pt-16 md:pt-24">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          
-          {/* Left Column - Main Content */}
-          <div className="space-y-8">
-            <AnimatedSection animation="fade-up">
-              {/* Platform badge */}
-              <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 text-white/90 text-sm mb-6">
-                <Shield className="h-4 w-4 mr-2 text-blue-300" />
-                Professional Healthcare Marketplace
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white">
-                <div className="mb-2">Connect with</div>
-                <div className="bg-gradient-to-r from-blue-300 via-teal-300 to-green-300 bg-clip-text text-transparent mb-2">
-                  Licensed Nurses
-                </div>
-                <div>On-Demand</div>
+      {/* Mobile Layout - Clean White Background */}
+      <div className="md:hidden w-full bg-white">
+        <div className="container mx-auto px-4 pt-24 pb-16">
+          <AnimatedSection animation="fade-up">
+            {/* Mobile Hero Image */}
+            <div className="mb-8">
+              <img 
+                src="/lovable-uploads/aa259e38-4b67-4f28-9b10-39e924acad54.png" 
+                alt="Professional nurse smiling" 
+                className="w-full h-64 object-cover rounded-2xl shadow-lg"
+              />
+            </div>
+            
+            {/* Mobile Header Content */}
+            <div className="text-center space-y-6">
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+                <span className="text-brand-primary">Need a nurse?</span>
+                <br />
+                <span className="text-gray-600 font-normal italic">We make it easy.</span>
               </h1>
               
-              <p className="text-xl text-blue-100 leading-relaxed max-w-xl">
-                The trusted platform where healthcare professionals and clients connect. 
-                Find qualified nurses for your specific needs or offer your professional services.
-              </p>
+              <div className="space-y-4 text-gray-700 leading-relaxed">
+                <p className="text-lg font-medium">
+                  PREMIUM CONCIERGE NURSING SERVICE NATIONWIDE.
+                </p>
+                <p className="text-base">
+                  WE SOURCE, VET, MATCH, AND MANAGE PAYMENTS
+                  <br />
+                  SO YOU FOCUS ON WHAT MATTERS.
+                </p>
+                <p className="text-lg font-medium text-brand-navy">
+                  LICENSED NURSES FOR EVERY CARE NEED.
+                </p>
+              </div>
               
-              {/* Dual CTA */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              {/* Mobile CTA Button */}
+              <div className="pt-6">
                 <Link to="/apply">
-                  <Button className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white px-8 py-4 text-lg rounded-xl shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 group">
-                    Find a Nurse
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  <Button className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
+                    Request A Nurse
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </div>
+      
+      {/* Desktop Content - Minimal overlay since image contains text */}
+      <div className="hidden md:block container mx-auto px-4 relative z-10 pt-16 md:pt-24">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Left Column - Subtle CTA for Desktop */}
+          <div className="space-y-8">
+            <AnimatedSection animation="fade-up">
+              {/* Desktop CTA positioned to complement the background image */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 mt-96">
+                <Link to="/apply">
+                  <Button className="bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
+                    Request A Nurse
+                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
@@ -64,7 +90,7 @@ export default function HeroSection() {
             </AnimatedSection>
           </div>
           
-          {/* Right Column - Platform Preview */}
+          {/* Right Column - Platform Preview (keeping existing for desktop) */}
           <AnimatedSection animation="fade-up" delay={200} className="relative">
             <div className="relative">
               {/* Main Card */}
@@ -149,7 +175,7 @@ export default function HeroSection() {
                   </div>
                   
                   {/* View More Button */}
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white rounded-xl">
+                  <Button className="w-full bg-brand-primary text-brand-navy rounded-xl">
                     View All Nurses
                   </Button>
                 </div>

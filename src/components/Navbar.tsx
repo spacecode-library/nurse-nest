@@ -9,7 +9,6 @@ import NurseDropdown from './navbar/NurseDropdown';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import FloatingCta from './navbar/FloatingCta';
-import Logo from './navbar/Logo';
 
 interface NavbarProps {
   isHomePage?: boolean;
@@ -76,12 +75,17 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
       <header className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-xl shadow-professional border-b border-neutral-light/50 py-4' 
-          : 'bg-transparent py-6'
+          ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200 py-3 mx-4 mt-4 rounded-2xl' 
+          : 'bg-white py-4'
       )}>
         <div className="container mx-auto px-6 flex items-center justify-between">
-          {/* Logo */}
-          <Logo shouldUseDarkText={shouldUseDarkText} />
+          {/* Logo with NurseNest styling */}
+          <div className="flex items-center">
+            <span className="text-2xl font-bold">
+              <span className="text-gray-800">Nurse</span>
+              <span className="text-brand-primary">Nest</span>
+            </span>
+          </div>
           
           {/* Desktop Navigation - centered */}
           <nav className="hidden lg:flex items-center space-x-10 flex-grow justify-center">
@@ -105,7 +109,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
               "lg:hidden focus:outline-none p-2 rounded-xl transition-all duration-300",
               shouldUseDarkText 
                 ? "text-brand-navy hover:bg-neutral-light" 
-                : "text-white hover:bg-white/10"
+                : "text-gray-800 hover:bg-gray-100"
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
