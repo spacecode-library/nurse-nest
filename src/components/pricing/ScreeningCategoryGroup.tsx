@@ -1,6 +1,5 @@
-
 import React from "react";
-import ScreeningCard from "./ScreeningCard";
+import { ScreeningCard } from "./ScreeningCard";
 import { Search, FileText, Car } from "lucide-react";
 
 type CategoryIcon = "search" | "file-text" | "car";

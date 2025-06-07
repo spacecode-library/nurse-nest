@@ -196,9 +196,9 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Right Side - Centered Login Form (50% on desktop) */}
-          <div className="w-full lg:w-[50%] bg-white/95 backdrop-blur-sm flex items-center justify-center relative">
-            <div className="w-full max-w-md px-6 lg:px-8 py-12 mx-auto ml-8 lg:ml-16">
+          {/* Right Side - Transparent Login Form (50% on desktop) */}
+          <div className="w-full lg:w-[50%] bg-white/30 backdrop-blur-sm flex items-center justify-start relative">
+            <div className="w-full max-w-md px-6 lg:px-8 py-12 mx-auto ml-4 lg:ml-8">
               
               {/* Header Image - Above Login Form */}
               <div className="mb-8 text-center">
@@ -221,7 +221,7 @@ export default function Auth() {
 
               {/* Error Display */}
               {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3 shadow-sm">
+                <div className="mb-6 p-4 bg-red-50/90 backdrop-blur-sm border border-red-200 rounded-lg flex items-start space-x-3 shadow-sm">
                   <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                   <span className="text-red-700 text-sm">{error}</span>
                 </div>
@@ -241,7 +241,7 @@ export default function Auth() {
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
+                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
                           required
                           placeholder="Enter first name"
                         />
@@ -255,7 +255,7 @@ export default function Auth() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
+                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
                           required
                           placeholder="Enter last name"
                         />
@@ -273,10 +273,10 @@ export default function Auth() {
                       >
                         {/* Radio group options - keep existing code */}
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
                             userType === 'client' 
-                              ? 'border-[#3b82f6] bg-blue-50 shadow-md' 
-                              : 'border-[#f1f5f9] shadow-sm'
+                              ? 'border-[#3b82f6] bg-blue-50/80 shadow-md' 
+                              : 'border-[#f1f5f9] bg-white/60 shadow-sm'
                           }`} onClick={() => setUserType('client')}>
                             <RadioGroupItem value="client" id="client" className="text-[#3b82f6]" />
                             <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center shadow-sm">
@@ -290,10 +290,10 @@ export default function Auth() {
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
                             userType === 'nurse' 
-                              ? 'border-[#3b82f6] bg-blue-50 shadow-md' 
-                              : 'border-[#f1f5f9] shadow-sm'
+                              ? 'border-[#3b82f6] bg-blue-50/80 shadow-md' 
+                              : 'border-[#f1f5f9] bg-white/60 shadow-sm'
                           }`} onClick={() => setUserType('nurse')}>
                             <RadioGroupItem value="nurse" id="nurse" className="text-[#3b82f6]" />
                             <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center shadow-sm">
@@ -307,10 +307,10 @@ export default function Auth() {
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
                             userType === 'admin' 
-                              ? 'border-[#3b82f6] bg-blue-50 shadow-md' 
-                              : 'border-[#f1f5f9] shadow-sm'
+                              ? 'border-[#3b82f6] bg-blue-50/80 shadow-md' 
+                              : 'border-[#f1f5f9] bg-white/60 shadow-sm'
                           }`} onClick={() => setUserType('admin')}>
                             <RadioGroupItem value="admin" id="admin" className="text-[#3b82f6]" />
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center shadow-sm">
@@ -342,7 +342,7 @@ export default function Auth() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 pl-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
+                      className="h-12 pl-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
                       required
                       placeholder="Enter your email"
                     />
@@ -372,7 +372,7 @@ export default function Auth() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 pl-12 pr-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
+                      className="h-12 pl-12 pr-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
                       required
                       placeholder="Enter your password"
                     />
@@ -464,7 +464,7 @@ export default function Auth() {
 
               {/* Admin Notice */}
               {userType === 'admin' && !isLogin && (
-                <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg shadow-sm">
+                <div className="mt-6 p-4 bg-purple-50/90 backdrop-blur-sm border border-purple-200 rounded-lg shadow-sm">
                   <div className="flex items-start space-x-3">
                     <Shield className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
                     <div className="text-sm">

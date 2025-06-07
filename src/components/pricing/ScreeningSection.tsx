@@ -1,6 +1,6 @@
-
-import React from "react";
-import ScreeningCard from "./ScreeningCard";
+import React from 'react';
+import { ScreeningCard } from './ScreeningCard';
+import ScreeningCategoryGroup from './ScreeningCategoryGroup';
 import AnimatedSection from "@/components/AnimatedSection";
 
 export default function ScreeningSection({ className = "" }: { className?: string }) {
