@@ -57,7 +57,7 @@ export default function ScreeningCard({
         <p className="text-[#64748b] text-sm">{description}</p>
       </div>
 
-      <ul className="space-y-3 mb-6">
+      <ul className="space-y-3">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
             <CheckCircle2 className={`h-4 w-4 mt-0.5 mr-2 flex-shrink-0 ${
@@ -67,12 +67,6 @@ export default function ScreeningCard({
           </li>
         ))}
       </ul>
-
-      {/* Contact Information */}
-      <div className="text-center pt-4 border-t border-[#f1f5f9]">
-        <p className="text-[#64748b] text-xs mb-1">Contact us for details:</p>
-        <p className="text-[#1e293b] font-medium text-sm">info@nursenest.us</p>
-      </div>
     </div>
   );
 }

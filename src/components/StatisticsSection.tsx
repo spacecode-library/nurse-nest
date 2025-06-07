@@ -99,17 +99,15 @@ export default function StatisticsSection() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <AnimatedSection animation="fade-up" className="text-center mb-12">
-          {/* Custom header image */}
+          {/* Much much larger statistics header image */}
           <div className="flex justify-center mb-4">
             <img
               src="/lovable-uploads/89138824-7217-49ac-bcf7-52d26a067082.png"
               alt="When staying home isn't just a preference"
-              className="h-16 md:h-20 w-auto max-w-full object-contain"
+              className="h-32 md:h-48 w-auto max-w-full object-contain"
             />
           </div>
-          <p className="text-lg md:text-xl text-white/90 font-normal">
-            Real statistics that matter
-          </p>
+          {/* Removed "Real statistics that matter" subtitle */}
         </AnimatedSection>
 
         {/* Statistics Grid */}

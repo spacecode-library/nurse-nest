@@ -48,10 +48,10 @@ export default function HowItWorksSection() {
       
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="text-center mb-16">
-          {/* Custom header image */}
+          {/* Replace with the uploaded image */}
           <div className="flex justify-center mb-6">
             <img
-              src="/lovable-uploads/23e28589-e556-4fe3-8450-ca29309e1fd9.png"
+              src="/lovable-uploads/1379c303-e425-47f4-99a8-e90f3e07c9ca.png"
               alt="How It Works"
               className="h-16 md:h-20 w-auto max-w-full object-contain"
             />

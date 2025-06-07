@@ -50,10 +50,10 @@ export default function PricingFooterInfo() {
         <div className="bg-white rounded-3xl shadow-lg border border-[#e2e8f0] p-8 md:p-10 mb-8">
           <div className="text-center mb-6">
             <h3 className="text-xl md:text-2xl font-light text-[#1e293b] mb-3">
-              Trusted by Leading Companies Worldwide
+              Stripe: The Choice of Industry Leaders Worldwide
             </h3>
             <p className="text-[#475569] text-sm leading-relaxed">
-              Stripe processes payments for millions of businesses, including industry leaders
+              Stripe processes billions in payments every year for the world's most trusted brands.
             </p>
           </div>
           

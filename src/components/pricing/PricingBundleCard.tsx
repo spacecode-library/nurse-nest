@@ -100,7 +100,7 @@ export default function PricingBundleCard({
       {/* Card Body */}
       <div className="flex flex-col flex-1 p-8 bg-white">
         {/* Features List */}
-        <div className="flex-1 mb-6">
+        <div className="flex-1">
           <ul className="space-y-4">
             {features.map((feat, i) => (
               <li key={i} className="flex items-start">
@@ -111,11 +111,7 @@ export default function PricingBundleCard({
           </ul>
         </div>
 
-        {/* Contact Information */}
-        <div className="text-center">
-          <p className="text-[#475569] text-sm mb-2">Contact us to get started:</p>
-          <p className="text-[#1e293b] font-medium">info@nursenest.us</p>
-        </div>
+        {/* Removed contact information section */}
       </div>
     </div>
   );
