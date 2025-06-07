@@ -1,7 +1,7 @@
 
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Shield, Users, Star, Clock } from 'lucide-react';
 import '@/index.css';
 import AnimatedSection from './AnimatedSection';
 
@@ -34,10 +34,25 @@ export default function HeroSection() {
         <div className="relative z-10 container mx-auto px-4 pt-24 pb-16 min-h-screen flex flex-col justify-center">
           <AnimatedSection animation="fade-up">
             <div className="text-center space-y-6">
-              {/* Request a Nurse Button - Positioned above the description text */}
+              {/* Description text first */}
+              <div className="space-y-4 mb-6">
+                <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+                  Need a nurse?
+                  <br />
+                  <span className="italic">We make it easy.</span>
+                </h1>
+                <div className="space-y-2 text-white/90 text-lg">
+                  <p>Premium concierge nursing service nationwide.</p>
+                  <p>We source, vet, match, and manage payments</p>
+                  <p>so you focus on what matters.</p>
+                  <p className="font-semibold">Licensed nurses for every care need.</p>
+                </div>
+              </div>
+              
+              {/* Request a Nurse Button - Positioned just above the description text area */}
               <div className="mb-8">
                 <Link to="/apply">
-                  <Button className="w-full md:w-auto bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
+                  <Button className="w-full md:w-auto bg-[#9bcbff] hover:bg-[#7dd3fc] text-[#1e293b] px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
                     Request A Nurse
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -75,21 +90,25 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* Trust Indicators - Desktop only, moved much lower on the page */}
+      {/* Trust Indicators - Desktop only, moved much lower on the page with icons restored */}
       <div className="absolute bottom-8 left-0 right-0 hidden md:block">
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
               <div className="flex items-center space-x-2">
+                <Shield className="h-4 w-4" />
                 <span className="text-sm">HIPAA Compliant</span>
               </div>
               <div className="flex items-center space-x-2">
+                <Users className="h-4 w-4" />
                 <span className="text-sm">Licensed Professionals</span>
               </div>
               <div className="flex items-center space-x-2">
+                <Star className="h-4 w-4" />
                 <span className="text-sm">Verified Reviews</span>
               </div>
               <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4" />
                 <span className="text-sm">24/7 Support</span>
               </div>
             </div>

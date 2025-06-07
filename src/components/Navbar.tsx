@@ -96,7 +96,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           
           {/* Authentication & CTA - Desktop */}
           <div className="hidden lg:flex items-center space-x-4 ml-auto">
-            {/* Request a Nurse Button - Updated styling to match reference */}
+            {/* Request a Nurse Button - Updated color to #9bcbff */}
             <Button
               onClick={handleRequestNurseClick}
               className="bg-[#9bcbff] hover:bg-[#7dd3fc] text-[#1e293b] font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
