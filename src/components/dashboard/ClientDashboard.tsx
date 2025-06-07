@@ -1,119 +1,50 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
-import JobManagementCard from './client/JobManagementCard';
-import ApplicantReviewCard from './client/ApplicantReviewCard';
-import ClientContractsCard from './client/ClientContractsCard';
-import PaymentHistoryCard from './client/PaymentHistoryCard';
-import BrowseNursesCard from './client/BrowseNursesCard';
-import ClientQuickActionsCard from './client/ClientQuickActionsCard';
-import EnhancedTimecardApprovalCard from './client/EnhancedTimecardApprovalCard';
-import PaymentMethodSetup from './client/PaymentMethodSetup';
-import JobPostingForm from './client/JobPostingForm';
-
-interface Job {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  hourly_rate: number;
-  shift_type: string;
-  requirements: string[];
-  status: string;
-  benefits?: string;
-  care_type?: string;
-  client_id?: string;
-  created_at?: string;
-  duration?: string;
-  job_code?: string;
-  preferred_time?: string;
-  updated_at?: string;
-}
-
-interface Application {
-  id: string;
-  nurse_id: string;
-  job_id: string;
-  status: string;
-  hourly_rate: number;
-  message: string;
-  cover_message?: string;
-  created_at?: string;
-  updated_at?: string;
-  nurse_profiles?: {
-    first_name: string;
-    last_name: string;
-  };
-  job_postings?: {
-    title: string;
-  };
-}
+import { 
+  Calendar, 
+  Clock, 
+  MapPin, 
+  DollarSign, 
+  Users, 
+  Activity,
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  User
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ClientDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    getCurrentUserData();
-    fetchData();
-  }, []);
-
-  const getCurrentUserData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUser(user);
-    } catch (error) {
-      console.error('Error getting current user:', error);
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // Fetch job postings with proper field mapping
-      const { data: jobsData, error: jobsError } = await supabase
+  // Fetch job postings
+  const { data: jobPostings, isLoading: jobsLoading } = useQuery({
+    queryKey: ['jobPostings', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from('job_postings')
-        .select('*');
+        .select('*')
+        .eq('client_id', user?.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id
+  });
 
-      if (jobsError) {
-        console.error('Error fetching jobs:', jobsError);
-        toast({
-          title: "Error",
-          description: "Failed to load job postings",
-          variant: "destructive"
-        });
-      } else if (jobsData) {
-        // Map the data to match our Job interface with proper fallbacks
-        const mappedJobs: Job[] = jobsData.map(job => ({
-          id: job.id,
-          title: job.title || 'Untitled Job',
-          description: job.description || '',
-          location: job.location || '',
-          hourly_rate: job.hourly_rate || 0,
-          shift_type: job.shift_type || '',
-          requirements: job.requirements || [],
-          status: job.status || '',
-          benefits: job.benefits,
-          care_type: job.care_type,
-          client_id: job.client_id,
-          created_at: job.created_at,
-          duration: job.duration,
-          job_code: job.job_code,
-          preferred_time: job.preferred_time,
-          updated_at: job.updated_at
-        }));
-        setJobs(mappedJobs);
-      }
-
-      // Fetch applications with proper data mapping
-      const { data: applicationsData, error: applicationsError } = await supabase
-        .from('applications')
+  // Fetch applications for user's jobs
+  const { data: applications, isLoading: applicationsLoading } = useQuery({
+    queryKey: ['applications', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('job_applications')
         .select(`
           *,
           nurse_profiles (
@@ -121,169 +52,231 @@ export default function ClientDashboard() {
             last_name
           ),
           job_postings (
-            title
+            care_type
           )
-        `);
+        `)
+        .in('job_id', jobPostings?.map(job => job.id) || []);
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!jobPostings?.length
+  });
 
-      if (applicationsError) {
-        console.error('Error fetching applications:', applicationsError);
-        toast({
-          title: "Error",
-          description: "Failed to load applications",
-          variant: "destructive"
-        });
-      } else if (applicationsData) {
-        // Map the data to match our Application interface with proper error handling
-        const mappedApplications: Application[] = applicationsData
-          .filter(app => app.job_postings && typeof app.job_postings === 'object' && 'title' in app.job_postings)
-          .map(app => ({
-            id: app.id,
-            nurse_id: app.nurse_id,
-            job_id: app.job_id,
-            status: app.status,
-            hourly_rate: app.hourly_rate || 0,
-            message: app.cover_message || '',
-            cover_message: app.cover_message,
-            created_at: app.created_at,
-            updated_at: app.updated_at,
-            nurse_profiles: app.nurse_profiles,
-            job_postings: app.job_postings as { title: string }
-          }));
-        setApplications(mappedApplications);
-      }
-
-    } catch (error) {
-      console.error('Error in fetchData:', error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'completed': return 'bg-blue-100 text-blue-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const handleRefresh = () => {
-    fetchData();
-  };
-
-  const handleJobCreated = () => {
-    fetchData();
-    setActiveTab('overview');
-  };
-
-  const handleApplicationUpdate = () => {
-    fetchData();
-  };
-
-  const renderTabContent = () => {
-    const clientId = currentUser?.id || '';
-    const clientEmail = currentUser?.email || '';
-    const clientName = `${currentUser?.user_metadata?.first_name || ''} ${currentUser?.user_metadata?.last_name || ''}`.trim();
-
-    switch (activeTab) {
-      case 'overview':
-        return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 xl:col-span-2 space-y-6">
-              <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />
-              <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />
-            </div>
-            <div className="space-y-6">
-              <ClientQuickActionsCard clientId={clientId} onRefresh={handleRefresh} />
-              <BrowseNursesCard clientId={clientId} />
-            </div>
-          </div>
-        );
-      case 'jobs':
-        return <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />;
-      case 'applications':
-        return <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />;
-      case 'contracts':
-        return <ClientContractsCard clientId={clientId} onContractUpdate={handleApplicationUpdate} />;
-      case 'timecards':
-        return <EnhancedTimecardApprovalCard clientId={clientId} onInvoiceAction={handleApplicationUpdate} />;
-      case 'payments':
-        return (
-          <div className="space-y-6">
-            <PaymentMethodSetup clientId={clientId} clientEmail={clientEmail} clientName={clientName} />
-            <PaymentHistoryCard clientId={clientId} />
-          </div>
-        );
-      case 'post-job':
-        return <JobPostingForm clientId={clientId} onJobCreated={handleJobCreated} onCancel={() => setActiveTab('overview')} />;
-      default:
-        return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 xl:col-span-2 space-y-6">
-              <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />
-              <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />
-            </div>
-            <div className="space-y-6">
-              <ClientQuickActionsCard clientId={clientId} onRefresh={handleRefresh} />
-              <BrowseNursesCard clientId={clientId} />
-            </div>
-          </div>
-        );
+  const getApplicationStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'accepted': return 'bg-green-100 text-green-800';
+      case 'rejected': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  
+  if (jobsLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">Client Dashboard</h1>
-              <div className="hidden md:flex space-x-8">
-                {[
-                  { id: 'overview', label: 'Overview' },
-                  { id: 'jobs', label: 'My Jobs' },
-                  { id: 'applications', label: 'Applications' },
-                  { id: 'contracts', label: 'Contracts' },
-                  { id: 'timecards', label: 'Timecards' },
-                  { id: 'payments', label: 'Payments' }
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      activeTab === tab.id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+    <div className="container mx-auto px-4 py-8 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Client Dashboard</h1>
+          <p className="text-gray-600">Manage your nursing care requests and applications</p>
+        </div>
+        <Button>
+          <FileText className="h-4 w-4 mr-2" />
+          Create New Job Posting
+        </Button>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Activity className="h-8 w-8 text-blue-500" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Active Jobs</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {jobPostings?.filter(job => job.status === 'active').length || 0}
+                </p>
               </div>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <Button
-                onClick={() => setActiveTab('post-job')}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Post New Job
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+          </CardContent>
+        </Card>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {loading ? (
-          <div className="flex items-center justify-center min-h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        ) : (
-          renderTabContent()
-        )}
-      </main>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Users className="h-8 w-8 text-green-500" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Applications</p>
+                <p className="text-2xl font-bold text-gray-900">{applications?.length || 0}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <CheckCircle className="h-8 w-8 text-purple-500" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Completed Jobs</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {jobPostings?.filter(job => job.status === 'completed').length || 0}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <AlertCircle className="h-8 w-8 text-orange-500" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Pending Review</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {applications?.filter(app => app.status === 'pending').length || 0}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Job Postings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Job Postings</CardTitle>
+          <CardDescription>Manage and track your nursing job requests</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {jobPostings && jobPostings.length > 0 ? (
+            <div className="space-y-4">
+              {jobPostings.map((job) => (
+                <div key={job.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-semibold text-lg">{job.care_type}</h3>
+                        <Badge className={getStatusColor(job.status)}>
+                          {job.status}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          <span>{job.duration}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          <span>{job.preferred_time}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          <span>Job #{job.job_code}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        Edit
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        View Applications ({applications?.filter(app => app.job_id === job.id).length || 0})
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No job postings yet</h3>
+              <p className="text-gray-600 mb-4">Create your first job posting to find qualified nurses</p>
+              <Button>Create Job Posting</Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Recent Applications */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Applications</CardTitle>
+          <CardDescription>Review and manage nurse applications</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {applications && applications.length > 0 ? (
+            <div className="space-y-4">
+              {applications.slice(0, 5).map((application) => (
+                <div key={application.id} className="border rounded-lg p-4">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <User className="h-5 w-5 text-gray-400" />
+                        <h4 className="font-medium">
+                          {application.nurse_profiles?.first_name} {application.nurse_profiles?.last_name}
+                        </h4>
+                        <Badge className={getApplicationStatusColor(application.status)}>
+                          {application.status}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Applied for: {application.job_postings?.care_type || 'N/A'}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {application.cover_message}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        View Profile
+                      </Button>
+                      {application.status === 'pending' && (
+                        <>
+                          <Button variant="outline" size="sm">
+                            Accept
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            Decline
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
+              <p className="text-gray-600">Applications will appear here once nurses apply to your jobs</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
