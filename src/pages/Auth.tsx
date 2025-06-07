@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -159,17 +160,20 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      <Navbar />
+      {/* Enhanced Navbar with glassmorphism effect */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-md border-b border-white/20">
+        <Navbar />
+      </div>
       
       <main className="relative flex min-h-screen pt-16">
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
-          {/* Left Side - Artistic Background (75% on desktop to show more of the graphic) */}
-          <div className="hidden lg:flex lg:w-[75%] relative overflow-hidden">
+          {/* Left Side - Artistic Background with header image (60% on desktop) */}
+          <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
             {/* Artistic Healthcare Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white">
-              {/* Main Healthcare Professional Image - positioned to show full left side */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white/30">
+              {/* Main Healthcare Professional Image */}
               <div className="absolute inset-0 flex items-center justify-start">
                 <img 
                   src="/lovable-uploads/cd188753-e3a5-419a-ad58-51cd5607d594.png" 
@@ -179,7 +183,16 @@ export default function Auth() {
               </div>
               
               {/* Ethereal Particle Effects Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/40"></div>
+              
+              {/* Header Image positioned in the left section */}
+              <div className="absolute top-1/3 left-8 right-8 flex justify-center z-10">
+                <img 
+                  src="/lovable-uploads/b03954bb-8493-4e23-a285-627ff87efdb8.png" 
+                  alt="Healthcare Reimagined" 
+                  className="max-w-full h-auto max-h-24 object-contain drop-shadow-lg"
+                />
+              </div>
               
               {/* Digital Network Effects */}
               <div className="absolute inset-0 opacity-30">
@@ -193,15 +206,21 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Right Side - Login Form (25% on desktop, positioned to start at 1/4 point) */}
-          <div className="w-full lg:w-[25%] bg-transparent flex items-center justify-center relative lg:justify-start lg:pl-8">
-            <div className="w-full max-w-md px-6 lg:px-8 py-12 bg-white/90 backdrop-blur-sm rounded-l-2xl lg:rounded-l-none lg:bg-white/95 lg:backdrop-blur-none">
+          {/* Right Side - Centered Login Form (40% on desktop) */}
+          <div className="w-full lg:w-[40%] bg-white/95 backdrop-blur-sm flex items-center justify-center relative">
+            <div className="w-full max-w-lg px-8 lg:px-12 py-12 mx-auto">
+              
+              {/* Mobile Header Image - Only shown on mobile */}
+              <div className="lg:hidden mb-8 text-center">
+                <img 
+                  src="/lovable-uploads/b03954bb-8493-4e23-a285-627ff87efdb8.png" 
+                  alt="Healthcare Reimagined" 
+                  className="max-w-full h-auto max-h-16 object-contain mx-auto drop-shadow-lg"
+                />
+              </div>
               
               {/* Header Section */}
               <div className="text-left mb-8">
-                <h1 className="text-4xl font-light text-[#1e293b] mb-2">
-                  Healthcare Reimagined
-                </h1>
                 <p className="text-lg text-[#475569] mb-2">
                   {isLogin ? 'Sign in to access your dashboard' : 'Create your account'}
                 </p>
@@ -212,7 +231,7 @@ export default function Auth() {
 
               {/* Error Display */}
               {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3 shadow-sm">
                   <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                   <span className="text-red-700 text-sm">{error}</span>
                 </div>
@@ -232,7 +251,7 @@ export default function Auth() {
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
                           required
                           placeholder="Enter first name"
                         />
@@ -246,14 +265,14 @@ export default function Auth() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
                           required
                           placeholder="Enter last name"
                         />
                       </div>
                     </div>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <Label className="text-[#475569] font-medium">
                         I am a:
                       </Label>
@@ -263,13 +282,13 @@ export default function Auth() {
                         className="space-y-3"
                       >
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md ${
                             userType === 'client' 
-                              ? 'border-[#3b82f6] bg-blue-50' 
-                              : 'border-[#f1f5f9]'
+                              ? 'border-[#3b82f6] bg-blue-50 shadow-md' 
+                              : 'border-[#f1f5f9] shadow-sm'
                           }`} onClick={() => setUserType('client')}>
                             <RadioGroupItem value="client" id="client" className="text-[#3b82f6]" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center shadow-sm">
                               <Building2 className="h-5 w-5 text-green-600" />
                             </div>
                             <div className="flex-1">
@@ -280,13 +299,13 @@ export default function Auth() {
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md ${
                             userType === 'nurse' 
-                              ? 'border-[#3b82f6] bg-blue-50' 
-                              : 'border-[#f1f5f9]'
+                              ? 'border-[#3b82f6] bg-blue-50 shadow-md' 
+                              : 'border-[#f1f5f9] shadow-sm'
                           }`} onClick={() => setUserType('nurse')}>
                             <RadioGroupItem value="nurse" id="nurse" className="text-[#3b82f6]" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center shadow-sm">
                               <Stethoscope className="h-5 w-5 text-blue-600" />
                             </div>
                             <div className="flex-1">
@@ -297,13 +316,13 @@ export default function Auth() {
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md ${
                             userType === 'admin' 
-                              ? 'border-[#3b82f6] bg-blue-50' 
-                              : 'border-[#f1f5f9]'
+                              ? 'border-[#3b82f6] bg-blue-50 shadow-md' 
+                              : 'border-[#f1f5f9] shadow-sm'
                           }`} onClick={() => setUserType('admin')}>
                             <RadioGroupItem value="admin" id="admin" className="text-[#3b82f6]" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center shadow-sm">
                               <Shield className="h-5 w-5 text-purple-600" />
                             </div>
                             <div className="flex-1">
@@ -332,7 +351,7 @@ export default function Auth() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 pl-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                      className="h-12 pl-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
                       required
                       placeholder="Enter your email"
                     />
@@ -362,7 +381,7 @@ export default function Auth() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 pl-12 pr-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                      className="h-12 pl-12 pr-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white shadow-sm"
                       required
                       placeholder="Enter your password"
                     />
@@ -401,7 +420,7 @@ export default function Auth() {
                 
                 {/* Sign In Button */}
                 <Button
-                  className="w-full h-12 bg-[#9bcbff] hover:bg-[#3b82f6] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                  className="w-full h-12 bg-[#9bcbff] hover:bg-[#3b82f6] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                   disabled={loading}
                   type="submit"
                 >
@@ -420,7 +439,7 @@ export default function Auth() {
               </form>
               
               {/* Footer Links */}
-              <div className="mt-6 text-left">
+              <div className="mt-8 text-left">
                 {isLogin ? (
                   <p className="text-[#64748b]">
                     Don't have an account?{' '}
@@ -454,7 +473,7 @@ export default function Auth() {
 
               {/* Admin Notice */}
               {userType === 'admin' && !isLogin && (
-                <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg shadow-sm">
                   <div className="flex items-start space-x-3">
                     <Shield className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
                     <div className="text-sm">
@@ -472,7 +491,7 @@ export default function Auth() {
               <div className="mt-8 text-left">
                 <div className="inline-flex items-center space-x-2 text-sm text-[#64748b]">
                   <CheckCircle className="h-4 w-4 text-[#10b981]" />
-                  <span>SSL Secured</span>
+                  <span>SSL Secured & HIPAA Compliant</span>
                 </div>
               </div>
             </div>
