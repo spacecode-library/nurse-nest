@@ -1,7 +1,6 @@
 // components/dashboard/client/ClientConversationsList.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -162,6 +161,24 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
     });
   };
 
+  const getFilteredCategories = () => {
+    let categories = faqCategories;
+    
+    if (activeCategory) {
+      categories = categories.filter(cat => cat.id === activeCategory);
+    }
+    
+    if (searchTerm.trim() === "") return categories;
+    
+    return categories.map(category => ({
+      ...category,
+      faqs: category.faqs.filter(faq => 
+        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    })).filter(category => category.faqs.length > 0);
+  };
+
   const filteredConversations = conversations.filter(convo => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
@@ -173,11 +190,22 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
     );
   });
 
+  const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    setIsSidebarOpen(false);
+    
+    // Smooth scroll to category
+    const element = document.getElementById(`category-${categoryId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   // If a conversation is selected, show the chat window
   if (selectedConversation) {
     return (
       <div className="h-screen flex flex-col">
-        <div className="p-4 border-b bg-white flex items-center">
+        <div className="card-header-brand flex items-center">
           <Button
             variant="ghost"
             size="sm"
@@ -187,7 +215,7 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
             <ChevronLeft className="h-4 w-4 mr-1" />
             Back to Conversations
           </Button>
-          <h2 className="text-lg font-semibold">Chat with {selectedConversation.otherParticipant?.name}</h2>
+          <h2 className="heading-secondary text-brand-navy">Chat with {selectedConversation.otherParticipant?.name}</h2>
         </div>
         <div className="flex-1">
           <ChatWindow
@@ -201,32 +229,33 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-light">
       {/* Header */}
-      <div className="bg-white border-b shadow-sm">
-        <div className="container mx-auto px-4 py-4">
+      <div className="main-navigation">
+        <div className="container mx-auto padding-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onBack}
-                className="flex items-center"
+                className="flex items-center text-brand-slate"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Back to Dashboard
               </Button>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900">Messages</h1>
+              <h1 className="heading-secondary text-brand-slate">Messages</h1>
               {totalUnread > 0 && (
-                <Badge className="bg-red-500 text-white">
+                <span className="status-error">
                   {totalUnread} unread
-                </Badge>
+                </span>
               )}
             </div>
             <Button
               variant="outline"
               size="sm"
               onClick={fetchConversations}
+              className="text-brand-slate border-brand-slate"
             >
               <Activity className="h-4 w-4 mr-2" />
               Refresh
@@ -236,29 +265,29 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 container mx-auto px-4 py-6">
+      <div className="flex-1 container mx-auto padding-md">
         <Card className="h-full flex flex-col">
-          <CardHeader className="pb-4">
+          <CardHeader>
             <div className="flex items-center justify-between mb-4">
               <CardTitle className="flex items-center">
-                <MessageCircle className="h-5 w-5 mr-2" />
+                <MessageCircle className="h-5 w-5 mr-2 text-brand-blue" />
                 Conversations with Nurses
                 {totalUnread > 0 && (
-                  <Badge className="ml-2 bg-blue-600 text-white">
+                  <span className="ml-2 status-error">
                     {totalUnread} unread
-                  </Badge>
+                  </span>
                 )}
               </CardTitle>
             </div>
             
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-brand-gray" />
               <Input
                 type="text"
                 placeholder="Search conversations..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="form-input pl-10"
               />
             </div>
           </CardHeader>
@@ -266,15 +295,15 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
           <CardContent className="flex-1 overflow-y-auto p-0">
             {loading ? (
               <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue"></div>
               </div>
             ) : filteredConversations.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-500 p-4">
+              <div className="flex flex-col items-center justify-center h-64 text-brand-gray padding-md">
                 <MessageCircle className="h-12 w-12 mb-4 opacity-50" />
                 <p className="text-lg font-medium">
                   {conversations.length === 0 ? 'No conversations yet' : 'No matching conversations'}
                 </p>
-                <p className="text-sm mt-2 text-center">
+                <p className="text-small mt-2 text-center">
                   {conversations.length === 0 
                     ? 'When nurses apply for your jobs and you start chatting, conversations will appear here'
                     : 'Try adjusting your search terms'
@@ -292,13 +321,13 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
                 )}
               </div>
             ) : (
-              <div className="divide-y">
+              <div className="divide-y divide-gray-100">
                 {/* Unread Messages Alert */}
                 {totalUnread > 0 && (
-                  <div className="p-4 bg-blue-50 border-b border-blue-200">
+                  <div className="padding-sm bg-brand-cloud-white border-b border-brand-soft-sky">
                     <div className="flex items-center">
-                      <Bell className="h-5 w-5 text-blue-600 mr-2 animate-pulse" />
-                      <span className="font-medium text-blue-900">
+                      <Bell className="h-5 w-5 text-brand-blue mr-2 animate-pulse" />
+                      <span className="font-medium text-brand-navy">
                         You have {totalUnread} unread message{totalUnread !== 1 ? 's' : ''} from nurses
                       </span>
                     </div>
@@ -308,14 +337,14 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
                 {filteredConversations.map((conversation) => (
                   <div
                     key={conversation.id}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                      conversation.unreadCount > 0 ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                    className={`padding-sm hover:bg-brand-slate cursor-pointer transition-colors ${
+                      conversation.unreadCount > 0 ? 'bg-brand-cloud-white border-l-4 border-l-brand-blue' : ''
                     }`}
                     onClick={() => setSelectedConversation(conversation)}
                   >
                     <div className="flex items-start space-x-3">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
+                        <div className="w-12 h-12 rounded-full bg-brand-slate overflow-hidden">
                           {conversation.otherParticipant?.profile_photo_url ? (
                             <img
                               src={conversation.otherParticipant.profile_photo_url}
@@ -323,7 +352,7 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                            <div className="w-full h-full bg-brand-blue flex items-center justify-center text-white font-medium">
                               {conversation.otherParticipant?.name?.charAt(0)?.toUpperCase() || 'N'}
                             </div>
                           )}
@@ -333,41 +362,41 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 flex items-center">
+                            <h4 className="font-semibold text-brand-navy flex items-center">
                               {conversation.otherParticipant?.name || 'Unknown Nurse'}
                               {conversation.unreadCount > 0 && (
-                                <Badge className="ml-2 bg-red-500 text-white text-xs animate-pulse">
+                                <span className="ml-2 status-error text-xs animate-pulse">
                                   {conversation.unreadCount}
-                                </Badge>
+                                </span>
                               )}
                             </h4>
-                            <p className="text-sm text-gray-600 flex items-center mt-1">
+                            <p className="text-small text-brand-gray flex items-center mt-1">
                               <Calendar className="h-3 w-3 mr-1" />
                               {conversation.job_postings?.job_code} - {conversation.job_postings?.care_type}
                             </p>
                           </div>
-                          <span className="text-xs text-gray-500 ml-2">
+                          <span className="text-small text-brand-gray ml-2">
                             {formatTime(conversation.lastMessage?.created_at || conversation.created_at)}
                           </span>
                         </div>
 
                         {conversation.lastMessage && (
-                          <p className={`text-sm mt-2 truncate ${
-                            conversation.unreadCount > 0 ? 'font-medium text-gray-900' : 'text-gray-600'
+                          <p className={`text-small mt-2 truncate ${
+                            conversation.unreadCount > 0 ? 'font-medium text-brand-navy' : 'text-brand-gray'
                           }`}>
                             {conversation.lastMessage.sender_id === userId && (
-                              <span className="text-gray-500 mr-1">You:</span>
+                              <span className="text-brand-gray mr-1">You:</span>
                             )}
                             {conversation.lastMessage.message_content}
                           </p>
                         )}
 
-                        <div className="flex items-center mt-2 space-x-3 text-xs text-gray-500">
+                        <div className="flex items-center mt-2 space-x-3 text-small text-brand-gray">
                           {conversation.lastMessage?.sender_id === userId && (
                             <span className="flex items-center">
                               {conversation.lastMessage.is_read ? (
                                 <>
-                                  <CheckCircle className="h-3 w-3 mr-1 text-blue-500" />
+                                  <CheckCircle className="h-3 w-3 mr-1 text-brand-blue" />
                                   Read
                                 </>
                               ) : (
@@ -379,7 +408,7 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
                             </span>
                           )}
                           {conversation.unreadCount === 0 && conversation.lastMessage?.sender_id !== userId && (
-                            <span className="text-green-600">
+                            <span className="text-brand-green">
                               Conversation up to date
                             </span>
                           )}
@@ -398,3 +427,9 @@ const ClientConversationsList: React.FC<ClientConversationsListProps> = ({
 };
 
 export default ClientConversationsList;
+
+const faqCategories = [];
+const setActiveCategory = () => {};
+const setIsSidebarOpen = () => {};
+const setIsOpen = () => {};
+const activeCategory = "";
