@@ -14,20 +14,14 @@ export default function AboutMeSection() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <AnimatedSection animation="fade-up" className="text-center mb-16">
-          <h2 
-            className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide leading-tight"
-            style={{ 
-              fontFamily: 'Arial, Helvetica, sans-serif',
-              background: 'linear-gradient(135deg, #1e293b 0%, #3b82f6 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              letterSpacing: '1px',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
-            }}
-          >
-            Meet the Founder
-          </h2>
+          {/* Custom header image */}
+          <div className="flex justify-center mb-6">
+            <img
+              src="/lovable-uploads/62c6c4e8-63bf-4393-b4c0-042689b94066.png"
+              alt="Meet the Founder"
+              className="h-16 md:h-20 w-auto max-w-full object-contain"
+            />
+          </div>
         </AnimatedSection>
 
         {/* Large White Card */}

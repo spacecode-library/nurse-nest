@@ -99,9 +99,14 @@ export default function StatisticsSection() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <AnimatedSection animation="fade-up" className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-light mb-4 text-white">
-            The care families need
-          </h2>
+          {/* Custom header image */}
+          <div className="flex justify-center mb-4">
+            <img
+              src="/lovable-uploads/89138824-7217-49ac-bcf7-52d26a067082.png"
+              alt="When staying home isn't just a preference"
+              className="h-16 md:h-20 w-auto max-w-full object-contain"
+            />
+          </div>
           <p className="text-lg md:text-xl text-white/90 font-normal">
             Real statistics that matter
           </p>

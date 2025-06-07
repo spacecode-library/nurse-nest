@@ -48,21 +48,14 @@ export default function HowItWorksSection() {
       
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="text-center mb-16">
-          {/* Enhanced title with sophisticated typography */}
-          <h2 
-            className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-wide leading-tight"
-            style={{ 
-              fontFamily: 'Arial, Helvetica, sans-serif',
-              background: 'linear-gradient(135deg, #1e293b 0%, #3b82f6 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              letterSpacing: '1px',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
-            }}
-          >
-            How it works
-          </h2>
+          {/* Custom header image */}
+          <div className="flex justify-center mb-6">
+            <img
+              src="/lovable-uploads/23e28589-e556-4fe3-8450-ca29309e1fd9.png"
+              alt="How It Works"
+              className="h-16 md:h-20 w-auto max-w-full object-contain"
+            />
+          </div>
           
           {/* Decorative accent line */}
           <div className="w-24 h-1 bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] mx-auto mb-6 rounded-full"></div>

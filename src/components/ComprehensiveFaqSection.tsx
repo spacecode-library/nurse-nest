@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Search, Menu, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -355,9 +354,14 @@ export default function ComprehensiveFaqSection() {
     <section className="w-full bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#bae6fd] py-20">
       <div className="container mx-auto px-4">
         <AnimatedSection animation="fade-up" className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-light text-[#1e293b] mb-4">
-            Frequently Asked Questions
-          </h2>
+          {/* Custom header image */}
+          <div className="flex justify-center mb-4">
+            <img
+              src="/lovable-uploads/9bcf449e-591b-47fb-8d9b-4ce6209462c2.png"
+              alt="Frequently Asked Questions"
+              className="h-16 md:h-20 w-auto max-w-full object-contain"
+            />
+          </div>
           <p className="text-lg text-[#475569] max-w-3xl mx-auto">
             Find answers to common questions about our platform, services, and processes.
           </p>

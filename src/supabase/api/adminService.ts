@@ -100,7 +100,7 @@ export const getAllUsers = async (): Promise<AdminUser[]> => {
   const transformedData: AdminUser[] = (data || []).map(item => ({
     id: item.user_id,
     email: '', // Not available in this query
-    user_type: item.user_type,
+    user_type: item.user_type as 'nurse' | 'client' | 'admin',
     account_status: item.account_status,
     created_at: new Date().toISOString(), // Mock date
     profile_data: {}
