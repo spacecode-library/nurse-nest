@@ -159,25 +159,30 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Enhanced Navbar with glassmorphism effect */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-md border-b border-white/20">
+      {/* Fixed Navbar with improved positioning */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-white/20">
         <Navbar />
       </div>
       
-      <main className="relative flex min-h-screen pt-16">
+      {/* Main Content with proper spacing for fixed navbar */}
+      <main className="relative flex min-h-screen pt-20">
         {/* Split Screen Layout */}
-        <div className="flex w-full">
+        <div className="flex w-full min-h-screen">
           
-          {/* Left Side - Artistic Background (50% on desktop) */}
-          <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden">
-            {/* Artistic Healthcare Background */}
+          {/* Left Side - Artistic Background (responsive width) */}
+          <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+            {/* Artistic Healthcare Background with proper responsive handling */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white/30">
-              {/* Main Healthcare Professional Image */}
-              <div className="absolute inset-0 flex items-center justify-start">
+              {/* Main Healthcare Professional Image with improved responsive behavior */}
+              <div className="absolute inset-0 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/cd188753-e3a5-419a-ad58-51cd5607d594.png" 
                   alt="Healthcare Professional" 
-                  className="w-full h-full object-cover object-left"
+                  className="w-full h-full object-cover object-center"
+                  style={{
+                    objectPosition: 'center center',
+                    minHeight: '100vh'
+                  }}
                 />
               </div>
               
@@ -196,22 +201,23 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Right Side - Transparent Login Form (50% on desktop) */}
-          <div className="w-full lg:w-[50%] bg-white/30 backdrop-blur-sm flex items-center justify-start relative">
-            <div className="w-full max-w-md px-6 lg:px-8 py-12 mx-auto ml-4 lg:ml-8">
+          {/* Right Side - Login Form (responsive width and improved container) */}
+          <div className="w-full lg:w-1/2 bg-white/95 backdrop-blur-sm flex items-center justify-center relative min-h-screen">
+            {/* Responsive container with proper constraints */}
+            <div className="w-full max-w-lg px-6 sm:px-8 lg:px-12 py-8 mx-auto">
               
-              {/* Header Image - Above Login Form */}
-              <div className="mb-8 text-center">
+              {/* Header Image - Responsive sizing */}
+              <div className="mb-6 sm:mb-8 text-center">
                 <img 
                   src="/lovable-uploads/b03954bb-8493-4e23-a285-627ff87efdb8.png" 
                   alt="Healthcare Reimagined" 
-                  className="max-w-full h-auto max-h-20 object-contain mx-auto drop-shadow-lg"
+                  className="max-w-full h-auto max-h-16 sm:max-h-20 object-contain mx-auto drop-shadow-lg"
                 />
               </div>
               
-              {/* Header Section */}
-              <div className="text-left mb-8">
-                <p className="text-lg text-[#475569] mb-2">
+              {/* Header Section with responsive text */}
+              <div className="text-left mb-6 sm:mb-8">
+                <p className="text-lg sm:text-xl text-[#475569] mb-2">
                   {isLogin ? 'Sign in to access your dashboard' : 'Create your account'}
                 </p>
                 <p className="text-sm text-[#64748b]">
@@ -227,13 +233,13 @@ export default function Auth() {
                 </div>
               )}
               
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Form with improved spacing */}
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 {!isLogin && (
                   <>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName" className="text-[#475569] font-medium">
+                        <Label htmlFor="firstName" className="text-[#475569] font-medium text-sm">
                           First Name
                         </Label>
                         <Input
@@ -241,13 +247,13 @@ export default function Auth() {
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
+                          className="h-11 sm:h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm text-sm"
                           required
                           placeholder="Enter first name"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName" className="text-[#475569] font-medium">
+                        <Label htmlFor="lastName" className="text-[#475569] font-medium text-sm">
                           Last Name
                         </Label>
                         <Input
@@ -255,7 +261,7 @@ export default function Auth() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
+                          className="h-11 sm:h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm text-sm"
                           required
                           placeholder="Enter last name"
                         />
@@ -263,7 +269,7 @@ export default function Auth() {
                     </div>
                     
                     <div className="space-y-4">
-                      <Label className="text-[#475569] font-medium">
+                      <Label className="text-[#475569] font-medium text-sm">
                         I am a:
                       </Label>
                       <RadioGroup 
@@ -271,57 +277,57 @@ export default function Auth() {
                         onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
                         className="space-y-3"
                       >
-                        {/* Radio group options - keep existing code */}
+                        {/* Radio group options with improved responsive design */}
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
+                          <div className={`flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
                             userType === 'client' 
                               ? 'border-[#3b82f6] bg-blue-50/80 shadow-md' 
                               : 'border-[#f1f5f9] bg-white/60 shadow-sm'
                           }`} onClick={() => setUserType('client')}>
                             <RadioGroupItem value="client" id="client" className="text-[#3b82f6]" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center shadow-sm">
-                              <Building2 className="h-5 w-5 text-green-600" />
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center shadow-sm">
+                              <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                             </div>
-                            <div className="flex-1">
-                              <div className="font-semibold text-[#1e293b]">Client</div>
-                              <div className="text-sm text-[#64748b]">I need nursing care services</div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-semibold text-[#1e293b] text-sm sm:text-base">Client</div>
+                              <div className="text-xs sm:text-sm text-[#64748b]">I need nursing care services</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
+                          <div className={`flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
                             userType === 'nurse' 
                               ? 'border-[#3b82f6] bg-blue-50/80 shadow-md' 
                               : 'border-[#f1f5f9] bg-white/60 shadow-sm'
                           }`} onClick={() => setUserType('nurse')}>
                             <RadioGroupItem value="nurse" id="nurse" className="text-[#3b82f6]" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center shadow-sm">
-                              <Stethoscope className="h-5 w-5 text-blue-600" />
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center shadow-sm">
+                              <Stethoscope className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                             </div>
-                            <div className="flex-1">
-                              <div className="font-semibold text-[#1e293b]">Healthcare Professional</div>
-                              <div className="text-sm text-[#64748b]">I provide nursing care services</div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-semibold text-[#1e293b] text-sm sm:text-base">Healthcare Professional</div>
+                              <div className="text-xs sm:text-sm text-[#64748b]">I provide nursing care services</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
+                          <div className={`flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md backdrop-blur-sm ${
                             userType === 'admin' 
                               ? 'border-[#3b82f6] bg-blue-50/80 shadow-md' 
                               : 'border-[#f1f5f9] bg-white/60 shadow-sm'
                           }`} onClick={() => setUserType('admin')}>
                             <RadioGroupItem value="admin" id="admin" className="text-[#3b82f6]" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center shadow-sm">
-                              <Shield className="h-5 w-5 text-purple-600" />
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center shadow-sm">
+                              <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                             </div>
-                            <div className="flex-1">
-                              <div className="font-semibold text-[#1e293b] flex items-center">
+                            <div className="flex-1 min-w-0">
+                              <div className="font-semibold text-[#1e293b] flex items-center text-sm sm:text-base">
                                 Administrator
-                                <Sparkles className="h-4 w-4 ml-2 text-purple-600" />
+                                <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 ml-2 text-purple-600" />
                               </div>
-                              <div className="text-sm text-[#64748b]">Platform administration</div>
+                              <div className="text-xs sm:text-sm text-[#64748b]">Platform administration</div>
                             </div>
                           </div>
                         </div>
@@ -332,17 +338,17 @@ export default function Auth() {
                 
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[#475569] font-medium">
+                  <Label htmlFor="email" className="text-[#475569] font-medium text-sm">
                     Email Address
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-4 h-5 w-5 text-[#64748b]" />
+                    <Mail className="absolute left-4 top-3 sm:top-4 h-4 w-4 sm:h-5 sm:w-5 text-[#64748b]" />
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 pl-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
+                      className="h-11 sm:h-12 pl-11 sm:pl-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm text-sm"
                       required
                       placeholder="Enter your email"
                     />
@@ -352,13 +358,13 @@ export default function Auth() {
                 {/* Password Field */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-[#475569] font-medium">
+                    <Label htmlFor="password" className="text-[#475569] font-medium text-sm">
                       Password
                     </Label>
                     {isLogin && (
                       <button
                         type="button"
-                        className="text-sm text-[#3b82f6] hover:text-[#2563eb] font-medium transition-colors"
+                        className="text-xs sm:text-sm text-[#3b82f6] hover:text-[#2563eb] font-medium transition-colors"
                         onClick={() => navigate('/auth/reset-password')}
                       >
                         Forgot password?
@@ -366,25 +372,25 @@ export default function Auth() {
                     )}
                   </div>
                   <div className="relative">
-                    <LockKeyhole className="absolute left-4 top-4 h-5 w-5 text-[#64748b]" />
+                    <LockKeyhole className="absolute left-4 top-3 sm:top-4 h-4 w-4 sm:h-5 sm:w-5 text-[#64748b]" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 pl-12 pr-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
+                      className="h-11 sm:h-12 pl-11 sm:pl-12 pr-11 sm:pr-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm shadow-sm text-sm"
                       required
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-4 text-[#64748b] hover:text-[#475569] transition-colors"
+                      className="absolute right-4 top-3 sm:top-4 text-[#64748b] hover:text-[#475569] transition-colors"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
+                        <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" />
                       ) : (
-                        <Eye className="h-5 w-5" />
+                        <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
                       )}
                     </button>
                   </div>
@@ -411,28 +417,28 @@ export default function Auth() {
                 
                 {/* Sign In Button */}
                 <Button
-                  className="w-full h-12 bg-[#9bcbff] hover:bg-[#3b82f6] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  className="w-full h-11 sm:h-12 bg-[#9bcbff] hover:bg-[#3b82f6] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm sm:text-base"
                   disabled={loading}
                   type="submit"
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       <span>Processing...</span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center space-x-2">
                       <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
-                      <ArrowRight className="h-5 w-5" />
+                      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                   )}
                 </Button>
               </form>
               
               {/* Footer Links */}
-              <div className="mt-8 text-left">
+              <div className="mt-6 sm:mt-8 text-left">
                 {isLogin ? (
-                  <p className="text-[#64748b]">
+                  <p className="text-[#64748b] text-sm">
                     Don't have an account?{' '}
                     <button
                       type="button"
@@ -446,7 +452,7 @@ export default function Auth() {
                     </button>
                   </p>
                 ) : (
-                  <p className="text-[#64748b]">
+                  <p className="text-[#64748b] text-sm">
                     Already have an account?{' '}
                     <button
                       type="button"
@@ -464,10 +470,10 @@ export default function Auth() {
 
               {/* Admin Notice */}
               {userType === 'admin' && !isLogin && (
-                <div className="mt-6 p-4 bg-purple-50/90 backdrop-blur-sm border border-purple-200 rounded-lg shadow-sm">
+                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-purple-50/90 backdrop-blur-sm border border-purple-200 rounded-lg shadow-sm">
                   <div className="flex items-start space-x-3">
-                    <Shield className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm">
+                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs sm:text-sm">
                       <p className="font-semibold text-purple-800 mb-1">Administrator Access</p>
                       <p className="text-purple-700">
                         You're creating an admin account with full platform access. 
@@ -479,9 +485,9 @@ export default function Auth() {
               )}
 
               {/* Security Badge */}
-              <div className="mt-8 text-left">
-                <div className="inline-flex items-center space-x-2 text-sm text-[#64748b]">
-                  <CheckCircle className="h-4 w-4 text-[#10b981]" />
+              <div className="mt-6 sm:mt-8 text-left">
+                <div className="inline-flex items-center space-x-2 text-xs sm:text-sm text-[#64748b]">
+                  <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-[#10b981]" />
                   <span>SSL Secured & HIPAA Compliant</span>
                 </div>
               </div>
