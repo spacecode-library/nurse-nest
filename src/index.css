@@ -173,18 +173,6 @@
       transform: translateY(0);
     }
   }
-
-  /* Sticky CTA Animation */
-  @keyframes subtle-intro {
-    0% { 
-      opacity: 0; 
-      transform: translateY(-10px) scale(0.95); 
-    }
-    100% { 
-      opacity: 1; 
-      transform: translateY(0) scale(1); 
-    }
-  }
   
   /* Spacing utilities */
   .space-section {
