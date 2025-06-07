@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -169,8 +168,8 @@ export default function Auth() {
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
-          {/* Left Side - Artistic Background with header image (60% on desktop) */}
-          <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
+          {/* Left Side - Artistic Background (50% on desktop) */}
+          <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden">
             {/* Artistic Healthcare Background */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white/30">
               {/* Main Healthcare Professional Image */}
@@ -185,15 +184,6 @@ export default function Auth() {
               {/* Ethereal Particle Effects Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/40"></div>
               
-              {/* Header Image positioned in the left section */}
-              <div className="absolute top-1/3 left-8 right-8 flex justify-center z-10">
-                <img 
-                  src="/lovable-uploads/b03954bb-8493-4e23-a285-627ff87efdb8.png" 
-                  alt="Healthcare Reimagined" 
-                  className="max-w-full h-auto max-h-24 object-contain drop-shadow-lg"
-                />
-              </div>
-              
               {/* Digital Network Effects */}
               <div className="absolute inset-0 opacity-30">
                 {/* Floating particles */}
@@ -206,16 +196,16 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Right Side - Centered Login Form (40% on desktop) */}
-          <div className="w-full lg:w-[40%] bg-white/95 backdrop-blur-sm flex items-center justify-center relative">
-            <div className="w-full max-w-lg px-8 lg:px-12 py-12 mx-auto">
+          {/* Right Side - Centered Login Form (50% on desktop) */}
+          <div className="w-full lg:w-[50%] bg-white/95 backdrop-blur-sm flex items-center justify-center relative">
+            <div className="w-full max-w-md px-6 lg:px-8 py-12 mx-auto ml-8 lg:ml-16">
               
-              {/* Mobile Header Image - Only shown on mobile */}
-              <div className="lg:hidden mb-8 text-center">
+              {/* Header Image - Above Login Form */}
+              <div className="mb-8 text-center">
                 <img 
                   src="/lovable-uploads/b03954bb-8493-4e23-a285-627ff87efdb8.png" 
                   alt="Healthcare Reimagined" 
-                  className="max-w-full h-auto max-h-16 object-contain mx-auto drop-shadow-lg"
+                  className="max-w-full h-auto max-h-20 object-contain mx-auto drop-shadow-lg"
                 />
               </div>
               
@@ -281,6 +271,7 @@ export default function Auth() {
                         onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
                         className="space-y-3"
                       >
+                        {/* Radio group options - keep existing code */}
                         <div className="relative">
                           <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 hover:shadow-md ${
                             userType === 'client' 
