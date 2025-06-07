@@ -163,11 +163,13 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Fixed Navbar */}
+      {/* Fixed Navbar with mobile transparency fix */}
       <div className="fixed top-0 left-0 right-0 z-50">
-        {/* Mobile - Full width white background with no gaps */}
-        <div className="md:hidden bg-white w-full">
-          <Navbar />
+        {/* Mobile - Transparent background for auth page only */}
+        <div className="md:hidden bg-transparent w-full">
+          <div className="mobile-auth-header">
+            <Navbar />
+          </div>
         </div>
         {/* Desktop - Keep original styling */}
         <div className="hidden md:block bg-white/90 backdrop-blur-md border-b border-white/20">
@@ -782,6 +784,30 @@ export default function Auth() {
       </main>
       
       <Footer />
+      
+      {/* Mobile Auth Header Styles */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .mobile-auth-header {
+            background: transparent !important;
+          }
+          .mobile-auth-header .text-gray-800 {
+            color: white !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+          }
+          .mobile-auth-header .text-[#9bcbff] {
+            color: white !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+          }
+          .mobile-auth-header .text-brand-navy,
+          .mobile-auth-header .text-gray-600 {
+            color: white !important;
+          }
+          .mobile-auth-header svg {
+            color: white !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

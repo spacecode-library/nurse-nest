@@ -184,11 +184,12 @@ export default function DynamicFaqSystem() {
       setIsExpanded(true);
       setTimeout(() => {
         if (sectionRef.current) {
-          // Scroll to the very top of the blue FAQ section with proper offset
+          // Get header height to calculate proper offset
+          const headerHeight = 80; // Approximate header height
           const rect = sectionRef.current.getBoundingClientRect();
           const offsetTop = window.pageYOffset + rect.top;
           window.scrollTo({ 
-            top: offsetTop - 80, // Increased offset to ensure header is fully visible
+            top: offsetTop - headerHeight, // Position blue section directly under header
             behavior: 'smooth'
           });
         }
@@ -210,10 +211,11 @@ export default function DynamicFaqSystem() {
     // Scroll to the FAQ section after expansion with proper positioning
     setTimeout(() => {
       if (sectionRef.current) {
+        const headerHeight = 80; // Approximate header height
         const rect = sectionRef.current.getBoundingClientRect();
         const offsetTop = window.pageYOffset + rect.top;
         window.scrollTo({ 
-          top: offsetTop - 80, // Increased offset to show full header
+          top: offsetTop - headerHeight, // Position blue section directly under header
           behavior: 'smooth'
         });
       }
@@ -239,7 +241,7 @@ export default function DynamicFaqSystem() {
   return (
     <section 
       ref={sectionRef}
-      className="section-padding"
+      className="section-padding pb-24" // Increased bottom padding significantly
       id="faq"
       style={{
         background: 'linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%)'
@@ -334,12 +336,12 @@ export default function DynamicFaqSystem() {
                             value={`${category.id}-${faqIndex}`}
                             className="bg-white/60 backdrop-blur-sm rounded-lg border border-white/30 shadow-sm overflow-hidden"
                           >
-                            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-white/50 transition-all duration-300">
+                            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-white/50 transition-all duration-300 border-0">
                               <span className="text-base md:text-lg font-medium text-[#1e293b] text-left">
                                 {faq.question}
                               </span>
                             </AccordionTrigger>
-                            <AccordionContent className="px-5 pb-5 pt-1 text-[#475569] whitespace-pre-line leading-relaxed">
+                            <AccordionContent className="px-5 pb-5 pt-1 text-[#475569] whitespace-pre-line leading-relaxed border-0">
                               {faq.answer}
                             </AccordionContent>
                           </AccordionItem>
