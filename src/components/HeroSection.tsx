@@ -20,49 +20,85 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Clean White Background */}
-      <div className="md:hidden w-full bg-white">
-        <div className="container mx-auto px-4 pt-24 pb-16">
+      {/* Mobile Layout - New soft blue flowing background */}
+      <div className="md:hidden w-full relative min-h-screen">
+        {/* Mobile Background - New soft blue flowing abstract */}
+        <div className="absolute inset-0">
+          <img 
+            src="/lovable-uploads/e50ae826-ca23-44da-a4c5-e11cf4307c20.png" 
+            alt="Soft blue flowing background" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="relative z-10 container mx-auto px-4 pt-24 pb-16 min-h-screen flex flex-col">
           <AnimatedSection animation="fade-up">
-            {/* Mobile Hero Image */}
+            {/* Mobile Nurse Portrait Image at top */}
             <div className="mb-8">
               <img 
-                src="/lovable-uploads/aa259e38-4b67-4f28-9b10-39e924acad54.png" 
-                alt="Professional nurse smiling" 
+                src="/lovable-uploads/7cc0723b-b1b5-4fe0-982a-6509e420f358.png" 
+                alt="Professional nurse" 
                 className="w-full h-64 object-cover rounded-2xl shadow-lg"
               />
             </div>
             
-            {/* Mobile Header Content */}
-            <div className="text-center space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                <span className="text-brand-primary">Need a nurse?</span>
-                <br />
-                <span className="text-gray-600 font-normal italic">We make it easy.</span>
-              </h1>
+            {/* Mobile Header Content with uploaded images */}
+            <div className="text-center space-y-6 flex-1 flex flex-col justify-center">
+              {/* Header Image - "Need a nurse?" */}
+              <div className="mb-4">
+                <img 
+                  src="/lovable-uploads/a2151151-2fb2-4a86-a93d-8d0d343ad519.png" 
+                  alt="Need a nurse?" 
+                  className="w-full max-w-sm mx-auto h-auto object-contain"
+                />
+              </div>
               
-              <div className="space-y-4 text-gray-700 leading-relaxed">
-                <p className="text-lg font-medium">
-                  PREMIUM CONCIERGE NURSING SERVICE NATIONWIDE.
-                </p>
-                <p className="text-base">
-                  WE SOURCE, VET, MATCH, AND MANAGE PAYMENTS
-                  <br />
-                  SO YOU FOCUS ON WHAT MATTERS.
-                </p>
-                <p className="text-lg font-medium text-brand-navy">
-                  LICENSED NURSES FOR EVERY CARE NEED.
+              {/* Subheader Image - "We make it easy." */}
+              <div className="mb-6">
+                <img 
+                  src="/lovable-uploads/3392fe86-f73b-4ad2-9f1e-df0799efc40d.png" 
+                  alt="We make it easy." 
+                  className="w-full max-w-xs mx-auto h-auto object-contain opacity-90"
+                />
+              </div>
+              
+              {/* Single line of text */}
+              <div className="mb-8">
+                <p className="text-lg font-medium text-slate-700">
+                  Premium concierge nursing service nationwide.
                 </p>
               </div>
               
               {/* Mobile CTA Button */}
-              <div className="pt-6">
+              <div className="mb-12">
                 <Link to="/apply">
                   <Button className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
                     Request A Nurse
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
+              </div>
+              
+              {/* Trust Indicators at bottom for mobile */}
+              <div className="mt-auto">
+                <div className="grid grid-cols-2 gap-4 text-slate-600">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Shield className="h-4 w-4 text-blue-500" />
+                    <span className="text-sm">HIPAA Compliant</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Users className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Licensed Professionals</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm">Verified Reviews</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Clock className="h-4 w-4 text-teal-500" />
+                    <span className="text-sm">24/7 Support</span>
+                  </div>
+                </div>
               </div>
             </div>
           </AnimatedSection>
@@ -96,7 +132,7 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* Trust Indicators - Moved much lower on the page */}
+      {/* Trust Indicators - Desktop only, moved much lower on the page */}
       <div className="absolute bottom-8 left-0 right-0 hidden md:block">
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="container mx-auto px-4">

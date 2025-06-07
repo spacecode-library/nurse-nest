@@ -38,26 +38,33 @@ export default function MobileMenu({
   return (
     <div
       className={cn(
-        'lg:hidden fixed inset-0 bg-white z-40 transform transition-transform duration-300 ease-in-out',
+        'lg:hidden fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out',
         isOpen ? 'translate-x-0' : 'translate-x-full'
       )}
     >
-      <div className="container-custom py-5">
+      {/* Solid white background overlay that completely covers background content */}
+      <div className="absolute inset-0 bg-white"></div>
+      
+      <div className="relative z-10 container-custom py-5 h-full">
         <div className="flex items-center justify-between mb-8">
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-heading font-bold text-nurse-dark">
-              Nurse <span className="text-primary-500">Nest</span>
+          {/* Single NurseNest logo - removed duplicate */}
+          <div className="flex items-center">
+            <span className="text-2xl font-bold">
+              <span className="text-gray-800">Nurse</span>
+              <span className="text-[#9bcbff]">Nest</span>
             </span>
-          </Link>
+          </div>
           
+          {/* Close button with better visibility */}
           <button 
-            className="text-gray-600 focus:outline-none" 
+            className="text-gray-600 hover:text-gray-800 focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-colors" 
             onClick={() => setIsOpen(false)}
           >
             <X className="h-6 w-6" />
           </button>
         </div>
         
+        {/* Navigation with improved spacing and styling */}
         <nav className="flex flex-col space-y-6">
           <NavLinks 
             shouldUseDarkText={true} 
@@ -65,83 +72,90 @@ export default function MobileMenu({
             onNavClick={handleNavClick} 
           />
           
-          {/* For Nurses Section in Mobile Menu */}
-          <div className="border-t border-b border-gray-100 py-4 space-y-4">
-            <h3 className="font-semibold text-gray-800">For Nurses</h3>
-            <Link 
-              to="#"
-              className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsOpen(false);
-                handleApplyNowClick();
-              }}
-            >
-              Apply Now
-            </Link>
-            <Link 
-              to="/malpractice-insurance"
-              className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
-              onClick={() => setIsOpen(false)}
-            >
-              Malpractice Insurance
-            </Link>
-            <Link 
-              to="/llc-setup-help"
-              className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
-              onClick={() => setIsOpen(false)}
-            >
-              LLC Setup Help
-            </Link>
-            <Link 
-              to="/1099-tax-tips"
-              className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
-              onClick={() => setIsOpen(false)}
-            >
-              1099 Tax Tips
-            </Link>
-          </div>
-          
-          {user ? (
-            <>
+          {/* For Nurses Section with better visual separation */}
+          <div className="border-t border-b border-gray-200 py-6 space-y-4">
+            <h3 className="font-semibold text-gray-800 text-lg">For Nurses</h3>
+            <div className="space-y-3 pl-3">
               <Link 
-                to="/dashboard" 
-                className="font-medium text-gray-700 hover:text-primary-500"
+                to="#"
+                className="font-medium text-gray-700 hover:text-primary-500 block py-2 transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsOpen(false);
+                  handleApplyNowClick();
+                }}
+              >
+                Apply Now
+              </Link>
+              <Link 
+                to="/malpractice-insurance"
+                className="font-medium text-gray-700 hover:text-primary-500 block py-2 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
-                <LayoutDashboard className="h-4 w-4 mr-2 inline" />
-                Dashboard
+                Malpractice Insurance
               </Link>
-              <Button 
-                variant="ghost" 
-                className="justify-start px-0 text-gray-700 hover:text-primary-500"
-                onClick={handleLogout}
+              <Link 
+                to="/llc-setup-help"
+                className="font-medium text-gray-700 hover:text-primary-500 block py-2 transition-colors"
+                onClick={() => setIsOpen(false)}
               >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-            </>
-          ) : (
-            <Link 
-              to="/auth"
-              className="font-medium text-gray-700 hover:text-primary-500"
-              onClick={() => setIsOpen(false)}
-            >
-              Sign In
-            </Link>
-          )}
+                LLC Setup Help
+              </Link>
+              <Link 
+                to="/1099-tax-tips"
+                className="font-medium text-gray-700 hover:text-primary-500 block py-2 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                1099 Tax Tips
+              </Link>
+            </div>
+          </div>
           
-          {/* CTA Button - Only show if not on nurse pages */}
+          {/* User authentication section with improved styling */}
+          <div className="space-y-4">
+            {user ? (
+              <>
+                <Link 
+                  to="/dashboard" 
+                  className="font-medium text-gray-700 hover:text-primary-500 flex items-center py-2 transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <LayoutDashboard className="h-5 w-5 mr-3" />
+                  Dashboard
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  className="justify-start px-0 text-gray-700 hover:text-primary-500 w-full"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-5 w-5 mr-3" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link 
+                to="/auth"
+                className="font-medium text-gray-700 hover:text-primary-500 block py-2 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
+          
+          {/* CTA Button with improved styling */}
           {!isNursePage && (
-            <Button 
-              className="bg-primary-500 hover:bg-primary-600 w-full mt-4 button-hover-effect"
-              onClick={() => {
-                setIsOpen(false);
-                handleRequestNurse();
-              }}
-            >
-              Request a Nurse
-            </Button>
+            <div className="pt-6 border-t border-gray-200">
+              <Button 
+                className="bg-primary-500 hover:bg-primary-600 w-full py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={() => {
+                  setIsOpen(false);
+                  handleRequestNurse();
+                }}
+              >
+                Request a Nurse
+              </Button>
+            </div>
           )}
         </nav>
       </div>
