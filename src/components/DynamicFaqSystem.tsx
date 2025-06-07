@@ -239,17 +239,17 @@ export default function DynamicFaqSystem() {
       className="section-padding animate-fade-in-up"
       id="faq"
       style={{
-        background: 'linear-gradient(180deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%)'
+        background: 'linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%)'
       }}
     >
       <div className="container-custom">
         {/* FAQ Header with larger image and closer positioning */}
-        <div className="text-center mb-6 relative">
-          <div className="mb-4">
+        <div className="text-center mb-8 relative">
+          <div className="mb-6">
             <img
               src="/lovable-uploads/436bcb1e-c141-4cd8-b1ed-beae8896e1d7.png"
               alt="Frequently Asked Questions"
-              className="mx-auto h-24 md:h-32 object-contain drop-shadow-lg"
+              className="mx-auto h-32 md:h-40 object-contain drop-shadow-lg"
             />
           </div>
           

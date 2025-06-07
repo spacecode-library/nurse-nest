@@ -1,3 +1,4 @@
+
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
@@ -6,6 +7,17 @@ export default function AboutMeSection() {
     // Trigger the FAQ system to open
     const event = new CustomEvent('openFAQ');
     window.dispatchEvent(event);
+    
+    // Scroll to FAQ section after a small delay to allow for animation
+    setTimeout(() => {
+      const faqSection = document.getElementById('faq');
+      if (faqSection) {
+        faqSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 300);
   };
 
   return (
@@ -94,20 +106,20 @@ export default function AboutMeSection() {
                     }}
                   />
                 </div>
-
-                {/* Browse FAQs Button */}
-                <div className="mt-8">
-                  <button
-                    onClick={handleBrowseFAQs}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                  >
-                    Browse FAQs
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </AnimatedSection>
+
+        {/* Browse FAQs Button - Outside the card and centered on page */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={handleBrowseFAQs}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          >
+            Browse FAQs
+          </button>
+        </div>
       </div>
     </section>
   );

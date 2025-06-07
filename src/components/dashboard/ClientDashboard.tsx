@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -77,7 +76,7 @@ export default function ClientDashboard() {
     try {
       setLoading(true);
       
-      // Fetch job postings with all required fields
+      // Fetch job postings with proper field mapping
       const { data: jobsData, error: jobsError } = await supabase
         .from('job_postings')
         .select('*');
@@ -135,19 +134,21 @@ export default function ClientDashboard() {
         });
       } else if (applicationsData) {
         // Map the data to match our Application interface with proper error handling
-        const mappedApplications: Application[] = applicationsData.map(app => ({
-          id: app.id,
-          nurse_id: app.nurse_id,
-          job_id: app.job_id,
-          status: app.status,
-          hourly_rate: app.hourly_rate || 0,
-          message: app.cover_message || '',
-          cover_message: app.cover_message,
-          created_at: app.created_at,
-          updated_at: app.updated_at,
-          nurse_profiles: app.nurse_profiles,
-          job_postings: app.job_postings || { title: 'Unknown Job' }
-        }));
+        const mappedApplications: Application[] = applicationsData
+          .filter(app => app.job_postings && typeof app.job_postings === 'object' && 'title' in app.job_postings)
+          .map(app => ({
+            id: app.id,
+            nurse_id: app.nurse_id,
+            job_id: app.job_id,
+            status: app.status,
+            hourly_rate: app.hourly_rate || 0,
+            message: app.cover_message || '',
+            cover_message: app.cover_message,
+            created_at: app.created_at,
+            updated_at: app.updated_at,
+            nurse_profiles: app.nurse_profiles,
+            job_postings: app.job_postings as { title: string }
+          }));
         setApplications(mappedApplications);
       }
 
