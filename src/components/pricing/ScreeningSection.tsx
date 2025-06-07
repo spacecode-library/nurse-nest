@@ -1,15 +1,19 @@
 
 import React from 'react';
 import { Shield, FileText, Car, Clock } from 'lucide-react';
-import AnimatedSection from './AnimatedSection';
-import ScreeningCard from './ScreeningCard';
+import AnimatedSection from '../AnimatedSection';
+import { ScreeningCard } from './ScreeningCard';
 
-export default function ScreeningSection() {
+interface ScreeningSectionProps {
+  className?: string;
+}
+
+export default function ScreeningSection({ className }: ScreeningSectionProps) {
   const screeningOptions = [
     {
       title: "Background Check",
       price: "$29",
-      features: [
+      bullets: [
         "Criminal history verification",
         "Employment verification", 
         "Reference checks",
@@ -21,7 +25,7 @@ export default function ScreeningSection() {
     {
       title: "Drug Screening",
       price: "$45", 
-      features: [
+      bullets: [
         "10-panel drug test",
         "Professional lab processing",
         "Results within 24-48 hours",
@@ -33,7 +37,7 @@ export default function ScreeningSection() {
     {
       title: "Driving Record",
       price: "$15",
-      features: [
+      bullets: [
         "3-year driving history",
         "Moving violations check", 
         "License status verification",
@@ -45,7 +49,7 @@ export default function ScreeningSection() {
     {
       title: "Express Processing",
       price: "$25",
-      features: [
+      bullets: [
         "24-hour rush processing",
         "Priority lab scheduling",
         "Expedited results delivery", 
@@ -57,7 +61,7 @@ export default function ScreeningSection() {
   ];
 
   return (
-    <section className="section-padding bg-gradient-to-br from-slate-50 to-blue-50">
+    <section className={`section-padding bg-gradient-to-br from-slate-50 to-blue-50 ${className || ''}`}>
       <div className="container-custom">
         <AnimatedSection animation="fade-up" className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -78,9 +82,7 @@ export default function ScreeningSection() {
               <ScreeningCard
                 title={option.title}
                 price={option.price}
-                features={option.features}
-                icon={option.icon}
-                isPopular={option.isPopular}
+                bullets={option.bullets}
               />
             </AnimatedSection>
           ))}
