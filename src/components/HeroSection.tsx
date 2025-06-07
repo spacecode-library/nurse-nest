@@ -1,6 +1,6 @@
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import '@/index.css';
 import AnimatedSection from './AnimatedSection';
 
@@ -21,10 +21,10 @@ export default function HeroSection() {
       
       {/* Mobile Layout - Complete replacement with new background */}
       <div className="md:hidden w-full relative min-h-screen">
-        {/* Mobile Background - New hero image with text overlay */}
+        {/* Mobile Background - Updated with new image */}
         <div className="absolute inset-0">
           <img 
-            src="/lovable-uploads/167f6ad3-c278-4101-99c7-b5c62d32d956.png" 
+            src="/lovable-uploads/4fc18a45-a3a3-4dae-be8a-ef43f145758e.png" 
             alt="Need a nurse? We make it easy." 
             className="w-full h-full object-cover"
           />
@@ -42,49 +42,29 @@ export default function HeroSection() {
                   </Button>
                 </Link>
               </div>
-              
-              {/* Trust Indicators at bottom for mobile */}
-              <div className="grid grid-cols-2 gap-4 text-white/90 text-shadow">
-                <div className="flex items-center justify-center space-x-2">
-                  <Shield className="h-4 w-4 text-blue-300" />
-                  <span className="text-sm font-medium">HIPAA Compliant</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <Users className="h-4 w-4 text-green-300" />
-                  <span className="text-sm font-medium">Licensed Professionals</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <Star className="h-4 w-4 text-yellow-300" />
-                  <span className="text-sm font-medium">Verified Reviews</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <Clock className="h-4 w-4 text-teal-300" />
-                  <span className="text-sm font-medium">24/7 Support</span>
-                </div>
-              </div>
             </div>
           </AnimatedSection>
         </div>
       </div>
       
-      {/* Desktop Content - Keep unchanged */}
+      {/* Desktop Content - Updated button styling to match reference */}
       <div className="hidden md:block container mx-auto px-4 relative z-10 pt-16 md:pt-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
-          {/* Left Column - Subtle CTA for Desktop */}
+          {/* Left Column - Updated button styling */}
           <div className="space-y-8">
             <AnimatedSection animation="fade-up">
               {/* Desktop CTA positioned to complement the background image */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4 mt-96">
                 <Link to="/apply">
-                  <Button className="bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
+                  <Button className="bg-[#9bcbff] hover:bg-[#7dd3fc] text-[#1e293b] px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
                     Request A Nurse
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth">
-                  <Button className="bg-white/95 text-slate-800 hover:bg-white border-2 border-white/20 px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm font-semibold">
+                  <Button className="bg-white hover:bg-gray-50 text-[#1e293b] border border-gray-300 px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-semibold">
                     Join as a Nurse
                   </Button>
                 </Link>
@@ -100,19 +80,15 @@ export default function HeroSection() {
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
               <div className="flex items-center space-x-2">
-                <Shield className="h-5 w-5 text-blue-300" />
                 <span className="text-sm">HIPAA Compliant</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Users className="h-5 w-5 text-green-300" />
                 <span className="text-sm">Licensed Professionals</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Star className="h-5 w-5 text-yellow-300" />
                 <span className="text-sm">Verified Reviews</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Clock className="h-5 w-5 text-teal-300" />
                 <span className="text-sm">24/7 Support</span>
               </div>
             </div>

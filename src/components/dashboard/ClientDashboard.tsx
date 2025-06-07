@@ -44,7 +44,7 @@ export default function ClientDashboard() {
     queryKey: ['applications', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('job_applications')
+        .from('applications')
         .select(`
           *,
           nurse_profiles (

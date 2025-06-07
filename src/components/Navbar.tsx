@@ -96,14 +96,10 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           
           {/* Authentication & CTA - Desktop */}
           <div className="hidden lg:flex items-center space-x-4 ml-auto">
-            {/* Request a Nurse Button - 3D Effect */}
+            {/* Request a Nurse Button - Updated styling to match reference */}
             <Button
               onClick={handleRequestNurseClick}
-              className="bg-gradient-to-br from-[#9bcbff] via-[#7dd3fc] to-[#3b82f6] hover:from-[#7dd3fc] hover:via-[#60a5fa] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-b-4 border-[#2563eb] hover:border-[#1d4ed8] active:border-b-2 active:translate-y-1"
-              style={{
-                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
-              }}
+              className="bg-[#9bcbff] hover:bg-[#7dd3fc] text-[#1e293b] font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               Request a Nurse
             </Button>
