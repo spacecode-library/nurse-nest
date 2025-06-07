@@ -15,20 +15,22 @@ export default function AboutMeSection() {
     <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="container mx-auto px-4">
         <AnimatedSection animation="fade-up" className="text-center mb-16">
-          {/* Custom Header Image */}
+          {/* Custom Header Image with better visibility */}
           <div className="flex justify-center mb-6">
-            <img 
-              src="/lovable-uploads/860b40a9-bce0-44b2-90e0-873b43061d41.png" 
-              alt="Founder"
-              className="h-16 md:h-20 lg:h-24 w-auto object-contain"
-            />
+            <div className="bg-white p-4 rounded-2xl shadow-lg">
+              <img 
+                src="/lovable-uploads/860b40a9-bce0-44b2-90e0-873b43061d41.png" 
+                alt="Founder"
+                className="h-16 md:h-20 lg:h-24 w-auto object-contain"
+              />
+            </div>
           </div>
         </AnimatedSection>
 
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Image */}
-            <AnimatedSection animation="fade-right" className="relative">
+            <AnimatedSection animation="fade-up" className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white p-2">
                 <img 
                   src="/lovable-uploads/119a6708-a3cb-400b-ac7b-c2437a103499.png" 
@@ -42,7 +44,7 @@ export default function AboutMeSection() {
             </AnimatedSection>
 
             {/* Right Column - Content */}
-            <AnimatedSection animation="fade-left" delay={200}>
+            <AnimatedSection animation="fade-up" delay={200}>
               <div className="space-y-6">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-semibold text-gray-800 leading-tight">

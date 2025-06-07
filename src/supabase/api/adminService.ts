@@ -15,6 +15,12 @@ export interface DashboardStats {
   active_jobs: number;
   completed_contracts: number;
   revenue_this_month: number;
+  pending_nurse_profiles: number;
+  pending_client_profiles: number;
+  new_applications: number;
+  pending_timecards: number;
+  pending_verifications: number;
+  open_jobs: number;
 }
 
 export interface SystemMetrics {
@@ -58,18 +64,37 @@ export interface AdminTimecard {
 }
 
 export const adminService = {
+  // Check admin status
+  async checkAdminStatus(userId: string): Promise<boolean> {
+    try {
+      const { data, error } = await supabase
+        .from('admin_profiles')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+      
+      return !!data;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
+  },
+
   // Get all users with admin privileges
   async getUsers(): Promise<AdminUser[]> {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('nurse_profiles')
       .select(`
         id,
         email,
-        user_type,
-        account_status,
-        created_at,
         first_name,
-        last_name
+        last_name,
+        created_at
       `);
     
     if (error) {
@@ -80,8 +105,8 @@ export const adminService = {
     return data?.map(user => ({
       id: user.id,
       email: user.email || '',
-      user_type: user.user_type as 'nurse' | 'client' | 'admin',
-      account_status: user.account_status || 'active',
+      user_type: 'nurse' as const,
+      account_status: 'active',
       created_at: user.created_at,
       profile_data: {
         first_name: user.first_name,
@@ -90,19 +115,30 @@ export const adminService = {
     })) || [];
   },
 
+  // Alias for backward compatibility
+  async getAllUsers(): Promise<AdminUser[]> {
+    return this.getUsers();
+  },
+
   // Get dashboard statistics
   async getDashboardStats(): Promise<DashboardStats> {
     try {
       const [usersResult, jobsResult] = await Promise.all([
-        supabase.from('profiles').select('id', { count: 'exact' }),
+        supabase.from('nurse_profiles').select('id', { count: 'exact' }),
         supabase.from('job_postings').select('id', { count: 'exact' }).eq('status', 'active')
       ]);
 
       return {
         total_users: usersResult.count || 0,
         active_jobs: jobsResult.count || 0,
-        completed_contracts: 0, // Placeholder
-        revenue_this_month: 0 // Placeholder
+        completed_contracts: 0,
+        revenue_this_month: 0,
+        pending_nurse_profiles: 0,
+        pending_client_profiles: 0,
+        new_applications: 0,
+        pending_timecards: 0,
+        pending_verifications: 0,
+        open_jobs: jobsResult.count || 0
       };
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -144,6 +180,12 @@ export const adminService = {
     })) || [];
   },
 
+  // Alias for backward compatibility
+  async getPendingLicenseVerifications(): Promise<LicenseVerification[]> {
+    const allVerifications = await this.getLicenseVerifications();
+    return allVerifications.filter(v => v.verification_status === 'pending');
+  },
+
   // Get job postings
   async getJobPostings(): Promise<JobPosting[]> {
     const { data, error } = await supabase
@@ -157,6 +199,11 @@ export const adminService = {
     }
 
     return data || [];
+  },
+
+  // Alias for backward compatibility
+  async getJobPostingsForReview(): Promise<JobPosting[]> {
+    return this.getJobPostings();
   },
 
   // Get timecards
@@ -183,6 +230,11 @@ export const adminService = {
     })) || [];
   },
 
+  // Alias for backward compatibility
+  async getTimecardsForAdmin(): Promise<AdminTimecard[]> {
+    return this.getTimecards();
+  },
+
   // Update license verification status
   async updateLicenseVerification(licenseId: string, status: 'verified' | 'rejected'): Promise<void> {
     const { error } = await supabase
@@ -199,10 +251,15 @@ export const adminService = {
     }
   },
 
+  // Alias for backward compatibility
+  async updateLicenseVerificationStatus(licenseId: string, status: 'verified' | 'rejected'): Promise<void> {
+    return this.updateLicenseVerification(licenseId, status);
+  },
+
   // Update user account status
   async updateUserStatus(userId: string, status: string): Promise<void> {
     const { error } = await supabase
-      .from('profiles')
+      .from('nurse_profiles')
       .update({ account_status: status })
       .eq('id', userId);
     
@@ -210,5 +267,29 @@ export const adminService = {
       console.error('Error updating user status:', error);
       throw error;
     }
+  },
+
+  // Alias for backward compatibility
+  async updateUserAccountStatus(userId: string, status: string): Promise<void> {
+    return this.updateUserStatus(userId, status);
   }
 };
+
+// Export individual functions for backward compatibility
+export const {
+  checkAdminStatus,
+  getUsers,
+  getAllUsers,
+  getDashboardStats,
+  getSystemMetrics,
+  getLicenseVerifications,
+  getPendingLicenseVerifications,
+  getJobPostings,
+  getJobPostingsForReview,
+  getTimecards,
+  getTimecardsForAdmin,
+  updateLicenseVerification,
+  updateLicenseVerificationStatus,
+  updateUserStatus,
+  updateUserAccountStatus
+} = adminService;
