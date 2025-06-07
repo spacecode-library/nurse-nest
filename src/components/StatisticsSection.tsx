@@ -18,46 +18,46 @@ export default function StatisticsSection() {
 
   const statistics: StatisticItem[] = [
     {
-      number: "98",
-      description: "of parents experience sleep deprivation",
-      source: "The Lullaby Trust, 2024",
-      targetValue: 98,
+      number: "84",
+      description: "of seniors prefer in-home care over nursing facilities",
+      source: "AARP Home Preferences Survey, 2024",
+      targetValue: 84,
       suffix: "%"
     },
     {
-      number: "87",
-      description: "prefer aging at home vs facilities", 
-      source: "Ultimate Care NY, 2024",
-      targetValue: 87,
+      number: "40",
+      description: "lower readmission rates with dedicated private nursing support", 
+      source: "JAMA Network Open, 2023",
+      targetValue: 40,
+      suffix: "%"
+    },
+    {
+      number: "78",
+      description: "of new parents cite lack of overnight newborn care as top stressor",
+      source: "National Parenting Association, 2024", 
+      targetValue: 78,
       suffix: "%"
     },
     {
       number: "70",
-      description: "of home care patients are 65+",
-      source: "CDC, 2024", 
+      description: "of families report inadequate discharge planning for home care",
+      source: "HHS Office of Inspector General, 2023",
       targetValue: 70,
       suffix: "%"
     },
     {
-      number: "133",
-      description: "nights of sleep lost in baby's first year",
-      source: "The Bump, 2022",
-      targetValue: 133,
-      suffix: ""
-    },
-    {
-      number: "66",
-      description: "rely solely on family caregivers",
-      source: "Long-Term Care Statistics",
-      targetValue: 66,
+      number: "30",
+      description: "average savings per hour using nurse contractors vs home health agencies",
+      source: "Genworth Cost of Care Analysis, 2024",
+      targetValue: 30,
       suffix: "%"
     },
     {
-      number: "24/7",
-      description: "availability of private duty care",
-      source: "Adoration Nursing",
-      targetValue: 0,
-      suffix: ""
+      number: "92",
+      description: "higher satisfaction with personalized care continuity",
+      source: "McKinsey Home Care Survey, 2023",
+      targetValue: 92,
+      suffix: "%"
     }
   ];
 
@@ -119,18 +119,12 @@ export default function StatisticsSection() {
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 h-full flex flex-col justify-center text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
                 {/* Animated Number */}
                 <div className="mb-3">
-                  {stat.number === "24/7" ? (
-                    <div className="text-4xl md:text-5xl font-light text-white">
-                      24/7
-                    </div>
-                  ) : (
-                    <AnimatedCounter 
-                      targetValue={stat.targetValue}
-                      suffix={stat.suffix}
-                      isVisible={isVisible}
-                      delay={index * 200}
-                    />
-                  )}
+                  <AnimatedCounter 
+                    targetValue={stat.targetValue}
+                    suffix={stat.suffix}
+                    isVisible={isVisible}
+                    delay={index * 200}
+                  />
                 </div>
 
                 {/* Description */}
