@@ -7,8 +7,12 @@ import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import AboutMeSection from "@/components/AboutMeSection";
 import ComprehensiveFaqSection from "@/components/ComprehensiveFaqSection";
+import FaqSidebar from "@/components/FaqSidebar";
+import FaqTriggerButton from "@/components/FaqTriggerButton";
 
 export default function Index() {
+  const [isFaqOpen, setIsFaqOpen] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Pass isHomePage prop to Navbar */}
@@ -32,6 +36,17 @@ export default function Index() {
       </main>
       
       <Footer />
+      
+      {/* FAQ Sidebar */}
+      <FaqSidebar 
+        isOpen={isFaqOpen} 
+        onClose={() => setIsFaqOpen(false)} 
+      />
+      
+      {/* FAQ Trigger Button */}
+      <FaqTriggerButton 
+        onClick={() => setIsFaqOpen(true)} 
+      />
     </div>
   );
 }
