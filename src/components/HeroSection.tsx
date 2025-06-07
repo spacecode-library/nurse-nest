@@ -8,12 +8,15 @@ import AnimatedSection from './AnimatedSection';
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Desktop Background - New Hero Image */}
+      {/* Desktop Background - New Hero Image with adjusted positioning */}
       <div className="hidden md:block absolute inset-0">
         <img 
           src="/lovable-uploads/d26f2a2e-9eb9-4d20-87e7-979b6954da43.png" 
           alt="Need a nurse? We make it easy." 
           className="w-full h-full object-cover"
+          style={{
+            objectPosition: '20% center'
+          }}
         />
       </div>
       
