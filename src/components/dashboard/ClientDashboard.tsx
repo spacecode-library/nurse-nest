@@ -13,6 +13,7 @@ import ClientQuickActionsCard from './client/ClientQuickActionsCard';
 import EnhancedTimecardApprovalCard from './client/EnhancedTimecardApprovalCard';
 import PaymentMethodSetup from './client/PaymentMethodSetup';
 import JobPostingForm from './client/JobPostingForm';
+import { Plus, FileText, Users, Clock, CreditCard, Search, Home, Briefcase } from 'lucide-react';
 
 interface Job {
   id: string;
@@ -82,7 +83,6 @@ export default function ClientDashboard() {
           variant: "destructive"
         });
       } else if (jobsData) {
-        // Map the data to match our Job interface with proper fallbacks
         const mappedJobs: Job[] = jobsData.map(job => ({
           id: job.id,
           job_code: job.job_code || 'No Code',
@@ -98,7 +98,6 @@ export default function ClientDashboard() {
         setJobs(mappedJobs);
       }
 
-      // Fetch applications with proper data mapping
       const { data: applicationsData, error: applicationsError } = await supabase
         .from('applications')
         .select(`
@@ -120,7 +119,6 @@ export default function ClientDashboard() {
           variant: "destructive"
         });
       } else if (applicationsData) {
-        // Map the data to match our Application interface with proper error handling
         const mappedApplications: Application[] = applicationsData
           .filter(app => app.job_postings && typeof app.job_postings === 'object' && app.job_postings !== null && 'job_code' in app.job_postings)
           .map(app => ({
@@ -170,14 +168,104 @@ export default function ClientDashboard() {
     switch (activeTab) {
       case 'overview':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 xl:col-span-2 space-y-6">
-              <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />
-              <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />
+          <div className="space-y-8">
+            {/* Hero Section */}
+            <div className="bg-gradient-to-br from-[#f0f9ff] to-[#e0f2fe] rounded-3xl p-8 md:p-12">
+              <div className="max-w-4xl">
+                <h1 className="text-3xl md:text-4xl font-light text-[#1e293b] mb-4">
+                  Welcome back, {currentUser?.user_metadata?.first_name || 'there'}! 👋
+                </h1>
+                <div className="text-lg text-[#475569] mb-8">
+                  {jobs.length === 0 ? (
+                    <p>Ready to find your perfect nurse?</p>
+                  ) : (
+                    <p>You have {jobs.filter(j => j.status === 'open').length} active jobs, {applications.length} applications pending</p>
+                  )}
+                </div>
+                <Button
+                  onClick={() => setActiveTab('post-job')}
+                  className="bg-[#9bcbff] hover:bg-[#3b82f6] text-[#1e293b] hover:text-white px-8 py-4 text-lg rounded-xl shadow-lg font-medium transition-all duration-300 transform hover:scale-105"
+                >
+                  {jobs.length === 0 ? 'Find My Perfect Nurse' : 'Post a New Job'}
+                </Button>
+              </div>
             </div>
-            <div className="space-y-6">
-              <ClientQuickActionsCard clientId={clientId} onRefresh={handleRefresh} />
-              <BrowseNursesCard clientId={clientId} />
+
+            {/* Quick Actions Section */}
+            <div>
+              <h2 className="text-2xl font-light text-[#1e293b] mb-6">What would you like to do today?</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Button
+                  onClick={() => setActiveTab('post-job')}
+                  variant="outline"
+                  className="h-32 flex flex-col items-center justify-center space-y-3 border-2 border-[#e2e8f0] hover:border-[#9bcbff] hover:bg-[#f0f9ff] transition-all duration-300"
+                >
+                  <div className="p-3 rounded-full bg-[#9bcbff] text-[#1e293b]">
+                    <Plus className="h-6 w-6" />
+                  </div>
+                  <span className="font-medium text-[#1e293b]">Post a New Job</span>
+                </Button>
+
+                <Button
+                  onClick={() => setActiveTab('applications')}
+                  variant="outline"
+                  className="h-32 flex flex-col items-center justify-center space-y-3 border-2 border-[#e2e8f0] hover:border-[#3b82f6] hover:bg-[#f0f9ff] transition-all duration-300"
+                >
+                  <div className="p-3 rounded-full bg-[#3b82f6] text-white">
+                    <Users className="h-6 w-6" />
+                  </div>
+                  <span className="font-medium text-[#1e293b]">Review Applications</span>
+                </Button>
+
+                <Button
+                  onClick={() => setActiveTab('timecards')}
+                  variant="outline"
+                  className="h-32 flex flex-col items-center justify-center space-y-3 border-2 border-[#e2e8f0] hover:border-[#10b981] hover:bg-[#f0fdf4] transition-all duration-300"
+                >
+                  <div className="p-3 rounded-full bg-[#10b981] text-white">
+                    <Clock className="h-6 w-6" />
+                  </div>
+                  <span className="font-medium text-[#1e293b]">Approve Hours</span>
+                </Button>
+
+                <Button
+                  onClick={() => setActiveTab('payments')}
+                  variant="outline"
+                  className="h-32 flex flex-col items-center justify-center space-y-3 border-2 border-[#e2e8f0] hover:border-[#f59e0b] hover:bg-[#fffbeb] transition-all duration-300"
+                >
+                  <div className="p-3 rounded-full bg-[#f59e0b] text-white">
+                    <CreditCard className="h-6 w-6" />
+                  </div>
+                  <span className="font-medium text-[#1e293b]">Manage Payments</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* Progress Guide */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-[#e2e8f0]">
+              <h3 className="text-xl font-medium text-[#1e293b] mb-6">Your Journey to Great Care:</h3>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <div className="w-8 h-8 rounded-full bg-[#10b981] flex items-center justify-center text-white font-medium">✓</div>
+                  <span className="text-[#475569]">1. Create your account</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-8 h-8 rounded-full bg-[#9bcbff] flex items-center justify-center text-[#1e293b] font-medium">2</div>
+                  <span className="text-[#475569]">2. Post your first job ← You are here</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center text-[#64748b] font-medium">3</div>
+                  <span className="text-[#64748b]">3. Review nurse applications</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center text-[#64748b] font-medium">4</div>
+                  <span className="text-[#64748b]">4. Interview and hire</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center text-[#64748b] font-medium">5</div>
+                  <span className="text-[#64748b]">5. Manage your care team</span>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -199,59 +287,55 @@ export default function ClientDashboard() {
       case 'post-job':
         return <JobPostingForm clientId={clientId} onJobCreated={handleJobCreated} onCancel={() => setActiveTab('overview')} />;
       default:
-        return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 xl:col-span-2 space-y-6">
-              <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />
-              <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />
-            </div>
-            <div className="space-y-6">
-              <ClientQuickActionsCard clientId={clientId} onRefresh={handleRefresh} />
-              <BrowseNursesCard clientId={clientId} />
-            </div>
-          </div>
-        );
+        return renderTabContent();
     }
   };
 
-  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-white to-[#e0f2fe]">
       {/* Desktop Navigation */}
-      <nav className="hidden md:block bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">Client Dashboard</h1>
+      <nav className="hidden md:block bg-white/90 backdrop-blur-md border-b border-[#e2e8f0] sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center space-x-12">
+              <h1 className="text-2xl font-light text-[#1e293b]">
+                <span className="text-[#1e293b]">Nurse</span>
+                <span className="text-[#9bcbff]">Nest</span>
+              </h1>
               <div className="hidden md:flex space-x-8">
                 {[
-                  { id: 'overview', label: 'Overview' },
-                  { id: 'jobs', label: 'My Jobs' },
-                  { id: 'applications', label: 'Applications' },
-                  { id: 'contracts', label: 'Contracts' },
-                  { id: 'timecards', label: 'Timecards' },
-                  { id: 'payments', label: 'Payments' }
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      activeTab === tab.id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+                  { id: 'overview', label: 'Dashboard', icon: Home },
+                  { id: 'jobs', label: 'My Jobs', icon: Briefcase },
+                  { id: 'applications', label: 'Applications', icon: Users },
+                  { id: 'contracts', label: 'Contracts', icon: FileText },
+                  { id: 'timecards', label: 'Timecards', icon: Clock },
+                  { id: 'payments', label: 'Payments', icon: CreditCard }
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center space-x-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                        activeTab === tab.id
+                          ? 'bg-[#9bcbff] text-[#1e293b] shadow-md'
+                          : 'text-[#475569] hover:text-[#1e293b] hover:bg-[#f1f5f9]'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
               <Button
                 onClick={() => setActiveTab('post-job')}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-[#9bcbff] hover:bg-[#3b82f6] text-[#1e293b] hover:text-white px-6 py-3 rounded-xl font-medium shadow-lg transition-all duration-300 transform hover:scale-105"
               >
+                <Plus className="h-4 w-4 mr-2" />
                 Post New Job
               </Button>
             </div>
@@ -260,67 +344,55 @@ export default function ClientDashboard() {
       </nav>
 
       {/* Mobile Navigation */}
-      <nav className="md:hidden bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-40">
-        <div className="px-4 py-3">
-          <h1 className="text-lg font-bold text-gray-900">Client Dashboard</h1>
+      <nav className="md:hidden bg-white/90 backdrop-blur-md border-b border-[#e2e8f0] sticky top-0 z-40">
+        <div className="px-6 py-4">
+          <h1 className="text-xl font-light text-[#1e293b]">
+            <span className="text-[#1e293b]">Nurse</span>
+            <span className="text-[#9bcbff]">Nest</span>
+          </h1>
         </div>
         
-        {/* Mobile Tab Bar */}
-        <div className="border-t border-gray-200 bg-white">
-          <div className="flex overflow-x-auto">
+        {/* Mobile Bottom Tab Bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#e2e8f0] z-50 md:hidden">
+          <div className="grid grid-cols-5 h-16">
             {[
-              { id: 'overview', label: 'Overview', icon: '📊' },
-              { id: 'jobs', label: 'Jobs', icon: '💼' },
-              { id: 'applications', label: 'Apps', icon: '📋' },
-              { id: 'payments', label: 'Pay', icon: '💳' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 min-w-0 px-2 py-3 text-xs font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-700'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-lg mb-1">{tab.icon}</span>
-                  <span>{tab.label}</span>
-                </div>
-              </button>
-            ))}
+              { id: 'overview', label: 'Home', icon: Home },
+              { id: 'applications', label: 'Nurses', icon: Users },
+              { id: 'jobs', label: 'Jobs', icon: Briefcase },
+              { id: 'payments', label: 'Pay', icon: CreditCard },
+              { id: 'post-job', label: 'Post', icon: Plus }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 ${
+                    activeTab === tab.id
+                      ? 'text-[#9bcbff] bg-[#f0f9ff]'
+                      : 'text-[#64748b] hover:text-[#1e293b]'
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="text-xs font-medium">{tab.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
-        {/* Mobile Post Job Button */}
-        <div className="md:hidden mb-4">
-          <Button
-            onClick={() => setActiveTab('post-job')}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white min-h-[44px]"
-          >
-            Post New Job
-          </Button>
-        </div>
-
+      <main className="max-w-7xl mx-auto px-6 py-8 pb-24 md:pb-8">
         {loading ? (
-          <div className="flex items-center justify-center min-h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="flex items-center justify-center min-h-96">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9bcbff] mx-auto mb-4"></div>
+              <p className="text-[#475569]">Loading your dashboard...</p>
+            </div>
           </div>
         ) : (
-          <div className="md:block">
-            {/* Mobile: Single column layout */}
-            <div className="md:hidden space-y-4">
-              {renderTabContent()}
-            </div>
-            
-            {/* Desktop: Original layout */}
-            <div className="hidden md:block">
-              {renderTabContent()}
-            </div>
-          </div>
+          renderTabContent()
         )}
       </main>
     </div>
