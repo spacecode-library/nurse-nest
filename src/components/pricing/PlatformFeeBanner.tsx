@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Lock, Search, Briefcase, ShieldCheck } from "lucide-react";
+import { Shield, ShieldCheck, CreditCard, Users } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
 interface PlatformFeeBannerProps {
@@ -10,53 +10,107 @@ interface PlatformFeeBannerProps {
 export default function PlatformFeeBanner({ className = "" }: PlatformFeeBannerProps) {
   return (
     <AnimatedSection animation="fade-up" className={`${className}`}>
-      <div className="bg-[#F9F9FA] border border-gray-100 rounded-2xl shadow-sm p-6 md:p-8">
-        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2 text-center">Your Search Starts Here</h2>
-        <p className="text-center text-gray-600 mb-6">All pricing is transparent and secure. You only pay for what you need.</p>
+      <div className="bg-gradient-to-br from-white via-[#f8fafc] to-[#f1f5f9] border border-[#e2e8f0] rounded-3xl shadow-lg p-8 md:p-10">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-light text-[#1e293b] mb-3">Platform Fee Structure</h2>
+          <p className="text-[#475569] text-lg leading-relaxed max-w-2xl mx-auto">
+            Simple, transparent pricing that covers everything you need for secure healthcare staffing.
+          </p>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          {/* Start Your Search Fee */}
-          <div className="flex flex-col justify-between h-full bg-white rounded-xl shadow-sm border border-gray-50 p-5">
-            <div className="flex items-start gap-4">
-              <div className="p-2.5 rounded-full bg-blue-50 mt-1">
-                <Search className="h-5 w-5 text-primary-500" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* Client Platform Fee */}
+          <div className="bg-white rounded-2xl shadow-md border border-[#e2e8f0] p-6 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-full bg-gradient-to-br from-[#9bcbff] to-[#3b82f6] shadow-sm">
+                <Users className="h-6 w-6 text-white" />
               </div>
-              <div>
-                <h3 className="text-lg font-medium text-gray-800 mb-1.5">Fully Refundable Search Fee</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Fully refundable if no nurse is matched within 14 days.
+              <div className="flex-1">
+                <h3 className="text-xl font-medium text-[#1e293b] mb-2">For Clients</h3>
+                <p className="text-[#475569] text-sm leading-relaxed">
+                  Added to your total when you hire a nurse. Covers platform operations, vetting, and secure payment processing.
                 </p>
               </div>
             </div>
-            <div className="mt-4 flex items-baseline">
-              <span className="text-xl font-bold text-primary-700 mr-2">$100</span>
-              <span className="text-green-600 text-xs font-medium bg-green-50 px-2 py-0.5 rounded-full">Fully Refundable</span>
+            
+            <div className="flex items-baseline justify-center mb-4">
+              <span className="text-4xl font-light text-[#1e293b] mr-2">10%</span>
+              <span className="text-[#475569] font-medium">Platform Fee</span>
+            </div>
+            
+            <div className="space-y-3 text-sm text-[#475569]">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>Comprehensive nurse vetting</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>24/7 platform support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>Secure payment processing</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>HIPAA-compliant platform</span>
+              </div>
             </div>
           </div>
 
-          {/* Platform Fee */}
-          <div className="flex flex-col justify-between h-full bg-white rounded-xl shadow-sm border border-gray-50 p-5">
-            <div className="flex items-start gap-4">
-              <div className="p-2.5 rounded-full bg-blue-50 mt-1">
-                <Briefcase className="h-5 w-5 text-primary-500" />
+          {/* Nurse Platform Fee */}
+          <div className="bg-white rounded-2xl shadow-md border border-[#e2e8f0] p-6 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#1e40af] shadow-sm">
+                <Shield className="h-6 w-6 text-white" />
               </div>
-              <div>
-                <h3 className="text-lg font-medium text-gray-800 mb-1.5">15% Concierge Platform Fee</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Only applied when you pay your nurse. Covers vetting, support, secure payments, and admin services.
+              <div className="flex-1">
+                <h3 className="text-xl font-medium text-[#1e293b] mb-2">For Nurses</h3>
+                <p className="text-[#475569] text-sm leading-relaxed">
+                  Deducted from earnings to provide access to vetted clients and comprehensive platform services.
                 </p>
               </div>
             </div>
-            <div className="mt-4 flex items-center">
-              <div className="flex items-center mr-3">
-                <Lock className="h-3.5 w-3.5 text-gray-500 mr-1" />
-                <span className="text-xs text-gray-500">Secure Payments</span>
+            
+            <div className="flex items-baseline justify-center mb-4">
+              <span className="text-4xl font-light text-[#1e293b] mr-2">5%</span>
+              <span className="text-[#475569] font-medium">Platform Fee</span>
+            </div>
+            
+            <div className="space-y-3 text-sm text-[#475569]">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>Access to vetted clients</span>
               </div>
-              <div className="flex items-center">
-                <ShieldCheck className="h-3.5 w-3.5 text-gray-500 mr-1" />
-                <span className="text-xs text-gray-500">HIPAA Compliant</span>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>Secure payment guaranteed</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>Professional support team</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#10b981]" />
+                <span>Elite status program available</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Trust Indicators */}
+        <div className="flex flex-wrap items-center justify-center gap-6 mt-8 pt-6 border-t border-[#e2e8f0]">
+          <div className="flex items-center gap-2 text-[#64748b]">
+            <CreditCard className="h-4 w-4" />
+            <span className="text-sm font-medium">Stripe Secured</span>
+          </div>
+          <div className="flex items-center gap-2 text-[#64748b]">
+            <ShieldCheck className="h-4 w-4" />
+            <span className="text-sm font-medium">HIPAA Compliant</span>
+          </div>
+          <div className="flex items-center gap-2 text-[#64748b]">
+            <Shield className="h-4 w-4" />
+            <span className="text-sm font-medium">SSL Encrypted</span>
           </div>
         </div>
       </div>

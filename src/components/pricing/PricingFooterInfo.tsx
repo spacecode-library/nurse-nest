@@ -1,37 +1,62 @@
 
 import React from "react";
-import { Lock, ShieldCheck } from "lucide-react";
+import { Lock, ShieldCheck, CreditCard, Star } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
 export default function PricingFooterInfo() {
   return (
-    <AnimatedSection animation="fade-up" className="w-full bg-[#F0F4F9] py-10 px-4 flex justify-center">
-      <div className="flex flex-col items-center justify-center gap-4 rounded-xl max-w-2xl mx-auto w-full">
-        <div className="flex items-center justify-center mb-1">
-          <Lock className="w-5 h-5 md:w-6 md:h-6 text-primary-600 mr-3" />
-          <span className="text-xl md:text-2xl font-semibold text-gray-800">
-            Secure Payment Processing
-          </span>
+    <AnimatedSection animation="fade-up" className="w-full bg-gradient-to-br from-[#f1f5f9] via-[#f8fafc] to-[#e2e8f0] py-16 px-4 flex justify-center">
+      <div className="max-w-4xl mx-auto w-full">
+        {/* Main Security Section */}
+        <div className="bg-white rounded-3xl shadow-lg border border-[#e2e8f0] p-8 md:p-10 mb-8">
+          <div className="flex items-center justify-center mb-6">
+            <div className="p-3 rounded-full bg-gradient-to-br from-[#9bcbff] to-[#3b82f6] mr-4">
+              <Lock className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl md:text-3xl font-light text-[#1e293b]">
+              Secure Payment Processing
+            </span>
+          </div>
+          
+          <p className="text-center text-[#475569] text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+            All payments are processed securely through Stripe with bank-level encryption. 
+            You pay your nurse directly through our platform, with transparent fees covering 
+            vetting, support, and comprehensive admin services.
+          </p>
+          
+          {/* Trust Indicators Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-4">
+              <CreditCard className="h-8 w-8 text-[#3b82f6] mx-auto mb-3" />
+              <h4 className="font-medium text-[#1e293b] mb-2">Stripe Powered</h4>
+              <p className="text-sm text-[#64748b]">Industry-leading payment security</p>
+            </div>
+            
+            <div className="text-center p-4">
+              <ShieldCheck className="h-8 w-8 text-[#10b981] mx-auto mb-3" />
+              <h4 className="font-medium text-[#1e293b] mb-2">HIPAA Compliant</h4>
+              <p className="text-sm text-[#64748b]">Protected health information</p>
+            </div>
+            
+            <div className="text-center p-4">
+              <Star className="h-8 w-8 text-[#f59e0b] mx-auto mb-3" />
+              <h4 className="font-medium text-[#1e293b] mb-2">Elite Program</h4>
+              <p className="text-sm text-[#64748b]">Earn 100% of your rates</p>
+            </div>
+          </div>
         </div>
-        <p className="text-center text-gray-700 text-[15px] md:text-base font-medium leading-relaxed">
-          All payments are handled securely via Stripe. You pay your nurse directly. 
-          Nurse Nest retains a 15% platform fee to manage vetting, support, and admin services.
-        </p>
-        
-        <div className="flex items-center justify-center space-x-6 mt-2">
-          <div className="flex items-center text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="20" viewBox="0 0 32 20" className="mr-2">
-              <path d="M29.6,0H2.4C1.1,0,0,1.1,0,2.4v15.1C0,18.9,1.1,20,2.4,20h27.2c1.3,0,2.4-1.1,2.4-2.4V2.4C32,1.1,30.9,0,29.6,0z" fill="#6772E5"/>
-              <path d="M15,14c-2.2,0-4-1.8-4-4s1.8-4,4-4c1,0,1.9,0.4,2.6,1c0.2,0.2,0.2,0.5,0,0.7c-0.2,0.2-0.5,0.2-0.7,0 c-0.5-0.5-1.2-0.7-1.9-0.7c-1.7,0-3,1.3-3,3s1.3,3,3,3c0.8,0,1.6-0.3,2.1-0.9c0.2-0.2,0.5-0.2,0.7,0c0.2,0.2,0.2,0.5,0,0.7 C17.1,13.5,16.1,14,15,14z" fill="#FFFFFF"/>
-              <path d="M20.4,13.7c-0.2,0-0.3-0.1-0.4-0.2l-2-2.5v2.3c0,0.3-0.2,0.5-0.5,0.5s-0.5-0.2-0.5-0.5V7.3c0-0.3,0.2-0.5,0.5-0.5 s0.5,0.2,0.5,0.5v2.3l2-2.5c0.2-0.2,0.5-0.3,0.7-0.1c0.2,0.2,0.3,0.5,0.1,0.7l-1.8,2.3l1.8,2.3c0.2,0.2,0.1,0.5-0.1,0.7 C20.6,13.7,20.5,13.7,20.4,13.7z" fill="#FFFFFF"/>
-              <path d="M8,13.7c-2.1,0-3.7-1.7-3.7-3.7S5.9,6.3,8,6.3s3.7,1.7,3.7,3.7S10.1,13.7,8,13.7z M8,7.3c-1.5,0-2.7,1.2-2.7,2.7 s1.2,2.7,2.7,2.7s2.7-1.2,2.7-2.7S9.5,7.3,8,7.3z" fill="#FFFFFF"/>
-              <path d="M24.8,13.7c-2.1,0-3.7-1.7-3.7-3.7s1.7-3.7,3.7-3.7s3.7,1.7,3.7,3.7S26.8,13.7,24.8,13.7z M24.8,7.3 c-1.5,0-2.7,1.2-2.7,2.7s1.2,2.7,2.7,2.7s2.7-1.2,2.7-2.7S26.3,7.3,24.8,7.3z" fill="#FFFFFF"/>
-            </svg>
+
+        {/* Elite Program Highlight */}
+        <div className="bg-gradient-to-r from-[#fef3e2] to-[#fefbf0] rounded-2xl border border-[#e5e7eb] p-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Star className="h-5 w-5 text-[#d97706] fill-current" />
+            <span className="text-lg font-medium text-[#92400e]">Verified Elite Nurse Program</span>
+            <Star className="h-5 w-5 text-[#d97706] fill-current" />
           </div>
-          <div className="flex items-center text-gray-600">
-            <ShieldCheck className="h-4 w-4 mr-1.5" />
-            <span className="text-xs font-medium">HIPAA Compliant</span>
-          </div>
+          <p className="text-[#92400e] text-sm">
+            Complete 1,400+ hours across 3+ successful contracts and earn Elite status. 
+            Elite nurses pay 0% platform fees and keep 100% of their earnings.
+          </p>
         </div>
       </div>
     </AnimatedSection>
