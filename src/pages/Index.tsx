@@ -27,6 +27,9 @@ export default function Index() {
         {/* About the Founder */}
         <AboutMeSection />
         
+        {/* FAQ Section - shows as full section on homepage */}
+        <DynamicFaqSystem showAsSection={true} />
+        
         {/* Dynamic FAQ System - starts as floating button, transforms to full section */}
         <DynamicFaqSystem />
       </main>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +33,7 @@ interface Application {
     experience_years: number;
     hourly_rate: number;
   };
-  jobs: {
+  job_postings: {
     title: string;
   };
 }
@@ -56,7 +55,7 @@ export default function ClientDashboard() {
   const fetchJobs = async () => {
     try {
       const { data, error } = await supabase
-        .from('jobs')
+        .from('job_postings')
         .select('*')
         .eq('client_id', user?.id)
         .order('created_at', { ascending: false });
@@ -71,7 +70,7 @@ export default function ClientDashboard() {
   const fetchApplications = async () => {
     try {
       const { data, error } = await supabase
-        .from('job_applications')
+        .from('applications')
         .select(`
           *,
           nurse_profiles (
@@ -81,11 +80,11 @@ export default function ClientDashboard() {
             experience_years,
             hourly_rate
           ),
-          jobs (
+          job_postings (
             title
           )
         `)
-        .eq('jobs.client_id', user?.id)
+        .eq('job_postings.client_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -149,7 +148,6 @@ export default function ClientDashboard() {
           </Button>
         </div>
         <ClientConversationList 
-          userId={user?.id || ''}
           onBack={() => setShowConversations(false)}
         />
       </div>
@@ -319,7 +317,7 @@ export default function ClientDashboard() {
                         {application.nurse_profiles.first_name} {application.nurse_profiles.last_name}
                       </h4>
                       <p className="text-small text-brand-gray">
-                        Applied for: {application.jobs.title}
+                        Applied for: {application.job_postings.title}
                       </p>
                     </div>
                     <span className={`${getStatusColor(application.status)} text-sm`}>

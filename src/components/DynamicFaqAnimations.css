@@ -140,11 +140,16 @@
   background: white;
   border-radius: 8px;
   transition: background 0.2s ease;
-  border: none;
+  border: none !important;
 }
 
 .faq-question-header:hover {
   background: rgba(255, 255, 255, 0.8);
+}
+
+/* Remove blue underline from accordion trigger */
+.faq-question-header:hover {
+  text-decoration: none !important;
 }
 
 /* Smooth scroll behavior */

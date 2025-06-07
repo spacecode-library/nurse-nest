@@ -21,9 +21,13 @@ type FaqCategory = {
   }[];
 };
 
-export default function DynamicFaqSystem() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+interface DynamicFaqSystemProps {
+  showAsSection?: boolean;
+}
+
+export default function DynamicFaqSystem({ showAsSection = false }: DynamicFaqSystemProps) {
+  const [isVisible, setIsVisible] = useState(showAsSection);
+  const [isExpanded, setIsExpanded] = useState(showAsSection);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("getting-started");
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -174,16 +178,18 @@ export default function DynamicFaqSystem() {
   const filteredCategories = getFilteredCategories();
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const triggerPoint = 400; // Show button after 400px scroll
-      
-      setIsVisible(scrollPosition > triggerPoint);
-    };
+    if (!showAsSection) {
+      const handleScroll = () => {
+        const scrollPosition = window.scrollY;
+        const triggerPoint = 400; // Show button after 400px scroll
+        
+        setIsVisible(scrollPosition > triggerPoint);
+      };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [showAsSection]);
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -203,11 +209,12 @@ export default function DynamicFaqSystem() {
     setIsExpanded(false);
   };
 
-  if (!isVisible && !isExpanded) {
+  // Show as floating button if not expanded and not showing as section
+  if (!showAsSection && !isVisible && !isExpanded) {
     return null;
   }
 
-  if (!isExpanded) {
+  if (!showAsSection && !isExpanded) {
     return (
       <div ref={triggerRef}>
         <FaqTriggerButton onClick={handleExpand} />
@@ -228,18 +235,20 @@ export default function DynamicFaqSystem() {
             <img
               src="/lovable-uploads/436bcb1e-c141-4cd8-b1ed-beae8896e1d7.png"
               alt="Frequently Asked Questions"
-              className="mx-auto h-16 md:h-20 object-contain drop-shadow-lg"
+              className="mx-auto h-12 md:h-16 object-contain drop-shadow-lg"
             />
           </div>
           
-          {/* Close button */}
-          <button
-            onClick={handleCollapse}
-            className="absolute top-6 right-6 p-2 rounded-lg hover:bg-white/20 transition-colors text-[#1e293b]"
-            aria-label="Close FAQ"
-          >
-            <X className="h-6 w-6" />
-          </button>
+          {/* Close button - only show for floating version */}
+          {!showAsSection && (
+            <button
+              onClick={handleCollapse}
+              className="absolute top-6 right-6 p-2 rounded-lg hover:bg-white/20 transition-colors text-[#1e293b]"
+              aria-label="Close FAQ"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          )}
         </div>
 
         {/* Search Bar */}
@@ -313,16 +322,16 @@ export default function DynamicFaqSystem() {
                           key={`${category.id}-${faqIndex}`}
                           value={`${category.id}-${faqIndex}`}
                           className={cn(
-                            "faq-question-card animate-scale-in",
+                            "faq-question-card animate-scale-in border-none",
                             `animate-stagger-${Math.min(faqIndex + 1, 5)}`
                           )}
                         >
-                          <AccordionTrigger className="faq-question-header hover:no-underline">
+                          <AccordionTrigger className="faq-question-header hover:no-underline border-none">
                             <span className="text-base md:text-lg font-medium text-[#1e293b] text-left">
                               {faq.question}
                             </span>
                           </AccordionTrigger>
-                          <AccordionContent className="px-5 pb-5 pt-1 text-[#475569] whitespace-pre-line leading-relaxed">
+                          <AccordionContent className="px-5 pb-5 pt-1 text-[#475569] whitespace-pre-line leading-relaxed border-none">
                             {faq.answer}
                           </AccordionContent>
                         </AccordionItem>
@@ -332,33 +341,6 @@ export default function DynamicFaqSystem() {
                 ))}
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Contact Information */}
-        <div className="max-w-xl mx-auto mt-12 text-center animate-fade-in-up animate-stagger-5">
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-8 border border-white/30 shadow-lg">
-            <h4 className="font-semibold text-xl text-[#1e293b] mb-6">Contact Information</h4>
-            <div className="space-y-4 text-[#475569] mb-6">
-              <div className="flex items-center justify-center gap-3">
-                <span className="font-medium">Email:</span>
-                <span>contact@nursenest.us</span>
-              </div>
-              <div className="flex items-center justify-center gap-3">
-                <span className="font-medium">Phone:</span>
-                <span>(425) 954-3381</span>
-              </div>
-              <div className="text-center">
-                <span className="font-medium">Support:</span>
-                <span className="block mt-1">Available through dashboard messaging center during business hours</span>
-              </div>
-            </div>
-            <a 
-              href="/contact" 
-              className="inline-flex items-center bg-[#3b82f6] text-white font-medium px-6 py-3 rounded-md hover:bg-[#2563eb] transition-colors shadow-lg hover:shadow-xl"
-            >
-              Contact our team
-            </a>
           </div>
         </div>
       </div>
