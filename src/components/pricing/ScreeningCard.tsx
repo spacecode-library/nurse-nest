@@ -1,46 +1,78 @@
 
 import React from "react";
-import { Check } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 interface ScreeningCardProps {
   title: string;
   price: string;
-  bullets: string[];
+  description: string;
+  features: string[];
+  badge?: {
+    text: string;
+    color: string;
+    textColor: string;
+  };
+  isPopular?: boolean;
 }
 
-export default function ScreeningCard({ title, price, bullets }: ScreeningCardProps) {
+export default function ScreeningCard({
+  title,
+  price,
+  description,
+  features,
+  badge,
+  isPopular = false,
+}: ScreeningCardProps) {
   return (
-    <div
-      className="rounded-xl shadow-md border border-gray-100 bg-white px-7 py-7 flex flex-col
-        min-h-[230px] md:min-h-[260px] relative transition duration-200
-        hover:shadow-lg"
-    >
-      {/* Title & Price */}
-      <div className="mb-2 flex items-baseline gap-2 min-h-[42px]">
-        <h4 className="font-semibold text-md md:text-lg text-gray-800 flex-1">{title}</h4>
-        <span className="font-bold text-base md:text-lg text-gray-900">{price}</span>
+    <div className={`relative bg-white rounded-2xl shadow-lg border-2 p-6 transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+      isPopular 
+        ? 'border-[#d97706] bg-gradient-to-br from-[#fffbf0] to-white' 
+        : 'border-[#e2e8f0] hover:border-[#9bcbff]'
+    }`}>
+      {isPopular && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <span className="bg-gradient-to-r from-[#fbbf24] to-[#d97706] text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+            Most Popular
+          </span>
+        </div>
+      )}
+
+      <div className="text-center mb-4">
+        <h3 className="text-xl font-semibold text-[#1e293b] mb-2">{title}</h3>
+        <div className="flex items-baseline justify-center mb-2">
+          <span className={`text-3xl font-light ${isPopular ? 'text-[#92400e]' : 'text-[#0c4a6e]'}`}>
+            {price}
+          </span>
+        </div>
+        
+        {badge && (
+          <div
+            className="inline-block rounded-full font-medium text-xs px-3 py-1 shadow-sm mb-3"
+            style={{ background: badge.color, color: badge.textColor }}
+          >
+            {badge.text}
+          </div>
+        )}
+        
+        <p className="text-[#64748b] text-sm">{description}</p>
       </div>
-      {/* Divider */}
-      <div className="h-px w-full bg-gray-100 mb-2" />
-      {/* Bullet List */}
-      <ul className="mt-1 flex-1 flex flex-col gap-2 text-sm text-gray-700">
-        {bullets.map((b, i) => (
-          <li key={i} className="flex items-center">
-            {b.startsWith("✅") ? (
-              <Check className="text-green-600 w-5 h-5 mr-2" aria-label="Instant" />
-            ) : null}
-            {b.startsWith("⏱️") ? (
-              <span className="inline-block mr-2 text-blue-400 text-lg" aria-hidden="true">⏱️</span>
-            ) : null}
-            {b.startsWith("❗") ? (
-              <span className="inline-block mr-2 text-red-500 text-lg" aria-hidden="true">❗</span>
-            ) : null}
-            <span className="">
-              {b.replace(/^✅|^⏱️ |^❗ /, "")}
-            </span>
+
+      <ul className="space-y-3 mb-6">
+        {features.map((feature, index) => (
+          <li key={index} className="flex items-start">
+            <CheckCircle2 className={`h-4 w-4 mt-0.5 mr-2 flex-shrink-0 ${
+              isPopular ? 'text-[#d97706]' : 'text-[#0ea5e9]'
+            }`} />
+            <span className="text-[#475569] text-sm leading-relaxed">{feature}</span>
           </li>
         ))}
       </ul>
+
+      {/* Contact Information */}
+      <div className="text-center pt-4 border-t border-[#f1f5f9]">
+        <p className="text-[#64748b] text-xs mb-1">Contact us for details:</p>
+        <p className="text-[#1e293b] font-medium text-sm">info@nursenest.us</p>
+      </div>
     </div>
   );
 }

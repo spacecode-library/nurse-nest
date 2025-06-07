@@ -6,7 +6,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 export default function PricingFooterInfo() {
   return (
     <AnimatedSection animation="fade-up" className="w-full bg-gradient-to-br from-[#f1f5f9] via-[#f8fafc] to-[#e2e8f0] py-16 px-4 flex justify-center">
-      <div className="max-w-4xl mx-auto w-full">
+      <div className="max-w-5xl mx-auto w-full">
         {/* Main Security Section */}
         <div className="bg-white rounded-3xl shadow-lg border border-[#e2e8f0] p-8 md:p-10 mb-8">
           <div className="flex items-center justify-center mb-6">
@@ -42,6 +42,53 @@ export default function PricingFooterInfo() {
               <Star className="h-8 w-8 text-[#f59e0b] mx-auto mb-3" />
               <h4 className="font-medium text-[#1e293b] mb-2">Elite Program</h4>
               <p className="text-sm text-[#64748b]">Earn 100% of your rates</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Major Companies Using Stripe */}
+        <div className="bg-white rounded-3xl shadow-lg border border-[#e2e8f0] p-8 md:p-10 mb-8">
+          <div className="text-center mb-6">
+            <h3 className="text-xl md:text-2xl font-light text-[#1e293b] mb-3">
+              Trusted by Leading Companies Worldwide
+            </h3>
+            <p className="text-[#475569] text-sm leading-relaxed">
+              Stripe processes payments for millions of businesses, including industry leaders
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Amazon</div>
+              <div className="text-xs text-[#64748b]">E-commerce</div>
+            </div>
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Shopify</div>
+              <div className="text-xs text-[#64748b]">Commerce Platform</div>
+            </div>
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Uber</div>
+              <div className="text-xs text-[#64748b]">Transportation</div>
+            </div>
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Lyft</div>
+              <div className="text-xs text-[#64748b]">Rideshare</div>
+            </div>
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Salesforce</div>
+              <div className="text-xs text-[#64748b]">Software</div>
+            </div>
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Slack</div>
+              <div className="text-xs text-[#64748b]">Communication</div>
+            </div>
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Zoom</div>
+              <div className="text-xs text-[#64748b]">Video Conferencing</div>
+            </div>
+            <div className="p-4">
+              <div className="font-semibold text-[#1e293b] text-lg mb-1">Netflix</div>
+              <div className="text-xs text-[#64748b]">Streaming</div>
             </div>
           </div>
         </div>

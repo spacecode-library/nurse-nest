@@ -165,8 +165,8 @@ export default function Auth() {
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
-          {/* Left Side - Artistic Background (65% on desktop to show more of the graphic) */}
-          <div className="hidden lg:flex lg:w-[65%] relative overflow-hidden">
+          {/* Left Side - Artistic Background (75% on desktop to show more of the graphic) */}
+          <div className="hidden lg:flex lg:w-[75%] relative overflow-hidden">
             {/* Artistic Healthcare Background */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white">
               {/* Main Healthcare Professional Image - positioned to show full left side */}
@@ -193,8 +193,8 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Right Side - Login Form (35% on desktop, positioned to start near center) */}
-          <div className="w-full lg:w-[35%] bg-transparent flex items-center justify-center relative">
+          {/* Right Side - Login Form (25% on desktop, positioned to start at 1/4 point) */}
+          <div className="w-full lg:w-[25%] bg-transparent flex items-center justify-center relative lg:justify-start lg:pl-8">
             <div className="w-full max-w-md px-6 lg:px-8 py-12 bg-white/90 backdrop-blur-sm rounded-l-2xl lg:rounded-l-none lg:bg-white/95 lg:backdrop-blur-none">
               
               {/* Header Section */}

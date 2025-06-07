@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 import NavLinks from './navbar/NavLinks';
 import NurseDropdown from './navbar/NurseDropdown';
 import UserMenu from './navbar/UserMenu';
@@ -55,6 +56,10 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
       window.location.href = 'https://www.nursenest.us/nurseapplication';
     }
   };
+
+  const handleRequestNurseClick = () => {
+    navigate('/apply');
+  };
   
   return (
     <>
@@ -67,9 +72,9 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
             : 'bg-white border-transparent py-4 mx-4'
       )}>
         <div className="container mx-auto px-6 flex items-center justify-between">
-          {/* Logo with NurseNest styling */}
+          {/* Logo with NurseNest styling - Made bigger */}
           <div className="flex items-center">
-            <span className="text-2xl font-bold">
+            <span className="text-3xl md:text-4xl font-bold">
               <span className={cn(
                 "transition-colors duration-300 ease-in-out",
                 isScrolled || !isHomePageRoute ? "text-gray-800" : "text-white"
@@ -79,7 +84,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           </div>
           
           {/* Desktop Navigation - centered */}
-          <nav className="hidden lg:flex items-center space-x-10 flex-grow justify-center">
+          <nav className="hidden lg:flex items-center space-x-8 flex-grow justify-center">
             <NavLinks shouldUseDarkText={isScrolled || !isHomePageRoute} />
 
             {/* For Nurses Dropdown */}
@@ -89,8 +94,16 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
             />
           </nav>
           
-          {/* Authentication - Desktop */}
-          <div className="hidden lg:flex items-center ml-auto">
+          {/* Authentication & CTA - Desktop */}
+          <div className="hidden lg:flex items-center space-x-4 ml-auto">
+            {/* Request a Nurse Button */}
+            <Button
+              onClick={handleRequestNurseClick}
+              className="bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            >
+              Request a Nurse
+            </Button>
+            
             <UserMenu shouldUseDarkText={isScrolled || !isHomePageRoute} />
           </div>
           
@@ -114,7 +127,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           setIsOpen={setIsOpen} 
           isNursePage={isNursePage}
           handleApplyNowClick={handleApplyNowClick}
-          handleRequestNurse={() => navigate('/apply')}
+          handleRequestNurse={handleRequestNurseClick}
         />
       </header>
     </>

@@ -1,8 +1,6 @@
 
 import React from "react";
 import { Shield, CheckCircle2, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 interface BundleBadge {
   text: string;
@@ -47,10 +45,6 @@ export default function PricingBundleCard({
   const textColor = variant === "pro" ? "text-[#1e293b]" : "text-[#1e293b]";
   const iconBgColor = variant === "pro" ? "bg-gradient-to-br from-[#fbbf24] to-[#d97706]" : "bg-gradient-to-br from-[#9bcbff] to-[#3b82f6]";
   const priceColor = variant === "pro" ? "text-[#92400e]" : "text-[#0c4a6e]";
-  
-  const buttonClasses = variant === "pro" 
-    ? "bg-gradient-to-r from-[#fbbf24] to-[#d97706] hover:from-[#f59e0b] hover:to-[#c2410c] text-white shadow-lg hover:shadow-xl transition-all duration-300"
-    : "bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white shadow-lg hover:shadow-xl transition-all duration-300";
 
   return (
     <div 
@@ -117,12 +111,11 @@ export default function PricingBundleCard({
           </ul>
         </div>
 
-        {/* Button */}
-        <Link to="/apply" className="block">
-          <Button className={`w-full py-4 text-base font-medium rounded-xl ${buttonClasses}`}>
-            Select This Bundle
-          </Button>
-        </Link>
+        {/* Contact Information */}
+        <div className="text-center">
+          <p className="text-[#475569] text-sm mb-2">Contact us to get started:</p>
+          <p className="text-[#1e293b] font-medium">info@nursenest.us</p>
+        </div>
       </div>
     </div>
   );
