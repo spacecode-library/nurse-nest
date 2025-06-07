@@ -10,7 +10,7 @@ export default function FaqTriggerButton({ onClick }: FaqTriggerButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-8 left-8 z-30 bg-[#3b82f6] hover:bg-[#2563eb] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 group"
+      className="fixed bottom-8 right-8 z-30 bg-[#3b82f6] hover:bg-[#2563eb] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 group"
       aria-label="Open FAQ"
     >
       <HelpCircle className="h-6 w-6 group-hover:rotate-12 transition-transform duration-200" />

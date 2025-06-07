@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, ArrowRight, Menu, X } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
@@ -352,6 +351,15 @@ export default function ComprehensiveFaqSection() {
   return (
     <section className="section-padding bg-gradient-to-br from-[#f0f9ff] to-[#e2e8f0]" id="faq">
       <div className="container-custom">
+        {/* Large FAQ Header Image - Positioned above everything */}
+        <div className="text-center mb-16">
+          <img
+            src="/lovable-uploads/436bcb1e-c141-4cd8-b1ed-beae8896e1d7.png"
+            alt="Frequently Asked Questions"
+            className="w-full max-w-4xl mx-auto h-auto object-contain drop-shadow-lg"
+          />
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Mobile Menu Button */}
           <div className="lg:hidden mb-4">
@@ -367,15 +375,6 @@ export default function ComprehensiveFaqSection() {
           {/* Sidebar */}
           <div className={`lg:w-80 lg:sticky lg:top-8 lg:h-fit ${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/30 shadow-lg">
-              {/* Large FAQ Header Image */}
-              <div className="text-center mb-8">
-                <img
-                  src="/lovable-uploads/436bcb1e-c141-4cd8-b1ed-beae8896e1d7.png"
-                  alt="Frequently Asked Questions"
-                  className="w-full max-w-sm mx-auto h-auto object-contain drop-shadow-lg"
-                />
-              </div>
-
               {/* Search Bar */}
               <div className="relative mb-6">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -470,15 +469,15 @@ export default function ComprehensiveFaqSection() {
                           <AccordionItem 
                             key={`${category.id}-${faqIndex}`} 
                             value={`${category.id}-${faqIndex}`} 
-                            className="bg-white/60 backdrop-blur-sm border border-white/30 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
+                            className="bg-white/60 backdrop-blur-sm border-0 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
                           >
-                            <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-white/40 transition-colors">
+                            <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-white/40 transition-colors border-0">
                               <div className="flex items-center text-left">
                                 <span className="text-xl mr-3">{category.icon}</span>
                                 <span className="text-base md:text-lg font-medium text-[#1e293b]">{faq.question}</span>
                               </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-4 pb-4 md:pb-6 pt-1 text-[#475569] whitespace-pre-line">
+                            <AccordionContent className="px-4 pb-4 md:pb-6 pt-1 text-[#475569] whitespace-pre-line border-0">
                               {faq.answer}
                             </AccordionContent>
                           </AccordionItem>
@@ -492,12 +491,21 @@ export default function ComprehensiveFaqSection() {
 
             {/* Contact Information */}
             <AnimatedSection animation="fade-up" delay={500} className="max-w-xl mx-auto mt-10 md:mt-14 text-center">
-              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/30 shadow-lg">
-                <h4 className="font-semibold text-lg text-[#1e293b] mb-4">Contact Information</h4>
-                <div className="space-y-2 text-[#475569] mb-4">
-                  <p>• Email: contact@nursenest.us</p>
-                  <p>• Phone: (425) 954-3381</p>
-                  <p>• Support: Available through dashboard messaging center during business hours</p>
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-8 border border-white/30 shadow-lg">
+                <h4 className="font-semibold text-xl text-[#1e293b] mb-6">Contact Information</h4>
+                <div className="space-y-4 text-[#475569] mb-6">
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="font-medium">Email:</span>
+                    <span>contact@nursenest.us</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="font-medium">Phone:</span>
+                    <span>(425) 954-3381</span>
+                  </div>
+                  <div className="text-center">
+                    <span className="font-medium">Support:</span>
+                    <span className="block mt-1">Available through dashboard messaging center during business hours</span>
+                  </div>
                 </div>
                 <a 
                   href="/contact" 
