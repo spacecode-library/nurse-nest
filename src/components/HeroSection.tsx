@@ -1,3 +1,4 @@
+
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -30,11 +31,11 @@ export default function HeroSection() {
           />
         </div>
         
-        <div className="relative z-10 container mx-auto px-4 pt-24 pb-16 min-h-screen flex flex-col justify-end">
+        <div className="relative z-10 container mx-auto px-4 pt-24 pb-16 min-h-screen flex flex-col justify-center">
           <AnimatedSection animation="fade-up">
-            <div className="text-center space-y-6 mb-8">
-              {/* Request a Nurse Button - Positioned above the text from image */}
-              <div className="mb-6">
+            <div className="text-center space-y-6">
+              {/* Request a Nurse Button - Positioned above the description text */}
+              <div className="mb-8">
                 <Link to="/apply">
                   <Button className="w-full md:w-auto bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
                     Request A Nurse
