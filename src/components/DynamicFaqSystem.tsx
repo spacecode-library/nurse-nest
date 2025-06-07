@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import FaqTriggerButton from './FaqTriggerButton';
-import './DynamicFaqAnimations.css';
 import { 
   Accordion,
   AccordionContent,
@@ -186,12 +185,15 @@ export default function DynamicFaqSystem() {
       setIsExpanded(true);
       setTimeout(() => {
         if (sectionRef.current) {
-          sectionRef.current.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
+          // Scroll to the very top of the blue FAQ section
+          const rect = sectionRef.current.getBoundingClientRect();
+          const offsetTop = window.pageYOffset + rect.top;
+          window.scrollTo({ 
+            top: offsetTop - 20, // Small offset to show full header
+            behavior: 'smooth'
           });
         }
-      }, 300);
+      }, 100);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -206,15 +208,17 @@ export default function DynamicFaqSystem() {
   const handleExpand = () => {
     setIsExpanded(true);
     
-    // Scroll to the FAQ section after expansion animation
+    // Scroll to the FAQ section after expansion
     setTimeout(() => {
       if (sectionRef.current) {
-        sectionRef.current.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
+        const rect = sectionRef.current.getBoundingClientRect();
+        const offsetTop = window.pageYOffset + rect.top;
+        window.scrollTo({ 
+          top: offsetTop - 20, // Small offset to show full header
+          behavior: 'smooth'
         });
       }
-    }, 300);
+    }, 100);
   };
 
   const handleCollapse = () => {
@@ -236,7 +240,7 @@ export default function DynamicFaqSystem() {
   return (
     <section 
       ref={sectionRef}
-      className="section-padding animate-fade-in-up"
+      className="section-padding"
       id="faq"
       style={{
         background: 'linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%)'
@@ -256,7 +260,7 @@ export default function DynamicFaqSystem() {
           {/* Close button */}
           <button
             onClick={handleCollapse}
-            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/20 transition-colors text-[#1e293b]"
+            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/20 transition-colors duration-300 text-[#1e293b]"
             aria-label="Close FAQ"
           >
             <X className="h-6 w-6" />
@@ -264,37 +268,35 @@ export default function DynamicFaqSystem() {
         </div>
 
         {/* Search Bar */}
-        <div className="faq-search animate-fade-in-up animate-stagger-1">
-          <div className="faq-search-icon">
-            <Search className="h-5 w-5" />
+        <div className="relative max-w-md mx-auto mb-8">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
           </div>
           <input
             type="text"
             placeholder="Search questions..."
-            className="faq-search-input"
+            className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-300 bg-white/80 backdrop-blur-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 animate-fade-in-up animate-stagger-2">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Categories */}
           <div className="lg:w-1/4">
             <div className="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/30 shadow-sm sticky top-8">
               <h3 className="font-semibold text-lg text-[#1e293b] mb-4">Categories</h3>
               <nav className="space-y-2">
-                {faqCategories.map((category, index) => (
+                {faqCategories.map((category) => (
                   <button
                     key={category.id}
                     onClick={() => setActiveCategory(category.id)}
                     className={cn(
-                      "w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3",
-                      "animate-fade-in-left",
+                      "w-full text-left p-3 rounded-lg transition-all duration-300 flex items-center gap-3",
                       activeCategory === category.id
                         ? "bg-[#3b82f6] text-white shadow-md"
                         : "hover:bg-white/40 text-[#475569]"
                     )}
-                    style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <span className="text-lg">{category.icon}</span>
                     <span className="font-medium text-sm">{category.title}</span>
@@ -312,14 +314,12 @@ export default function DynamicFaqSystem() {
               </div>
             ) : (
               <div className="space-y-6">
-                {filteredCategories.map((category, categoryIndex) => (
+                {filteredCategories.map((category) => (
                   <div
                     key={category.id}
                     className={cn(
-                      "animate-fade-in-right",
                       (!searchTerm && category.id !== activeCategory) ? "hidden" : ""
                     )}
-                    style={{ animationDelay: `${categoryIndex * 150}ms` }}
                   >
                     {/* Category Header */}
                     <div className="flex items-center gap-3 mb-4">
@@ -327,59 +327,30 @@ export default function DynamicFaqSystem() {
                       <h3 className="font-semibold text-xl text-[#1e293b]">{category.title}</h3>
                     </div>
 
-                    {/* FAQ Questions */}
-                    <Accordion type="single" collapsible className="space-y-3">
+                    {/* FAQ Questions - Simple accordion with smooth transitions */}
+                    <div className="space-y-3">
                       {category.faqs.map((faq, faqIndex) => (
-                        <AccordionItem
-                          key={`${category.id}-${faqIndex}`}
-                          value={`${category.id}-${faqIndex}`}
-                          className={cn(
-                            "faq-question-card animate-scale-in",
-                            `animate-stagger-${Math.min(faqIndex + 1, 5)}`
-                          )}
-                        >
-                          <AccordionTrigger className="faq-question-header hover:no-underline">
-                            <span className="text-base md:text-lg font-medium text-[#1e293b] text-left">
-                              {faq.question}
-                            </span>
-                          </AccordionTrigger>
-                          <AccordionContent className="px-5 pb-5 pt-1 text-[#475569] whitespace-pre-line leading-relaxed">
-                            {faq.answer}
-                          </AccordionContent>
-                        </AccordionItem>
+                        <Accordion key={`${category.id}-${faqIndex}`} type="single" collapsible>
+                          <AccordionItem
+                            value={`${category.id}-${faqIndex}`}
+                            className="bg-white/60 backdrop-blur-sm rounded-lg border border-white/30 shadow-sm overflow-hidden"
+                          >
+                            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-white/50 transition-all duration-300">
+                              <span className="text-base md:text-lg font-medium text-[#1e293b] text-left">
+                                {faq.question}
+                              </span>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-5 pb-5 pt-1 text-[#475569] whitespace-pre-line leading-relaxed">
+                              {faq.answer}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       ))}
-                    </Accordion>
+                    </div>
                   </div>
                 ))}
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Contact Information */}
-        <div className="max-w-xl mx-auto mt-12 text-center animate-fade-in-up animate-stagger-5">
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-8 border border-white/30 shadow-lg">
-            <h4 className="font-semibold text-xl text-[#1e293b] mb-6">Contact Information</h4>
-            <div className="space-y-4 text-[#475569] mb-6">
-              <div className="flex items-center justify-center gap-3">
-                <span className="font-medium">Email:</span>
-                <span>contact@nursenest.us</span>
-              </div>
-              <div className="flex items-center justify-center gap-3">
-                <span className="font-medium">Phone:</span>
-                <span>(425) 954-3381</span>
-              </div>
-              <div className="text-center">
-                <span className="font-medium">Support:</span>
-                <span className="block mt-1">Available through dashboard messaging center during business hours</span>
-              </div>
-            </div>
-            <a 
-              href="/contact" 
-              className="inline-flex items-center bg-[#3b82f6] text-white font-medium px-6 py-3 rounded-md hover:bg-[#2563eb] transition-colors shadow-lg hover:shadow-xl"
-            >
-              Contact our team
-            </a>
           </div>
         </div>
       </div>

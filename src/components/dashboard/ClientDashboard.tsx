@@ -15,12 +15,12 @@ import JobPostingForm from './client/JobPostingForm';
 
 interface Job {
   id: string;
-  title: string;
-  description: string;
-  location: string;
-  hourly_rate: number;
-  shift_type: string;
-  requirements: string[];
+  title?: string;
+  description?: string;
+  location?: string;
+  hourly_rate?: number;
+  shift_type?: string;
+  requirements?: string[];
   status: string;
   benefits?: string;
   care_type?: string;
@@ -37,8 +37,8 @@ interface Application {
   nurse_id: string;
   job_id: string;
   status: string;
-  hourly_rate: number;
-  message: string;
+  hourly_rate?: number;
+  message?: string;
   cover_message?: string;
   created_at?: string;
   updated_at?: string;
@@ -48,7 +48,7 @@ interface Application {
   };
   job_postings?: {
     title: string;
-  };
+  } | null;
 }
 
 export default function ClientDashboard() {
@@ -135,7 +135,7 @@ export default function ClientDashboard() {
       } else if (applicationsData) {
         // Map the data to match our Application interface with proper error handling
         const mappedApplications: Application[] = applicationsData
-          .filter(app => app.job_postings && typeof app.job_postings === 'object' && 'title' in app.job_postings)
+          .filter(app => app.job_postings && typeof app.job_postings === 'object' && app.job_postings !== null && 'title' in app.job_postings)
           .map(app => ({
             id: app.id,
             nurse_id: app.nurse_id,
