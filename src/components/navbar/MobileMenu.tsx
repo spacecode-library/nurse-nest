@@ -43,9 +43,9 @@ export default function MobileMenu({
       )}
     >
       {/* Solid white background overlay that completely covers background content */}
-      <div className="absolute inset-0 bg-white z-40"></div>
+      <div className="absolute inset-0 bg-white"></div>
       
-      <div className="relative z-50 container-custom py-5 h-full bg-white">
+      <div className="relative z-10 container-custom py-5 h-full">
         <div className="flex items-center justify-between mb-8">
           {/* Single NurseNest logo - removed duplicate */}
           <div className="flex items-center">

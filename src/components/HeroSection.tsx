@@ -20,9 +20,9 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* NEW Mobile Layout - Complete replacement with updated nurse background */}
+      {/* NEW Mobile Layout - Complete replacement with nurse background */}
       <div className="md:hidden w-full relative min-h-screen">
-        {/* Mobile Background - Updated nurse image with built-in text */}
+        {/* Mobile Background - New nurse image with built-in text */}
         <div className="absolute inset-0">
           <img 
             src="/lovable-uploads/1efc2a46-b1ce-450d-8694-25066ad43f85.png" 
@@ -35,12 +35,12 @@ export default function HeroSection() {
           />
         </div>
         
-        {/* Mobile Content - Request a Nurse button positioned moved down */}
+        {/* Mobile Content - Request a Nurse button positioned lower */}
         <div className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col justify-center">
           <AnimatedSection animation="fade-up">
             <div className="text-center">
-              {/* Request a Nurse Button - moved down by 50px from previous position */}
-              <div className="mt-96 pt-36">
+              {/* Request a Nurse Button - positioned lower, above description text */}
+              <div className="mt-96 pt-24">
                 <Link to="/apply">
                   <Button 
                     className="text-white px-8 py-4 text-lg rounded-xl shadow-lg font-semibold min-h-[44px] transition-all duration-300 hover:shadow-xl"
