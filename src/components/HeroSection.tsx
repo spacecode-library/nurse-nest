@@ -1,3 +1,4 @@
+
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
@@ -21,11 +22,11 @@ export default function HeroSection() {
       
       {/* NEW Mobile Layout - Complete replacement with nurse background */}
       <div className="md:hidden w-full relative min-h-screen">
-        {/* Mobile Background - Nurse image with built-in text */}
+        {/* Mobile Background - New nurse image with built-in text */}
         <div className="absolute inset-0">
           <img 
-            src="/lovable-uploads/7cc0723b-b1b5-4fe0-982a-6509e420f358.png" 
-            alt="Professional nurse with text overlay" 
+            src="/lovable-uploads/1efc2a46-b1ce-450d-8694-25066ad43f85.png" 
+            alt="Need a nurse? We make it easy." 
             className="w-full h-full object-cover"
             style={{
               backgroundSize: 'cover',
@@ -34,12 +35,12 @@ export default function HeroSection() {
           />
         </div>
         
-        {/* Mobile Content - Only Request a Nurse button positioned above text in image */}
+        {/* Mobile Content - Request a Nurse button positioned lower */}
         <div className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col justify-center">
           <AnimatedSection animation="fade-up">
             <div className="text-center">
-              {/* Request a Nurse Button - positioned above the text that's baked into the image */}
-              <div className="mb-12">
+              {/* Request a Nurse Button - positioned lower, above description text */}
+              <div className="mt-96 pt-24">
                 <Link to="/apply">
                   <Button 
                     className="text-white px-8 py-4 text-lg rounded-xl shadow-lg font-semibold min-h-[44px] transition-all duration-300 hover:shadow-xl"

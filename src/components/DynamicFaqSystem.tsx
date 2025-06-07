@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -185,11 +184,11 @@ export default function DynamicFaqSystem() {
       setIsExpanded(true);
       setTimeout(() => {
         if (sectionRef.current) {
-          // Scroll to the very top of the blue FAQ section
+          // Scroll to the very top of the blue FAQ section with proper offset
           const rect = sectionRef.current.getBoundingClientRect();
           const offsetTop = window.pageYOffset + rect.top;
           window.scrollTo({ 
-            top: offsetTop - 20, // Small offset to show full header
+            top: offsetTop - 80, // Increased offset to ensure header is fully visible
             behavior: 'smooth'
           });
         }
@@ -208,13 +207,13 @@ export default function DynamicFaqSystem() {
   const handleExpand = () => {
     setIsExpanded(true);
     
-    // Scroll to the FAQ section after expansion
+    // Scroll to the FAQ section after expansion with proper positioning
     setTimeout(() => {
       if (sectionRef.current) {
         const rect = sectionRef.current.getBoundingClientRect();
         const offsetTop = window.pageYOffset + rect.top;
         window.scrollTo({ 
-          top: offsetTop - 20, // Small offset to show full header
+          top: offsetTop - 80, // Increased offset to show full header
           behavior: 'smooth'
         });
       }

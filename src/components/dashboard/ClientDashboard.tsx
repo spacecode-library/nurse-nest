@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,20 +16,14 @@ import JobPostingForm from './client/JobPostingForm';
 
 interface Job {
   id: string;
-  title?: string;
-  description?: string;
-  location?: string;
-  hourly_rate?: number;
-  shift_type?: string;
-  requirements?: string[];
+  job_code: string;
+  care_type: string;
+  duration: string;
+  preferred_time: string;
   status: string;
   benefits?: string;
-  care_type?: string;
   client_id?: string;
   created_at?: string;
-  duration?: string;
-  job_code?: string;
-  preferred_time?: string;
   updated_at?: string;
 }
 
@@ -37,8 +32,6 @@ interface Application {
   nurse_id: string;
   job_id: string;
   status: string;
-  hourly_rate?: number;
-  message?: string;
   cover_message?: string;
   created_at?: string;
   updated_at?: string;
@@ -47,7 +40,7 @@ interface Application {
     last_name: string;
   };
   job_postings?: {
-    title: string;
+    job_code: string;
   } | null;
 }
 
@@ -92,20 +85,14 @@ export default function ClientDashboard() {
         // Map the data to match our Job interface with proper fallbacks
         const mappedJobs: Job[] = jobsData.map(job => ({
           id: job.id,
-          title: job.title || 'Untitled Job',
-          description: job.description || '',
-          location: job.location || '',
-          hourly_rate: job.hourly_rate || 0,
-          shift_type: job.shift_type || '',
-          requirements: job.requirements || [],
-          status: job.status || '',
+          job_code: job.job_code || 'No Code',
+          care_type: job.care_type || 'General Care',
+          duration: job.duration || 'Not specified',
+          preferred_time: job.preferred_time || 'Flexible',
+          status: job.status || 'open',
           benefits: job.benefits,
-          care_type: job.care_type,
           client_id: job.client_id,
           created_at: job.created_at,
-          duration: job.duration,
-          job_code: job.job_code,
-          preferred_time: job.preferred_time,
           updated_at: job.updated_at
         }));
         setJobs(mappedJobs);
@@ -121,7 +108,7 @@ export default function ClientDashboard() {
             last_name
           ),
           job_postings (
-            title
+            job_code
           )
         `);
 
@@ -135,19 +122,17 @@ export default function ClientDashboard() {
       } else if (applicationsData) {
         // Map the data to match our Application interface with proper error handling
         const mappedApplications: Application[] = applicationsData
-          .filter(app => app.job_postings && typeof app.job_postings === 'object' && app.job_postings !== null && 'title' in app.job_postings)
+          .filter(app => app.job_postings && typeof app.job_postings === 'object' && app.job_postings !== null && 'job_code' in app.job_postings)
           .map(app => ({
             id: app.id,
             nurse_id: app.nurse_id,
             job_id: app.job_id,
             status: app.status,
-            hourly_rate: app.hourly_rate || 0,
-            message: app.cover_message || '',
             cover_message: app.cover_message,
             created_at: app.created_at,
             updated_at: app.updated_at,
             nurse_profiles: app.nurse_profiles,
-            job_postings: app.job_postings as { title: string }
+            job_postings: app.job_postings as { job_code: string }
           }));
         setApplications(mappedApplications);
       }
@@ -232,8 +217,8 @@ export default function ClientDashboard() {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-40">
+      {/* Desktop Navigation */}
+      <nav className="hidden md:block bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
@@ -274,14 +259,68 @@ export default function ClientDashboard() {
         </div>
       </nav>
 
+      {/* Mobile Navigation */}
+      <nav className="md:hidden bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-40">
+        <div className="px-4 py-3">
+          <h1 className="text-lg font-bold text-gray-900">Client Dashboard</h1>
+        </div>
+        
+        {/* Mobile Tab Bar */}
+        <div className="border-t border-gray-200 bg-white">
+          <div className="flex overflow-x-auto">
+            {[
+              { id: 'overview', label: 'Overview', icon: '📊' },
+              { id: 'jobs', label: 'Jobs', icon: '💼' },
+              { id: 'applications', label: 'Apps', icon: '📋' },
+              { id: 'payments', label: 'Pay', icon: '💳' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 min-w-0 px-2 py-3 text-xs font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <div className="flex flex-col items-center">
+                  <span className="text-lg mb-1">{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        {/* Mobile Post Job Button */}
+        <div className="md:hidden mb-4">
+          <Button
+            onClick={() => setActiveTab('post-job')}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white min-h-[44px]"
+          >
+            Post New Job
+          </Button>
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center min-h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : (
-          renderTabContent()
+          <div className="md:block">
+            {/* Mobile: Single column layout */}
+            <div className="md:hidden space-y-4">
+              {renderTabContent()}
+            </div>
+            
+            {/* Desktop: Original layout */}
+            <div className="hidden md:block">
+              {renderTabContent()}
+            </div>
+          </div>
         )}
       </main>
     </div>
