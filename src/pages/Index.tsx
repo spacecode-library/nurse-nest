@@ -6,13 +6,9 @@ import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import AboutMeSection from "@/components/AboutMeSection";
-import SimpleFaqSection from "@/components/SimpleFaqSection";
-import FaqSidebar from "@/components/FaqSidebar";
-import FaqTriggerButton from "@/components/FaqTriggerButton";
+import DynamicFaqSystem from "@/components/DynamicFaqSystem";
 
 export default function Index() {
-  const [isFaqOpen, setIsFaqOpen] = useState(false);
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Pass isHomePage prop to Navbar */}
@@ -31,22 +27,11 @@ export default function Index() {
         {/* About the Founder */}
         <AboutMeSection />
         
-        {/* Simple FAQ Section for Homepage */}
-        <SimpleFaqSection />
+        {/* Dynamic FAQ System - starts as floating button, transforms to full section */}
+        <DynamicFaqSystem />
       </main>
       
       <Footer />
-      
-      {/* FAQ Sidebar */}
-      <FaqSidebar 
-        isOpen={isFaqOpen} 
-        onClose={() => setIsFaqOpen(false)} 
-      />
-      
-      {/* FAQ Trigger Button */}
-      <FaqTriggerButton 
-        onClick={() => setIsFaqOpen(true)} 
-      />
     </div>
   );
 }
