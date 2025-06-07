@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,14 @@ interface Job {
   shift_type: string;
   requirements: string[];
   status: string;
+  benefits?: string;
+  care_type?: string;
+  client_id?: string;
+  created_at?: string;
+  duration?: string;
+  job_code?: string;
+  preferred_time?: string;
+  updated_at?: string;
 }
 
 interface Application {
@@ -31,6 +40,9 @@ interface Application {
   status: string;
   hourly_rate: number;
   message: string;
+  cover_message?: string;
+  created_at?: string;
+  updated_at?: string;
   nurse_profiles?: {
     first_name: string;
     last_name: string;
@@ -45,16 +57,27 @@ export default function ClientDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
+    getCurrentUserData();
     fetchData();
   }, []);
+
+  const getCurrentUserData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUser(user);
+    } catch (error) {
+      console.error('Error getting current user:', error);
+    }
+  };
 
   const fetchData = async () => {
     try {
       setLoading(true);
       
-      // Fetch job postings using the correct table name
+      // Fetch job postings with proper data mapping
       const { data: jobsData, error: jobsError } = await supabase
         .from('job_postings')
         .select('*');
@@ -67,10 +90,29 @@ export default function ClientDashboard() {
           variant: "destructive"
         });
       } else if (jobsData) {
-        setJobs(jobsData as Job[]);
+        // Map the data to match our Job interface
+        const mappedJobs: Job[] = jobsData.map(job => ({
+          id: job.id,
+          title: job.title || '',
+          description: job.description || '',
+          location: job.location || '',
+          hourly_rate: job.hourly_rate || 0,
+          shift_type: job.shift_type || '',
+          requirements: job.requirements || [],
+          status: job.status || '',
+          benefits: job.benefits,
+          care_type: job.care_type,
+          client_id: job.client_id,
+          created_at: job.created_at,
+          duration: job.duration,
+          job_code: job.job_code,
+          preferred_time: job.preferred_time,
+          updated_at: job.updated_at
+        }));
+        setJobs(mappedJobs);
       }
 
-      // Fetch applications using the correct table name
+      // Fetch applications with proper data mapping
       const { data: applicationsData, error: applicationsError } = await supabase
         .from('applications')
         .select(`
@@ -92,7 +134,21 @@ export default function ClientDashboard() {
           variant: "destructive"
         });
       } else if (applicationsData) {
-        setApplications(applicationsData as Application[]);
+        // Map the data to match our Application interface
+        const mappedApplications: Application[] = applicationsData.map(app => ({
+          id: app.id,
+          nurse_id: app.nurse_id,
+          job_id: app.job_id,
+          status: app.status,
+          hourly_rate: app.hourly_rate || 0,
+          message: app.cover_message || '',
+          cover_message: app.cover_message,
+          created_at: app.created_at,
+          updated_at: app.updated_at,
+          nurse_profiles: app.nurse_profiles,
+          job_postings: app.job_postings
+        }));
+        setApplications(mappedApplications);
       }
 
     } catch (error) {
@@ -107,48 +163,65 @@ export default function ClientDashboard() {
     }
   };
 
+  const handleRefresh = () => {
+    fetchData();
+  };
+
+  const handleJobCreated = () => {
+    fetchData();
+    setActiveTab('overview');
+  };
+
+  const handleApplicationUpdate = () => {
+    fetchData();
+  };
+
   const renderTabContent = () => {
+    const clientId = currentUser?.id || '';
+    const clientEmail = currentUser?.email || '';
+    const clientName = `${currentUser?.user_metadata?.first_name || ''} ${currentUser?.user_metadata?.last_name || ''}`.trim();
+
     switch (activeTab) {
       case 'overview':
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             <div className="lg:col-span-2 xl:col-span-2 space-y-6">
-              <JobManagementCard />
-              <ApplicantReviewCard />
+              <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />
+              <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />
             </div>
             <div className="space-y-6">
-              <ClientQuickActionsCard />
-              <BrowseNursesCard />
+              <ClientQuickActionsCard clientId={clientId} onRefresh={handleRefresh} />
+              <BrowseNursesCard clientId={clientId} />
             </div>
           </div>
         );
       case 'jobs':
-        return <JobManagementCard />;
+        return <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />;
       case 'applications':
-        return <ApplicantReviewCard />;
+        return <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />;
       case 'contracts':
-        return <ClientContractsCard />;
+        return <ClientContractsCard clientId={clientId} onContractUpdate={handleApplicationUpdate} />;
       case 'timecards':
-        return <EnhancedTimecardApprovalCard />;
+        return <EnhancedTimecardApprovalCard clientId={clientId} onInvoiceAction={handleApplicationUpdate} />;
       case 'payments':
         return (
           <div className="space-y-6">
-            <PaymentMethodSetup />
-            <PaymentHistoryCard />
+            <PaymentMethodSetup clientId={clientId} clientEmail={clientEmail} clientName={clientName} />
+            <PaymentHistoryCard clientId={clientId} />
           </div>
         );
       case 'post-job':
-        return <JobPostingForm onBack={() => setActiveTab('overview')} />;
+        return <JobPostingForm clientId={clientId} onJobCreated={handleJobCreated} />;
       default:
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             <div className="lg:col-span-2 xl:col-span-2 space-y-6">
-              <JobManagementCard />
-              <ApplicantReviewCard />
+              <JobManagementCard clientId={clientId} onJobCreated={handleJobCreated} />
+              <ApplicantReviewCard clientId={clientId} onApplicationUpdate={handleApplicationUpdate} />
             </div>
             <div className="space-y-6">
-              <ClientQuickActionsCard />
-              <BrowseNursesCard />
+              <ClientQuickActionsCard clientId={clientId} onRefresh={handleRefresh} />
+              <BrowseNursesCard clientId={clientId} />
             </div>
           </div>
         );

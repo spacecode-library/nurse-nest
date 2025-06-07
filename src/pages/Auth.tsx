@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -45,20 +44,24 @@ export default function Auth() {
   useEffect(() => {
     // Check if user is already logged in
     const checkSession = async () => {
-      const { data } = await getCurrentUser();
-      if (data?.user) {
-        // Check user type and redirect accordingly
-        const { data: userMetadata } = await supabase
-          .from('user_metadata')
-          .select('user_type')
-          .eq('user_id', data.user.id)
-          .single();
-        
-        if (userMetadata?.user_type === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
+      try {
+        const { data } = await getCurrentUser();
+        if (data?.user) {
+          // Check user type and redirect accordingly
+          const { data: userMetadata } = await supabase
+            .from('user_metadata')
+            .select('user_type')
+            .eq('user_id', data.user.id)
+            .single();
+          
+          if (userMetadata?.user_type === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/dashboard');
+          }
         }
+      } catch (error) {
+        console.error('Error getting current user:', error);
       }
     };
     
@@ -165,74 +168,59 @@ export default function Auth() {
         <Navbar />
       </div>
       
-      {/* Main Content with consistent fixed background */}
-      <main className="relative flex min-h-screen pt-16">
-        {/* Split Screen Layout */}
-        <div className="flex w-full min-h-screen">
-          
-          {/* Left Side - Fixed Background Image */}
-          <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-            {/* Fixed background with consistent positioning */}
-            <div 
-              className="absolute inset-0 w-full h-full bg-cover bg-no-repeat"
-              style={{
-                backgroundImage: 'url(/lovable-uploads/cd188753-e3a5-419a-ad58-51cd5607d594.png)',
-                backgroundPosition: 'left center',
-                backgroundAttachment: 'fixed'
-              }}
-            >
-              {/* Gradient overlay for better text contrast */}
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-800/50 to-transparent"></div>
-            </div>
-            
-            {/* Floating particles overlay */}
-            <div className="absolute inset-0 opacity-30">
-              <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-              <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-1000"></div>
-              <div className="absolute top-1/2 right-1/5 w-3 h-3 bg-blue-500 rounded-full animate-pulse delay-500"></div>
-              <div className="absolute top-2/3 right-2/5 w-1.5 h-1.5 bg-blue-300 rounded-full animate-pulse delay-1500"></div>
-            </div>
-          </div>
-
-          {/* Right Side - Compact Form Container */}
-          <div className="w-full lg:w-1/2 bg-white flex items-center justify-center relative min-h-screen">
-            {/* More compact form container */}
-            <div className="w-full max-w-md px-6 sm:px-8 py-8 mx-auto">
+      {/* Main Content - Single seamless background */}
+      <main className="relative min-h-screen pt-16">
+        {/* Full width fixed background image that fades naturally to white */}
+        <div 
+          className="fixed inset-0 w-full h-full bg-cover bg-no-repeat z-0"
+          style={{
+            backgroundImage: 'url(/lovable-uploads/cd188753-e3a5-419a-ad58-51cd5607d594.png)',
+            backgroundPosition: 'left center',
+            backgroundAttachment: 'fixed'
+          }}
+        />
+        
+        {/* Content overlay without any borders or hard edges */}
+        <div className="relative z-10 min-h-screen flex">
+          {/* Form container positioned to blend with image's natural fade */}
+          <div className="w-full flex items-center justify-end pr-4 sm:pr-8 lg:pr-16">
+            {/* Compact form container with no borders or shadows */}
+            <div className="w-full max-w-sm bg-white/95 backdrop-blur-sm rounded-2xl p-6 my-8">
               
-              {/* Smaller header image */}
-              <div className="mb-6 text-center">
+              {/* Header image */}
+              <div className="mb-4 text-center">
                 <img 
                   src="/lovable-uploads/b03954bb-8493-4e23-a285-627ff87efdb8.png" 
                   alt="Healthcare Reimagined" 
-                  className="max-w-full h-auto max-h-12 object-contain mx-auto drop-shadow-lg"
+                  className="max-w-full h-auto max-h-10 object-contain mx-auto drop-shadow-lg"
                 />
               </div>
               
               {/* Compact header section */}
-              <div className="text-left mb-6">
-                <p className="text-lg text-slate-600 mb-2">
-                  {isLogin ? 'Sign in to access your dashboard' : 'Create your account'}
+              <div className="text-center mb-4">
+                <p className="text-base text-slate-600 mb-1">
+                  {isLogin ? 'Sign in to your account' : 'Create your account'}
                 </p>
-                <p className="text-sm text-slate-500">
-                  For healthcare professionals and clients
+                <p className="text-xs text-slate-500">
+                  Healthcare professionals and clients
                 </p>
               </div>
 
               {/* Error Display */}
               {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
-                  <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-red-700 text-sm">{error}</span>
+                <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
+                  <AlertCircle className="h-3 w-3 text-red-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-red-700 text-xs">{error}</span>
                 </div>
               )}
               
               {/* Compact form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {!isLogin && (
                   <>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
-                        <Label htmlFor="firstName" className="text-slate-600 text-sm">
+                        <Label htmlFor="firstName" className="text-slate-600 text-xs">
                           First Name
                         </Label>
                         <Input
@@ -240,13 +228,13 @@ export default function Auth() {
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="h-10 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-sm"
+                          className="h-8 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-xs"
                           required
-                          placeholder="Enter first name"
+                          placeholder="First name"
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label htmlFor="lastName" className="text-slate-600 text-sm">
+                        <Label htmlFor="lastName" className="text-slate-600 text-xs">
                           Last Name
                         </Label>
                         <Input
@@ -254,72 +242,72 @@ export default function Auth() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="h-10 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-sm"
+                          className="h-8 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-xs"
                           required
-                          placeholder="Enter last name"
+                          placeholder="Last name"
                         />
                       </div>
                     </div>
                     
-                    <div className="space-y-3">
-                      <Label className="text-slate-600 text-sm">
+                    <div className="space-y-2">
+                      <Label className="text-slate-600 text-xs">
                         I am a:
                       </Label>
                       <RadioGroup 
                         value={userType} 
                         onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
-                        className="space-y-2"
+                        className="space-y-1"
                       >
                         <div className="relative">
-                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-2 p-2 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50/50 ${
                             userType === 'client' 
                               ? 'border-blue-500 bg-blue-50' 
                               : 'border-slate-200 bg-white'
                           }`} onClick={() => setUserType('client')}>
                             <RadioGroupItem value="client" id="client" className="text-blue-500" />
-                            <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
-                              <Building2 className="h-4 w-4 text-green-600" />
+                            <div className="w-6 h-6 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+                              <Building2 className="h-3 w-3 text-green-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium text-slate-800 text-sm">Client</div>
-                              <div className="text-xs text-slate-600">I need nursing care services</div>
+                              <div className="font-medium text-slate-800 text-xs">Client</div>
+                              <div className="text-xs text-slate-600">Need nursing care</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-2 p-2 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50/50 ${
                             userType === 'nurse' 
                               ? 'border-blue-500 bg-blue-50' 
                               : 'border-slate-200 bg-white'
                           }`} onClick={() => setUserType('nurse')}>
                             <RadioGroupItem value="nurse" id="nurse" className="text-blue-500" />
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
-                              <Stethoscope className="h-4 w-4 text-blue-600" />
+                            <div className="w-6 h-6 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+                              <Stethoscope className="h-3 w-3 text-blue-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium text-slate-800 text-sm">Healthcare Professional</div>
-                              <div className="text-xs text-slate-600">I provide nursing care services</div>
+                              <div className="font-medium text-slate-800 text-xs">Healthcare Professional</div>
+                              <div className="text-xs text-slate-600">Provide nursing care</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-2 p-2 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50/50 ${
                             userType === 'admin' 
                               ? 'border-blue-500 bg-blue-50' 
                               : 'border-slate-200 bg-white'
                           }`} onClick={() => setUserType('admin')}>
                             <RadioGroupItem value="admin" id="admin" className="text-blue-500" />
-                            <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
-                              <Shield className="h-4 w-4 text-purple-600" />
+                            <div className="w-6 h-6 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+                              <Shield className="h-3 w-3 text-purple-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium text-slate-800 flex items-center text-sm">
+                              <div className="font-medium text-slate-800 flex items-center text-xs">
                                 Administrator
-                                <Sparkles className="h-3 w-3 ml-2 text-purple-600" />
+                                <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
                               </div>
-                              <div className="text-xs text-slate-600">Platform administration</div>
+                              <div className="text-xs text-slate-600">Platform admin</div>
                             </div>
                           </div>
                         </div>
@@ -330,17 +318,17 @@ export default function Auth() {
                 
                 {/* Email Field */}
                 <div className="space-y-1">
-                  <Label htmlFor="email" className="text-slate-600 text-sm">
+                  <Label htmlFor="email" className="text-slate-600 text-xs">
                     Email Address
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
+                    <Mail className="absolute left-2 top-2 h-3 w-3 text-slate-500" />
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-10 pl-10 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-sm"
+                      className="h-8 pl-8 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-xs"
                       required
                       placeholder="Enter your email"
                     />
@@ -350,7 +338,7 @@ export default function Auth() {
                 {/* Password Field */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-slate-600 text-sm">
+                    <Label htmlFor="password" className="text-slate-600 text-xs">
                       Password
                     </Label>
                     {isLogin && (
@@ -359,36 +347,36 @@ export default function Auth() {
                         className="text-xs text-blue-500 hover:text-blue-600 font-medium"
                         onClick={() => navigate('/auth/reset-password')}
                       >
-                        Forgot password?
+                        Forgot?
                       </button>
                     )}
                   </div>
                   <div className="relative">
-                    <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
+                    <LockKeyhole className="absolute left-2 top-2 h-3 w-3 text-slate-500" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-10 pl-10 pr-10 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-sm"
+                      className="h-8 pl-8 pr-8 border-slate-200 focus:border-blue-400 rounded-lg bg-white shadow-sm text-xs"
                       required
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-slate-500 hover:text-slate-600"
+                      className="absolute right-2 top-2 text-slate-500 hover:text-slate-600"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="h-3 w-3" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-3 w-3" />
                       )}
                     </button>
                   </div>
                   {!isLogin && (
                     <p className="text-xs text-slate-500 mt-1">
-                      Must be at least 8 characters long
+                      At least 8 characters
                     </p>
                   )}
                 </div>
@@ -399,38 +387,38 @@ export default function Auth() {
                     <input
                       type="checkbox"
                       id="remember"
-                      className="h-4 w-4 text-blue-500 rounded border-slate-300"
+                      className="h-3 w-3 text-blue-500 rounded border-slate-300"
                     />
-                    <Label htmlFor="remember" className="text-sm text-slate-600 cursor-pointer">
-                      Remember me for 30 days
+                    <Label htmlFor="remember" className="text-xs text-slate-600 cursor-pointer">
+                      Remember me
                     </Label>
                   </div>
                 )}
                 
                 {/* Submit Button */}
                 <Button
-                  className="w-full h-10 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 text-sm"
+                  className="w-full h-8 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 text-xs"
                   disabled={loading}
                   type="submit"
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       <span>Processing...</span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center space-x-2">
                       <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-3 w-3" />
                     </div>
                   )}
                 </Button>
               </form>
               
               {/* Footer Links */}
-              <div className="mt-6 text-left">
+              <div className="mt-4 text-center">
                 {isLogin ? (
-                  <p className="text-slate-600 text-sm">
+                  <p className="text-slate-600 text-xs">
                     Don't have an account?{' '}
                     <button
                       type="button"
@@ -440,11 +428,11 @@ export default function Auth() {
                         setError(null);
                       }}
                     >
-                      Sign up for free
+                      Sign up free
                     </button>
                   </p>
                 ) : (
-                  <p className="text-slate-600 text-sm">
+                  <p className="text-slate-600 text-xs">
                     Already have an account?{' '}
                     <button
                       type="button"
@@ -462,11 +450,11 @@ export default function Auth() {
 
               {/* Admin Notice */}
               {userType === 'admin' && !isLogin && (
-                <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                <div className="mt-3 p-2 bg-purple-50 border border-purple-200 rounded-lg">
                   <div className="flex items-start space-x-2">
-                    <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <Shield className="h-3 w-3 text-purple-600 mt-0.5 flex-shrink-0" />
                     <div className="text-xs">
-                      <p className="font-medium text-purple-800 mb-1">Administrator Access</p>
+                      <p className="font-medium text-purple-800 mb-1">Admin Access</p>
                       <p className="text-purple-700">
                         Creating admin account with full platform access.
                       </p>
@@ -476,7 +464,7 @@ export default function Auth() {
               )}
 
               {/* Security Badge */}
-              <div className="mt-6 text-left">
+              <div className="mt-4 text-center">
                 <div className="inline-flex items-center space-x-2 text-xs text-slate-600">
                   <CheckCircle className="h-3 w-3 text-green-500" />
                   <span>SSL Secured & HIPAA Compliant</span>
