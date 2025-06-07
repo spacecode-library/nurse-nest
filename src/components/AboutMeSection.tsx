@@ -1,106 +1,126 @@
 
 import React from 'react';
-import { ArrowRight, Heart, Users, Award, CheckCircle } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 export default function AboutMeSection() {
-  const achievements = [
-    { icon: <Users className="h-6 w-6 text-blue-600" />, text: "15+ years nursing experience" },
-    { icon: <Award className="h-6 w-6 text-blue-600" />, text: "Advanced practice certification" },
-    { icon: <Heart className="h-6 w-6 text-blue-600" />, text: "Passionate patient advocate" },
-    { icon: <CheckCircle className="h-6 w-6 text-blue-600" />, text: "Healthcare innovation leader" }
-  ];
-
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto px-4">
+    <section 
+      className="relative py-20 md:py-32" 
+      id="about-me"
+      style={{
+        background: 'linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%)'
+      }}
+    >
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Section Header */}
         <AnimatedSection animation="fade-up" className="text-center mb-16">
-          {/* Custom Header Image with better visibility */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-white p-4 rounded-2xl shadow-lg">
+          <h2 
+            className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide leading-tight"
+            style={{ 
+              fontFamily: 'Arial, Helvetica, sans-serif',
+              background: 'linear-gradient(135deg, #1e293b 0%, #3b82f6 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              letterSpacing: '1px',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+            }}
+          >
+            Meet the Founder
+          </h2>
+        </AnimatedSection>
+
+        {/* Large White Card */}
+        <AnimatedSection animation="fade-up" delay={150}>
+          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl p-8 md:p-12 lg:p-16 max-w-5xl mx-auto border border-white/50 backdrop-blur-sm">
+            <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
+              {/* Profile Image - much bigger */}
+              <div className="flex-shrink-0">
+                <div className="w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden border-4 border-blue-100 shadow-lg">
+                  <img
+                    src="/lovable-uploads/9daccab5-730e-4656-81e6-a31931f7d3f6.png"
+                    alt="Jayson M."
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+              </div>
+              
+              {/* Name and Title next to photo */}
+              <div className="flex-1">
+                <div className="mb-8">
+                  <h3 
+                    className="text-3xl md:text-4xl font-bold text-slate-900 mb-2"
+                    style={{ 
+                      fontFamily: 'Arial, Helvetica, sans-serif'
+                    }}
+                  >
+                    Jayson M.
+                  </h3>
+                  <p 
+                    className="text-lg md:text-xl text-blue-600 font-medium"
+                    style={{ 
+                      fontFamily: 'Arial, Helvetica, sans-serif'
+                    }}
+                  >
+                    Founder of Nurse Nest
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Story Content - full width below */}
+            <div 
+              className="space-y-6 text-left mt-8"
+              style={{ 
+                fontFamily: 'Arial, Helvetica, sans-serif',
+                fontSize: '18px',
+                lineHeight: '1.6',
+                color: '#475569'
+              }}
+            >
+              <p className="font-medium text-slate-900 text-lg">
+                Hi, I'm Jayson — Thank you so much for being here.
+              </p>
+              
+              <p>
+                I started my nursing journey in 2008, and I'll be honest—it didn't start smoothly. I struggled through my first semester of nursing school and seriously questioned whether I could do it. But I kept going, graduated, and began my career in the ICU.
+              </p>
+              
+              <p>
+                Since then, I've worked in over 10 hospitals and nearly every type of critical care environment. In 2016, I transitioned into travel nursing, where I've continued to grow and learn across a wide variety of clinical settings. My career has also taken me into correctional health, psychiatry, telehealth, and independent contracting.
+              </p>
+              
+              <p>
+                Along the way, I've seen how challenging it can be for families to find the right in-home nurse—and how difficult it is for nurses to navigate constant credentialing and onboarding with little guidance.
+              </p>
+              
+              <p>
+                I created Nurse Nest to make things better. This platform exists to simplify the process for both clients and nurses, offering a thoughtful, transparent way to connect with licensed professionals who are ready to help.
+              </p>
+              
+              <p>
+                Whether you're a new parent, caring for an aging family member, or a clinic in need of support, I'm here to make it easier to get the care you need from someone you can trust.
+              </p>
+              
+              <p className="font-medium text-slate-900 text-lg">
+                If you have any questions or just want to connect, I'd love to hear from you.
+              </p>
+            </div>
+            
+            {/* Signature - bigger and left aligned with reduced padding */}
+            <div className="mt-6">
               <img 
-                src="/lovable-uploads/860b40a9-bce0-44b2-90e0-873b43061d41.png" 
-                alt="Founder"
-                className="h-16 md:h-20 lg:h-24 w-auto object-contain"
+                src="/lovable-uploads/16f8aab2-52ef-4d03-a067-775c04042d1f.png"
+                alt="Jayson Hinagawa Signature"
+                className="h-24 md:h-32 w-auto opacity-70"
+                style={{
+                  filter: 'brightness(0.3)',
+                  maxWidth: '300px'
+                }}
               />
             </div>
           </div>
         </AnimatedSection>
-
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Image */}
-            <AnimatedSection animation="fade-up" className="relative">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white p-2">
-                <img 
-                  src="/lovable-uploads/119a6708-a3cb-400b-ac7b-c2437a103499.png" 
-                  alt="Nurse Nest Founder" 
-                  className="w-full h-auto rounded-xl"
-                />
-                {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-100 rounded-full opacity-20"></div>
-                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full opacity-30"></div>
-              </div>
-            </AnimatedSection>
-
-            {/* Right Column - Content */}
-            <AnimatedSection animation="fade-up" delay={200}>
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-semibold text-gray-800 leading-tight">
-                    Meet the Nurse Behind Nurse Nest
-                  </h3>
-                  
-                  <div className="space-y-4 text-gray-600 leading-relaxed">
-                    <p>
-                      Hi, I'm <span className="font-semibold text-gray-800">Ashley</span>, a registered nurse with over 15 years of experience in healthcare. Throughout my career, I've witnessed firsthand the challenges families face when trying to find reliable, skilled nursing care at home.
-                    </p>
-                    
-                    <p>
-                      After seeing countless patients struggle with impersonal agency care and families overwhelmed by the complexity of hiring independent nurses, I knew there had to be a better way.
-                    </p>
-                    
-                    <p>
-                      That's why I created <span className="font-semibold text-blue-600">Nurse Nest</span> – to bridge the gap between families who need exceptional care and skilled nurses who want to practice independently. Our platform combines the personal touch of private nursing with the security and support of a professional service.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Achievements Grid */}
-                <div className="grid grid-cols-2 gap-4 py-6">
-                  {achievements.map((achievement, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm border border-gray-100">
-                      {achievement.icon}
-                      <span className="text-sm font-medium text-gray-700">{achievement.text}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Mission Statement */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
-                  <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-                    <Heart className="h-5 w-5 text-red-500 mr-2" />
-                    Our Mission
-                  </h4>
-                  <p className="text-gray-600 leading-relaxed">
-                    To empower families with access to exceptional nursing care while supporting independent nurses in building meaningful, sustainable practices. Every connection we make is a step toward better healthcare outcomes and stronger communities.
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div className="pt-4">
-                  <a 
-                    href="/apply" 
-                    className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    Start Your Care Journey
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </a>
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
       </div>
     </section>
   );
