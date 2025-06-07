@@ -1,11 +1,17 @@
-
-import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { Clock, MapPin, DollarSign, User, MessageCircle, Calendar, CheckCircle, AlertCircle, XCircle } from "lucide-react";
-import ClientConversationList from "@/components/ClientConversationList";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
+import JobManagementCard from './client/JobManagementCard';
+import ApplicantReviewCard from './client/ApplicantReviewCard';
+import ClientContractsCard from './client/ClientContractsCard';
+import PaymentHistoryCard from './client/PaymentHistoryCard';
+import BrowseNursesCard from './client/BrowseNursesCard';
+import ClientQuickActionsCard from './client/ClientQuickActionsCard';
+import EnhancedTimecardApprovalCard from './client/EnhancedTimecardApprovalCard';
+import PaymentMethodSetup from './client/PaymentMethodSetup';
+import JobPostingForm from './client/JobPostingForm';
 
 interface Job {
   id: string;
@@ -13,10 +19,9 @@ interface Job {
   description: string;
   location: string;
   hourly_rate: number;
-  start_date: string;
-  end_date: string;
+  shift_type: string;
+  requirements: string[];
   status: string;
-  created_at: string;
 }
 
 interface Application {
@@ -26,346 +31,185 @@ interface Application {
   status: string;
   hourly_rate: number;
   message: string;
-  created_at: string;
-  nurse_profiles: {
+  nurse_profiles?: {
     first_name: string;
     last_name: string;
-    specialties: string[];
-    experience_years: number;
-    hourly_rate: number;
   };
-  jobs: {
+  job_postings?: {
     title: string;
   };
 }
 
 export default function ClientDashboard() {
-  const { user } = useAuth();
-  const [activeJobs, setActiveJobs] = useState<Job[]>([]);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showConversations, setShowConversations] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      fetchJobs();
-      fetchApplications();
-    }
-  }, [user]);
+    fetchData();
+  }, []);
 
-  const fetchJobs = async () => {
+  const fetchData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('client_id', user?.id)
-        .order('created_at', { ascending: false });
+      setLoading(true);
+      
+      // Fetch job postings using the correct table name
+      const { data: jobsData, error: jobsError } = await supabase
+        .from('job_postings')
+        .select('*');
 
-      if (error) throw error;
-      setActiveJobs(data || []);
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-    }
-  };
+      if (jobsError) {
+        console.error('Error fetching jobs:', jobsError);
+        toast({
+          title: "Error",
+          description: "Failed to load job postings",
+          variant: "destructive"
+        });
+      } else if (jobsData) {
+        setJobs(jobsData as Job[]);
+      }
 
-  const fetchApplications = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('job_applications')
+      // Fetch applications using the correct table name
+      const { data: applicationsData, error: applicationsError } = await supabase
+        .from('applications')
         .select(`
           *,
           nurse_profiles (
             first_name,
-            last_name,
-            specialties,
-            experience_years,
-            hourly_rate
+            last_name
           ),
-          jobs (
+          job_postings (
             title
           )
-        `)
-        .eq('jobs.client_id', user?.id)
-        .order('created_at', { ascending: false });
+        `);
 
-      if (error) throw error;
-      setApplications(data || []);
+      if (applicationsError) {
+        console.error('Error fetching applications:', applicationsError);
+        toast({
+          title: "Error",
+          description: "Failed to load applications",
+          variant: "destructive"
+        });
+      } else if (applicationsData) {
+        setApplications(applicationsData as Application[]);
+      }
+
     } catch (error) {
-      console.error('Error fetching applications:', error);
+      console.error('Error in fetchData:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <CheckCircle className="h-4 w-4 text-brand-green" />;
-      case 'pending':
-        return <AlertCircle className="h-4 w-4 text-brand-amber" />;
-      case 'completed':
-        return <CheckCircle className="h-4 w-4 text-brand-gray" />;
-      case 'cancelled':
-        return <XCircle className="h-4 w-4 text-brand-red" />;
-      default:
-        return <Clock className="h-4 w-4 text-brand-gray" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'status-success';
-      case 'pending':
-        return 'status-warning';
-      case 'completed':
-        return 'status-pending';
-      case 'cancelled':
-        return 'status-error';
-      default:
-        return 'status-pending';
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-brand-navy border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (showConversations) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="heading-secondary text-brand-navy">Messages & Conversations</h2>
-          <Button 
-            onClick={() => setShowConversations(false)}
-            variant="outline"
-            className="btn-secondary"
-          >
-            Back to Dashboard
-          </Button>
-        </div>
-        <ClientConversationList 
-          userId={user?.id || ''}
-          onBack={() => setShowConversations(false)}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-8">
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="card-brand">
-          <CardHeader className="card-header-brand">
-            <CardTitle className="heading-secondary text-brand-navy flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-brand-blue" />
-              Active Jobs
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="text-3xl font-light text-brand-navy mb-2">
-              {activeJobs.filter(job => job.status === 'active').length}
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 xl:col-span-2 space-y-6">
+              <JobManagementCard />
+              <ApplicantReviewCard />
             </div>
-            <p className="text-body text-brand-gray">Currently posted</p>
-          </CardContent>
-        </Card>
-
-        <Card className="card-brand">
-          <CardHeader className="card-header-brand">
-            <CardTitle className="heading-secondary text-brand-navy flex items-center gap-2">
-              <User className="h-5 w-5 text-brand-blue" />
-              Applications
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="text-3xl font-light text-brand-navy mb-2">
-              {applications.length}
+            <div className="space-y-6">
+              <ClientQuickActionsCard />
+              <BrowseNursesCard />
             </div>
-            <p className="text-body text-brand-gray">Total received</p>
-          </CardContent>
-        </Card>
-
-        <Card className="card-brand">
-          <CardHeader className="card-header-brand">
-            <CardTitle className="heading-secondary text-brand-navy flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-brand-blue" />
-              Messages
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="text-3xl font-light text-brand-navy mb-2">3</div>
-            <p className="text-body text-brand-gray">Unread messages</p>
-            <Button 
-              onClick={() => setShowConversations(true)}
-              className="btn-primary mt-3 w-full"
-            >
-              View Messages
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
-      <Card className="card-brand">
-        <CardHeader className="card-header-brand">
-          <CardTitle className="heading-secondary text-brand-navy">Quick Actions</CardTitle>
-          <CardDescription className="text-body text-brand-gray">
-            Manage your nursing jobs and applications
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="btn-primary">
-              Post New Job
-            </Button>
-            <Button className="btn-secondary">
-              Review Applications
-            </Button>
-            <Button className="btn-secondary">
-              View Reports
-            </Button>
           </div>
-        </CardContent>
-      </Card>
+        );
+      case 'jobs':
+        return <JobManagementCard />;
+      case 'applications':
+        return <ApplicantReviewCard />;
+      case 'contracts':
+        return <ClientContractsCard />;
+      case 'timecards':
+        return <EnhancedTimecardApprovalCard />;
+      case 'payments':
+        return (
+          <div className="space-y-6">
+            <PaymentMethodSetup />
+            <PaymentHistoryCard />
+          </div>
+        );
+      case 'post-job':
+        return <JobPostingForm onBack={() => setActiveTab('overview')} />;
+      default:
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 xl:col-span-2 space-y-6">
+              <JobManagementCard />
+              <ApplicantReviewCard />
+            </div>
+            <div className="space-y-6">
+              <ClientQuickActionsCard />
+              <BrowseNursesCard />
+            </div>
+          </div>
+        );
+    }
+  };
 
-      {/* Recent Jobs */}
-      <Card className="card-brand">
-        <CardHeader className="card-header-brand">
-          <CardTitle className="heading-secondary text-brand-navy">Recent Job Postings</CardTitle>
-          <CardDescription className="text-body text-brand-gray">
-            Your latest nursing job opportunities
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
-          {activeJobs.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-body text-brand-gray mb-4">No jobs posted yet</p>
-              <Button className="btn-primary">
-                Post Your First Job
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center space-x-8">
+              <h1 className="text-xl font-bold text-gray-900">Client Dashboard</h1>
+              <div className="hidden md:flex space-x-8">
+                {[
+                  { id: 'overview', label: 'Overview' },
+                  { id: 'jobs', label: 'My Jobs' },
+                  { id: 'applications', label: 'Applications' },
+                  { id: 'contracts', label: 'Contracts' },
+                  { id: 'timecards', label: 'Timecards' },
+                  { id: 'payments', label: 'Payments' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Button
+                onClick={() => setActiveTab('post-job')}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Post New Job
               </Button>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {activeJobs.slice(0, 3).map((job) => (
-                <div key={job.id} className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-3">
-                    <h4 className="font-medium text-brand-navy">{job.title}</h4>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(job.status)}
-                      <span className={`${getStatusColor(job.status)} text-sm`}>
-                        {job.status}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <p className="text-body text-brand-gray mb-3 line-clamp-2">
-                    {job.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-4 text-small text-brand-gray">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {job.location}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-4 w-4" />
-                      ${job.hourly_rate}/hour
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {new Date(job.start_date).toLocaleDateString()}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              
-              {activeJobs.length > 3 && (
-                <div className="text-center">
-                  <Button variant="outline" className="btn-secondary">
-                    View All Jobs
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      </nav>
 
-      {/* Recent Applications */}
-      <Card className="card-brand">
-        <CardHeader className="card-header-brand">
-          <CardTitle className="heading-secondary text-brand-navy">Recent Applications</CardTitle>
-          <CardDescription className="text-body text-brand-gray">
-            Nurses who have applied to your jobs
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
-          {applications.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-body text-brand-gray">No applications yet</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {applications.slice(0, 5).map((application) => (
-                <div key={application.id} className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h4 className="font-medium text-brand-navy">
-                        {application.nurse_profiles.first_name} {application.nurse_profiles.last_name}
-                      </h4>
-                      <p className="text-small text-brand-gray">
-                        Applied for: {application.jobs.title}
-                      </p>
-                    </div>
-                    <span className={`${getStatusColor(application.status)} text-sm`}>
-                      {application.status}
-                    </span>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-4 text-small text-brand-gray mb-3">
-                    <div className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
-                      {application.nurse_profiles.experience_years} years exp.
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-4 w-4" />
-                      ${application.hourly_rate}/hour
-                    </div>
-                  </div>
-                  
-                  {application.message && (
-                    <p className="text-body text-brand-gray line-clamp-2 mb-3">
-                      "{application.message}"
-                    </p>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    <Button size="sm" className="btn-primary">
-                      View Profile
-                    </Button>
-                    <Button size="sm" variant="outline" className="btn-secondary">
-                      Message
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              
-              {applications.length > 5 && (
-                <div className="text-center">
-                  <Button variant="outline" className="btn-secondary">
-                    View All Applications
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {loading ? (
+          <div className="flex items-center justify-center min-h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          renderTabContent()
+        )}
+      </main>
     </div>
   );
 }
