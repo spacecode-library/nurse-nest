@@ -77,7 +77,7 @@ export default function ClientDashboard() {
     try {
       setLoading(true);
       
-      // Fetch job postings with proper data mapping
+      // Fetch job postings with all required fields
       const { data: jobsData, error: jobsError } = await supabase
         .from('job_postings')
         .select('*');
@@ -90,10 +90,10 @@ export default function ClientDashboard() {
           variant: "destructive"
         });
       } else if (jobsData) {
-        // Map the data to match our Job interface
+        // Map the data to match our Job interface with proper fallbacks
         const mappedJobs: Job[] = jobsData.map(job => ({
           id: job.id,
-          title: job.title || '',
+          title: job.title || 'Untitled Job',
           description: job.description || '',
           location: job.location || '',
           hourly_rate: job.hourly_rate || 0,
@@ -134,7 +134,7 @@ export default function ClientDashboard() {
           variant: "destructive"
         });
       } else if (applicationsData) {
-        // Map the data to match our Application interface
+        // Map the data to match our Application interface with proper error handling
         const mappedApplications: Application[] = applicationsData.map(app => ({
           id: app.id,
           nurse_id: app.nurse_id,
@@ -146,7 +146,7 @@ export default function ClientDashboard() {
           created_at: app.created_at,
           updated_at: app.updated_at,
           nurse_profiles: app.nurse_profiles,
-          job_postings: app.job_postings
+          job_postings: app.job_postings || { title: 'Unknown Job' }
         }));
         setApplications(mappedApplications);
       }
@@ -211,7 +211,7 @@ export default function ClientDashboard() {
           </div>
         );
       case 'post-job':
-        return <JobPostingForm clientId={clientId} onJobCreated={handleJobCreated} />;
+        return <JobPostingForm clientId={clientId} onJobCreated={handleJobCreated} onCancel={() => setActiveTab('overview')} />;
       default:
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">

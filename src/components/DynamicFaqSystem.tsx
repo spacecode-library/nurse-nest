@@ -181,8 +181,26 @@ export default function DynamicFaqSystem() {
       setIsVisible(scrollPosition > triggerPoint);
     };
 
+    // Listen for custom openFAQ event
+    const handleOpenFAQ = () => {
+      setIsExpanded(true);
+      setTimeout(() => {
+        if (sectionRef.current) {
+          sectionRef.current.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 300);
+    };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('openFAQ', handleOpenFAQ);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('openFAQ', handleOpenFAQ);
+    };
   }, []);
 
   const handleExpand = () => {
@@ -218,24 +236,27 @@ export default function DynamicFaqSystem() {
   return (
     <section 
       ref={sectionRef}
-      className="section-padding bg-gradient-to-br from-[#f0f9ff] to-[#e0f2fe] animate-fade-in-up"
+      className="section-padding animate-fade-in-up"
       id="faq"
+      style={{
+        background: 'linear-gradient(180deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%)'
+      }}
     >
       <div className="container-custom">
-        {/* FAQ Header with smaller image */}
-        <div className="faq-header">
-          <div className="text-center mb-8">
+        {/* FAQ Header with larger image and closer positioning */}
+        <div className="text-center mb-6 relative">
+          <div className="mb-4">
             <img
               src="/lovable-uploads/436bcb1e-c141-4cd8-b1ed-beae8896e1d7.png"
               alt="Frequently Asked Questions"
-              className="mx-auto h-16 md:h-20 object-contain drop-shadow-lg"
+              className="mx-auto h-24 md:h-32 object-contain drop-shadow-lg"
             />
           </div>
           
           {/* Close button */}
           <button
             onClick={handleCollapse}
-            className="absolute top-6 right-6 p-2 rounded-lg hover:bg-white/20 transition-colors text-[#1e293b]"
+            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/20 transition-colors text-[#1e293b]"
             aria-label="Close FAQ"
           >
             <X className="h-6 w-6" />

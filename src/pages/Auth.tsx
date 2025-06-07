@@ -187,12 +187,12 @@ export default function Auth() {
             {/* Compact form container with no borders or shadows */}
             <div className="w-full max-w-sm bg-white/95 backdrop-blur-sm rounded-2xl p-6 my-8">
               
-              {/* Header image */}
+              {/* Header image - MUCH BIGGER */}
               <div className="mb-4 text-center">
                 <img 
                   src="/lovable-uploads/b03954bb-8493-4e23-a285-627ff87efdb8.png" 
                   alt="Healthcare Reimagined" 
-                  className="max-w-full h-auto max-h-10 object-contain mx-auto drop-shadow-lg"
+                  className="max-w-full h-auto max-h-20 object-contain mx-auto drop-shadow-lg"
                 />
               </div>
               

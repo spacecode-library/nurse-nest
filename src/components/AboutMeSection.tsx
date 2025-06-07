@@ -1,8 +1,13 @@
-
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
 export default function AboutMeSection() {
+  const handleBrowseFAQs = () => {
+    // Trigger the FAQ system to open
+    const event = new CustomEvent('openFAQ');
+    window.dispatchEvent(event);
+  };
+
   return (
     <section 
       className="relative py-12 md:py-16" 
@@ -88,6 +93,16 @@ export default function AboutMeSection() {
                       maxWidth: '300px'
                     }}
                   />
+                </div>
+
+                {/* Browse FAQs Button */}
+                <div className="mt-8">
+                  <button
+                    onClick={handleBrowseFAQs}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  >
+                    Browse FAQs
+                  </button>
                 </div>
               </div>
             </div>
