@@ -6,7 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import AboutMeSection from "@/components/AboutMeSection";
-import ComprehensiveFaqSection from "@/components/ComprehensiveFaqSection";
+import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 
 export default function Index() {
   return (
@@ -27,8 +27,8 @@ export default function Index() {
         {/* About the Founder */}
         <AboutMeSection />
         
-        {/* Comprehensive FAQ Section */}
-        <ComprehensiveFaqSection />
+        {/* Luxurious FAQ Section */}
+        <LuxuriousFaqSection />
       </main>
       
       <Footer />
