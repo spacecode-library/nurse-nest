@@ -30,21 +30,10 @@ export interface AdminUser {
   user_id: string;
   account_status: string;
   profile_data?: {
-    id?: string;
     first_name?: string;
     last_name?: string;
     phone_number?: string;
     email?: string;
-    client_type?: string;
-    onboarding_completed?: boolean;
-    care_needs?: any;
-    relationship_to_recipient?: string;
-    care_recipients?: any;
-    care_location?: any;
-    onboarding_completion_percentage?: number;
-    years_experience?: number;
-    specializations?: any;
-    license_info?: any;
   };
 }
 

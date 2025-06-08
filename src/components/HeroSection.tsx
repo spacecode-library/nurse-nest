@@ -8,47 +8,54 @@ import AnimatedSection from './AnimatedSection';
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Desktop Background - Keep existing desktop hero unchanged */}
+      {/* Desktop Background - New Hero Image */}
       <div className="hidden md:block absolute inset-0">
         <img 
           src="/lovable-uploads/d26f2a2e-9eb9-4d20-87e7-979b6954da43.png" 
           alt="Need a nurse? We make it easy." 
           className="w-full h-full object-cover"
-          style={{
-            objectPosition: '20% center'
-          }}
         />
       </div>
       
-      {/* NEW Mobile Layout - Complete replacement with nurse background */}
-      <div className="md:hidden w-full relative min-h-screen">
-        {/* Mobile Background - New nurse image with built-in text */}
-        <div className="absolute inset-0">
-          <img 
-            src="/lovable-uploads/1efc2a46-b1ce-450d-8694-25066ad43f85.png" 
-            alt="Need a nurse? We make it easy." 
-            className="w-full h-full object-cover"
-            style={{
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          />
-        </div>
-        
-        {/* Mobile Content - Request a Nurse button positioned lower */}
-        <div className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col justify-center">
+      {/* Mobile Layout - Clean White Background */}
+      <div className="md:hidden w-full bg-white">
+        <div className="container mx-auto px-4 pt-24 pb-16">
           <AnimatedSection animation="fade-up">
-            <div className="text-center">
-              {/* Request a Nurse Button - positioned lower, above description text */}
-              <div className="mt-96 pt-24">
+            {/* Mobile Hero Image */}
+            <div className="mb-8">
+              <img 
+                src="/lovable-uploads/aa259e38-4b67-4f28-9b10-39e924acad54.png" 
+                alt="Professional nurse smiling" 
+                className="w-full h-64 object-cover rounded-2xl shadow-lg"
+              />
+            </div>
+            
+            {/* Mobile Header Content */}
+            <div className="text-center space-y-6">
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+                <span className="text-brand-primary">Need a nurse?</span>
+                <br />
+                <span className="text-gray-600 font-normal italic">We make it easy.</span>
+              </h1>
+              
+              <div className="space-y-4 text-gray-700 leading-relaxed">
+                <p className="text-lg font-medium">
+                  PREMIUM CONCIERGE NURSING SERVICE NATIONWIDE.
+                </p>
+                <p className="text-base">
+                  WE SOURCE, VET, MATCH, AND MANAGE PAYMENTS
+                  <br />
+                  SO YOU FOCUS ON WHAT MATTERS.
+                </p>
+                <p className="text-lg font-medium text-brand-navy">
+                  LICENSED NURSES FOR EVERY CARE NEED.
+                </p>
+              </div>
+              
+              {/* Mobile CTA Button */}
+              <div className="pt-6">
                 <Link to="/apply">
-                  <Button 
-                    className="text-white px-8 py-4 text-lg rounded-xl shadow-lg font-semibold min-h-[44px] transition-all duration-300 hover:shadow-xl"
-                    style={{
-                      backgroundColor: '#9bcbff',
-                      color: '#1e293b'
-                    }}
-                  >
+                  <Button className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
                     Request A Nurse
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -59,7 +66,7 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* Desktop Content - Keep existing desktop content unchanged */}
+      {/* Desktop Content - Minimal overlay since image contains text */}
       <div className="hidden md:block container mx-auto px-4 relative z-10 pt-16 md:pt-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
@@ -69,19 +76,14 @@ export default function HeroSection() {
               {/* Desktop CTA positioned to complement the background image */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4 mt-96">
                 <Link to="/apply">
-                  <Button 
-                    className="text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300"
-                    style={{
-                      backgroundColor: '#9bcbff'
-                    }}
-                  >
+                  <Button className="bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
                     Request A Nurse
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth">
-                  <Button className="bg-white text-slate-800 hover:bg-white border-2 border-white/20 px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm font-semibold">
+                  <Button className="bg-white/95 text-slate-800 hover:bg-white border-2 border-white/20 px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm font-semibold">
                     Join as a Nurse
                   </Button>
                 </Link>
@@ -91,7 +93,7 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* Trust Indicators - Desktop only, moved much lower on the page */}
+      {/* Trust Indicators - Moved much lower on the page */}
       <div className="absolute bottom-8 left-0 right-0 hidden md:block">
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="container mx-auto px-4">

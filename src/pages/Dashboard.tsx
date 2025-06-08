@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -95,34 +94,32 @@ export default function Dashboard() {
 
   if (loading || !profile) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-light">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-brand-navy border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-lg text-brand-gray">Loading your dashboard...</p>
+          <div className="w-12 h-12 border-4 border-nurse-dark border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-light">
-      <div className="main-navigation">
-        <Navbar />
-      </div>
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
       
       <main className="flex-1 pt-24 pb-16">
         <div className="container-custom max-w-6xl">
           {/* Welcome Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 padding-md">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-              <h1 className="heading-primary text-brand-navy">
+              <h1 className="text-3xl font-bold text-gray-800">
                 Welcome, {profile.first_name || 'User'}
               </h1>
-              <p className="text-body text-brand-gray mt-2">
-                Dashboard • <span className="font-medium text-brand-navy capitalize">{userRole}</span>
+              <p className="text-gray-600 mt-1">
+                Dashboard • <span className="font-medium text-nurse-dark capitalize">{userRole}</span>
               </p>
             </div>
-            <Button className="mt-4 md:mt-0">
+            <Button className="mt-4 md:mt-0 bg-nurse-dark hover:bg-primary-700">
               Edit Account Details
             </Button>
           </div>

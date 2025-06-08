@@ -6,7 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import AboutMeSection from "@/components/AboutMeSection";
-import DynamicFaqSystem from "@/components/DynamicFaqSystem";
+import ComprehensiveFaqSection from "@/components/ComprehensiveFaqSection";
 
 export default function Index() {
   return (
@@ -27,8 +27,8 @@ export default function Index() {
         {/* About the Founder */}
         <AboutMeSection />
         
-        {/* Dynamic FAQ System - starts as floating button, transforms to full section */}
-        <DynamicFaqSystem />
+        {/* Comprehensive FAQ Section */}
+        <ComprehensiveFaqSection />
       </main>
       
       <Footer />
