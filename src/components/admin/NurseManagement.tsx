@@ -32,25 +32,15 @@ export default function NurseManagement() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('nurse_profiles')
-        .select(`
-          *,
-          profiles!inner(email, first_name, last_name, phone_number)
-        `);
+        .select('*');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching nurses:', error);
+        throw error;
+      }
       
-      // Transform the data to match our interface
-      return data.map(nurse => ({
-        id: nurse.id,
-        first_name: nurse.profiles?.first_name,
-        last_name: nurse.profiles?.last_name,
-        phone_number: nurse.profiles?.phone_number,
-        email: nurse.profiles?.email,
-        years_experience: nurse.years_experience,
-        onboarding_completed: nurse.onboarding_completed,
-        specializations: nurse.specializations,
-        license_info: nurse.license_info,
-      }));
+      // Return the data directly since we're not joining with profiles
+      return data || [];
     },
   });
 
@@ -264,12 +254,6 @@ export default function NurseManagement() {
                               <span>{nurse.years_experience} years experience</span>
                             </div>
                           )}
-                          {nurse.license_info && (
-                            <div className="flex items-center gap-2">
-                              <FileText className="h-4 w-4" />
-                              <span>Licensed</span>
-                            </div>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -305,10 +289,9 @@ export default function NurseManagement() {
 
             <div className="p-6 space-y-6">
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="basic">Basic Info</TabsTrigger>
                   <TabsTrigger value="experience">Experience</TabsTrigger>
-                  <TabsTrigger value="licenses">Licenses</TabsTrigger>
                   <TabsTrigger value="activity">Activity</TabsTrigger>
                 </TabsList>
 
@@ -331,43 +314,6 @@ export default function NurseManagement() {
                     </div>
                   ) : (
                     <p className="text-gray-500">No experience information available</p>
-                  )}
-
-                  {selectedNurse.specializations ? (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Specializations</label>
-                      <div className="bg-gray-50 p-3 rounded border">
-                        {typeof selectedNurse.specializations === 'object' ? (
-                          <pre className="text-sm whitespace-pre-wrap">
-                            {JSON.stringify(selectedNurse.specializations, null, 2)}
-                          </pre>
-                        ) : (
-                          <p>{selectedNurse.specializations}</p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">No specializations information available</p>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="licenses" className="space-y-4">
-                  {selectedNurse.license_info ? (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">License Information</label>
-                      <div className="bg-gray-50 p-3 rounded border">
-                        <p>License Status: Active</p>
-                        {typeof selectedNurse.license_info === 'object' ? (
-                          <pre className="text-sm whitespace-pre-wrap mt-2">
-                            {JSON.stringify(selectedNurse.license_info, null, 2)}
-                          </pre>
-                        ) : (
-                          <p className="mt-2">{selectedNurse.license_info}</p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">No license information available</p>
                   )}
                 </TabsContent>
 

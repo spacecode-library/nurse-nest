@@ -158,47 +158,313 @@ export default function Auth() {
   };
   
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      <Navbar />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Mobile Background */}
+      <div className="md:hidden absolute inset-0">
+        <img 
+          src="/lovable-uploads/4b72d6f4-4dd2-4225-b089-459ca3101fbc.png" 
+          alt="Soft blue flowing abstract background" 
+          className="w-full h-full object-cover"
+        />
+      </div>
+      
+      {/* Desktop Background */}
+      <div className="hidden md:block absolute inset-0">
+        <img 
+          src="/lovable-uploads/764d592e-44da-4556-bc9c-a2808c164758.png" 
+          alt="Healthcare Professional with digital effects" 
+          className="w-full h-full object-cover object-left"
+        />
+      </div>
+      
+      {/* Mobile Transparent Navbar */}
+      <div className="md:hidden">
+        <Navbar />
+      </div>
+      
+      {/* Desktop Normal Navbar */}
+      <div className="hidden md:block">
+        <Navbar />
+      </div>
       
       <main className="relative flex min-h-screen pt-16">
-        {/* Split Screen Layout */}
-        <div className="flex w-full">
-          
-          {/* Left Side - Artistic Background (75% on desktop to show more of the graphic) */}
-          <div className="hidden lg:flex lg:w-[75%] relative overflow-hidden">
-            {/* Artistic Healthcare Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white">
-              {/* Main Healthcare Professional Image - positioned to show full left side */}
-              <div className="absolute inset-0 flex items-center justify-start">
-                <img 
-                  src="/lovable-uploads/cd188753-e3a5-419a-ad58-51cd5607d594.png" 
-                  alt="Healthcare Professional" 
-                  className="w-full h-full object-cover object-left"
-                />
+        {/* Mobile Layout */}
+        <div className="md:hidden w-full flex items-center justify-center relative z-10 px-4">
+          <div className="w-full max-w-sm bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
+            
+            {/* Healthcare Reimagined Image - Larger on mobile */}
+            <div className="text-center mb-6">
+              <img
+                src="/lovable-uploads/9127454a-71b0-437d-ae12-d99b8dd8bff5.png"
+                alt="Healthcare Reimagined"
+                className="h-20 w-auto max-w-full object-contain mx-auto"
+              />
+            </div>
+            
+            {/* Mobile Form Content */}
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-light text-[#1e293b] mb-2">
+                  {isLogin ? 'Welcome Back' : 'Join Us'}
+                </h1>
+                <p className="text-sm text-[#475569]">
+                  {isLogin ? 'Sign in to access your dashboard' : 'Create your account'}
+                </p>
               </div>
+
+              {/* Error Display */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
+                  <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-red-700 text-xs">{error}</span>
+                </div>
+              )}
               
-              {/* Ethereal Particle Effects Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label htmlFor="firstName" className="text-[#475569] text-sm">
+                          First Name
+                        </Label>
+                        <Input
+                          id="firstName"
+                          type="text"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          className="h-10 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white text-sm"
+                          required
+                          placeholder="First name"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="lastName" className="text-[#475569] text-sm">
+                          Last Name
+                        </Label>
+                        <Input
+                          id="lastName"
+                          type="text"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          className="h-10 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white text-sm"
+                          required
+                          placeholder="Last name"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-[#475569] text-sm">
+                        I am a:
+                      </Label>
+                      <RadioGroup 
+                        value={userType} 
+                        onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
+                        className="space-y-2"
+                      >
+                        <div className="relative">
+                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                            userType === 'client' 
+                              ? 'border-[#3b82f6] bg-blue-50' 
+                              : 'border-[#f1f5f9]'
+                          }`} onClick={() => setUserType('client')}>
+                            <RadioGroupItem value="client" id="client" className="text-[#3b82f6]" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+                              <Building2 className="h-4 w-4 text-green-600" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-semibold text-[#1e293b] text-sm">Client</div>
+                              <div className="text-xs text-[#64748b]">I need care services</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="relative">
+                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                            userType === 'nurse' 
+                              ? 'border-[#3b82f6] bg-blue-50' 
+                              : 'border-[#f1f5f9]'
+                          }`} onClick={() => setUserType('nurse')}>
+                            <RadioGroupItem value="nurse" id="nurse" className="text-[#3b82f6]" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+                              <Stethoscope className="h-4 w-4 text-blue-600" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-semibold text-[#1e293b] text-sm">Nurse</div>
+                              <div className="text-xs text-[#64748b]">I provide care services</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="relative">
+                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                            userType === 'admin' 
+                              ? 'border-[#3b82f6] bg-blue-50' 
+                              : 'border-[#f1f5f9]'
+                          }`} onClick={() => setUserType('admin')}>
+                            <RadioGroupItem value="admin" id="admin" className="text-[#3b82f6]" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+                              <Shield className="h-4 w-4 text-purple-600" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-semibold text-[#1e293b] text-sm flex items-center">
+                                Admin
+                                <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
+                              </div>
+                              <div className="text-xs text-[#64748b]">Platform administration</div>
+                            </div>
+                          </div>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                  </>
+                )}
+                
+                {/* Email Field */}
+                <div className="space-y-1">
+                  <Label htmlFor="email" className="text-[#475569] text-sm">
+                    Email Address
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-[#64748b]" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="h-10 pl-10 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white text-sm"
+                      required
+                      placeholder="Enter your email"
+                    />
+                  </div>
+                </div>
+                
+                {/* Password Field */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="text-[#475569] text-sm">
+                      Password
+                    </Label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        className="text-xs text-[#3b82f6] hover:text-[#2563eb] font-medium transition-colors"
+                        onClick={() => navigate('/auth/reset-password')}
+                      >
+                        Forgot?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-[#64748b]" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-10 pl-10 pr-10 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white text-sm"
+                      required
+                      placeholder="Enter your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-[#64748b] hover:text-[#475569] transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Sign In Button */}
+                <Button
+                  className="w-full h-10 bg-[#9bcbff] hover:bg-[#3b82f6] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
+                  disabled={loading}
+                  type="submit"
+                >
+                  {loading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Processing...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center space-x-2">
+                      <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+                  )}
+                </Button>
+              </form>
               
-              {/* Digital Network Effects */}
-              <div className="absolute inset-0 opacity-30">
-                {/* Floating particles */}
-                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-[#9bcbff] rounded-full animate-pulse"></div>
-                <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-1000"></div>
-                <div className="absolute top-1/2 right-1/5 w-3 h-3 bg-[#3b82f6] rounded-full animate-pulse delay-500"></div>
-                <div className="absolute top-2/3 right-2/5 w-1.5 h-1.5 bg-[#9bcbff] rounded-full animate-pulse delay-1500"></div>
-                <div className="absolute top-3/4 right-1/6 w-2 h-2 bg-white rounded-full animate-pulse delay-2000"></div>
+              {/* Footer Links */}
+              <div className="mt-4 text-center">
+                {isLogin ? (
+                  <p className="text-[#64748b] text-xs">
+                    Don't have an account?{' '}
+                    <button
+                      type="button"
+                      className="text-[#3b82f6] hover:text-[#2563eb] font-semibold transition-colors"
+                      onClick={() => {
+                        setIsLogin(false);
+                        setError(null);
+                      }}
+                    >
+                      Sign up for free
+                    </button>
+                  </p>
+                ) : (
+                  <p className="text-[#64748b] text-xs">
+                    Already have an account?{' '}
+                    <button
+                      type="button"
+                      className="text-[#3b82f6] hover:text-[#2563eb] font-semibold transition-colors"
+                      onClick={() => {
+                        setIsLogin(true);
+                        setError(null);
+                      }}
+                    >
+                      Sign in
+                    </button>
+                  </p>
+                )}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Right Side - Login Form (25% on desktop, positioned to start at 1/4 point) */}
-          <div className="w-full lg:w-[25%] bg-transparent flex items-center justify-center relative lg:justify-start lg:pl-8">
-            <div className="w-full max-w-md px-6 lg:px-8 py-12 bg-white/90 backdrop-blur-sm rounded-l-2xl lg:rounded-l-none lg:bg-white/95 lg:backdrop-blur-none">
+        {/* Desktop Layout */}
+        <div className="hidden md:flex w-full">
+          
+          {/* Left Side - Artistic Background (75% on desktop to show more of the graphic) */}
+          <div className="flex lg:w-[75%] relative overflow-hidden">
+            {/* Healthcare Professional Image with digital effects overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white">
+              {/* Ethereal Particle Effects Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
+            </div>
+          </div>
+
+          {/* Right Side - Login Form (25% on desktop) */}
+          <div className="w-full lg:w-[25%] bg-white/95 backdrop-blur-sm flex items-center justify-start relative">
+            <div className="w-full max-w-md px-6 lg:px-8 py-12">
               
               {/* Header Section */}
               <div className="text-left mb-8">
+                {/* Healthcare Reimagined Image */}
+                <div className="mb-6">
+                  <img
+                    src="/lovable-uploads/9127454a-71b0-437d-ae12-d99b8dd8bff5.png"
+                    alt="Healthcare Reimagined"
+                    className="h-16 md:h-20 w-auto max-w-full object-contain"
+                  />
+                </div>
+                
                 <h1 className="text-4xl font-light text-[#1e293b] mb-2">
                   Healthcare Reimagined
                 </h1>
@@ -481,6 +747,25 @@ export default function Auth() {
       </main>
       
       <Footer />
+      
+      {/* CSS for mobile transparent header */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .auth-page header {
+            background: transparent !important;
+            backdrop-filter: none !important;
+          }
+          
+          .auth-page .logo-text {
+            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+          }
+          
+          .auth-page .hamburger-icon {
+            color: white !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

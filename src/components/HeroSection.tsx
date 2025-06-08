@@ -17,52 +17,24 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Clean White Background */}
-      <div className="md:hidden w-full bg-white">
-        <div className="container mx-auto px-4 pt-24 pb-16">
-          <AnimatedSection animation="fade-up">
-            {/* Mobile Hero Image */}
-            <div className="mb-8">
-              <img 
-                src="/lovable-uploads/aa259e38-4b67-4f28-9b10-39e924acad54.png" 
-                alt="Professional nurse smiling" 
-                className="w-full h-64 object-cover rounded-2xl shadow-lg"
-              />
-            </div>
-            
-            {/* Mobile Header Content */}
-            <div className="text-center space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                <span className="text-brand-primary">Need a nurse?</span>
-                <br />
-                <span className="text-gray-600 font-normal italic">We make it easy.</span>
-              </h1>
-              
-              <div className="space-y-4 text-gray-700 leading-relaxed">
-                <p className="text-lg font-medium">
-                  PREMIUM CONCIERGE NURSING SERVICE NATIONWIDE.
-                </p>
-                <p className="text-base">
-                  WE SOURCE, VET, MATCH, AND MANAGE PAYMENTS
-                  <br />
-                  SO YOU FOCUS ON WHAT MATTERS.
-                </p>
-                <p className="text-lg font-medium text-brand-navy">
-                  LICENSED NURSES FOR EVERY CARE NEED.
-                </p>
-              </div>
-              
-              {/* Mobile CTA Button */}
-              <div className="pt-6">
-                <Link to="/apply">
-                  <Button className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
-                    Request A Nurse
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </AnimatedSection>
+      {/* Mobile Layout - Use uploaded nurse background image with built-in text */}
+      <div className="md:hidden w-full relative">
+        <img 
+          src="/lovable-uploads/ff3b16a2-a071-4999-b032-7b094ed88fd8.png" 
+          alt="Need a nurse? We make it easy." 
+          className="w-full h-screen object-cover"
+        />
+        
+        {/* Mobile CTA Button positioned above descriptive text */}
+        <div className="absolute inset-0 flex flex-col justify-center items-center pt-36">
+          <Link to="/apply" className="mb-8">
+            <Button 
+              className="bg-[#9bcbff] hover:bg-[#7dd3fc] text-white px-8 py-4 text-lg rounded-xl shadow-lg font-semibold min-h-[44px] transition-all duration-300"
+            >
+              Request A Nurse
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </div>
       
@@ -76,14 +48,14 @@ export default function HeroSection() {
               {/* Desktop CTA positioned to complement the background image */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4 mt-96">
                 <Link to="/apply">
-                  <Button className="bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
+                  <Button className="bg-[#9bcbff] hover:bg-[#7dd3fc] text-white px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
                     Request A Nurse
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth">
-                  <Button className="bg-white/95 text-slate-800 hover:bg-white border-2 border-white/20 px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm font-semibold">
+                  <Button className="bg-white text-slate-800 hover:bg-gray-50 border-2 border-white/20 px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm font-semibold">
                     Join as a Nurse
                   </Button>
                 </Link>
@@ -93,7 +65,7 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* Trust Indicators - Moved much lower on the page */}
+      {/* Trust Indicators - Restored for desktop with icons */}
       <div className="absolute bottom-8 left-0 right-0 hidden md:block">
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="container mx-auto px-4">
