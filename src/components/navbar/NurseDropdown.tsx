@@ -25,24 +25,30 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
           className={cn(
             "font-medium flex items-center link-underline",
             shouldUseDarkText
-              ? "text-gray-700 hover:text-primary-500" 
-              : "text-white hover:text-primary-100"
+              ? "text-gray-700 hover:text-[#3b82f6]" 
+              : "text-white hover:text-[#9bcbff]"
           )}
         >
           For Nurses <ChevronDown className="ml-1 h-4 w-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-white shadow-md rounded-md border border-gray-100 w-64">
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={handleApplyNowClick}>
+      <DropdownMenuContent className="bg-white shadow-lg rounded-md border border-gray-100 w-64 z-50">
+        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={handleApplyNowClick}>
           Apply Now
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={() => navigate('/malpractice-insurance')}>
-          Malpractice Insurance
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={() => navigate('/llc-setup-help')}>
+        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/nurse-llc-setup-guide')}>
           LLC Setup Help
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-primary-50" onClick={() => navigate('/1099-tax-tips')}>
+        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/get-ein-nurse-business')}>
+          EIN Applications
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/business-bank-account-for-nurses')}>
+          Business Banking
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/malpractice-insurance-for-nurses')}>
+          Malpractice Insurance
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/1099-tax-tips')}>
           1099 Tax Tips
         </DropdownMenuItem>
       </DropdownMenuContent>

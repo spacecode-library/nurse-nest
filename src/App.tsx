@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -33,6 +34,10 @@ import NurseDashboard from "./components/dashboard/NurseDashboard";
 import DashboardRouter from "./components/DashboardRouter";
 import ClientDashboard from "./components/dashboard/ClientDashboard";
 import PendingApprovalPage from "./components/PendingApprovalPage";
+
+// New page imports
+import NurseLlcSetup from "./pages/NurseLlcSetup";
+import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
 
 export default function App() {
   return (
@@ -74,6 +79,10 @@ export default function App() {
               <Route path="/malpractice-insurance" element={<MalpracticeInsurance />} />
               <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
               <Route path="/1099-tax-tips" element={<TaxTips />} />
+              
+              {/* New Nurse Business Setup Routes */}
+              <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
+              <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
               
               {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />

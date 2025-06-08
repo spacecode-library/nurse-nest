@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -9,6 +8,7 @@ import NavLinks from './navbar/NavLinks';
 import NurseDropdown from './navbar/NurseDropdown';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
+import CareServicesDropdown from './navbar/CareServicesDropdown';
 
 interface NavbarProps {
   isHomePage?: boolean;
@@ -92,6 +92,9 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
               shouldUseDarkText={isScrolled || !isHomePageRoute} 
               handleApplyNowClick={handleApplyNowClick} 
             />
+
+            {/* Care Services Dropdown */}
+            <CareServicesDropdown shouldUseDarkText={isScrolled || !isHomePageRoute} />
           </nav>
           
           {/* Authentication & CTA - Desktop */}

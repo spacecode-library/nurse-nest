@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useScrollToSection } from '@/hooks/use-scroll-to-section';
 
-// Navigation links data with Pay Calculator added
+// Navigation links data with new structure
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Pricing', path: '/pricing' },

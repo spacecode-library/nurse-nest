@@ -1,490 +1,385 @@
-// src/components/admin/ClientManagement.tsx
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Building2, 
-  Search, 
-  Eye, 
-  Filter,
-  MapPin,
-  DollarSign,
-  Phone,
-  Mail,
-  Calendar,
-  Heart,
-  Users,
-  Briefcase,
-  Star,
-  CreditCard,
-  TrendingUp,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Home,
-  UserCheck,
-  RefreshCw
-} from 'lucide-react';
-import { AdminUser } from '@/supabase/api/adminService';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Search, Filter, Eye, Mail, Phone, MapPin, Clock, User, Building2, Heart, FileText, Shield } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-interface ClientManagementProps {
-  users: AdminUser[];
-  searchTerm: string;
-  onSearchChange: (term: string) => void;
-  onViewDetails: (clientId: string, name: string) => void;
-  onRefresh: () => void;
+// Updated interface to match actual data structure
+interface ClientProfile {
+  id?: string;
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  email?: string;
+  client_type?: string;
+  onboarding_completed?: boolean;
+  onboarding_completion_percentage?: number;
+  relationship_to_recipient?: string;
+  care_needs?: any;
+  care_recipients?: any;
+  care_location?: any;
 }
 
-export default function ClientManagement({ 
-  users, 
-  searchTerm, 
-  onSearchChange, 
-  onViewDetails, 
-  onRefresh 
-}: ClientManagementProps) {
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [clientTypeFilter, setClientTypeFilter] = useState<string>('all');
-  const [onboardingFilter, setOnboardingFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('created_at');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+export default function ClientManagement() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState<'all' | 'individual' | 'facility'>('all');
+  const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
 
-  // Filter and sort clients
-  const filteredAndSortedClients = useMemo(() => {
-    let filtered = users.filter(user => {
-      // Status filter
-      if (statusFilter !== 'all' && user.account_status !== statusFilter) return false;
+  const { data: clients = [], isLoading, refetch } = useQuery({
+    queryKey: ['admin-clients'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('client_profiles')
+        .select(`
+          *,
+          profiles!inner(email, first_name, last_name, phone_number)
+        `);
       
-      // Client type filter
-      if (clientTypeFilter !== 'all' && user.profile_data?.client_type !== clientTypeFilter) return false;
+      if (error) throw error;
       
-      // Onboarding filter
-      if (onboardingFilter === 'completed' && !user.profile_data?.onboarding_completed) return false;
-      if (onboardingFilter === 'pending' && user.profile_data?.onboarding_completed) return false;
-      
-      // Search filter
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        const fullName = `${user.profile_data?.first_name || ''} ${user.profile_data?.last_name || ''}`.toLowerCase();
-        const email = user.email?.toLowerCase() || '';
-        
-        return fullName.includes(searchLower) || email.includes(searchLower);
-      }
-      
-      return true;
-    });
+      // Transform the data to match our interface
+      return data.map(client => ({
+        id: client.id,
+        first_name: client.profiles?.first_name,
+        last_name: client.profiles?.last_name,
+        phone_number: client.profiles?.phone_number,
+        email: client.profiles?.email,
+        client_type: client.client_type,
+        onboarding_completed: client.onboarding_completed,
+        onboarding_completion_percentage: client.onboarding_completion_percentage,
+        relationship_to_recipient: client.relationship_to_recipient,
+        care_needs: client.care_needs,
+        care_recipients: client.care_recipients,
+        care_location: client.care_location,
+      }));
+    },
+  });
 
-    // Sort
-    filtered.sort((a, b) => {
-      let aValue: any, bValue: any;
-      
-      switch (sortBy) {
-        case 'name':
-          aValue = `${a.profile_data?.first_name || ''} ${a.profile_data?.last_name || ''}`;
-          bValue = `${b.profile_data?.first_name || ''} ${b.profile_data?.last_name || ''}`;
-          break;
-        case 'created_at':
-          aValue = new Date(a.created_at || 0);
-          bValue = new Date(b.created_at || 0);
-          break;
-        case 'client_type':
-          aValue = a.profile_data?.client_type || '';
-          bValue = b.profile_data?.client_type || '';
-          break;
-        case 'status':
-          aValue = a.account_status;
-          bValue = b.account_status;
-          break;
-        default:
-          aValue = a.created_at;
-          bValue = b.created_at;
-      }
+  const filteredClients = clients.filter(client => {
+    const matchesSearch = 
+      client.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
+    const matchesFilter = filterType === 'all' || 
+      (filterType === 'individual' && client.client_type === 'individual') ||
+      (filterType === 'facility' && client.client_type === 'facility');
 
-    return filtered;
-  }, [users, statusFilter, clientTypeFilter, onboardingFilter, searchTerm, sortBy, sortOrder]);
+    return matchesSearch && matchesFilter;
+  });
 
-  // Statistics
-  const stats = useMemo(() => {
-    const total = users.length;
-    const individual = users.filter(u => u.profile_data?.client_type === 'individual').length;
-    const family = users.filter(u => u.profile_data?.client_type === 'family').length;
-    const active = users.filter(u => u.account_status === 'active').length;
-    const incomplete = users.filter(u => !u.profile_data?.onboarding_completed).length;
-    const withCareNeeds = users.filter(u => u.profile_data?.care_needs).length;
-
-    return { total, individual, family, active, incomplete, withCareNeeds };
-  }, [users]);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800 border-green-200';
-      case 'suspended': return 'bg-red-100 text-red-800 border-red-200';
-      case 'deactivated': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'dormant': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+  const stats = {
+    total: clients.length,
+    onboarded: clients.filter(c => c.onboarding_completed).length,
+    pending: clients.filter(c => !c.onboarding_completed).length,
+    individual: clients.filter(c => c.client_type === 'individual').length,
+    facility: clients.filter(c => c.client_type === 'facility').length,
   };
 
-  const getClientTypeColor = (type: string) => {
-    switch (type) {
-      case 'individual': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'family': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+  const getCompletionColor = (percentage: number) => {
+    if (percentage >= 80) return 'text-green-600';
+    if (percentage >= 50) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
-  const getUserDisplayName = (user: AdminUser) => {
-    if (user.profile_data?.first_name && user.profile_data?.last_name) {
-      return `${user.profile_data.first_name} ${user.profile_data.last_name}`;
-    }
-    return 'Unknown User';
-  };
-
-  const getCompletionPercentage = (user: AdminUser) => {
-    return user.profile_data?.onboarding_completion_percentage || 0;
-  };
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-        <div>
-          <h2 className="text-3xl font-bold text-slate-800">Client Management</h2>
-          <p className="text-slate-600 mt-1">Monitor and manage care seekers on the platform</p>
-        </div>
-        <Button onClick={onRefresh} variant="outline" size="sm">
-         <RefreshCw className="h-4 w-4 mr-2" />
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900">Client Management</h1>
+        <Button onClick={() => refetch()}>
           Refresh Data
         </Button>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Building2 className="h-5 w-5 text-blue-600" />
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <User className="h-5 w-5 text-blue-500" />
+              <div>
+                <p className="text-sm text-gray-600">Total Clients</p>
+                <p className="text-2xl font-bold">{stats.total}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
-            <p className="text-sm text-slate-600">Total Clients</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <UserCheck className="h-5 w-5 text-green-600" />
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Shield className="h-5 w-5 text-green-500" />
+              <div>
+                <p className="text-sm text-gray-600">Onboarded</p>
+                <p className="text-2xl font-bold text-green-600">{stats.onboarded}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-slate-800">{stats.individual}</p>
-            <p className="text-sm text-slate-600">Individual</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Users className="h-5 w-5 text-purple-600" />
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Clock className="h-5 w-5 text-yellow-500" />
+              <div>
+                <p className="text-sm text-gray-600">Pending</p>
+                <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-slate-800">{stats.family}</p>
-            <p className="text-sm text-slate-600">Family</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <CheckCircle className="h-5 w-5 text-emerald-600" />
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <User className="h-5 w-5 text-purple-500" />
+              <div>
+                <p className="text-sm text-gray-600">Individual</p>
+                <p className="text-2xl font-bold">{stats.individual}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-slate-800">{stats.active}</p>
-            <p className="text-sm text-slate-600">Active</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Clock className="h-5 w-5 text-yellow-600" />
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Building2 className="h-5 w-5 text-indigo-500" />
+              <div>
+                <p className="text-sm text-gray-600">Facility</p>
+                <p className="text-2xl font-bold">{stats.facility}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-slate-800">{stats.incomplete}</p>
-            <p className="text-sm text-slate-600">Incomplete</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Heart className="h-5 w-5 text-pink-600" />
-            </div>
-            <p className="text-2xl font-bold text-slate-800">{stats.withCareNeeds}</p>
-            <p className="text-sm text-slate-600">Care Defined</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters and Search */}
-      <Card className="border-0 shadow-md">
-        <CardHeader className="border-b border-slate-100">
-          <CardTitle className="flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
-            Filters & Search
-          </CardTitle>
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search clients by name or email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant={filterType === 'all' ? 'default' : 'outline'}
+            onClick={() => setFilterType('all')}
+            size="sm"
+          >
+            All Clients
+          </Button>
+          <Button
+            variant={filterType === 'individual' ? 'default' : 'outline'}
+            onClick={() => setFilterType('individual')}
+            size="sm"
+          >
+            Individual
+          </Button>
+          <Button
+            variant={filterType === 'facility' ? 'default' : 'outline'}
+            onClick={() => setFilterType('facility')}
+            size="sm"
+          >
+            Facility
+          </Button>
+        </div>
+      </div>
+
+      {/* Clients Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Client Directory ({filteredClients.length})</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-            <div>
-              <Label htmlFor="search">Search Clients</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="search"
-                  placeholder="Name or email..."
-                  value={searchTerm}
-                  onChange={(e) => onSearchChange(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+        <CardContent>
+          {filteredClients.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No clients found matching your criteria.
             </div>
-
-            <div>
-              <Label htmlFor="status-filter">Account Status</Label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
-                  <SelectItem value="deactivated">Deactivated</SelectItem>
-                  <SelectItem value="dormant">Dormant</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="client-type-filter">Client Type</Label>
-              <Select value={clientTypeFilter} onValueChange={setClientTypeFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="individual">Individual</SelectItem>
-                  <SelectItem value="family">Family</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="onboarding-filter">Onboarding</Label>
-              <Select value={onboardingFilter} onValueChange={setOnboardingFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="sort-by">Sort By</Label>
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="created_at">Join Date</SelectItem>
-                  <SelectItem value="name">Name</SelectItem>
-                  <SelectItem value="client_type">Type</SelectItem>
-                  <SelectItem value="status">Status</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="sort-order">Order</Label>
-              <Select value={sortOrder} onValueChange={(value: 'asc' | 'desc') => setSortOrder(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="desc">Newest First</SelectItem>
-                  <SelectItem value="asc">Oldest First</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Clients List */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader className="border-b border-slate-100">
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="text-lg font-semibold">Clients ({filteredAndSortedClients.length})</CardTitle>
-              <CardDescription>Monitor client profiles and care requirements</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {filteredAndSortedClients.length > 0 ? (
-            <div className="divide-y divide-slate-100">
-              {filteredAndSortedClients.map((user) => (
-                <div key={user.user_id} className="p-6 hover:bg-slate-50 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Building2 className="h-6 w-6 text-green-600" />
+          ) : (
+            <div className="space-y-4">
+              {filteredClients.map((client) => (
+                <div key={client.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-semibold text-lg">
+                          {client.first_name} {client.last_name}
+                        </h3>
+                        <Badge variant={client.client_type === 'individual' ? 'default' : 'secondary'}>
+                          {client.client_type === 'individual' ? 'Individual' : 'Facility'}
+                        </Badge>
+                        <Badge variant={client.onboarding_completed ? 'default' : 'destructive'}>
+                          {client.onboarding_completed ? 'Complete' : 'Pending'}
+                        </Badge>
                       </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h4 className="font-semibold text-slate-900 truncate">
-                            {getUserDisplayName(user)}
-                          </h4>
-                          <Badge className={getStatusColor(user.account_status)}>
-                            {user.account_status}
-                          </Badge>
-                          {user.profile_data?.client_type && (
-                            <Badge className={getClientTypeColor(user.profile_data.client_type)}>
-                              {user.profile_data.client_type}
-                            </Badge>
-                          )}
-                          {!user.profile_data?.onboarding_completed && (
-                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
-                              Setup Incomplete
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-slate-600">
-                          <div className="flex items-center space-x-1">
-                            <Mail className="h-3 w-3" />
-                            <span className="truncate">{user.email}</span>
-                          </div>
-                          
-                          {user.profile_data?.phone_number && (
-                            <div className="flex items-center space-x-1">
-                              <Phone className="h-3 w-3" />
-                              <span>{user.profile_data.phone_number}</span>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                        <div className="space-y-1">
+                          {client.email && (
+                            <div className="flex items-center gap-2">
+                              <Mail className="h-4 w-4" />
+                              <span>{client.email}</span>
                             </div>
                           )}
-                          
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="h-3 w-3" />
-                            <span>Joined {new Date(user.created_at || '').toLocaleDateString()}</span>
-                          </div>
-                          
-                          {user.profile_data?.relationship_to_recipient && (
-                            <div className="flex items-center space-x-1">
-                              <Heart className="h-3 w-3" />
-                              <span>{user.profile_data.relationship_to_recipient}</span>
+                          {client.phone_number && (
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-4 w-4" />
+                              <span>{client.phone_number}</span>
                             </div>
                           )}
                         </div>
-
-                        {/* Progress Bar for Incomplete Onboarding */}
-                        {!user.profile_data?.onboarding_completed && (
-                          <div className="mt-3">
-                            <div className="flex items-center space-x-3">
-                              <div className="flex-1">
-                                <div className="flex justify-between text-xs text-slate-600 mb-1">
-                                  <span>Profile Completion</span>
-                                  <span>{getCompletionPercentage(user)}%</span>
-                                </div>
-                                <div className="w-full bg-slate-200 rounded-full h-2">
-                                  <div 
-                                    className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-300"
-                                    style={{ width: `${getCompletionPercentage(user)}%` }}
-                                  ></div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Care Information */}
-                        {user.profile_data?.care_needs && (
-                          <div className="mt-3">
-                            <div className="flex flex-wrap gap-1">
-                              {user.profile_data.care_needs.care_types?.slice(0, 3).map((type: string, index: number) => (
-                                <Badge key={index} variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                                  {type}
-                                </Badge>
-                              ))}
-                              {user.profile_data.care_needs.care_types?.length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{user.profile_data.care_needs.care_types.length - 3} more
-                                </Badge>
-                              )}
-                              {user.profile_data.care_needs.hours_per_week && (
-                                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                                  {user.profile_data.care_needs.hours_per_week}h/week
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Care Recipients */}
-                        {user.profile_data?.care_recipients && user.profile_data.care_recipients.length > 0 && (
-                          <div className="mt-3 flex items-center space-x-2 text-sm text-slate-600">
-                            <Users className="h-4 w-4" />
-                            <span>
-                              Care for {user.profile_data.care_recipients.length} recipient{user.profile_data.care_recipients.length !== 1 ? 's' : ''}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Location */}
-                        {user.profile_data?.care_location && (
-                          <div className="mt-2 flex items-center space-x-2 text-sm text-slate-600">
-                            <MapPin className="h-4 w-4" />
-                            <span>
-                              {user.profile_data.care_location.city}, {user.profile_data.care_location.state}
-                            </span>
-                          </div>
-                        )}
                       </div>
+
+                      {client.onboarding_completion_percentage !== undefined && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600">Onboarding Progress:</span>
+                          <span className={`font-semibold ${getCompletionColor(client.onboarding_completion_percentage || 0)}`}>
+                            {client.onboarding_completion_percentage}%
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex items-center space-x-2 ml-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onViewDetails(user.profile_data?.id || user.user_id, getUserDisplayName(user))}
-                        className="flex items-center space-x-1"
-                      >
-                        <Eye className="h-4 w-4" />
-                        <span className="hidden sm:inline">Details</span>
-                      </Button>
-                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedClient(client)}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Details
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="p-12 text-center text-slate-500">
-              <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-medium mb-2">No clients found</h3>
-              <p className="text-sm">Try adjusting your search criteria or filters.</p>
-            </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Client Detail Modal */}
+      {selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
+              <h2 className="text-2xl font-bold">
+                {selectedClient.first_name} {selectedClient.last_name}
+              </h2>
+              <Button variant="outline" onClick={() => setSelectedClient(null)}>
+                Close
+              </Button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <Tabs defaultValue="basic" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                  <TabsTrigger value="care">Care Details</TabsTrigger>
+                  <TabsTrigger value="location">Location</TabsTrigger>
+                  <TabsTrigger value="activity">Activity</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="basic" className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Client Type</label>
+                      <p className="font-semibold capitalize">{selectedClient.client_type || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Onboarding Status</label>
+                      <p className={`font-semibold ${selectedClient.onboarding_completed ? 'text-green-600' : 'text-red-600'}`}>
+                        {selectedClient.onboarding_completed ? 'Completed' : 'Pending'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {selectedClient.relationship_to_recipient && (
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Relationship to Care Recipient</label>
+                      <p className="font-semibold capitalize">{selectedClient.relationship_to_recipient}</p>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="care" className="space-y-4">
+                  {selectedClient.care_needs ? (
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Care Needs</label>
+                      <div className="bg-gray-50 p-3 rounded border">
+                        {typeof selectedClient.care_needs === 'object' ? (
+                          <pre className="text-sm whitespace-pre-wrap">
+                            {JSON.stringify(selectedClient.care_needs, null, 2)}
+                          </pre>
+                        ) : (
+                          <p>{selectedClient.care_needs}</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No care needs information available</p>
+                  )}
+
+                  {selectedClient.care_recipients && (
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Care Recipients</label>
+                      <div className="bg-gray-50 p-3 rounded border">
+                        <p>Recipients: {Array.isArray(selectedClient.care_recipients) ? selectedClient.care_recipients.length : 1}</p>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="location" className="space-y-4">
+                  {selectedClient.care_location ? (
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Care Location</label>
+                      <div className="bg-gray-50 p-3 rounded border">
+                        {typeof selectedClient.care_location === 'object' ? (
+                          <pre className="text-sm whitespace-pre-wrap">
+                            {JSON.stringify(selectedClient.care_location, null, 2)}
+                          </pre>
+                        ) : (
+                          <p>{selectedClient.care_location}</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No location information available</p>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="activity" className="space-y-4">
+                  <p className="text-gray-500">Activity tracking coming soon...</p>
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
