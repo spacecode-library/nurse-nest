@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -24,9 +23,6 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
   
   // Check if we're on the home page
   const isHomePageRoute = location.pathname === '/';
-  
-  // Check if we're on the auth page
-  const isAuthPage = location.pathname === '/auth';
   
   // Check if we're on one of the nurses resources pages
   const isNursePage = location.pathname === '/malpractice-insurance' ||
@@ -69,9 +65,6 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
     <>
       <header className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out',
-        // Mobile auth page styling
-        isAuthPage ? 'md:bg-white/95 md:backdrop-blur-xl md:shadow-lg md:border md:border-gray-200/50 md:py-3 md:mx-4 md:mt-4 md:rounded-2xl bg-transparent py-6 mx-4 mt-4' :
-        // Regular styling for other pages
         isScrolled 
           ? 'bg-white/95 backdrop-blur-xl shadow-lg border border-gray-200/50 py-3 mx-4 mt-4 rounded-2xl' 
           : isHomePageRoute
@@ -81,16 +74,9 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
         <div className="container mx-auto px-6 flex items-center justify-between">
           {/* Logo with NurseNest styling - Made bigger */}
           <div className="flex items-center">
-            <span className={cn(
-              "text-3xl md:text-4xl font-bold transition-colors duration-300 ease-in-out",
-              // Mobile auth page styling
-              isAuthPage ? 'md:text-gray-800 text-white' :
-              // Regular styling
-              isScrolled || !isHomePageRoute ? "text-gray-800" : "text-white"
-            )}>
+            <span className="text-3xl md:text-4xl font-bold">
               <span className={cn(
                 "transition-colors duration-300 ease-in-out",
-                isAuthPage ? 'md:text-gray-800 text-white' :
                 isScrolled || !isHomePageRoute ? "text-gray-800" : "text-white"
               )}>Nurse</span>
               <span className="text-[#9bcbff] transition-colors duration-300 ease-in-out">Nest</span>
@@ -128,9 +114,6 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           <button 
             className={cn(
               "lg:hidden focus:outline-none p-2 rounded-xl transition-all duration-300 ease-in-out",
-              // Mobile auth page styling
-              isAuthPage ? 'md:text-brand-navy md:hover:bg-neutral-light text-white hover:bg-white/10' :
-              // Regular styling
               isScrolled || !isHomePageRoute
                 ? "text-brand-navy hover:bg-neutral-light" 
                 : "text-white hover:bg-white/10"

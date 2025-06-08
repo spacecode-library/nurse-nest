@@ -1,58 +1,72 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Check } from 'lucide-react';
+import React from "react";
+import { CheckCircle2 } from "lucide-react";
 
-export interface ScreeningCardProps {
+interface ScreeningCardProps {
   title: string;
   price: string;
-  bullets?: string[];
-  features?: string[];
-  popular?: boolean;
-  category?: string;
+  description: string;
+  features: string[];
+  badge?: {
+    text: string;
+    color: string;
+    textColor: string;
+  };
+  isPopular?: boolean;
 }
 
-export default function ScreeningCard({ 
-  title, 
-  price, 
-  bullets = [], 
-  features = [], 
-  popular = false, 
-  category 
+export default function ScreeningCard({
+  title,
+  price,
+  description,
+  features,
+  badge,
+  isPopular = false,
 }: ScreeningCardProps) {
-  const allFeatures = [...bullets, ...features];
-  
   return (
-    <Card className={`relative h-full transition-all duration-300 hover:shadow-lg ${
-      popular ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
+    <div className={`relative bg-white rounded-2xl shadow-lg border-2 p-6 transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+      isPopular 
+        ? 'border-[#d97706] bg-gradient-to-br from-[#fffbf0] to-white' 
+        : 'border-[#e2e8f0] hover:border-[#9bcbff]'
     }`}>
-      {popular && (
+      {isPopular && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <Badge className="bg-blue-500 text-white px-3 py-1">Most Popular</Badge>
+          <span className="bg-gradient-to-r from-[#fbbf24] to-[#d97706] text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+            Most Popular
+          </span>
         </div>
       )}
-      
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl font-semibold text-gray-900">{title}</CardTitle>
-        <div className="text-3xl font-bold text-blue-600 mt-2">{price}</div>
-        {category && (
-          <Badge variant="secondary" className="mt-2">{category}</Badge>
+
+      <div className="text-center mb-4">
+        <h3 className="text-xl font-semibold text-[#1e293b] mb-2">{title}</h3>
+        <div className="flex items-baseline justify-center mb-2">
+          <span className={`text-3xl font-light ${isPopular ? 'text-[#92400e]' : 'text-[#0c4a6e]'}`}>
+            {price}
+          </span>
+        </div>
+        
+        {badge && (
+          <div
+            className="inline-block rounded-full font-medium text-xs px-3 py-1 shadow-sm mb-3"
+            style={{ background: badge.color, color: badge.textColor }}
+          >
+            {badge.text}
+          </div>
         )}
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
-        {allFeatures.length > 0 && (
-          <ul className="space-y-2">
-            {allFeatures.map((feature, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-gray-600">{feature}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
+        
+        <p className="text-[#64748b] text-sm">{description}</p>
+      </div>
+
+      <ul className="space-y-3">
+        {features.map((feature, index) => (
+          <li key={index} className="flex items-start">
+            <CheckCircle2 className={`h-4 w-4 mt-0.5 mr-2 flex-shrink-0 ${
+              isPopular ? 'text-[#d97706]' : 'text-[#0ea5e9]'
+            }`} />
+            <span className="text-[#475569] text-sm leading-relaxed">{feature}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
