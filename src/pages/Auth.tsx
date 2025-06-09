@@ -21,6 +21,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { signIn, signUp, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
+import Navbar from '@/components/Navbar';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -145,30 +146,12 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Visible header for both desktop and mobile */}
-      <header className="absolute top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200/50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <button 
-              onClick={() => navigate('/')}
-              className="text-2xl md:text-3xl font-bold hover:opacity-80 transition-opacity"
-            >
-              <span className="text-gray-800">Nurse</span>
-              <span className="text-[#9bcbff]">Nest</span>
-            </button>
-            
-            {/* Back to Home link for mobile */}
-            <button
-              onClick={() => navigate('/')}
-              className="text-sm text-gray-600 hover:text-gray-800 md:hidden"
-            >
-              ← Back to Home
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Sticky Navbar - matches home page */}
+      <div className="sticky top-0 z-50">
+        <Navbar />
+      </div>
       
-      <main className="flex min-h-screen pt-20">
+      <main className="flex min-h-screen pt-0">
         {/* Split Screen Layout */}
         <div className="flex w-full">
           

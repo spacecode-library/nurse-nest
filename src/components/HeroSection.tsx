@@ -1,4 +1,3 @@
-
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
@@ -17,52 +16,29 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Clean White Background */}
-      <div className="md:hidden w-full bg-white">
-        <div className="container mx-auto px-4 pt-24 pb-16">
-          <AnimatedSection animation="fade-up">
-            {/* Mobile Hero Image */}
-            <div className="mb-8">
-              <img 
-                src="/lovable-uploads/aa259e38-4b67-4f28-9b10-39e924acad54.png" 
-                alt="Professional nurse smiling" 
-                className="w-full h-64 object-cover rounded-2xl shadow-lg"
-              />
-            </div>
-            
-            {/* Mobile Header Content */}
-            <div className="text-center space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                <span className="text-brand-primary">Need a nurse?</span>
-                <br />
-                <span className="text-gray-600 font-normal italic">We make it easy.</span>
-              </h1>
-              
-              <div className="space-y-4 text-gray-700 leading-relaxed">
-                <p className="text-lg font-medium">
-                  PREMIUM CONCIERGE NURSING SERVICE NATIONWIDE.
-                </p>
-                <p className="text-base">
-                  WE SOURCE, VET, MATCH, AND MANAGE PAYMENTS
-                  <br />
-                  SO YOU FOCUS ON WHAT MATTERS.
-                </p>
-                <p className="text-lg font-medium text-brand-navy">
-                  LICENSED NURSES FOR EVERY CARE NEED.
-                </p>
-              </div>
-              
-              {/* Mobile CTA Button */}
-              <div className="pt-6">
-                <Link to="/apply">
-                  <Button className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
-                    Request A Nurse
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </AnimatedSection>
+      {/* Mobile Layout - Updated with new image */}
+      <div className="md:hidden w-full relative min-h-screen flex flex-col">
+        {/* Mobile Hero Image - Full screen */}
+        <div 
+          className="flex-1 relative"
+          style={{
+            backgroundImage: `url('/lovable-uploads/b31f68cc-c0bc-4fbf-a6ce-478c83795425.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            minHeight: 'calc(100vh - 80px)'
+          }}
+        >
+          {/* Request a Nurse Button - positioned at bottom */}
+          <div className="absolute bottom-8 left-4 right-4">
+            <AnimatedSection animation="fade-up">
+              <Link to="/apply" className="block">
+                <Button className="w-full bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
+                  Request A Nurse
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </AnimatedSection>
+          </div>
         </div>
       </div>
       
