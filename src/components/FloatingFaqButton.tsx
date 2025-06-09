@@ -15,7 +15,7 @@ export default function FloatingFaqButton({ onClick, isOpen }: FloatingFaqButton
       setTimeout(() => {
         const faqSection = document.getElementById('faq-section');
         if (faqSection) {
-          faqSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          faqSection.scrollIntoView({ behavior: 'smooth' });
         }
       }, 100);
     }

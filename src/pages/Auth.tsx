@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { 
   AlertCircle, 
@@ -145,8 +146,9 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
+      <Navbar />
       
-      <main className="relative flex min-h-screen">
+      <main className="relative flex min-h-screen pt-16">
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
@@ -164,18 +166,17 @@ export default function Auth() {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
           </div>
 
-          {/* Right Side - Login Form - Moved more to the left */}
+          {/* Right Side - Login Form - Moved significantly to the left */}
           <div className="w-full lg:w-1/3 bg-white flex items-center justify-start relative">
-            {/* Position form significantly more to the left */}
-            <div className="w-full max-w-md px-4 py-12 ml-2 lg:ml-4">
+            {/* Position form more to the left */}
+            <div className="w-full max-w-sm px-4 py-12 ml-4 lg:ml-8">
               
-              {/* Header Section with Enhanced Healthcare Reimagined Image */}
+              {/* Header Section with Healthcare Reimagined Image */}
               <div className="text-left mb-8">
                 <img
                   src="/lovable-uploads/4833d6fb-c7e4-4dc3-86a5-2b6da1365e6a.png"
                   alt="Healthcare Reimagined"
-                  className="h-16 md:h-20 lg:h-24 w-auto mb-6"
-                  style={{ maxWidth: '320px' }}
+                  className="h-10 md:h-12 w-auto mb-6"
                 />
                 <p className="text-lg text-gray-600 mb-2">
                   {isLogin ? 'Sign in to your account' : 'Create your account'}
