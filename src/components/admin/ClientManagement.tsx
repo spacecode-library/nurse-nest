@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Filter, Eye, Mail, Phone, MapPin, Clock, User, Building2, Heart, FileText, Shield } from 'lucide-react';
+import { Search, Eye, Mail, Phone, MapPin, Clock, User, Building2, Shield } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -13,13 +12,14 @@ interface ClientProfile {
   id: string;
   first_name: string;
   last_name: string;
-  email: string;
-  phone_number?: string;
   client_type?: string;
   onboarding_completed?: boolean;
   onboarding_completion_percentage?: number;
   relationship_to_recipient?: string;
   created_at: string;
+  phone_number?: string;
+  payment_setup_completed?: boolean;
+  user_id: string;
 }
 
 export default function ClientManagement() {
@@ -46,8 +46,7 @@ export default function ClientManagement() {
   const filteredClients = clients.filter(client => {
     const matchesSearch = 
       client.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      client.last_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter = filterType === 'all' || 
       (filterType === 'individual' && client.client_type === 'individual') ||
@@ -156,7 +155,7 @@ export default function ClientManagement() {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search clients by name or email..."
+            placeholder="Search clients by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -217,12 +216,6 @@ export default function ClientManagement() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                         <div className="space-y-1">
-                          {client.email && (
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4" />
-                              <span>{client.email}</span>
-                            </div>
-                          )}
                           {client.phone_number && (
                             <div className="flex items-center gap-2">
                               <Phone className="h-4 w-4" />

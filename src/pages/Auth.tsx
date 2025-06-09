@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,17 +14,11 @@ import {
   Mail, 
   Eye, 
   EyeOff,
-  Heart,
   Stethoscope,
-  UserPlus,
-  LogIn,
-  CheckCircle,
   Building2,
   ArrowRight,
   Sparkles,
-  Award,
-  Users,
-  Clock
+  CheckCircle
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { signIn, signUp, getCurrentUser } from '@/supabase/auth/authService';
@@ -165,48 +160,36 @@ export default function Auth() {
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
-          {/* Left Side - Artistic Background (75% on desktop to show more of the graphic) */}
-          <div className="hidden lg:flex lg:w-[75%] relative overflow-hidden">
-            {/* Artistic Healthcare Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white">
-              {/* Main Healthcare Professional Image - positioned to show full left side */}
-              <div className="absolute inset-0 flex items-center justify-start">
-                <img 
-                  src="/lovable-uploads/cd188753-e3a5-419a-ad58-51cd5607d594.png" 
-                  alt="Healthcare Professional" 
-                  className="w-full h-full object-cover object-left"
-                />
-              </div>
-              
-              {/* Ethereal Particle Effects Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
-              
-              {/* Digital Network Effects */}
-              <div className="absolute inset-0 opacity-30">
-                {/* Floating particles */}
-                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-[#9bcbff] rounded-full animate-pulse"></div>
-                <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-1000"></div>
-                <div className="absolute top-1/2 right-1/5 w-3 h-3 bg-[#3b82f6] rounded-full animate-pulse delay-500"></div>
-                <div className="absolute top-2/3 right-2/5 w-1.5 h-1.5 bg-[#9bcbff] rounded-full animate-pulse delay-1500"></div>
-                <div className="absolute top-3/4 right-1/6 w-2 h-2 bg-white rounded-full animate-pulse delay-2000"></div>
-              </div>
-            </div>
+          {/* Left Side - Artistic Background */}
+          <div 
+            className="hidden lg:flex lg:w-3/4 relative overflow-hidden"
+            style={{
+              backgroundImage: `url('/lovable-uploads/1d340da6-726a-48a9-b86e-f5753a168762.png')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'left center',
+              backgroundAttachment: 'fixed'
+            }}
+          >
+            {/* Gradient overlay for smooth transition */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/20"></div>
           </div>
 
-          {/* Right Side - Login Form (25% on desktop, positioned to start at 1/4 point) */}
-          <div className="w-full lg:w-[25%] bg-transparent flex items-center justify-center relative lg:justify-start lg:pl-8">
-            <div className="w-full max-w-md px-6 lg:px-8 py-12 bg-white/90 backdrop-blur-sm rounded-l-2xl lg:rounded-l-none lg:bg-white/95 lg:backdrop-blur-none">
+          {/* Right Side - Login Form */}
+          <div className="w-full lg:w-1/4 bg-white flex items-center justify-start relative">
+            <div className="w-full max-w-md px-6 py-12 ml-0 lg:ml-8">
               
-              {/* Header Section */}
+              {/* Header Section with Healthcare Reimagined Image */}
               <div className="text-left mb-8">
-                <h1 className="text-4xl font-light text-[#1e293b] mb-2">
-                  Healthcare Reimagined
-                </h1>
-                <p className="text-lg text-[#475569] mb-2">
-                  {isLogin ? 'Sign in to access your dashboard' : 'Create your account'}
+                <img
+                  src="/lovable-uploads/4833d6fb-c7e4-4dc3-86a5-2b6da1365e6a.png"
+                  alt="Healthcare Reimagined"
+                  className="h-12 md:h-16 w-auto mb-6"
+                />
+                <p className="text-lg text-gray-600 mb-2">
+                  {isLogin ? 'Sign in to your account' : 'Create your account'}
                 </p>
-                <p className="text-sm text-[#64748b]">
-                  For healthcare professionals and clients
+                <p className="text-sm text-gray-500">
+                  Healthcare professionals and clients
                 </p>
               </div>
 
@@ -224,7 +207,7 @@ export default function Auth() {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName" className="text-[#475569] font-medium">
+                        <Label htmlFor="firstName" className="text-gray-700 font-medium">
                           First Name
                         </Label>
                         <Input
@@ -232,13 +215,13 @@ export default function Auth() {
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                          className="h-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                           required
                           placeholder="Enter first name"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName" className="text-[#475569] font-medium">
+                        <Label htmlFor="lastName" className="text-gray-700 font-medium">
                           Last Name
                         </Label>
                         <Input
@@ -246,7 +229,7 @@ export default function Auth() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="h-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                          className="h-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                           required
                           placeholder="Enter last name"
                         />
@@ -254,7 +237,7 @@ export default function Auth() {
                     </div>
                     
                     <div className="space-y-3">
-                      <Label className="text-[#475569] font-medium">
+                      <Label className="text-gray-700 font-medium">
                         I am a:
                       </Label>
                       <RadioGroup 
@@ -263,55 +246,55 @@ export default function Auth() {
                         className="space-y-3"
                       >
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
                             userType === 'client' 
-                              ? 'border-[#3b82f6] bg-blue-50' 
-                              : 'border-[#f1f5f9]'
+                              ? 'border-blue-500 bg-blue-50' 
+                              : 'border-gray-200'
                           }`} onClick={() => setUserType('client')}>
-                            <RadioGroupItem value="client" id="client" className="text-[#3b82f6]" />
+                            <RadioGroupItem value="client" id="client" className="text-blue-500" />
                             <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
                               <Building2 className="h-5 w-5 text-green-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-semibold text-[#1e293b]">Client</div>
-                              <div className="text-sm text-[#64748b]">I need nursing care services</div>
+                              <div className="font-semibold text-gray-900">Client</div>
+                              <div className="text-sm text-gray-600">I need nursing care services</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
                             userType === 'nurse' 
-                              ? 'border-[#3b82f6] bg-blue-50' 
-                              : 'border-[#f1f5f9]'
+                              ? 'border-blue-500 bg-blue-50' 
+                              : 'border-gray-200'
                           }`} onClick={() => setUserType('nurse')}>
-                            <RadioGroupItem value="nurse" id="nurse" className="text-[#3b82f6]" />
+                            <RadioGroupItem value="nurse" id="nurse" className="text-blue-500" />
                             <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
                               <Stethoscope className="h-5 w-5 text-blue-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-semibold text-[#1e293b]">Healthcare Professional</div>
-                              <div className="text-sm text-[#64748b]">I provide nursing care services</div>
+                              <div className="font-semibold text-gray-900">Healthcare Professional</div>
+                              <div className="text-sm text-gray-600">I provide nursing care services</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-[#3b82f6] hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
                             userType === 'admin' 
-                              ? 'border-[#3b82f6] bg-blue-50' 
-                              : 'border-[#f1f5f9]'
+                              ? 'border-blue-500 bg-blue-50' 
+                              : 'border-gray-200'
                           }`} onClick={() => setUserType('admin')}>
-                            <RadioGroupItem value="admin" id="admin" className="text-[#3b82f6]" />
+                            <RadioGroupItem value="admin" id="admin" className="text-blue-500" />
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
                               <Shield className="h-5 w-5 text-purple-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-semibold text-[#1e293b] flex items-center">
+                              <div className="font-semibold text-gray-900 flex items-center">
                                 Administrator
                                 <Sparkles className="h-4 w-4 ml-2 text-purple-600" />
                               </div>
-                              <div className="text-sm text-[#64748b]">Platform administration</div>
+                              <div className="text-sm text-gray-600">Platform administration</div>
                             </div>
                           </div>
                         </div>
@@ -322,17 +305,17 @@ export default function Auth() {
                 
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[#475569] font-medium">
+                  <Label htmlFor="email" className="text-gray-700 font-medium">
                     Email Address
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-4 h-5 w-5 text-[#64748b]" />
+                    <Mail className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 pl-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                      className="h-12 pl-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                       required
                       placeholder="Enter your email"
                     />
@@ -342,13 +325,13 @@ export default function Auth() {
                 {/* Password Field */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-[#475569] font-medium">
+                    <Label htmlFor="password" className="text-gray-700 font-medium">
                       Password
                     </Label>
                     {isLogin && (
                       <button
                         type="button"
-                        className="text-sm text-[#3b82f6] hover:text-[#2563eb] font-medium transition-colors"
+                        className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
                         onClick={() => navigate('/auth/reset-password')}
                       >
                         Forgot password?
@@ -356,20 +339,20 @@ export default function Auth() {
                     )}
                   </div>
                   <div className="relative">
-                    <LockKeyhole className="absolute left-4 top-4 h-5 w-5 text-[#64748b]" />
+                    <LockKeyhole className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 pl-12 pr-12 border-[#f1f5f9] focus:border-[#9bcbff] rounded-lg bg-white"
+                      className="h-12 pl-12 pr-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                       required
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-4 text-[#64748b] hover:text-[#475569] transition-colors"
+                      className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5" />
@@ -379,7 +362,7 @@ export default function Auth() {
                     </button>
                   </div>
                   {!isLogin && (
-                    <p className="text-xs text-[#64748b] mt-1">
+                    <p className="text-xs text-gray-500 mt-1">
                       Must be at least 8 characters long
                     </p>
                   )}
@@ -391,17 +374,17 @@ export default function Auth() {
                     <input
                       type="checkbox"
                       id="remember"
-                      className="h-4 w-4 text-[#3b82f6] rounded border-[#f1f5f9] focus:ring-[#9bcbff]"
+                      className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                     />
-                    <Label htmlFor="remember" className="text-sm text-[#64748b] cursor-pointer">
+                    <Label htmlFor="remember" className="text-sm text-gray-600 cursor-pointer">
                       Remember me for 30 days
                     </Label>
                   </div>
                 )}
                 
-                {/* Sign In Button */}
+                {/* Submit Button */}
                 <Button
-                  className="w-full h-12 bg-[#9bcbff] hover:bg-[#3b82f6] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                   disabled={loading}
                   type="submit"
                 >
@@ -422,11 +405,11 @@ export default function Auth() {
               {/* Footer Links */}
               <div className="mt-6 text-left">
                 {isLogin ? (
-                  <p className="text-[#64748b]">
+                  <p className="text-gray-600">
                     Don't have an account?{' '}
                     <button
                       type="button"
-                      className="text-[#3b82f6] hover:text-[#2563eb] font-semibold transition-colors"
+                      className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
                       onClick={() => {
                         setIsLogin(false);
                         setError(null);
@@ -436,11 +419,11 @@ export default function Auth() {
                     </button>
                   </p>
                 ) : (
-                  <p className="text-[#64748b]">
+                  <p className="text-gray-600">
                     Already have an account?{' '}
                     <button
                       type="button"
-                      className="text-[#3b82f6] hover:text-[#2563eb] font-semibold transition-colors"
+                      className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
                       onClick={() => {
                         setIsLogin(true);
                         setError(null);
@@ -452,26 +435,10 @@ export default function Auth() {
                 )}
               </div>
 
-              {/* Admin Notice */}
-              {userType === 'admin' && !isLogin && (
-                <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                  <div className="flex items-start space-x-3">
-                    <Shield className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm">
-                      <p className="font-semibold text-purple-800 mb-1">Administrator Access</p>
-                      <p className="text-purple-700">
-                        You're creating an admin account with full platform access. 
-                        Only authorized personnel should use this option.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Security Badge */}
               <div className="mt-8 text-left">
-                <div className="inline-flex items-center space-x-2 text-sm text-[#64748b]">
-                  <CheckCircle className="h-4 w-4 text-[#10b981]" />
+                <div className="inline-flex items-center space-x-2 text-sm text-gray-500">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
                   <span>SSL Secured</span>
                 </div>
               </div>
