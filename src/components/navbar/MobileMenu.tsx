@@ -38,16 +38,15 @@ export default function MobileMenu({
   return (
     <div
       className={cn(
-        'lg:hidden fixed inset-0 z-[9999] transform transition-transform duration-300 ease-in-out',
+        'lg:hidden fixed inset-0 z-[99999] transform transition-transform duration-300 ease-in-out',
         isOpen ? 'translate-x-0' : 'translate-x-full'
       )}
-      style={{ backgroundColor: 'rgba(255, 255, 255, 1)' }}
     >
-      {/* Solid white background overlay */}
+      {/* Solid white background - no transparency */}
       <div className="absolute inset-0 bg-white"></div>
       
       {/* Menu content */}
-      <div className="relative z-10 container-custom py-5">
+      <div className="relative z-10 bg-white min-h-full container-custom py-5">
         <div className="flex items-center justify-between mb-8">
           <Link to="/" className="flex items-center">
             <span className="text-2xl font-heading font-bold text-nurse-dark">
@@ -56,7 +55,7 @@ export default function MobileMenu({
           </Link>
           
           <button 
-            className="text-gray-600 focus:outline-none p-2 hover:bg-gray-100 rounded-lg" 
+            className="text-gray-600 focus:outline-none p-2 hover:bg-gray-100 rounded-lg z-50" 
             onClick={() => setIsOpen(false)}
           >
             <X className="h-6 w-6" />

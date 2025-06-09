@@ -145,19 +145,30 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Single, simple header - no duplicates */}
-      <header className="absolute top-0 left-0 right-0 z-10 bg-transparent">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center">
-            <span className="text-3xl font-bold">
-              <span className="text-white">Nurse</span>
+      {/* Visible header for both desktop and mobile */}
+      <header className="absolute top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200/50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <button 
+              onClick={() => navigate('/')}
+              className="text-2xl md:text-3xl font-bold hover:opacity-80 transition-opacity"
+            >
+              <span className="text-gray-800">Nurse</span>
               <span className="text-[#9bcbff]">Nest</span>
-            </span>
+            </button>
+            
+            {/* Back to Home link for mobile */}
+            <button
+              onClick={() => navigate('/')}
+              className="text-sm text-gray-600 hover:text-gray-800 md:hidden"
+            >
+              ← Back to Home
+            </button>
           </div>
         </div>
       </header>
       
-      <main className="flex min-h-screen">
+      <main className="flex min-h-screen pt-20">
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
@@ -184,7 +195,7 @@ export default function Auth() {
                 <img
                   src="/lovable-uploads/4833d6fb-c7e4-4dc3-86a5-2b6da1365e6a.png"
                   alt="Healthcare Reimagined"
-                  className="h-12 md:h-16 w-auto mb-6 mx-auto"
+                  className="h-16 md:h-20 w-auto mb-6 mx-auto"
                 />
                 <p className="text-lg text-gray-600 mb-2">
                   {isLogin ? 'Sign in to your account' : 'Create your account'}
