@@ -17,23 +17,51 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - New Hero Image */}
-      <div className="md:hidden w-full h-screen relative">
-        <img 
-          src="/lovable-uploads/2499c7b5-05bf-4be1-aeb6-e473fa714cfe.png" 
-          alt="Need a nurse? We make it easy." 
-          className="w-full h-full object-cover"
-        />
-        
-        {/* Mobile CTA Button positioned at bottom */}
-        <div className="absolute bottom-8 left-4 right-4">
+      {/* Mobile Layout - Clean White Background */}
+      <div className="md:hidden w-full bg-white">
+        <div className="container mx-auto px-4 pt-24 pb-16">
           <AnimatedSection animation="fade-up">
-            <Link to="/apply">
-              <Button className="w-full bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
-                Request A Nurse
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            {/* Mobile Hero Image */}
+            <div className="mb-8">
+              <img 
+                src="/lovable-uploads/aa259e38-4b67-4f28-9b10-39e924acad54.png" 
+                alt="Professional nurse smiling" 
+                className="w-full h-64 object-cover rounded-2xl shadow-lg"
+              />
+            </div>
+            
+            {/* Mobile Header Content */}
+            <div className="text-center space-y-6">
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+                <span className="text-brand-primary">Need a nurse?</span>
+                <br />
+                <span className="text-gray-600 font-normal italic">We make it easy.</span>
+              </h1>
+              
+              <div className="space-y-4 text-gray-700 leading-relaxed">
+                <p className="text-lg font-medium">
+                  PREMIUM CONCIERGE NURSING SERVICE NATIONWIDE.
+                </p>
+                <p className="text-base">
+                  WE SOURCE, VET, MATCH, AND MANAGE PAYMENTS
+                  <br />
+                  SO YOU FOCUS ON WHAT MATTERS.
+                </p>
+                <p className="text-lg font-medium text-brand-navy">
+                  LICENSED NURSES FOR EVERY CARE NEED.
+                </p>
+              </div>
+              
+              {/* Mobile CTA Button */}
+              <div className="pt-6">
+                <Link to="/apply">
+                  <Button className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
+                    Request A Nurse
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </AnimatedSection>
         </div>
       </div>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,18 +16,11 @@ import {
   Building2,
   ArrowRight,
   Sparkles,
-  CheckCircle,
-  Menu
+  CheckCircle
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { signIn, signUp, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import NavLinks from '@/components/navbar/NavLinks';
-import NurseDropdown from '@/components/navbar/NurseDropdown';
-import UserMenu from '@/components/navbar/UserMenu';
-import MobileMenu from '@/components/navbar/MobileMenu';
-import CareServicesDropdown from '@/components/navbar/CareServicesDropdown';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -38,9 +32,7 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
   
   useEffect(() => {
     const checkSession = async () => {
@@ -151,69 +143,32 @@ export default function Auth() {
     }
   };
   
-  const handleApplyNowClick = () => {
-    if (!user) {
-      navigate('/auth', { state: { redirectAfterAuth: 'https://www.nursenest.us/nurseapplication' } });
-    } else {
-      window.location.href = 'https://www.nursenest.us/nurseapplication';
-    }
-  };
-
-  const handleRequestNurseClick = () => {
-    navigate('/apply');
-  };
-  
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Header exactly like home screen but sticky */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl shadow-lg border border-gray-200/50 py-3 mx-4 mt-4 rounded-2xl">
-        <div className="container mx-auto px-6 flex items-center justify-between">
-          {/* Logo with NurseNest styling */}
-          <div className="flex items-center">
-            <span className="text-3xl md:text-4xl font-bold">
+      {/* Visible header for both desktop and mobile */}
+      <header className="absolute top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200/50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <button 
+              onClick={() => navigate('/')}
+              className="text-2xl md:text-3xl font-bold hover:opacity-80 transition-opacity"
+            >
               <span className="text-gray-800">Nurse</span>
               <span className="text-[#9bcbff]">Nest</span>
-            </span>
-          </div>
-          
-          {/* Desktop Navigation - centered */}
-          <nav className="hidden lg:flex items-center space-x-8 flex-grow justify-center">
-            <NavLinks shouldUseDarkText={true} />
-            <NurseDropdown shouldUseDarkText={true} handleApplyNowClick={handleApplyNowClick} />
-            <CareServicesDropdown shouldUseDarkText={true} />
-          </nav>
-          
-          {/* Authentication & CTA - Desktop */}
-          <div className="hidden lg:flex items-center space-x-4 ml-auto">
-            <Button
-              onClick={handleRequestNurseClick}
-              className="bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            </button>
+            
+            {/* Back to Home link for mobile */}
+            <button
+              onClick={() => navigate('/')}
+              className="text-sm text-gray-600 hover:text-gray-800 md:hidden"
             >
-              Request a Nurse
-            </Button>
-            <UserMenu shouldUseDarkText={true} />
+              ← Back to Home
+            </button>
           </div>
-          
-          {/* Mobile Menu Button */}
-          <button 
-            className="lg:hidden focus:outline-none p-2 rounded-xl text-gray-800 hover:bg-gray-100"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <Menu className="h-6 w-6" />
-          </button>
         </div>
-        
-        {/* Mobile Menu */}
-        <MobileMenu 
-          isOpen={isOpen} 
-          setIsOpen={setIsOpen} 
-          isNursePage={false}
-          handleApplyNowClick={handleApplyNowClick}
-          handleRequestNurse={handleRequestNurseClick}
-        />
       </header>
       
-      <main className="flex min-h-screen pt-24">
+      <main className="flex min-h-screen pt-20">
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
