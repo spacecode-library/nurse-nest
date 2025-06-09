@@ -603,7 +603,7 @@ export default function ApplicantReviewCard({
                       ) : (
                         <>
                           <UserCheck className="h-4 w-4 mr-1" />
-                          Hire & Create Contract
+                          Hire
                         </>
                       )}
                     </Button>
@@ -624,9 +624,9 @@ export default function ApplicantReviewCard({
                   <div className="flex items-center space-x-2">
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-md">
                       <CheckCircle className="h-4 w-4 mr-1" />
-                      Hired - Contract Created
+                      Hired
                     </Badge>
-                    <Button
+                    {/* <Button
                       size="sm"
                       variant="outline"
                       onClick={() => {
@@ -637,7 +637,7 @@ export default function ApplicantReviewCard({
                     >
                       <FileText className="h-4 w-4 mr-1" />
                       View Contract
-                    </Button>
+                    </Button> */}
                   </div>
                 )}
               </div>
@@ -957,7 +957,7 @@ export default function ApplicantReviewCard({
                     disabled={creatingContract}
                     className="px-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
                   >
-                    {creatingContract ? 'Creating Contract...' : 'Hire & Create Contract'}
+                    {creatingContract ? 'Hiring ...' : 'Hire'}
                   </Button>
                 )}
               </div>

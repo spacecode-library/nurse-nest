@@ -167,19 +167,19 @@ export default function ContractNotifications({
   const showToastNotification = (notification: ContractNotification) => {
     const icon = getNotificationIcon(notification.type);
     
-    toast({
-      title: notification.title,
-      description: notification.message,
-      duration: 8000,
-      action: onNotificationClick ? (
-        <Button
-          size="sm"
-          onClick={() => onNotificationClick(notification.contractId)}
-        >
-          View Contract
-        </Button>
-      ) : undefined,
-    });
+    // toast({
+    //   title: notification.title,
+    //   description: notification.message,
+    //   duration: 8000,
+    //   action: onNotificationClick ? (
+    //     <Button
+    //       size="sm"
+    //       onClick={() => onNotificationClick(notification.contractId)}
+    //     >
+    //       View Contract
+    //     </Button>
+    //   ) : undefined,
+    // });
   };
 
   const getNotificationIcon = (type: ContractNotification['type']) => {

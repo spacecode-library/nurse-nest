@@ -79,7 +79,7 @@ export default function EnhancedTimecardSubmissionForm({
   const [calculatedHours, setCalculatedHours] = useState(0);
   const [paymentPreview, setPaymentPreview] = useState<any>(null);
   const [nurseHourlyRate, setNurseHourlyRate] = useState(50); // NEW: Dynamic hourly rate
-
+  console.log("active don",activeContracts)
   useEffect(() => {
     loadActiveContracts();
     loadNurseHourlyRate();

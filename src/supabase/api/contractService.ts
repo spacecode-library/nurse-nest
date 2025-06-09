@@ -48,7 +48,7 @@ export async function createContract(contractData: Omit<Contract, 'id' | 'status
       .from('contracts')
       .insert({
         ...contractData,
-        status: 'pending' // Default status for new contracts
+        status: 'active' // Default status for new contracts
       })
       .select()
       .single();

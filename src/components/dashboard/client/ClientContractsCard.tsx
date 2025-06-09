@@ -897,14 +897,14 @@ export default function ClientContractsCard({
             )}
 
             <div className="flex flex-wrap gap-2">
-              <Button
+              {/* <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setSelectedContract(contract)}
               >
                 <Eye className="h-4 w-4 mr-1" />
                 View Contract
-              </Button>
+              </Button> */}
               
               <Button
                 variant="outline"
