@@ -1,11 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { 
   AlertCircle, 
   LockKeyhole, 
@@ -145,38 +144,47 @@ export default function Auth() {
   };
   
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      <Navbar />
+    <div className="min-h-screen bg-white relative">
+      {/* Single, simple header - no duplicates */}
+      <header className="absolute top-0 left-0 right-0 z-10 bg-transparent">
+        <div className="container mx-auto px-6 py-6">
+          <div className="flex items-center">
+            <span className="text-3xl font-bold">
+              <span className="text-white">Nurse</span>
+              <span className="text-[#9bcbff]">Nest</span>
+            </span>
+          </div>
+        </div>
+      </header>
       
-      <main className="relative flex min-h-screen pt-16">
+      <main className="flex min-h-screen">
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
-          {/* Left Side - Artistic Background */}
+          {/* Left Side - Background Image */}
           <div 
             className="hidden lg:flex lg:w-2/3 relative overflow-hidden"
             style={{
-              backgroundImage: `url('/lovable-uploads/1d340da6-726a-48a9-b86e-f5753a168762.png')`,
+              backgroundImage: `url('/lovable-uploads/7c9b7912-ea93-48c3-9bb9-23fb6339c2d0.png')`,
               backgroundSize: 'cover',
               backgroundPosition: 'left center',
               backgroundAttachment: 'fixed'
             }}
           >
-            {/* Gradient overlay for smooth transition */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
+            {/* Smooth gradient overlay for seamless transition */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/20"></div>
           </div>
 
-          {/* Right Side - Login Form - Moved significantly to the left */}
-          <div className="w-full lg:w-1/3 bg-white flex items-center justify-start relative">
-            {/* Position form more to the left */}
-            <div className="w-full max-w-sm px-4 py-12 ml-4 lg:ml-8">
+          {/* Right Side - Login Form */}
+          <div className="w-full lg:w-1/3 bg-white flex items-center justify-center relative min-h-screen">
+            <div className="w-full max-w-md px-6 py-12">
               
               {/* Header Section with Healthcare Reimagined Image */}
-              <div className="text-left mb-8">
+              <div className="text-center mb-8">
                 <img
                   src="/lovable-uploads/4833d6fb-c7e4-4dc3-86a5-2b6da1365e6a.png"
                   alt="Healthcare Reimagined"
-                  className="h-10 md:h-12 w-auto mb-6"
+                  className="h-12 md:h-16 w-auto mb-6 mx-auto"
                 />
                 <p className="text-lg text-gray-600 mb-2">
                   {isLogin ? 'Sign in to your account' : 'Create your account'}
@@ -396,7 +404,7 @@ export default function Auth() {
               </form>
               
               {/* Footer Links */}
-              <div className="mt-5 text-left">
+              <div className="mt-5 text-center">
                 {isLogin ? (
                   <p className="text-gray-600">
                     Don't have an account?{' '}
@@ -429,7 +437,7 @@ export default function Auth() {
               </div>
 
               {/* Security Badge */}
-              <div className="mt-6 text-left">
+              <div className="mt-6 text-center">
                 <div className="inline-flex items-center space-x-2 text-sm text-gray-500">
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   <span>SSL Secured</span>
@@ -439,8 +447,6 @@ export default function Auth() {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 }
