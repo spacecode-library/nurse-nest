@@ -36,8 +36,8 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={handleApplyNowClick}>
           Apply Now
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/nurse-llc-setup-guide')}>
-          LLC Setup Help
+        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2 font-semibold" onClick={() => navigate('/nurse-llc-setup-guide')}>
+          LLC Setup Guide
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/get-ein-nurse-business')}>
           EIN Applications

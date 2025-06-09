@@ -1,72 +1,58 @@
 
-import React from "react";
-import { CheckCircle2 } from "lucide-react";
+import React from 'react';
+import { CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ScreeningCardProps {
   title: string;
   price: string;
-  description: string;
   features: string[];
-  badge?: {
-    text: string;
-    color: string;
-    textColor: string;
-  };
   isPopular?: boolean;
+  onSelect?: () => void;
 }
 
-export default function ScreeningCard({
-  title,
-  price,
-  description,
-  features,
-  badge,
-  isPopular = false,
-}: ScreeningCardProps) {
+const ScreeningCard: React.FC<ScreeningCardProps> = ({ 
+  title, 
+  price, 
+  features, 
+  isPopular = false, 
+  onSelect 
+}) => {
   return (
-    <div className={`relative bg-white rounded-2xl shadow-lg border-2 p-6 transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-      isPopular 
-        ? 'border-[#d97706] bg-gradient-to-br from-[#fffbf0] to-white' 
-        : 'border-[#e2e8f0] hover:border-[#9bcbff]'
-    }`}>
+    <Card className={`relative ${isPopular ? 'border-blue-500 shadow-lg' : 'border-gray-200'}`}>
       {isPopular && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <span className="bg-gradient-to-r from-[#fbbf24] to-[#d97706] text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+          <span className="bg-blue-500 text-white px-4 py-1 text-sm font-semibold rounded-full">
             Most Popular
           </span>
         </div>
       )}
-
-      <div className="text-center mb-4">
-        <h3 className="text-xl font-semibold text-[#1e293b] mb-2">{title}</h3>
-        <div className="flex items-baseline justify-center mb-2">
-          <span className={`text-3xl font-light ${isPopular ? 'text-[#92400e]' : 'text-[#0c4a6e]'}`}>
-            {price}
-          </span>
-        </div>
+      
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl font-semibold">{title}</CardTitle>
+        <div className="text-3xl font-bold text-blue-600">{price}</div>
+      </CardHeader>
+      
+      <CardContent className="space-y-4">
+        <ul className="space-y-3">
+          {features.map((feature, index) => (
+            <li key={index} className="flex items-center space-x-3">
+              <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
         
-        {badge && (
-          <div
-            className="inline-block rounded-full font-medium text-xs px-3 py-1 shadow-sm mb-3"
-            style={{ background: badge.color, color: badge.textColor }}
-          >
-            {badge.text}
-          </div>
-        )}
-        
-        <p className="text-[#64748b] text-sm">{description}</p>
-      </div>
-
-      <ul className="space-y-3">
-        {features.map((feature, index) => (
-          <li key={index} className="flex items-start">
-            <CheckCircle2 className={`h-4 w-4 mt-0.5 mr-2 flex-shrink-0 ${
-              isPopular ? 'text-[#d97706]' : 'text-[#0ea5e9]'
-            }`} />
-            <span className="text-[#475569] text-sm leading-relaxed">{feature}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+        <Button 
+          className={`w-full ${isPopular ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-600 hover:bg-gray-700'}`}
+          onClick={onSelect}
+        >
+          Select Package
+        </Button>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default ScreeningCard;

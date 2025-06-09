@@ -9,54 +9,37 @@ import { Search, Filter, Eye, Mail, Phone, MapPin, Clock, User, Building2, Heart
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-// Updated interface to match actual data structure
 interface ClientProfile {
-  id?: string;
-  first_name?: string;
-  last_name?: string;
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
   phone_number?: string;
-  email?: string;
   client_type?: string;
   onboarding_completed?: boolean;
   onboarding_completion_percentage?: number;
   relationship_to_recipient?: string;
-  care_needs?: any;
-  care_recipients?: any;
-  care_location?: any;
+  created_at: string;
 }
 
 export default function ClientManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'individual' | 'facility'>('all');
-  const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
 
   const { data: clients = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-clients'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('client_profiles')
-        .select(`
-          *,
-          profiles!inner(email, first_name, last_name, phone_number)
-        `);
+        .select('*')
+        .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching clients:', error);
+        return [];
+      }
       
-      // Transform the data to match our interface
-      return data.map(client => ({
-        id: client.id,
-        first_name: client.profiles?.first_name,
-        last_name: client.profiles?.last_name,
-        phone_number: client.profiles?.phone_number,
-        email: client.profiles?.email,
-        client_type: client.client_type,
-        onboarding_completed: client.onboarding_completed,
-        onboarding_completion_percentage: client.onboarding_completion_percentage,
-        relationship_to_recipient: client.relationship_to_recipient,
-        care_needs: client.care_needs,
-        care_recipients: client.care_recipients,
-        care_location: client.care_location,
-      }));
+      return data || [];
     },
   });
 
@@ -79,12 +62,6 @@ export default function ClientManagement() {
     pending: clients.filter(c => !c.onboarding_completed).length,
     individual: clients.filter(c => c.client_type === 'individual').length,
     facility: clients.filter(c => c.client_type === 'facility').length,
-  };
-
-  const getCompletionColor = (percentage: number) => {
-    if (percentage >= 80) return 'text-green-600';
-    if (percentage >= 50) return 'text-yellow-600';
-    return 'text-red-600';
   };
 
   if (isLoading) {
@@ -257,22 +234,24 @@ export default function ClientManagement() {
 
                       {client.onboarding_completion_percentage !== undefined && (
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-600">Onboarding Progress:</span>
-                          <span className={`font-semibold ${getCompletionColor(client.onboarding_completion_percentage || 0)}`}>
-                            {client.onboarding_completion_percentage}%
-                          </span>
+                          <span className="text-sm text-gray-600">Progress:</span>
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-600 h-2 rounded-full" 
+                              style={{ width: `${client.onboarding_completion_percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm text-gray-600">{client.onboarding_completion_percentage}%</span>
                         </div>
                       )}
                     </div>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedClient(client)}
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Details
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -280,106 +259,6 @@ export default function ClientManagement() {
           )}
         </CardContent>
       </Card>
-
-      {/* Client Detail Modal */}
-      {selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
-              <h2 className="text-2xl font-bold">
-                {selectedClient.first_name} {selectedClient.last_name}
-              </h2>
-              <Button variant="outline" onClick={() => setSelectedClient(null)}>
-                Close
-              </Button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                  <TabsTrigger value="care">Care Details</TabsTrigger>
-                  <TabsTrigger value="location">Location</TabsTrigger>
-                  <TabsTrigger value="activity">Activity</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="basic" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Client Type</label>
-                      <p className="font-semibold capitalize">{selectedClient.client_type || 'Not specified'}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Onboarding Status</label>
-                      <p className={`font-semibold ${selectedClient.onboarding_completed ? 'text-green-600' : 'text-red-600'}`}>
-                        {selectedClient.onboarding_completed ? 'Completed' : 'Pending'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {selectedClient.relationship_to_recipient && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Relationship to Care Recipient</label>
-                      <p className="font-semibold capitalize">{selectedClient.relationship_to_recipient}</p>
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="care" className="space-y-4">
-                  {selectedClient.care_needs ? (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Care Needs</label>
-                      <div className="bg-gray-50 p-3 rounded border">
-                        {typeof selectedClient.care_needs === 'object' ? (
-                          <pre className="text-sm whitespace-pre-wrap">
-                            {JSON.stringify(selectedClient.care_needs, null, 2)}
-                          </pre>
-                        ) : (
-                          <p>{selectedClient.care_needs}</p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">No care needs information available</p>
-                  )}
-
-                  {selectedClient.care_recipients && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Care Recipients</label>
-                      <div className="bg-gray-50 p-3 rounded border">
-                        <p>Recipients: {Array.isArray(selectedClient.care_recipients) ? selectedClient.care_recipients.length : 1}</p>
-                      </div>
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="location" className="space-y-4">
-                  {selectedClient.care_location ? (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Care Location</label>
-                      <div className="bg-gray-50 p-3 rounded border">
-                        {typeof selectedClient.care_location === 'object' ? (
-                          <pre className="text-sm whitespace-pre-wrap">
-                            {JSON.stringify(selectedClient.care_location, null, 2)}
-                          </pre>
-                        ) : (
-                          <p>{selectedClient.care_location}</p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">No location information available</p>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="activity" className="space-y-4">
-                  <p className="text-gray-500">Activity tracking coming soon...</p>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
