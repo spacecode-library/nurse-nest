@@ -146,13 +146,9 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Sticky Navbar with curved corners - matches home page */}
+      {/* Sticky Navbar - matches home page */}
       <div className="sticky top-0 z-50">
-        <div className="mx-4 mt-4">
-          <div className="bg-white/95 backdrop-blur-xl shadow-lg border border-gray-200/50 py-3 rounded-2xl">
-            <Navbar />
-          </div>
-        </div>
+        <Navbar />
       </div>
       
       <main className="flex min-h-screen pt-0">
