@@ -8,7 +8,7 @@ interface BrowseFaqSectionProps {
 
 export default function BrowseFaqSection({ onToggleFaq, isOpen }: BrowseFaqSectionProps) {
   return (
-    <section className="py-12 px-4">
+    <section className="py-12 px-4 bg-gray-50">
       <div className="max-w-4xl mx-auto text-center">
         <button
           onClick={onToggleFaq}
