@@ -13,17 +13,11 @@ import {
   Mail, 
   Eye, 
   EyeOff,
-  Heart,
-  Stethoscope,
-  UserPlus,
-  LogIn,
-  CheckCircle,
   Building2,
   ArrowRight,
   Sparkles,
-  Award,
-  Users,
-  Clock
+  CheckCircle,
+  Stethoscope
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { signIn, signUp, getCurrentUser } from '@/supabase/auth/authService';
@@ -165,43 +159,32 @@ export default function Auth() {
         {/* Split Screen Layout */}
         <div className="flex w-full">
           
-          {/* Left Side - Artistic Background (75% on desktop to show more of the graphic) */}
-          <div className="hidden lg:flex lg:w-[75%] relative overflow-hidden">
-            {/* Artistic Healthcare Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1e293b] via-[#334155] to-white">
-              {/* Main Healthcare Professional Image - positioned to show full left side */}
-              <div className="absolute inset-0 flex items-center justify-start">
-                <img 
-                  src="/lovable-uploads/cd188753-e3a5-419a-ad58-51cd5607d594.png" 
-                  alt="Healthcare Professional" 
-                  className="w-full h-full object-cover object-left"
-                />
-              </div>
-              
-              {/* Ethereal Particle Effects Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
-              
-              {/* Digital Network Effects */}
-              <div className="absolute inset-0 opacity-30">
-                {/* Floating particles */}
-                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-[#9bcbff] rounded-full animate-pulse"></div>
-                <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-1000"></div>
-                <div className="absolute top-1/2 right-1/5 w-3 h-3 bg-[#3b82f6] rounded-full animate-pulse delay-500"></div>
-                <div className="absolute top-2/3 right-2/5 w-1.5 h-1.5 bg-[#9bcbff] rounded-full animate-pulse delay-1500"></div>
-                <div className="absolute top-3/4 right-1/6 w-2 h-2 bg-white rounded-full animate-pulse delay-2000"></div>
-              </div>
+          {/* Left Side - Healthcare Background Image (60% on desktop) */}
+          <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-cover bg-left-center"
+              style={{
+                backgroundImage: "url('/lovable-uploads/7d0fb480-953b-4a16-8dad-cb36feecdbb1.png')",
+                backgroundAttachment: 'fixed'
+              }}
+            >
+              {/* Subtle overlay for better contrast */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/20"></div>
             </div>
           </div>
 
-          {/* Right Side - Login Form (25% on desktop, positioned to start at 1/4 point) */}
-          <div className="w-full lg:w-[25%] bg-transparent flex items-center justify-center relative lg:justify-start lg:pl-8">
-            <div className="w-full max-w-md px-6 lg:px-8 py-12 bg-white/90 backdrop-blur-sm rounded-l-2xl lg:rounded-l-none lg:bg-white/95 lg:backdrop-blur-none">
+          {/* Right Side - Login Form (40% on desktop, positioned more to the left) */}
+          <div className="w-full lg:w-[40%] bg-white flex items-center justify-start relative">
+            <div className="w-full max-w-md px-6 lg:px-8 py-12 lg:ml-8">
               
-              {/* Header Section */}
-              <div className="text-left mb-8">
-                <h1 className="text-4xl font-light text-[#1e293b] mb-2">
-                  Healthcare Reimagined
-                </h1>
+              {/* Healthcare Reimagined Header Image */}
+              <div className="text-center mb-8">
+                <img 
+                  src="/lovable-uploads/f19134b3-3045-4fc9-a9bc-2437d29ebfbd.png" 
+                  alt="Healthcare Reimagined" 
+                  className="mx-auto mb-6"
+                  style={{maxHeight: '60px'}}
+                />
                 <p className="text-lg text-[#475569] mb-2">
                   {isLogin ? 'Sign in to access your dashboard' : 'Create your account'}
                 </p>

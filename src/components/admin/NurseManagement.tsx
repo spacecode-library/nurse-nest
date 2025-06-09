@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Eye, Mail, Phone, MapPin, Clock, User, Star, Shield, FileText } from 'lucide-react';
+import { Search, Eye, Phone, MapPin, Clock, User, Star, Shield, FileText } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -12,7 +12,6 @@ interface NurseProfile {
   id: string;
   first_name: string;
   last_name: string;
-  email: string;
   phone_number?: string;
   city?: string;
   state?: string;
@@ -47,7 +46,6 @@ export default function NurseManagement() {
     const matchesSearch = 
       nurse.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       nurse.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      nurse.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       nurse.city?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter = filterStatus === 'all' || 
@@ -131,7 +129,7 @@ export default function NurseManagement() {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search nurses by name, email, or location..."
+            placeholder="Search nurses by name or location..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -189,12 +187,6 @@ export default function NurseManagement() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                         <div className="space-y-1">
-                          {nurse.email && (
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4" />
-                              <span>{nurse.email}</span>
-                            </div>
-                          )}
                           {nurse.phone_number && (
                             <div className="flex items-center gap-2">
                               <Phone className="h-4 w-4" />

@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Filter, Eye, Mail, Phone, MapPin, Clock, User, Building2, Heart, FileText, Shield } from 'lucide-react';
+import { Search, Eye, Phone, MapPin, Clock, User, Star, Shield, FileText } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -13,18 +12,17 @@ interface ClientProfile {
   id: string;
   first_name: string;
   last_name: string;
-  email: string;
   phone_number?: string;
-  client_type?: string;
+  city?: string;
+  state?: string;
   onboarding_completed?: boolean;
   onboarding_completion_percentage?: number;
-  relationship_to_recipient?: string;
   created_at: string;
 }
 
 export default function ClientManagement() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'individual' | 'facility'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'pending'>('all');
 
   const { data: clients = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-clients'],
@@ -47,21 +45,19 @@ export default function ClientManagement() {
     const matchesSearch = 
       client.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      client.city?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesFilter = filterType === 'all' || 
-      (filterType === 'individual' && client.client_type === 'individual') ||
-      (filterType === 'facility' && client.client_type === 'facility');
+    const matchesFilter = filterStatus === 'all' || 
+      (filterStatus === 'active' && client.onboarding_completed) ||
+      (filterStatus === 'pending' && !client.onboarding_completed);
 
     return matchesSearch && matchesFilter;
   });
 
   const stats = {
     total: clients.length,
-    onboarded: clients.filter(c => c.onboarding_completed).length,
+    active: clients.filter(c => c.onboarding_completed).length,
     pending: clients.filter(c => !c.onboarding_completed).length,
-    individual: clients.filter(c => c.client_type === 'individual').length,
-    facility: clients.filter(c => c.client_type === 'facility').length,
   };
 
   if (isLoading) {
@@ -69,8 +65,8 @@ export default function ClientManagement() {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[1,2,3,4].map(i => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1,2,3].map(i => (
               <div key={i} className="h-24 bg-gray-200 rounded"></div>
             ))}
           </div>
@@ -89,7 +85,7 @@ export default function ClientManagement() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
@@ -107,8 +103,8 @@ export default function ClientManagement() {
             <div className="flex items-center space-x-2">
               <Shield className="h-5 w-5 text-green-500" />
               <div>
-                <p className="text-sm text-gray-600">Onboarded</p>
-                <p className="text-2xl font-bold text-green-600">{stats.onboarded}</p>
+                <p className="text-sm text-gray-600">Active</p>
+                <p className="text-2xl font-bold text-green-600">{stats.active}</p>
               </div>
             </div>
           </CardContent>
@@ -125,30 +121,6 @@ export default function ClientManagement() {
             </div>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <User className="h-5 w-5 text-purple-500" />
-              <div>
-                <p className="text-sm text-gray-600">Individual</p>
-                <p className="text-2xl font-bold">{stats.individual}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Building2 className="h-5 w-5 text-indigo-500" />
-              <div>
-                <p className="text-sm text-gray-600">Facility</p>
-                <p className="text-2xl font-bold">{stats.facility}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Search and Filters */}
@@ -156,7 +128,7 @@ export default function ClientManagement() {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search clients by name or email..."
+            placeholder="Search clients by name or location..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -164,25 +136,25 @@ export default function ClientManagement() {
         </div>
         <div className="flex gap-2">
           <Button
-            variant={filterType === 'all' ? 'default' : 'outline'}
-            onClick={() => setFilterType('all')}
+            variant={filterStatus === 'all' ? 'default' : 'outline'}
+            onClick={() => setFilterStatus('all')}
             size="sm"
           >
             All Clients
           </Button>
           <Button
-            variant={filterType === 'individual' ? 'default' : 'outline'}
-            onClick={() => setFilterType('individual')}
+            variant={filterStatus === 'active' ? 'default' : 'outline'}
+            onClick={() => setFilterStatus('active')}
             size="sm"
           >
-            Individual
+            Active
           </Button>
           <Button
-            variant={filterType === 'facility' ? 'default' : 'outline'}
-            onClick={() => setFilterType('facility')}
+            variant={filterStatus === 'pending' ? 'default' : 'outline'}
+            onClick={() => setFilterStatus('pending')}
             size="sm"
           >
-            Facility
+            Pending
           </Button>
         </div>
       </div>
@@ -207,26 +179,23 @@ export default function ClientManagement() {
                         <h3 className="font-semibold text-lg">
                           {client.first_name} {client.last_name}
                         </h3>
-                        <Badge variant={client.client_type === 'individual' ? 'default' : 'secondary'}>
-                          {client.client_type === 'individual' ? 'Individual' : 'Facility'}
-                        </Badge>
                         <Badge variant={client.onboarding_completed ? 'default' : 'destructive'}>
-                          {client.onboarding_completed ? 'Complete' : 'Pending'}
+                          {client.onboarding_completed ? 'Active' : 'Pending'}
                         </Badge>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                         <div className="space-y-1">
-                          {client.email && (
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4" />
-                              <span>{client.email}</span>
-                            </div>
-                          )}
                           {client.phone_number && (
                             <div className="flex items-center gap-2">
                               <Phone className="h-4 w-4" />
                               <span>{client.phone_number}</span>
+                            </div>
+                          )}
+                          {(client.city || client.state) && (
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4" />
+                              <span>{client.city}{client.city && client.state ? ', ' : ''}{client.state}</span>
                             </div>
                           )}
                         </div>

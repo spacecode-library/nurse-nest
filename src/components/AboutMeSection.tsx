@@ -4,117 +4,86 @@ import AnimatedSection from './AnimatedSection';
 
 export default function AboutMeSection() {
   return (
-    <section 
-      className="relative py-20 md:py-32" 
-      id="about-me"
-      style={{
-        background: 'linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%)'
-      }}
-    >
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header */}
-        <AnimatedSection animation="fade-up" className="text-center mb-16">
-          {/* Custom header image */}
-          <div className="flex justify-center mb-6">
-            <img
-              src="/lovable-uploads/62c6c4e8-63bf-4393-b4c0-042689b94066.png"
-              alt="Meet the Founder"
-              className="h-16 md:h-20 w-auto max-w-full object-contain"
-            />
-          </div>
-        </AnimatedSection>
-
-        {/* Large White Card */}
-        <AnimatedSection animation="fade-up" delay={150}>
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl p-8 md:p-12 lg:p-16 max-w-5xl mx-auto border border-white/50 backdrop-blur-sm">
-            <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
-              {/* Profile Image - much bigger */}
-              <div className="flex-shrink-0">
-                <div className="w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden border-4 border-blue-100 shadow-lg">
-                  <img
-                    src="/lovable-uploads/9daccab5-730e-4656-81e6-a31931f7d3f6.png"
-                    alt="Jayson M."
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-              </div>
-              
-              {/* Name and Title next to photo */}
-              <div className="flex-1">
-                <div className="mb-8">
-                  <h3 
-                    className="text-3xl md:text-4xl font-bold text-slate-900 mb-2"
-                    style={{ 
-                      fontFamily: 'Arial, Helvetica, sans-serif'
-                    }}
-                  >
-                    Jayson M.
-                  </h3>
-                  <p 
-                    className="text-lg md:text-xl text-blue-600 font-medium"
-                    style={{ 
-                      fontFamily: 'Arial, Helvetica, sans-serif'
-                    }}
-                  >
-                    Founder of Nurse Nest
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Story Content - full width below */}
-            <div 
-              className="space-y-6 text-left mt-8"
-              style={{ 
-                fontFamily: 'Arial, Helvetica, sans-serif',
-                fontSize: '18px',
-                lineHeight: '1.6',
-                color: '#475569'
-              }}
-            >
-              <p className="font-medium text-slate-900 text-lg">
-                Hi, I'm Jayson — Thank you so much for being here.
-              </p>
-              
-              <p>
-                I started my nursing journey in 2008, and I'll be honest—it didn't start smoothly. I struggled through my first semester of nursing school and seriously questioned whether I could do it. But I kept going, graduated, and began my career in the ICU.
-              </p>
-              
-              <p>
-                Since then, I've worked in over 10 hospitals and nearly every type of critical care environment. In 2016, I transitioned into travel nursing, where I've continued to grow and learn across a wide variety of clinical settings. My career has also taken me into correctional health, psychiatry, telehealth, and independent contracting.
-              </p>
-              
-              <p>
-                Along the way, I've seen how challenging it can be for families to find the right in-home nurse—and how difficult it is for nurses to navigate constant credentialing and onboarding with little guidance.
-              </p>
-              
-              <p>
-                I created Nurse Nest to make things better. This platform exists to simplify the process for both clients and nurses, offering a thoughtful, transparent way to connect with licensed professionals who are ready to help.
-              </p>
-              
-              <p>
-                Whether you're a new parent, caring for an aging family member, or a clinic in need of support, I'm here to make it easier to get the care you need from someone you can trust.
-              </p>
-              
-              <p className="font-medium text-slate-900 text-lg">
-                If you have any questions or just want to connect, I'd love to hear from you.
-              </p>
-            </div>
-            
-            {/* Signature - bigger and left aligned with reduced padding */}
-            <div className="mt-6">
+    <section className="py-section" style={{backgroundColor: '#f1f5f9'}}>
+      <div className="container-custom">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+            {/* Title moved inside the white card */}
+            <div className="text-center mb-8">
               <img 
-                src="/lovable-uploads/16f8aab2-52ef-4d03-a067-775c04042d1f.png"
-                alt="Jayson Hinagawa Signature"
-                className="h-24 md:h-32 w-auto opacity-70"
-                style={{
-                  filter: 'brightness(0.3)',
-                  maxWidth: '300px'
-                }}
+                src="/lovable-uploads/f19134b3-3045-4fc9-a9bc-2437d29ebfbd.png" 
+                alt="Meet the Founder" 
+                className="mx-auto mb-6"
+                style={{maxHeight: '80px'}}
               />
             </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Profile Photo */}
+              <AnimatedSection animation="fade-in" delay={200} className="text-center lg:text-left">
+                <div className="relative inline-block">
+                  <img
+                    src="/lovable-uploads/fd0f9e23-7074-4670-8f43-6b3cf64a08dc.png"
+                    alt="Founder"
+                    className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-cover rounded-full mx-auto lg:mx-0 shadow-lg"
+                  />
+                </div>
+              </AnimatedSection>
+
+              {/* Content */}
+              <AnimatedSection animation="fade-in" delay={400} className="space-y-6">
+                <div className="space-y-4">
+                  <p className="text-lg leading-relaxed" style={{color: '#475569'}}>
+                    Hi, I'm Jayson — Thank you so much for being here.
+                  </p>
+                  
+                  <p className="text-base leading-relaxed" style={{color: '#475569'}}>
+                    I started my nursing journey in 2008, and I'll be honest—it didn't start smoothly. I 
+                    struggled through my first semester of nursing school and seriously questioned 
+                    whether I could do it. But I kept going, graduated, and began my career in the ICU.
+                  </p>
+
+                  <p className="text-base leading-relaxed" style={{color: '#475569'}}>
+                    Since then, I've worked in over 10 hospitals and nearly every type of critical care 
+                    environment. In 2016, I transitioned into travel nursing, where I've continued to grow 
+                    and learn across a wide variety of clinical settings. My career has also taken me into 
+                    correctional health, psychiatry, telehealth, and independent contracting.
+                  </p>
+
+                  <p className="text-base leading-relaxed" style={{color: '#475569'}}>
+                    Along the way, I've seen how challenging it can be for families to find the right in-home nurse—and how difficult it is for nurses to navigate constant credentialing and 
+                    onboarding with little guidance.
+                  </p>
+
+                  <p className="text-base leading-relaxed" style={{color: '#475569'}}>
+                    I created Nurse Nest to make things better. This platform exists to simplify the 
+                    process for both clients and nurses, offering a thoughtful, transparent way to connect 
+                    with licensed professionals who are ready to help.
+                  </p>
+
+                  <p className="text-base leading-relaxed" style={{color: '#475569'}}>
+                    Whether you're a new parent, caring for an aging family member, or a clinic in need 
+                    of support, I'm here to make it easier to get the care you need from someone you can 
+                    trust.
+                  </p>
+
+                  <p className="text-base leading-relaxed" style={{color: '#475569'}}>
+                    If you have any questions or just want to connect, I'd love to hear from you.
+                  </p>
+                </div>
+
+                {/* Signature */}
+                <div className="pt-6">
+                  <img
+                    src="/lovable-uploads/85e79782-ec91-447f-ae99-6defbdd27e25.png"
+                    alt="Signature"
+                    className="h-16 w-auto"
+                  />
+                </div>
+              </AnimatedSection>
+            </div>
           </div>
-        </AnimatedSection>
+        </div>
       </div>
     </section>
   );
