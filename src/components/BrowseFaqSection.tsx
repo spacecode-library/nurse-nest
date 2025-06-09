@@ -8,26 +8,22 @@ interface BrowseFaqSectionProps {
 
 export default function BrowseFaqSection({ onToggleFaq, isOpen }: BrowseFaqSectionProps) {
   return (
-    <section className="py-8 px-4" style={{ backgroundColor: '#f8fafc' }}>
+    <section className="py-12 px-4">
       <div className="max-w-4xl mx-auto text-center">
-        <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-          <div className="flex flex-col items-center space-y-4">
-            <button
-              onClick={onToggleFaq}
-              className={`px-8 py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 ${
-                isOpen
-                  ? 'bg-red-500 text-white hover:bg-red-600'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-              }`}
-              style={{ 
-                fontFamily: 'Arial, Helvetica, sans-serif',
-                minHeight: '44px'
-              }}
-            >
-              {isOpen ? 'Close FAQs' : 'Browse FAQs'}
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={onToggleFaq}
+          className={`px-10 py-5 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
+            isOpen
+              ? 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700'
+              : 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800'
+          }`}
+          style={{ 
+            fontFamily: 'Arial, Helvetica, sans-serif',
+            minHeight: '60px'
+          }}
+        >
+          {isOpen ? 'Close FAQs' : 'Browse FAQs'}
+        </button>
       </div>
     </section>
   );

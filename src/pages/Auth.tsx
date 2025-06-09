@@ -152,26 +152,25 @@ export default function Auth() {
       </div>
       
       <main className="flex min-h-screen pt-0">
-        {/* Split Screen Layout */}
-        <div className="flex w-full">
+        {/* Split Screen Layout - Full width */}
+        <div className="flex w-full min-h-screen">
           
-          {/* Left Side - Background Image */}
+          {/* Left Side - Background Image - Full width */}
           <div 
-            className="hidden lg:flex lg:w-2/3 relative overflow-hidden"
+            className="hidden lg:flex lg:w-3/5 relative overflow-hidden"
             style={{
               backgroundImage: `url('/lovable-uploads/7c9b7912-ea93-48c3-9bb9-23fb6339c2d0.png')`,
               backgroundSize: 'cover',
-              backgroundPosition: 'left center',
-              backgroundAttachment: 'fixed'
+              backgroundPosition: 'left center'
             }}
           >
             {/* Smooth gradient overlay for seamless transition */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/20"></div>
           </div>
 
-          {/* Right Side - Login Form */}
-          <div className="w-full lg:w-1/3 bg-white flex items-center justify-center relative min-h-screen">
-            <div className="w-full max-w-md px-6 py-12">
+          {/* Right Side - Login Form - Shifted left */}
+          <div className="w-full lg:w-2/5 bg-white flex items-center justify-center relative min-h-screen">
+            <div className="w-full max-w-md px-6 py-12 lg:px-12">
               
               {/* Header Section with Healthcare Reimagined Image */}
               <div className="text-center mb-8">

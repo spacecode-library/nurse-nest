@@ -1,3 +1,4 @@
+
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
@@ -10,7 +11,7 @@ export default function HeroSection() {
       {/* Desktop Background - New Hero Image */}
       <div className="hidden md:block absolute inset-0">
         <img 
-          src="/lovable-uploads/d26f2a2e-9eb9-4d20-87e7-979b6954da43.png" 
+          src="/lovable-uploads/9067393e-65f2-441b-9af1-b3646163052f.png" 
           alt="Need a nurse? We make it easy." 
           className="w-full h-full object-cover"
         />
@@ -22,7 +23,7 @@ export default function HeroSection() {
         <div 
           className="flex-1 relative"
           style={{
-            backgroundImage: `url('/lovable-uploads/b31f68cc-c0bc-4fbf-a6ce-478c83795425.png')`,
+            backgroundImage: `url('/lovable-uploads/24cf5331-b151-4c38-a13e-c496ba867ace.png')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             minHeight: 'calc(100vh - 80px)'
