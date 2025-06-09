@@ -8,9 +8,22 @@ interface FloatingFaqButtonProps {
 }
 
 export default function FloatingFaqButton({ onClick, isOpen }: FloatingFaqButtonProps) {
+  const handleClick = () => {
+    onClick();
+    // Scroll to FAQ section when it opens
+    if (!isOpen) {
+      setTimeout(() => {
+        const faqSection = document.getElementById('faq-section');
+        if (faqSection) {
+          faqSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center ${
         isOpen 
           ? 'bg-blue-600 text-white' 

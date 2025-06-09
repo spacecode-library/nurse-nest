@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -37,11 +36,9 @@ export default function Auth() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Check if user is already logged in
     const checkSession = async () => {
       const { data } = await getCurrentUser();
       if (data?.user) {
-        // Check user type and redirect accordingly
         const { data: userMetadata } = await supabase
           .from('user_metadata')
           .select('user_type')
@@ -66,7 +63,6 @@ export default function Auth() {
     
     try {
       if (isLogin) {
-        // Sign in existing user
         const { data, error } = await signIn(email, password);
         
         if (error) {
@@ -77,7 +73,6 @@ export default function Auth() {
             variant: "destructive"
           });
         } else if (data?.user) {
-          // Check user type and redirect accordingly
           const { data: userMetadata } = await supabase
             .from('user_metadata')
             .select('user_type')
@@ -96,7 +91,6 @@ export default function Auth() {
           }
         }
       } else {
-        // Sign up new user with proper metadata
         const metadata = {
           first_name: firstName,
           last_name: lastName
@@ -117,7 +111,6 @@ export default function Auth() {
             variant: "destructive"
           });
         } else if (data?.user) {
-          // Ensure proper account status is set for nurses
           if (userType === 'nurse') {
             await supabase
               .from('user_metadata')
@@ -134,7 +127,6 @@ export default function Auth() {
               : "Please check your email to verify your account."
           });
           
-          // Redirect based on user type
           if (userType === 'nurse') {
             navigate('/onboarding/nurse');
           } else if (userType === 'client') {
@@ -162,7 +154,7 @@ export default function Auth() {
           
           {/* Left Side - Artistic Background */}
           <div 
-            className="hidden lg:flex lg:w-3/4 relative overflow-hidden"
+            className="hidden lg:flex lg:w-2/3 relative overflow-hidden"
             style={{
               backgroundImage: `url('/lovable-uploads/1d340da6-726a-48a9-b86e-f5753a168762.png')`,
               backgroundSize: 'cover',
@@ -171,19 +163,20 @@ export default function Auth() {
             }}
           >
             {/* Gradient overlay for smooth transition */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30"></div>
           </div>
 
-          {/* Right Side - Login Form */}
-          <div className="w-full lg:w-1/4 bg-white flex items-center justify-start relative">
-            <div className="w-full max-w-md px-6 py-12 ml-0 lg:ml-8">
+          {/* Right Side - Login Form - Moved significantly to the left */}
+          <div className="w-full lg:w-1/3 bg-white flex items-center justify-start relative">
+            {/* Position form more to the left */}
+            <div className="w-full max-w-sm px-4 py-12 ml-4 lg:ml-8">
               
               {/* Header Section with Healthcare Reimagined Image */}
               <div className="text-left mb-8">
                 <img
                   src="/lovable-uploads/4833d6fb-c7e4-4dc3-86a5-2b6da1365e6a.png"
                   alt="Healthcare Reimagined"
-                  className="h-12 md:h-16 w-auto mb-6"
+                  className="h-10 md:h-12 w-auto mb-6"
                 />
                 <p className="text-lg text-gray-600 mb-2">
                   {isLogin ? 'Sign in to your account' : 'Create your account'}
@@ -202,10 +195,10 @@ export default function Auth() {
               )}
               
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 {!isLogin && (
                   <>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-2">
                         <Label htmlFor="firstName" className="text-gray-700 font-medium">
                           First Name
@@ -215,7 +208,7 @@ export default function Auth() {
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="h-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
+                          className="h-11 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                           required
                           placeholder="Enter first name"
                         />
@@ -229,7 +222,7 @@ export default function Auth() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="h-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
+                          className="h-11 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                           required
                           placeholder="Enter last name"
                         />
@@ -246,55 +239,55 @@ export default function Auth() {
                         className="space-y-3"
                       >
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
                             userType === 'client' 
                               ? 'border-blue-500 bg-blue-50' 
                               : 'border-gray-200'
                           }`} onClick={() => setUserType('client')}>
                             <RadioGroupItem value="client" id="client" className="text-blue-500" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
-                              <Building2 className="h-5 w-5 text-green-600" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+                              <Building2 className="h-4 w-4 text-green-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-semibold text-gray-900">Client</div>
-                              <div className="text-sm text-gray-600">I need nursing care services</div>
+                              <div className="font-semibold text-gray-900 text-sm">Client</div>
+                              <div className="text-xs text-gray-600">I need nursing care services</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
                             userType === 'nurse' 
                               ? 'border-blue-500 bg-blue-50' 
                               : 'border-gray-200'
                           }`} onClick={() => setUserType('nurse')}>
                             <RadioGroupItem value="nurse" id="nurse" className="text-blue-500" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
-                              <Stethoscope className="h-5 w-5 text-blue-600" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+                              <Stethoscope className="h-4 w-4 text-blue-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-semibold text-gray-900">Healthcare Professional</div>
-                              <div className="text-sm text-gray-600">I provide nursing care services</div>
+                              <div className="font-semibold text-gray-900 text-sm">Healthcare Professional</div>
+                              <div className="text-xs text-gray-600">I provide nursing care services</div>
                             </div>
                           </div>
                         </div>
                         
                         <div className="relative">
-                          <div className={`flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
+                          <div className={`flex items-center space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 ${
                             userType === 'admin' 
                               ? 'border-blue-500 bg-blue-50' 
                               : 'border-gray-200'
                           }`} onClick={() => setUserType('admin')}>
                             <RadioGroupItem value="admin" id="admin" className="text-blue-500" />
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
-                              <Shield className="h-5 w-5 text-purple-600" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+                              <Shield className="h-4 w-4 text-purple-600" />
                             </div>
                             <div className="flex-1">
-                              <div className="font-semibold text-gray-900 flex items-center">
+                              <div className="font-semibold text-gray-900 text-sm flex items-center">
                                 Administrator
-                                <Sparkles className="h-4 w-4 ml-2 text-purple-600" />
+                                <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
                               </div>
-                              <div className="text-sm text-gray-600">Platform administration</div>
+                              <div className="text-xs text-gray-600">Platform administration</div>
                             </div>
                           </div>
                         </div>
@@ -309,13 +302,13 @@ export default function Auth() {
                     Email Address
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 pl-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
+                      className="h-11 pl-10 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                       required
                       placeholder="Enter your email"
                     />
@@ -339,20 +332,20 @@ export default function Auth() {
                     )}
                   </div>
                   <div className="relative">
-                    <LockKeyhole className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+                    <LockKeyhole className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 pl-12 pr-12 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
+                      className="h-11 pl-10 pr-10 border-gray-200 focus:border-blue-500 rounded-lg bg-white"
                       required
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5" />
@@ -384,7 +377,7 @@ export default function Auth() {
                 
                 {/* Submit Button */}
                 <Button
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                  className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                   disabled={loading}
                   type="submit"
                 >
@@ -403,7 +396,7 @@ export default function Auth() {
               </form>
               
               {/* Footer Links */}
-              <div className="mt-6 text-left">
+              <div className="mt-5 text-left">
                 {isLogin ? (
                   <p className="text-gray-600">
                     Don't have an account?{' '}
@@ -436,7 +429,7 @@ export default function Auth() {
               </div>
 
               {/* Security Badge */}
-              <div className="mt-8 text-left">
+              <div className="mt-6 text-left">
                 <div className="inline-flex items-center space-x-2 text-sm text-gray-500">
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   <span>SSL Secured</span>
