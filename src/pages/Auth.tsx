@@ -146,9 +146,17 @@ export default function Auth() {
   
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Sticky Navbar - matches home page */}
-      <div className="sticky top-0 z-50">
-        <Navbar />
+      {/* Glassmorphism Sticky Header */}
+      <div className="sticky top-0 z-50 w-full">
+        <div 
+          className="backdrop-blur-lg bg-white/10 border-b border-white/20"
+          style={{ 
+            backdropFilter: 'blur(10px)',
+            background: 'rgba(255, 255, 255, 0.1)'
+          }}
+        >
+          <Navbar />
+        </div>
       </div>
       
       <main className="flex min-h-screen pt-0">
