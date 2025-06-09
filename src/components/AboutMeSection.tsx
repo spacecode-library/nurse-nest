@@ -4,90 +4,70 @@ import AnimatedSection from './AnimatedSection';
 
 export default function AboutMeSection() {
   return (
-    <section 
-      className="relative py-20 md:py-32" 
-      id="about-me"
-      style={{
-        background: 'linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%)'
-      }}
-    >
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Large White Card */}
-        <AnimatedSection animation="fade-up" delay={150}>
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl p-8 md:p-12 lg:p-16 max-w-5xl mx-auto border border-white/50 backdrop-blur-sm">
+    <section className="py-20 bg-gradient-to-br from-blue-50 to-white relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute top-0 left-0 w-64 h-64 bg-blue-100 rounded-full -translate-x-32 -translate-y-32 opacity-20"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-200 rounded-full translate-x-48 translate-y-48 opacity-10"></div>
+      
+      <div className="container mx-auto px-6">
+        <AnimatedSection animation="fade-up">
+          <div className="text-center mb-16">
+            {/* Make the title image slightly larger */}
+            <img
+              src="/lovable-uploads/598548b2-a370-469c-86f5-19503d151210.png"
+              alt="Meet the Founder"
+              className="h-20 md:h-24 w-auto mx-auto mb-8"
+            />
             
-            {/* Meet the Founder Header - Now inside the card */}
-            <div className="flex justify-center mb-8">
-              <img
-                src="/lovable-uploads/62c6c4e8-63bf-4393-b4c0-042689b94066.png"
-                alt="Meet the Founder"
-                className="h-16 md:h-20 w-auto max-w-full object-contain"
-              />
-            </div>
-
-            <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
-              {/* Profile Image */}
-              <div className="flex-shrink-0">
-                <div className="w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden border-4 border-blue-100 shadow-lg">
-                  <img
-                    src="/lovable-uploads/9daccab5-730e-4656-81e6-a31931f7d3f6.png"
-                    alt="Founder"
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-              </div>
-              
-              {/* Story Content */}
-              <div className="flex-1">
-                <div 
-                  className="space-y-6 text-left"
-                  style={{ 
-                    fontFamily: 'Arial, Helvetica, sans-serif',
-                    fontSize: '18px',
-                    lineHeight: '1.6',
-                    color: '#475569'
-                  }}
-                >
-                  <p className="font-medium text-slate-900 text-lg">
-                    Hi, I'm Jayson — Thank you so much for being here.
-                  </p>
-                  
-                  <p>
-                    I started my nursing journey in 2008, and I'll be honest—it didn't start smoothly. I struggled through my first semester of nursing school and seriously questioned whether I could do it. But I kept going, graduated, and began my career in the ICU.
-                  </p>
-                  
-                  <p>
-                    Since then, I've worked in over 10 hospitals and nearly every type of critical care environment. In 2016, I transitioned into travel nursing, where I've continued to grow and learn across a wide variety of clinical settings. My career has also taken me into correctional health, psychiatry, telehealth, and independent contracting.
-                  </p>
-                  
-                  <p>
-                    Along the way, I've seen how challenging it can be for families to find the right in-home nurse—and how difficult it is for nurses to navigate constant credentialing and onboarding with little guidance.
-                  </p>
-                  
-                  <p>
-                    I created Nurse Nest to make things better. This platform exists to simplify the process for both clients and nurses, offering a thoughtful, transparent way to connect with licensed professionals who are ready to help.
-                  </p>
-                  
-                  <p>
-                    Whether you're a new parent, caring for an aging family member, or a clinic in need of support, I'm here to make it easier to get the care you need from someone you can trust.
-                  </p>
-                  
-                  <p className="font-medium text-slate-900 text-lg">
-                    If you have any questions or just want to connect, I'd love to hear from you.
-                  </p>
+            <div className="max-w-4xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                {/* Left: Founder Image */}
+                <div className="relative">
+                  <div className="relative z-10">
+                    <img
+                      src="/lovable-uploads/e2b60f86-a631-4074-9374-e350c4ea1e3f.png"
+                      alt="Founder - Healthcare Professional"
+                      className="w-full max-w-md mx-auto rounded-3xl shadow-2xl"
+                    />
+                  </div>
+                  {/* Decorative background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-300 rounded-3xl transform rotate-3 scale-105 opacity-20"></div>
                 </div>
                 
-                {/* Signature */}
-                <div className="mt-6">
-                  <img 
-                    src="/lovable-uploads/16f8aab2-52ef-4d03-a067-775c04042d1f.png"
-                    alt="Signature"
-                    className="h-24 md:h-32 w-auto opacity-70"
-                    style={{
-                      filter: 'brightness(0.3)',
-                      maxWidth: '300px'
-                    }}
-                  />
+                {/* Right: Founder Story */}
+                <div className="space-y-6 text-left">
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+                    Our Story
+                  </h3>
+                  
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    As a nurse practitioner with over a decade of experience, I've witnessed firsthand the challenges families face when seeking quality healthcare at home. The traditional system often leaves gaps that can feel overwhelming.
+                  </p>
+                  
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    That's why I created NurseNest - to bridge those gaps with a platform that connects families with exceptional healthcare professionals quickly, safely, and affordably.
+                  </p>
+                  
+                  <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-blue-100">
+                    <p className="text-gray-800 font-medium italic">
+                      "Every family deserves access to compassionate, professional healthcare in the comfort of their own home. We're here to make that happen."
+                    </p>
+                    <p className="text-sm text-gray-600 mt-3 font-semibold">
+                      - Founder, NurseNest
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-4 pt-4">
+                    <div className="bg-blue-50 px-4 py-2 rounded-full">
+                      <span className="text-blue-700 font-medium text-sm">10+ Years Experience</span>
+                    </div>
+                    <div className="bg-green-50 px-4 py-2 rounded-full">
+                      <span className="text-green-700 font-medium text-sm">Licensed NP</span>
+                    </div>
+                    <div className="bg-purple-50 px-4 py-2 rounded-full">
+                      <span className="text-purple-700 font-medium text-sm">Healthcare Innovation</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
