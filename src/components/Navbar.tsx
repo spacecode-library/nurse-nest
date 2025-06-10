@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, ArrowRight } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -100,15 +100,12 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           {/* Authentication & CTA - Desktop */}
           <div className="hidden lg:flex items-center space-x-4 ml-auto">
             {/* Request a Nurse Button */}
-            <button
+            <Button
               onClick={handleRequestNurseClick}
-              className="bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center"
+              className="bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               Request a Nurse
-              <div className="ml-3 w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                <ArrowRight className="h-3 w-3 text-white" />
-              </div>
-            </button>
+            </Button>
             
             <UserMenu shouldUseDarkText={isScrolled || !isHomePageRoute} />
           </div>

@@ -1,3 +1,4 @@
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -61,35 +62,6 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     /* Use Inter as fallback for Avenir */
     font-family: 'Avenir', 'Helvetica', 'Inter', 'Arial', sans-serif;
-    /* Hide scrollbars globally */
-    overflow-x: hidden;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-  }
-  
-  /* Hide scrollbars for WebKit browsers */
-  body::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Ensure main content takes full width on mobile */
-  .main-content {
-    width: 100%;
-    overflow-x: hidden;
-  }
-
-  /* Mobile sidebar positioning */
-  @media (max-width: 768px) {
-    .sidebar {
-      position: fixed;
-      right: -100%;
-      transform: translateX(0);
-      transition: right 0.3s ease;
-    }
-
-    .sidebar.open {
-      right: 0;
-    }
   }
   
   /* Typography Hierarchy */
@@ -216,14 +188,22 @@
   }
 }
 
-/* Hide scrollbars but maintain scrolling functionality */
-* {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-*::-webkit-scrollbar {
-  display: none; /* WebKit */
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9bcbff;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
 }
 
 /* Focus styles */
@@ -241,5 +221,4 @@
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
