@@ -42,8 +42,8 @@ export default function HeroSection() {
             <AnimatedSection animation="fade-up">
               {/* Desktop CTA positioned to complement the background image */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4 mt-96">
-                <Link to="/apply">
-                  <Button className="bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300 text-lg">
+                <Link to="/apply" className="py-0 px-[38px]">
+                  <Button className="bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 text-lg font-semibold">
                     Request A Nurse
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
