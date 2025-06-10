@@ -33,10 +33,12 @@ export default function HeroSection() {
           <div className="absolute bottom-8 left-4 right-4">
             <AnimatedSection animation="fade-up">
               <Link to="/apply" className="block">
-                <Button className="w-full bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
+                <button className="w-full bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center">
                   Request A Nurse
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+                  <div className="ml-3 w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                    <ArrowRight className="h-4 w-4 text-white" />
+                  </div>
+                </button>
               </Link>
             </AnimatedSection>
           </div>
@@ -51,18 +53,23 @@ export default function HeroSection() {
           <div className="space-y-8">
             <AnimatedSection animation="fade-up">
               {/* Desktop CTA positioned to complement the background image */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 mt-96">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 mt-96 justify-center">
                 <Link to="/apply">
-                  <Button className="bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold transform hover:scale-105 transition-all duration-300">
+                  <button className="bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white px-8 py-4 text-lg rounded-full shadow-lg font-semibold transform hover:scale-105 transition-all duration-300 flex items-center">
                     Request A Nurse
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                    <div className="ml-3 w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                      <ArrowRight className="h-4 w-4 text-white" />
+                    </div>
+                  </button>
                 </Link>
                 
                 <Link to="/auth">
-                  <Button className="bg-white/95 text-slate-800 hover:bg-white border-2 border-white/20 px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm font-semibold">
+                  <button className="bg-white/95 text-slate-800 hover:bg-white border-2 border-white/20 px-8 py-4 text-lg rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm font-semibold flex items-center">
                     Join as a Nurse
-                  </Button>
+                    <div className="ml-3 w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                      <ArrowRight className="h-4 w-4 text-white" />
+                    </div>
+                  </button>
                 </Link>
               </div>
             </AnimatedSection>

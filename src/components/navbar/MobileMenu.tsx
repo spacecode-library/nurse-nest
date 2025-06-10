@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { X, LogOut, LayoutDashboard } from 'lucide-react';
+import { X, LogOut, LayoutDashboard, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,9 +38,17 @@ export default function MobileMenu({
   return (
     <div
       className={cn(
-        'lg:hidden fixed inset-0 z-[99999] transform transition-transform duration-300 ease-in-out',
-        isOpen ? 'translate-x-0' : 'translate-x-full'
+        'lg:hidden fixed inset-0 z-[99999] transform transition-all duration-300 ease-in-out',
+        'md:hidden',
+        isOpen ? 'right-0' : 'right-[-100%]'
       )}
+      style={{
+        position: 'fixed',
+        right: isOpen ? '0' : '-100%',
+        transition: 'right 0.3s ease',
+        width: '100%',
+        height: '100vh'
+      }}
     >
       {/* Solid white background - no transparency */}
       <div className="absolute inset-0 bg-white"></div>
@@ -137,15 +145,18 @@ export default function MobileMenu({
           
           {/* CTA Button - Only show if not on nurse pages */}
           {!isNursePage && (
-            <Button 
-              className="bg-primary-500 hover:bg-primary-600 w-full mt-4 button-hover-effect"
+            <button 
+              className="bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center w-full mt-4"
               onClick={() => {
                 setIsOpen(false);
                 handleRequestNurse();
               }}
             >
               Request a Nurse
-            </Button>
+              <div className="ml-3 w-6 h-6 bg-black rounded-full flex items-center justify-center">
+                <ArrowRight className="h-3 w-3 text-white" />
+              </div>
+            </button>
           )}
         </nav>
       </div>
