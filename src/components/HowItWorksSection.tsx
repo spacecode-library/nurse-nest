@@ -1,10 +1,13 @@
+
 import React from 'react';
 import { Computer, Smartphone, User, Clipboard } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
+
 export default function HowItWorksSection() {
   // Use our custom hook to set up scroll animation
   useScrollAnimationObserver();
+  
   const steps = [{
     number: 1,
     title: "Quick Care Request Submission",
@@ -26,9 +29,11 @@ export default function HowItWorksSection() {
     description: "Handle all care management through one convenient platform. Verify invoices, approve payments, and communicate with your nurse - everything you need in one secure, mobile-optimized dashboard.",
     icon: <Clipboard className="h-12 w-12 text-[#3b82f6]" />
   }];
-  return <section className="relative py-20 md:py-32" id="how-it-works" style={{
-    background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f1f5f9 100%)'
-  }}>
+
+  return (
+    <section className="relative py-20 md:py-32" id="how-it-works" style={{
+      background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f1f5f9 100%)'
+    }}>
       {/* Subtle decorative elements */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#9bcbff] to-transparent opacity-30"></div>
       
@@ -51,7 +56,8 @@ export default function HowItWorksSection() {
         
         {/* Enhanced 4-column grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-          {steps.map((step, index) => <AnimatedSection key={index} animation="fade-up" delay={index * 200} className="relative group">
+          {steps.map((step, index) => (
+            <AnimatedSection key={index} animation="fade-up" delay={index * 200} className="relative group">
               {/* Premium elevated card design */}
               <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl h-full flex flex-col relative min-h-[400px] transition-all duration-300 hover:transform hover:scale-105 border border-white/50 backdrop-blur-sm">
                 
@@ -104,15 +110,19 @@ export default function HowItWorksSection() {
                 {/* Subtle corner accent */}
                 <div className="absolute top-0 right-0 w-8 h-8 rounded-bl-2xl bg-gradient-to-br from-[#f0f9ff] to-transparent opacity-50"></div>
               </div>
-            </AnimatedSection>)}
+            </AnimatedSection>
+          ))}
         </div>
         
         {/* Subtle bottom decorative element */}
         <div className="mt-16 flex justify-center">
           <div className="flex space-x-2">
-            {[...Array(4)].map((_, i) => {})}
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="w-2 h-2 rounded-full bg-[#9bcbff] opacity-50"></div>
+            ))}
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 }

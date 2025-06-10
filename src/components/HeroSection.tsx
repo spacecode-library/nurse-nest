@@ -1,10 +1,38 @@
+
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
 import '@/index.css';
 import AnimatedSection from './AnimatedSection';
+import RotatingText from './RotatingText';
+
 export default function HeroSection() {
-  return <section className="relative min-h-screen flex items-center overflow-hidden">
+  const heroTexts = [
+    "Professional Care",
+    "Trusted Nurses", 
+    "Quality Service",
+    "24/7 Support"
+  ];
+
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Rotating Text Overlay - Above background */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <div className="text-center">
+          <div className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
+            <RotatingText 
+              texts={heroTexts}
+              rotationInterval={3000}
+              mainClassName="justify-center"
+              elementLevelClassName="text-white drop-shadow-lg"
+            />
+          </div>
+          <p className="text-xl md:text-2xl text-white/90 drop-shadow-lg">
+            DELIVERED TO YOUR DOORSTEP
+          </p>
+        </div>
+      </div>
+
       {/* Desktop Background - New Hero Image */}
       <div className="hidden md:block absolute inset-0">
         <img src="/lovable-uploads/9067393e-65f2-441b-9af1-b3646163052f.png" alt="Need a nurse? We make it easy." className="w-full h-full object-cover" />
@@ -20,7 +48,7 @@ export default function HeroSection() {
         minHeight: 'calc(100vh - 80px)'
       }}>
           {/* Request a Nurse Button - positioned at bottom */}
-          <div className="absolute bottom-8 left-4 right-4">
+          <div className="absolute bottom-8 left-4 right-4 z-20">
             <AnimatedSection animation="fade-up">
               <Link to="/apply" className="block">
                 <Button className="w-full bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-8 py-4 text-lg rounded-xl shadow-lg font-semibold">
@@ -61,7 +89,7 @@ export default function HeroSection() {
       </div>
       
       {/* Trust Indicators - Moved much lower on the page */}
-      <div className="absolute bottom-8 left-0 right-0 hidden md:block">
+      <div className="absolute bottom-8 left-0 right-0 hidden md:block z-10">
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
@@ -85,5 +113,6 @@ export default function HeroSection() {
           </div>
         </AnimatedSection>
       </div>
-    </section>;
+    </section>
+  );
 }
