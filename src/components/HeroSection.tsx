@@ -17,22 +17,27 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Rotating Text Overlay - Above background */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-        <div className="text-center">
-          <div className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
-            <RotatingText 
-              texts={heroTexts}
-              rotationInterval={3000}
-              mainClassName="justify-center"
-              elementLevelClassName="text-white drop-shadow-lg"
-            />
-          </div>
-          <p className="text-xl md:text-2xl text-white/90 drop-shadow-lg">
-            We Make it
-          </p>
-        </div>
-      </div>
+{/* Rotating Text Overlay - Positioned to match original text */}
+<div className="absolute inset-0 flex items-center justify-start pl-16 md:pl-24">
+  <div className="text-left">
+    <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+      Need a nurse?
+    </h1>
+    <p className="text-2xl md:text-3xl text-white/90 font-light">
+      We make it{' '}
+      <RotatingText 
+        texts={heroTexts}
+        rotationInterval={1500}
+        style={{ color: '#9bcbff', fontSize: 'inherit', fontWeight: 'inherit' }}
+      />
+    </p>
+    <p className="text-sm md:text-base text-white/70 mt-4 tracking-wider">
+      NATIONWIDE CONCIERGE<br />
+      NURSING SERVICE<br />
+      DELIVERED TO YOUR DOORSTEP.
+    </p>
+  </div>
+</div>
 
       {/* Desktop Background - New Hero Image */}
       <div className="hidden md:block absolute inset-0">
