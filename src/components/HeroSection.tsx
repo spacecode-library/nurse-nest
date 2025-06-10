@@ -8,10 +8,11 @@ import RotatingText from './RotatingText';
 
 export default function HeroSection() {
   const heroTexts = [
-    "Professional Care",
-    "Trusted Nurses", 
-    "Quality Service",
-    "24/7 Support"
+    "Easy",
+    "Pain-Free", 
+    "Trusted",
+    "Nationwide",
+    "Worry-Free"
   ];
 
   return (
@@ -28,7 +29,7 @@ export default function HeroSection() {
             />
           </div>
           <p className="text-xl md:text-2xl text-white/90 drop-shadow-lg">
-            DELIVERED TO YOUR DOORSTEP
+            We Make it
           </p>
         </div>
       </div>
