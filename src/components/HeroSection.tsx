@@ -1,32 +1,10 @@
-
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
 import '@/index.css';
 import AnimatedSection from './AnimatedSection';
-import RotatingText from './RotatingText';
-
 export default function HeroSection() {
-  const rotatingTexts = [
-    "PROFESSIONAL NURSES",
-    "QUALITY CARE",
-    "TRUSTED PROVIDERS",
-    "LICENSED PROFESSIONALS"
-  ];
-
-  return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* RotatingText Component - Above background image */}
-      <div className="absolute top-32 left-0 right-0 z-20 text-center">
-        <RotatingText
-          texts={rotatingTexts}
-          mainClassName="text-4xl md:text-6xl font-bold text-white"
-          rotationInterval={3000}
-          staggerDuration={0.05}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        />
-      </div>
-
+  return <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Desktop Background - New Hero Image */}
       <div className="hidden md:block absolute inset-0">
         <img src="/lovable-uploads/9067393e-65f2-441b-9af1-b3646163052f.png" alt="Need a nurse? We make it easy." className="w-full h-full object-cover" />
@@ -107,6 +85,5 @@ export default function HeroSection() {
           </div>
         </AnimatedSection>
       </div>
-    </section>
-  );
+    </section>;
 }
