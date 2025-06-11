@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Component as SilkBackground } from './ui/silk-background-animation';
+import { BeamsBackground } from './ui/beams-background';
 import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover-effects';
 
 export default function HowItWorksSection() {
@@ -9,9 +9,9 @@ export default function HowItWorksSection() {
       className="relative py-12 md:py-16 min-h-auto h-auto" 
       id="how-it-works"
     >
-      {/* Silk Background Animation */}
+      {/* Beams Background Animation */}
       <div className="absolute inset-0">
-        <SilkBackground />
+        <BeamsBackground />
       </div>
       
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
