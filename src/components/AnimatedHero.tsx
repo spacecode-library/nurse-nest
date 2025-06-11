@@ -1,14 +1,11 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { StarBorder } from "@/components/ui/star-border";
-
+import { GlowEffect } from "@/components/ui/glow-effect";
 function Hero() {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(() => ["reliable", "professional", "compassionate", "qualified", "trusted"], []);
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (titleNumber === titles.length - 1) {
@@ -19,40 +16,32 @@ function Hero() {
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, [titleNumber, titles]);
-
-  return (
-    <div className="w-full">
+  return <div className="w-full">
       <div className="container mx-auto">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
-          <div></div>
+          <div>
+            
+          </div>
           <div className="flex gap-4 flex-col max-w-3xl">
             <h1 className="text-5xl md:text-7xl tracking-tighter text-left font-regular text-white">
               <span className="text-white">Need a</span>
               <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
                 &nbsp;
-                {titles.map((title, index) => (
-                  <motion.span
-                    key={index}
-                    className="absolute font-semibold text-blue-300"
-                    initial={{
-                      opacity: 0,
-                      y: "-100"
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 50
-                    }}
-                    animate={titleNumber === index ? {
-                      y: 0,
-                      opacity: 1
-                    } : {
-                      y: titleNumber > index ? -150 : 150,
-                      opacity: 0
-                    }}
-                  >
+                {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" initial={{
+                opacity: 0,
+                y: "-100"
+              }} transition={{
+                type: "spring",
+                stiffness: 50
+              }} animate={titleNumber === index ? {
+                y: 0,
+                opacity: 1
+              } : {
+                y: titleNumber > index ? -150 : 150,
+                opacity: 0
+              }}>
                     {title}
-                  </motion.span>
-                ))}
+                  </motion.span>)}
               </span>
               <span className="text-white"> nurse?</span>
             </h1>
@@ -63,21 +52,21 @@ function Hero() {
             </p>
           </div>
           <div className="flex flex-row gap-3">
-            <StarBorder color="#3b82f6" speed="4s">
-              <Button size="lg" className="gap-4 text-white bg-sky-300 hover:bg-sky-200 border-0">
+            <div className="relative">
+              <GlowEffect colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} mode="rotate" blur="soft" duration={3} scale={1.1} />
+              <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200">
                 Request a Nurse <PhoneCall className="w-4 h-4" />
               </Button>
-            </StarBorder>
-            <StarBorder color="#ffffff" speed="3s">
-              <Button size="lg" className="gap-4 bg-white text-blue-600 hover:bg-blue-50 border-0" variant="outline">
+            </div>
+            <div className="relative">
+              <GlowEffect colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} mode="pulse" blur="soft" duration={2} scale={1.05} />
+              <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50" variant="outline">
                 Join as a Nurse <MoveRight className="w-4 h-4" />
               </Button>
-            </StarBorder>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
-
 export { Hero };
