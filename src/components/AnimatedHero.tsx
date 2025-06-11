@@ -7,7 +7,7 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 
 function Hero() {
   const [titleNumber, setTitleNumber] = useState(0);
-  const titles = useMemo(() => ["Specialized", "Night Nurse", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
+  const titles = useMemo(() => ["Specialized", "Night", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
   
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -59,7 +59,7 @@ function Hero() {
             {/* Content block moved significantly lower on mobile */}
             <div className="mt-8 md:mt-0 mb-16 md:mb-0">
               <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left px-4 md:px-0 mb-6">
-                Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. *Because the best care happens where you feel safest.
+                Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
               </p>
               
               <div className="flex flex-col md:flex-row gap-3 px-4 md:px-0 w-full md:w-auto">
