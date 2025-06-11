@@ -7,44 +7,30 @@ import AnimatedSection from './AnimatedSection';
 import RotatingText from './RotatingText';
 
 export default function HeroSection() {
-  const heroTexts = [
-    "Easy",
-    "Pain-Free", 
-    "Trusted",
-    "Nationwide",
-    "Worry-Free"
-  ];
-
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Rotating Text Overlay - Simple positioning */}
-<div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
-  <div className="text-left">
-    <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
-      Need a nurse?
-    </h1>
-    <p className="text-2xl md:text-3xl text-white/90 font-light">
-      We make it{' '}
-      <RotatingText 
-        texts={heroTexts}
-        rotationInterval={1500}
-        style={{ color: '#9bcbff' }}
-      />
-    </p>
-    <p className="text-sm md:text-base text-white/70 mt-4 tracking-wider">
-      NATIONWIDE CONCIERGE<br />
-      NURSING SERVICE<br />
-      DELIVERED TO YOUR DOORSTEP.
-    </p>
-  </div>
-</div>
+      {/* RotatingText Component - Above background image */}
+      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-30">
+        <RotatingText
+          texts={['React', 'Bits', 'Is', 'Cool!']}
+          mainClassName="px-2 sm:px-2 md:px-3 bg-cyan-300 text-black overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg"
+          staggerFrom="last"
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "-120%" }}
+          staggerDuration={0.025}
+          splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+          transition={{ type: "spring", damping: 30, stiffness: 400 }}
+          rotationInterval={2000}
+        />
+      </div>
 
-      {/* Desktop Background - New Hero Image */}
+      {/* Desktop Background */}
       <div className="hidden md:block absolute inset-0">
         <img src="/lovable-uploads/9067393e-65f2-441b-9af1-b3646163052f.png" alt="Need a nurse? We make it easy." className="w-full h-full object-cover" />
       </div>
       
-      {/* Mobile Layout - Updated with new image */}
+      {/* Mobile Layout */}
       <div className="md:hidden w-full relative min-h-screen flex flex-col">
         {/* Mobile Hero Image - Full screen */}
         <div className="flex-1 relative" style={{
@@ -67,7 +53,7 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* Desktop Content - Minimal overlay since image contains text */}
+      {/* Desktop Content */}
       <div className="hidden md:block container mx-auto px-4 relative z-10 pt-16 md:pt-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
