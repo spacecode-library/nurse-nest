@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
-import AboutMeSection from "@/components/AboutMeSection";
 import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 import FloatingFaqButton from "@/components/FloatingFaqButton";
 import BrowseFaqSection from "@/components/BrowseFaqSection";
@@ -31,9 +30,6 @@ export default function Index() {
         
         {/* Statistics Section */}
         <StatisticsSection />
-        
-        {/* About the Founder */}
-        <AboutMeSection />
         
         {/* Browse FAQ Section */}
         <BrowseFaqSection onToggleFaq={toggleFaq} isOpen={isFaqVisible} />

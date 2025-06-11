@@ -19,18 +19,20 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Preserved */}
+      {/* Mobile Layout - Fixed for proper display */}
       <div className="md:hidden w-full relative min-h-screen">
-        <div className="flex-1 relative" style={{
-          backgroundImage: `url('/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: 'calc(100vh - 80px)'
-        }}>
-        </div>
+        <div 
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url('/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
       </div>
       
-      {/* NEW ANIMATED HERO CONTENT - Uses nursing-specific content */}
+      {/* ANIMATED HERO CONTENT - Uses nursing-specific content */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
         <Hero />
       </div>
