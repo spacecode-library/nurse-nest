@@ -23,7 +23,7 @@ function Hero() {
             
           </div>
           <div className="flex gap-4 flex-col max-w-3xl">
-            <h1 className="text-5xl md:text-7xl tracking-tighter text-left font-regular text-white">
+            <h1 className="text-5xl md:text-7xl tracking-tighter text-left font-regular text-white my-[132px] mx-[19px] px-0">
               <span className="text-white">Need a</span>
               <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
                 &nbsp;
