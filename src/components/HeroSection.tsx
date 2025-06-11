@@ -10,10 +10,10 @@ export default function HeroSection() {
       {/* Rotating Text Overlay - Updated with Old Standard TT font */}
       <div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
         <div className="text-left">
-          <h1 className="text-5xl font-old-standard font-bold mb-2 italic text-sky-200 md:text-7xl">
+          <h1 className="text-5xl font-old-standard font-bold mb-2 text-sky-200 md:text-7xl">
             Need a nurse?
           </h1>
-          <p className="text-4xl md:text-4xl text-white/90 font-old-standard font-bold">
+          <p className="text-2xl md:text-2xl text-white/90 font-old-standard font-bold">
             We make it{' '}
             <RotatingText texts={heroTexts} rotationInterval={1500} highlightColor="#9bcbff" mainClassName="text-white font-old-standard font-bold italic" initial={{
             y: "100%"
