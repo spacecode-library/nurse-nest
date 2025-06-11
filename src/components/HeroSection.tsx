@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
 import '@/index.css';
 import AnimatedSection from './AnimatedSection';
-import { Hero } from './ui/animated-hero';
+import { Hero } from './AnimatedHero';
 
 export default function HeroSection() {
   return (
@@ -30,7 +30,7 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* NEW ANIMATED HERO CONTENT - Replaces center content */}
+      {/* NEW ANIMATED HERO CONTENT - Uses nursing-specific content */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
         <Hero />
       </div>
