@@ -1,4 +1,3 @@
-
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
@@ -83,11 +82,17 @@ export default {
       fontFamily: {
         sans: ['Avenir', 'Helvetica', 'Arial', 'sans-serif'], // AvenirHelvetica font family
         heading: ['Avenir', 'Helvetica', 'Arial', 'sans-serif'],
-        'old-standard': ['Old Standard TT', 'serif'], // Add Old Standard TT font
+        'roboto': ['Roboto', 'Arial', 'sans-serif'], // Add Roboto font
+        'roboto-black': ['Roboto', 'Arial', 'sans-serif'], // Roboto Black 900
+        'roboto-extrabold': ['Roboto', 'Arial', 'sans-serif'], // Roboto ExtraBold 800
+        'roboto-regular': ['Roboto', 'Arial', 'sans-serif'], // Roboto Regular 400
       },
       fontWeight: {
         'light': '200', // Primary Heading weight
         'normal': '400', // Secondary Heading and Body Text weight
+        'roboto-regular': '400', // Roboto Regular
+        'roboto-extrabold': '800', // Roboto ExtraBold
+        'roboto-black': '900', // Roboto Black
       },
       spacing: {
         'section': '6rem', // 96px for major section spacing

@@ -1,9 +1,10 @@
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Import Old Standard TT Bold 700 and Inter fonts */
-@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@700&family=Inter:wght@200;400;500;600;700&display=swap');
+/* Import Roboto fonts - Black 900, ExtraBold 800 Italic, and Regular 400 */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,800&display=swap');
 
 @layer base {
   :root {

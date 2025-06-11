@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -37,13 +36,13 @@ interface RotatingTextProps {
 const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
   const {
     texts,
-    transition = { type: "spring", damping: 25, stiffness: 300 },
+    transition = { type: "spring", damping: 35, stiffness: 300, duration: 0.6 },
     initial = { y: "100%", opacity: 0 },
     animate = { y: 0, opacity: 1 },
-    exit = { y: "-120%", opacity: 0 },
+    exit = { y: "-100%", opacity: 0 },
     animatePresenceMode = "wait",
     animatePresenceInitial = false,
-    rotationInterval = 2000,
+    rotationInterval = 2500, // Slower animation
     staggerDuration = 0,
     staggerFrom = "first",
     loop = true,
@@ -180,7 +179,7 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
   return (
     <motion.span
       className={cn(
-        "inline-flex relative min-w-fit",
+        "inline-flex relative",
         mainClassName
       )}
       {...rest}
@@ -188,10 +187,11 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
       transition={transition}
       style={{ 
         backgroundColor: highlightColor, 
-        padding: '4px 12px', 
-        borderRadius: '4px',
+        padding: '6px 16px', // Increased padding to prevent cutoff
+        borderRadius: '6px',
         whiteSpace: 'nowrap',
-        minWidth: 'max-content'
+        minWidth: 'max-content',
+        display: 'inline-block' // Better positioning
       }}
     >
       <span className="sr-only">{texts[currentTextIndex]}</span>
@@ -201,18 +201,21 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
           className={cn(
             splitBy === "lines"
               ? "flex flex-col w-full"
-              : "flex flex-wrap whitespace-pre-wrap relative min-w-fit"
+              : "flex flex-wrap whitespace-pre-wrap relative"
           )}
           layout
           aria-hidden="true"
-          style={{ minWidth: 'max-content' }}
+          style={{ 
+            minWidth: 'max-content',
+            width: 'auto' // Auto width to fit content
+          }}
         >
           {elements.map((wordObj, wordIndex, array) => {
             const previousCharsCount = array
               .slice(0, wordIndex)
               .reduce((sum, word) => sum + word.characters.length, 0);
             return (
-              <span key={wordIndex} className={cn("inline-flex min-w-fit", splitLevelClassName)}>
+              <span key={wordIndex} className={cn("inline-flex", splitLevelClassName)}>
                 {wordObj.characters.map((char, charIndex) => (
                   <motion.span
                     key={charIndex}
@@ -226,8 +229,7 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
                         array.reduce((sum, word) => sum + word.characters.length, 0)
                       ),
                     }}
-                    className={cn("inline-block min-w-fit", elementLevelClassName)}
-                    style={{ minWidth: 'max-content' }}
+                    className={cn("inline-block", elementLevelClassName)}
                   >
                     {char}
                   </motion.span>
