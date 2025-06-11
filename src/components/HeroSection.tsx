@@ -35,7 +35,7 @@ export default function HeroSection() {
           </p>
           <p style={{
           fontWeight: '400'
-        }} className="text-sm mt-4 tracking-wider font-roboto-regular text-center md:text-left text-zinc-50 md:text-lg md:mt-12 pt-4 md:pt-8 py-4 md:py-[166px]">
+        }} className="text-sm mt-4 tracking-wider font-roboto-regular text-center md:text-left text-zinc-50 md:text-lg md:mt-12 pt-4 md:pt-8 py-4 md:py-[166px] my-[152px]">
             NATIONWIDE CONCIERGE<br />
             NURSING SERVICE<br />
             DELIVERED TO YOUR DOORSTEP.
