@@ -6,7 +6,7 @@ import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover
 export default function HowItWorksSection() {
   return (
     <section 
-      className="relative py-20 md:py-32 min-h-auto h-auto" 
+      className="relative py-12 md:py-16 min-h-auto h-auto" 
       id="how-it-works"
     >
       {/* Silk Background Animation */}
@@ -18,11 +18,11 @@ export default function HowItWorksSection() {
       
       <div className="container mx-auto px-4 relative z-30">
         {/* Replace title with uploaded image */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <img 
             src="/lovable-uploads/777025b3-590c-4edc-9777-ca6c29756c00.png" 
             alt="Nurse Nest" 
-            className="mx-auto max-w-full h-auto"
+            className="mx-auto max-w-xs md:max-w-sm h-auto"
           />
         </div>
         
