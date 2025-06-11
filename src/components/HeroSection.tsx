@@ -1,49 +1,33 @@
-
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
 import '@/index.css';
 import AnimatedSection from './AnimatedSection';
 import RotatingText from './RotatingText';
-
 export default function HeroSection() {
   const heroTexts = ["Easy", "Pain-Free", "Trusted", "Nationwide", "Worry-Free"];
-  
-  return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+  return <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Rotating Text Overlay - Updated with Old Standard TT font */}
       <div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
-        <div className="text-left">
-          <h1 className="text-5xl font-old-standard font-bold mb-2 text-sky-200 md:text-7xl">
+        <div className="text-left py-0 my-[36px] rounded-none px-0 mx-0">
+          <h1 className="text-5xl font-old-standard font-bold mb-2 text-sky-200 md:text-7xl my-0 mx-0 px-0 py-0 text-center">
             Need a nurse?
           </h1>
-          <p className="text-2xl md:text-2xl text-white/90 font-old-standard font-bold">
+          <p className="text-2xl md:text-2xl text-white/90 font-old-standard font-bold py-0">
             We make it{' '}
-            <RotatingText 
-              texts={heroTexts} 
-              rotationInterval={1500} 
-              highlightColor="#9bcbff" 
-              mainClassName="text-white font-old-standard font-bold italic" 
-              initial={{
-                y: "100%"
-              }} 
-              animate={{
-                y: 0
-              }} 
-              exit={{
-                y: "-120%"
-              }} 
-              staggerFrom="last" 
-              staggerDuration={0.025} 
-              splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1" 
-              transition={{
-                type: "spring",
-                damping: 30,
-                stiffness: 400
-              }} 
-            />
+            <RotatingText texts={heroTexts} rotationInterval={1500} highlightColor="#9bcbff" mainClassName="text-white font-old-standard font-bold italic" initial={{
+            y: "100%"
+          }} animate={{
+            y: 0
+          }} exit={{
+            y: "-120%"
+          }} staggerFrom="last" staggerDuration={0.025} splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1" transition={{
+            type: "spring",
+            damping: 30,
+            stiffness: 400
+          }} />
           </p>
-          <p className="text-sm mt-4 tracking-wider font-old-standard text-left text-zinc-50 font-bold md:text-lg py-[84px]">
+          <p className="text-sm mt-4 tracking-wider font-old-standard text-left text-zinc-50 font-bold md:text-lg my-[127px] py-[120px]">
             NATIONWIDE CONCIERGE<br />
             NURSING SERVICE<br />
             DELIVERED TO YOUR DOORSTEP.
@@ -53,28 +37,20 @@ export default function HeroSection() {
 
       {/* Desktop Background - New static image with full coverage */}
       <div className="hidden md:block absolute inset-0">
-        <img 
-          src="/lovable-uploads/7d6005a3-1dca-4980-bf11-bb34da3a852e.png" 
-          alt="Professional nurse providing care" 
-          className="w-full h-full object-cover object-center" 
-          style={{
-            transform: 'none'
-          }} 
-        />
+        <img src="/lovable-uploads/7d6005a3-1dca-4980-bf11-bb34da3a852e.png" alt="Professional nurse providing care" className="w-full h-full object-cover object-center" style={{
+        transform: 'none'
+      }} />
       </div>
       
       {/* Mobile Layout - New mobile background */}
       <div className="md:hidden w-full relative min-h-screen flex flex-col">
         {/* Mobile Hero Image - Full screen */}
-        <div 
-          className="flex-1 relative" 
-          style={{
-            backgroundImage: `url('/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            minHeight: 'calc(100vh - 80px)'
-          }}
-        >
+        <div className="flex-1 relative" style={{
+        backgroundImage: `url('/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minHeight: 'calc(100vh - 80px)'
+      }}>
           {/* Request a Nurse Button - positioned at bottom */}
           <div className="absolute bottom-8 left-4 right-4 z-20">
             <AnimatedSection animation="fade-up">
@@ -141,6 +117,5 @@ export default function HeroSection() {
           </div>
         </AnimatedSection>
       </div>
-    </section>
-  );
+    </section>;
 }
