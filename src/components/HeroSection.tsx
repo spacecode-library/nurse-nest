@@ -1,16 +1,18 @@
+
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
 import '@/index.css';
 import AnimatedSection from './AnimatedSection';
 import RotatingText from './RotatingText';
+
 export default function HeroSection() {
   const heroTexts = ["Easy", "Pain-Free", "Trusted", "Nationwide", "Worry-Free"];
   
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Rotating Text Overlay - Updated positioning for mobile */}
-      <div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20 md:block">
+      {/* Desktop Text Overlay - Only visible on desktop */}
+      <div className="hidden md:block absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
         <div className="text-left py-0 my-[36px] rounded-none px-0 mx-0 md:mx-[199px]">
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-roboto-black font-black mb-2 my-0 mx-0 px-0 py-0 text-center md:text-left" style={{
             color: '#9bcbff',
@@ -57,10 +59,10 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Mobile Text Overlay - Positioned relative to woman's face */}
-      <div className="md:hidden absolute inset-0 z-20 flex flex-col justify-center px-4">
-        {/* Header positioned at forehead level */}
-        <div className="absolute top-[25%] left-0 right-0 text-center">
+      {/* Mobile Text Overlay - Only visible on mobile */}
+      <div className="md:hidden mobile-hero-container absolute inset-0 z-20 flex flex-col">
+        {/* Mobile Header positioned at forehead level */}
+        <div className="mobile-hero-header absolute top-[20%] left-0 right-0 text-center px-4">
           <h1 className="text-3xl font-roboto-black font-black mb-2" style={{
             color: '#9bcbff',
             fontWeight: '900'
@@ -98,8 +100,8 @@ export default function HeroSection() {
           </p>
         </div>
 
-        {/* Description positioned at chin level */}
-        <div className="absolute top-[60%] left-0 right-0 text-center px-4">
+        {/* Mobile Description positioned at chin level */}
+        <div className="mobile-hero-description absolute top-[60%] left-0 right-0 text-center px-4">
           <p className="text-xs tracking-wider font-roboto-regular text-zinc-50" style={{
             fontWeight: '400'
           }}>
@@ -107,6 +109,18 @@ export default function HeroSection() {
             NURSING SERVICE<br />
             DELIVERED TO YOUR DOORSTEP.
           </p>
+        </div>
+
+        {/* Mobile Request A Nurse Button - compact and properly positioned */}
+        <div className="mobile-hero-button absolute bottom-24 left-4 right-4">
+          <AnimatedSection animation="fade-up">
+            <Link to="/apply" className="block">
+              <Button className="mobile-cta-button w-full bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-4 py-2 text-sm rounded-xl shadow-lg font-semibold max-w-xs mx-auto flex items-center justify-center">
+                Request A Nurse
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </AnimatedSection>
         </div>
       </div>
 
@@ -118,7 +132,7 @@ export default function HeroSection() {
       </div>
       
       {/* Mobile Layout - New mobile background */}
-      <div className="md:hidden w-full relative min-h-screen flex flex-col">
+      <div className="md:hidden w-full relative min-h-screen">
         {/* Mobile Hero Image - Full screen */}
         <div className="flex-1 relative" style={{
         backgroundImage: `url('/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png')`,
@@ -126,17 +140,6 @@ export default function HeroSection() {
         backgroundPosition: 'center',
         minHeight: 'calc(100vh - 80px)'
       }}>
-          {/* Compact Request a Nurse Button - positioned at bottom */}
-          <div className="absolute bottom-20 left-4 right-4 z-20">
-            <AnimatedSection animation="fade-up">
-              <Link to="/apply" className="block">
-                <Button className="w-full bg-brand-primary hover:bg-brand-primary/90 text-brand-navy px-6 py-3 text-base rounded-xl shadow-lg font-semibold max-w-xs mx-auto block">
-                  Request A Nurse
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </AnimatedSection>
-          </div>
         </div>
       </div>
       
