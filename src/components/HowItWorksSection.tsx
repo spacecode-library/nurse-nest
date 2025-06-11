@@ -1,24 +1,33 @@
 
 import React from 'react';
-import { AuroraBackground } from './ui/aurora-background';
+import { Component as SilkBackground } from './ui/silk-background-animation';
 import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover-effects';
 
 export default function HowItWorksSection() {
   return (
-    <AuroraBackground 
+    <section 
       className="relative py-20 md:py-32 min-h-auto h-auto" 
       id="how-it-works"
-      showRadialGradient={false}
     >
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#9bcbff] to-transparent opacity-30"></div>
+      {/* Silk Background Animation */}
+      <div className="absolute inset-0">
+        <SilkBackground />
+      </div>
       
-      <div className="container mx-auto px-4 relative z-10">
-        <h2 className="text-4xl font-light text-center mb-12 text-[#1e293b]">
-          Why Choose Nurse Nest
-        </h2>
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+      
+      <div className="container mx-auto px-4 relative z-30">
+        {/* Replace title with uploaded image */}
+        <div className="text-center mb-12">
+          <img 
+            src="/lovable-uploads/777025b3-590c-4edc-9777-ca6c29756c00.png" 
+            alt="Nurse Nest" 
+            className="mx-auto max-w-full h-auto"
+          />
+        </div>
         
         <FeaturesSectionWithHoverEffects />
       </div>
-    </AuroraBackground>
+    </section>
   );
 }
