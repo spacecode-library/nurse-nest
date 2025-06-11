@@ -18,7 +18,7 @@ export default function HeroSection() {
           </h1>
           <p style={{
           fontWeight: '800'
-        }} className="text-2xl md:text-2xl text-white font-roboto-extrabold italic py-0">
+        }} className="text-2xl text-white font-roboto-extrabold italic py-0 md:text-3xl">
             We make it{' '}
             <RotatingText texts={heroTexts} rotationInterval={2500} highlightColor="#9bcbff" mainClassName="text-white font-roboto-extrabold italic" initial={{
             y: "100%"
