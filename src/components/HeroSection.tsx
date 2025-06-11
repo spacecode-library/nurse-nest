@@ -8,8 +8,8 @@ export default function HeroSection() {
   const heroTexts = ["Easy", "Pain-Free", "Trusted", "Nationwide", "Worry-Free"];
   return <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Rotating Text Overlay - Updated with Roboto fonts */}
-      <div className="absolute top-1/4 left-8 md:left-16 transform -translate-y-1/2 z-20">
-        <div className="text-left py-0 my-[36px] rounded-none px-0 mx-[240px]">
+      <div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
+        <div className="text-left py-0 my-[36px] rounded-none px-0 mx-0">
           <h1 className="text-5xl font-roboto-black font-black mb-2 md:text-7xl my-0 mx-0 px-0 py-0 text-center" style={{
           color: '#9bcbff',
           fontWeight: '900'
@@ -18,7 +18,7 @@ export default function HeroSection() {
           </h1>
           <p style={{
           fontWeight: '800'
-        }} className="text-2xl text-white font-roboto-extrabold italic py-0 md:text-3xl">
+        }} className="text-2xl md:text-2xl text-white font-roboto-extrabold italic py-0 my-0">
             We make it{' '}
             <RotatingText texts={heroTexts} rotationInterval={2500} highlightColor="#9bcbff" mainClassName="text-white font-roboto-extrabold italic" initial={{
             y: "100%"
@@ -35,7 +35,7 @@ export default function HeroSection() {
           </p>
           <p style={{
           fontWeight: '400'
-        }} className="text-sm mt-4 tracking-wider font-roboto-regular text-left text-zinc-50 md:text-lg mt-4 md:mt-12 pt-8 md:pt-24 my-[161px]">
+        }} className="text-sm mt-4 tracking-wider font-roboto-regular text-left text-zinc-50 md:text-lg mt-4 md:mt-12 pt-8 md:pt-24 my-0 py-[166px]">
             NATIONWIDE CONCIERGE<br />
             NURSING SERVICE<br />
             DELIVERED TO YOUR DOORSTEP.
