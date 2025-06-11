@@ -3,6 +3,7 @@ import React from 'react';
 import { Computer, Smartphone, User, Clipboard } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
+import { AuroraBackground } from './ui/aurora-background';
 
 export default function HowItWorksSection() {
   // Use our custom hook to set up scroll animation
@@ -31,9 +32,11 @@ export default function HowItWorksSection() {
   }];
 
   return (
-    <section className="relative py-20 md:py-32" id="how-it-works" style={{
-      background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f1f5f9 100%)'
-    }}>
+    <AuroraBackground 
+      className="relative py-20 md:py-32 h-auto min-h-screen" 
+      id="how-it-works"
+      showRadialGradient={false}
+    >
       {/* Subtle decorative elements */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#9bcbff] to-transparent opacity-30"></div>
       
@@ -59,7 +62,7 @@ export default function HowItWorksSection() {
           {steps.map((step, index) => (
             <AnimatedSection key={index} animation="fade-up" delay={index * 200} className="relative group">
               {/* Premium elevated card design */}
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl h-full flex flex-col relative min-h-[400px] transition-all duration-300 hover:transform hover:scale-105 border border-white/50 backdrop-blur-sm">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl h-full flex flex-col relative min-h-[400px] transition-all duration-300 hover:transform hover:scale-105 border border-white/50">
                 
                 {/* Enhanced numbered circle with gradient */}
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -123,6 +126,6 @@ export default function HowItWorksSection() {
           </div>
         </div>
       </div>
-    </section>
+    </AuroraBackground>
   );
 }
