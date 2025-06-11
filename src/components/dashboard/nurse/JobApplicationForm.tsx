@@ -27,6 +27,7 @@ import { submitApplication, hasApplied } from '@/supabase/api/applicationService
 interface JobApplicationFormProps {
   job: any;
   nurseId: string;
+  nurseEmail?:string;
   onBack: () => void;
   onApplicationSubmitted: () => void;
 }
@@ -34,6 +35,7 @@ interface JobApplicationFormProps {
 export default function JobApplicationForm({
   job,
   nurseId,
+  nurseEmail,
   onBack,
   onApplicationSubmitted
 }: JobApplicationFormProps) {
@@ -78,11 +80,13 @@ export default function JobApplicationForm({
 
     try {
       setSubmitting(true);
+      console.log(nurseEmail)
       const { data, error } = await submitApplication({
         nurse_id: nurseId,
         job_id: job.id,
         cover_message: coverMessage.trim() || null
       });
+      
 
       if (error) throw error;
 

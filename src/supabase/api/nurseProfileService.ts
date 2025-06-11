@@ -21,6 +21,7 @@ export interface NurseProfile {
   state: string;
   zip_code: string;
   bio: string;
+  email:string;
 }
 
 /**

@@ -757,6 +757,7 @@ export type Database = {
           updated_at: string | null
           user_id: string | null
           zip_code: string
+          email:string
         }
         Insert: {
           bio?: string | null

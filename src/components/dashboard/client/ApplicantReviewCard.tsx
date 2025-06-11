@@ -38,6 +38,7 @@ import { createContract, generateContractTermsTemplate } from '@/supabase/api/co
 // Import your chat components
 import ChatWindow from '@/components/ChatWindow';
 import { useAuth } from '@/contexts/AuthContext';
+import { EmailService } from '@/supabase/email/emailService';
 
 interface Application {
   id: string;
@@ -114,7 +115,7 @@ export default function ApplicantReviewCard({
   const [statusFilter, setStatusFilter] = useState('all');
   const [jobFilter, setJobFilter] = useState('all');
   const [selectedApplicant, setSelectedApplicant] = useState<Application | null>(null);
-  
+  const emailService = new EmailService();
   // Updated activeChat state
   const [activeChat, setActiveChat] = useState<{
     conversation: any;
@@ -386,6 +387,8 @@ export default function ApplicantReviewCard({
         description: `Contract created and sent to ${application.nurse_profiles.name} for acceptance.`,
         duration: 5000
       });
+
+      await emailService.sendNurseHireEmail(nurseDetails.first_name + ''+nurseDetails.last_name,application.job_postings.job_code,nurseDetails?.email,application.job_postings.benefits)
 
       loadData();
       onApplicationUpdate();

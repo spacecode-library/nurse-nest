@@ -119,12 +119,13 @@ export default function Auth() {
           }
           
           toast({
-            title: "Account created successfully!",
+            title: "Verify you Account !",
             description: userType === 'admin' 
               ? "Admin account created successfully!" 
               : userType === 'nurse'
-              ? "Account created! Complete your profile to get started."
-              : "Please check your email to verify your account."
+              ? "Please check your email to verify your account."
+              : userType === 'client'
+              ? "Please check your email to verify your account.": "Please try again later."
           });
           
           if (userType === 'nurse') {

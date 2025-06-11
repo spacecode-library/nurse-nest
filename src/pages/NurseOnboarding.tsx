@@ -24,6 +24,8 @@ import {
 } from '@/supabase/api/nurseProfileService';
 import { supabase } from '@/integrations/supabase/client';
 import { AmericanDateInput, DateUtils } from '@/components/ui/american-date-input';
+import Auth from './Auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Constants for form options
 const LICENSE_TYPES = [
@@ -153,6 +155,8 @@ export default function NurseOnboarding() {
     const stepPercentage = 100 / ONBOARDING_STEPS.length;
     return Math.round(stepPercentage * (step + 1));
   };
+
+  const {user} = useAuth();
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
@@ -294,7 +298,8 @@ export default function NurseOnboarding() {
               city: city,
               state: state,
               zip_code: zipCode,
-              bio: ''
+              bio: '',
+              email: user?.email || '',
             });
             
             if (error) throw error;

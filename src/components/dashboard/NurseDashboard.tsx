@@ -1084,6 +1084,7 @@ export default function NurseDashboard() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
             <JobApplicationForm
+              nurseEmail={user?.email}
               job={selectedJob}
               nurseId={nurseProfile.id}
               onBack={() => {
