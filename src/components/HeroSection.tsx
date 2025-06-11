@@ -5,7 +5,7 @@ import '@/index.css';
 import AnimatedSection from './AnimatedSection';
 import RotatingText from './RotatingText';
 export default function HeroSection() {
-  const heroTexts = ["Simple", "Pain-Free", "Trusted", "Nationwide", "Personal", "Seamless"];
+  const heroTexts = ["Easy", "Pain-Free", "Trusted", "Nationwide", "Worry-Free"];
   return <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Rotating Text Overlay - Updated with Roboto fonts */}
       <div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
@@ -36,9 +36,9 @@ export default function HeroSection() {
           <p style={{
           fontWeight: '400'
         }} className="text-sm mt-4 tracking-wider font-roboto-regular text-left text-zinc-50 md:text-lg mt-4 md:mt-12 pt-8 md:pt-24 my-0 py-[166px]">
-            Professional Nursing Care<br />
-            Delivered Nationwide<br />
-            To Your Doorstep.
+            NATIONWIDE CONCIERGE<br />
+            NURSING SERVICE<br />
+            DELIVERED TO YOUR DOORSTEP.
           </p>
         </div>
       </div>
