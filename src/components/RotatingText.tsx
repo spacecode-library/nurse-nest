@@ -30,6 +30,7 @@ interface RotatingTextProps {
   mainClassName?: string;
   splitLevelClassName?: string;
   elementLevelClassName?: string;
+  highlightColor?: string;
   [key: string]: any;
 }
 
@@ -52,16 +53,13 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
     mainClassName,
     splitLevelClassName,
     elementLevelClassName,
+    highlightColor = "#9bcbff",
     ...rest
   } = props;
 
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
 
   const splitIntoCharacters = (text: string) => {
-    if (typeof Intl !== "undefined" && Intl.Segmenter) {
-      const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
-      return Array.from(segmenter.segment(text), (segment) => segment.segment);
-    }
     return Array.from(text);
   };
 
@@ -182,12 +180,13 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
   return (
     <motion.span
       className={cn(
-        "flex flex-wrap whitespace-pre-wrap relative",
+        "inline-flex relative",
         mainClassName
       )}
       {...rest}
       layout
       transition={transition}
+      style={{ backgroundColor: highlightColor, padding: '4px 8px', borderRadius: '4px' }}
     >
       <span className="sr-only">{texts[currentTextIndex]}</span>
       <AnimatePresence mode={animatePresenceMode} initial={animatePresenceInitial}>

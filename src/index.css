@@ -1,10 +1,9 @@
-
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Import Avenir/Helvetica fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;600;700&display=swap');
+/* Import Old Standard TT Bold 700 and Inter fonts */
+@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@700&family=Inter:wght@200;400;500;600;700&display=swap');
 
 @layer base {
   :root {

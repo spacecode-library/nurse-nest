@@ -1,4 +1,3 @@
-
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
@@ -17,34 +16,47 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Rotating Text Overlay - Simple positioning */}
-<div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
-  <div className="text-left">
-    <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
-      Need a nurse?
-    </h1>
-    <p className="text-2xl md:text-3xl text-white/90 font-light">
-      We make it{' '}
-      <RotatingText 
-        texts={heroTexts}
-        rotationInterval={1500}
-        style={{ color: '#9bcbff' }}
-      />
-    </p>
-    <p className="text-sm md:text-base text-white/70 mt-4 tracking-wider">
-      NATIONWIDE CONCIERGE<br />
-      NURSING SERVICE<br />
-      DELIVERED TO YOUR DOORSTEP.
-    </p>
-  </div>
-</div>
+      {/* Rotating Text Overlay - Updated with Old Standard TT font */}
+      <div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
+        <div className="text-left">
+          <h1 className="text-4xl md:text-5xl font-old-standard font-bold text-white mb-2 italic">
+            Need a nurse?
+          </h1>
+          <p className="text-2xl md:text-3xl text-white/90 font-old-standard font-bold italic">
+            We make it{' '}
+            <RotatingText 
+              texts={heroTexts}
+              rotationInterval={1500}
+              highlightColor="#9bcbff"
+              mainClassName="text-white font-old-standard font-bold italic"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-120%" }}
+              staggerFrom="last"
+              staggerDuration={0.025}
+              splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
+            />
+          </p>
+          <p className="text-sm md:text-base text-white/70 mt-4 tracking-wider font-old-standard font-bold">
+            NATIONWIDE CONCIERGE<br />
+            NURSING SERVICE<br />
+            DELIVERED TO YOUR DOORSTEP.
+          </p>
+        </div>
+      </div>
 
-      {/* Desktop Background - New Hero Image */}
+      {/* Desktop Background - Static image with full coverage */}
       <div className="hidden md:block absolute inset-0">
-        <img src="/lovable-uploads/9067393e-65f2-441b-9af1-b3646163052f.png" alt="Need a nurse? We make it easy." className="w-full h-full object-cover" />
+        <img 
+          src="/lovable-uploads/9067393e-65f2-441b-9af1-b3646163052f.png" 
+          alt="Need a nurse? We make it easy." 
+          className="w-full h-full object-cover object-center"
+          style={{ transform: 'none' }}
+        />
       </div>
       
-      {/* Mobile Layout - Updated with new image */}
+      {/* Mobile Layout - Keep existing mobile background unchanged */}
       <div className="md:hidden w-full relative min-h-screen flex flex-col">
         {/* Mobile Hero Image - Full screen */}
         <div className="flex-1 relative" style={{

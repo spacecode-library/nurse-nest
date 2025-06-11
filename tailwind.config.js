@@ -83,6 +83,7 @@ export default {
       fontFamily: {
         sans: ['Avenir', 'Helvetica', 'Arial', 'sans-serif'], // AvenirHelvetica font family
         heading: ['Avenir', 'Helvetica', 'Arial', 'sans-serif'],
+        'old-standard': ['Old Standard TT', 'serif'], // Add Old Standard TT font
       },
       fontWeight: {
         'light': '200', // Primary Heading weight
