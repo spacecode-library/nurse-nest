@@ -9,7 +9,7 @@ export default function HeroSection() {
   return <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Rotating Text Overlay - Updated with Roboto fonts */}
       <div className="absolute top-1/2 left-8 md:left-16 transform -translate-y-1/2 z-20">
-        <div className="text-left py-0 my-[36px] rounded-none px-0 mx-0">
+        <div className="text-left py-0 my-[36px] rounded-none px-0 mx-[199px]">
           <h1 className="text-5xl font-roboto-black font-black mb-2 md:text-7xl my-0 mx-0 px-0 py-0 text-center" style={{
           color: '#9bcbff',
           fontWeight: '900'
