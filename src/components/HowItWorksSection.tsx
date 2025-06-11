@@ -2,6 +2,7 @@
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 import { useScrollAnimationObserver } from '@/hooks/use-scroll-animation-observer';
+import { AuroraBackground } from './ui/aurora-background';
 
 export default function HowItWorksSection() {
   useScrollAnimationObserver();
@@ -34,9 +35,11 @@ export default function HowItWorksSection() {
   ];
 
   return (
-    <section className="relative py-20 md:py-32" id="how-it-works" style={{
-      background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f1f5f9 100%)'
-    }}>
+    <AuroraBackground 
+      className="relative py-20 md:py-32 min-h-auto h-auto" 
+      id="how-it-works"
+      showRadialGradient={false}
+    >
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#9bcbff] to-transparent opacity-30"></div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -172,6 +175,6 @@ export default function HowItWorksSection() {
           </div>
         </div>
       </div>
-    </section>
+    </AuroraBackground>
   );
 }
