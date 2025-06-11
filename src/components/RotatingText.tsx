@@ -180,13 +180,19 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
   return (
     <motion.span
       className={cn(
-        "inline-flex relative",
+        "inline-flex relative min-w-fit",
         mainClassName
       )}
       {...rest}
       layout
       transition={transition}
-      style={{ backgroundColor: highlightColor, padding: '4px 8px', borderRadius: '4px' }}
+      style={{ 
+        backgroundColor: highlightColor, 
+        padding: '4px 12px', 
+        borderRadius: '4px',
+        whiteSpace: 'nowrap',
+        minWidth: 'max-content'
+      }}
     >
       <span className="sr-only">{texts[currentTextIndex]}</span>
       <AnimatePresence mode={animatePresenceMode} initial={animatePresenceInitial}>
@@ -195,17 +201,18 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
           className={cn(
             splitBy === "lines"
               ? "flex flex-col w-full"
-              : "flex flex-wrap whitespace-pre-wrap relative"
+              : "flex flex-wrap whitespace-pre-wrap relative min-w-fit"
           )}
           layout
           aria-hidden="true"
+          style={{ minWidth: 'max-content' }}
         >
           {elements.map((wordObj, wordIndex, array) => {
             const previousCharsCount = array
               .slice(0, wordIndex)
               .reduce((sum, word) => sum + word.characters.length, 0);
             return (
-              <span key={wordIndex} className={cn("inline-flex", splitLevelClassName)}>
+              <span key={wordIndex} className={cn("inline-flex min-w-fit", splitLevelClassName)}>
                 {wordObj.characters.map((char, charIndex) => (
                   <motion.span
                     key={charIndex}
@@ -219,7 +226,8 @@ const RotatingText = forwardRef<any, RotatingTextProps>((props, ref) => {
                         array.reduce((sum, word) => sum + word.characters.length, 0)
                       ),
                     }}
-                    className={cn("inline-block", elementLevelClassName)}
+                    className={cn("inline-block min-w-fit", elementLevelClassName)}
+                    style={{ minWidth: 'max-content' }}
                   >
                     {char}
                   </motion.span>
