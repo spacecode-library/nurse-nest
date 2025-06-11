@@ -101,7 +101,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           
           {/* Authentication & CTA - Desktop */}
           <div className="hidden lg:flex items-center space-x-4 ml-auto">
-            {/* Request a Nurse Button with Glow */}
+            {/* Request a Nurse Button with Reduced Glow */}
             <div className="relative">
               <GlowEffect
                 colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
@@ -109,6 +109,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
                 blur="medium"
                 duration={4}
                 scale={1.1}
+                intensity={0.35}
               />
               <Button
                 onClick={handleRequestNurseClick}

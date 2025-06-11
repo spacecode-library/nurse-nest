@@ -7,7 +7,7 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 
 function Hero() {
   const [titleNumber, setTitleNumber] = useState(0);
-  const titles = useMemo(() => ["reliable", "professional", "compassionate", "qualified", "trusted"], []);
+  const titles = useMemo(() => ["Specialized", "Night Nurse", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
   
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -56,24 +56,26 @@ function Hero() {
               <span className="text-white"> nurse?</span>
             </h1>
 
-            <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left px-4 md:px-0">
-              We provide nationwide concierge nursing services delivered directly to your doorstep. 
-              Our licensed professionals ensure worry-free, quality care when you need it most.
-            </p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-3 px-4 md:px-0 w-full md:w-auto">
-            <div className="relative">
-              <GlowEffect colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} mode="rotate" blur="soft" duration={3} scale={1.1} />
-              <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8">
-                Request a Nurse <PhoneCall className="w-4 h-4 md:w-5 md:h-5" />
-              </Button>
-            </div>
-            <div className="relative">
-              <GlowEffect colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} mode="pulse" blur="soft" duration={2} scale={1.05} />
-              <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8" variant="outline">
-                Join as a Nurse <MoveRight className="w-4 h-4 md:w-5 md:h-5" />
-              </Button>
+            {/* Content block moved significantly lower on mobile */}
+            <div className="mt-8 md:mt-0 mb-16 md:mb-0">
+              <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left px-4 md:px-0 mb-6">
+                Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. *Because the best care happens where you feel safest.
+              </p>
+              
+              <div className="flex flex-col md:flex-row gap-3 px-4 md:px-0 w-full md:w-auto">
+                <div className="relative">
+                  <GlowEffect colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} mode="rotate" blur="soft" duration={3} scale={1.1} intensity={0.35} />
+                  <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8">
+                    Request a Nurse <PhoneCall className="w-4 h-4 md:w-5 md:h-5" />
+                  </Button>
+                </div>
+                <div className="relative">
+                  <GlowEffect colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} mode="pulse" blur="soft" duration={2} scale={1.05} />
+                  <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8" variant="outline">
+                    Join as a Nurse <MoveRight className="w-4 h-4 md:w-5 md:h-5" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

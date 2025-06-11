@@ -19,8 +19,8 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Fixed for proper display */}
-      <div className="md:hidden w-full relative min-h-screen">
+      {/* Mobile Layout - Fixed for proper display and positioned for lower content */}
+      <div className="md:hidden w-full relative min-h-screen flex items-end pb-20">
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
@@ -33,7 +33,7 @@ export default function HeroSection() {
       </div>
       
       {/* ANIMATED HERO CONTENT - Uses nursing-specific content */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center">
+      <div className="absolute inset-0 z-10 flex items-center justify-center md:items-center">
         <Hero />
       </div>
       

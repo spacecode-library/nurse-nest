@@ -26,6 +26,7 @@ export type GlowEffectProps = {
   transition?: Transition;
   scale?: number;
   duration?: number;
+  intensity?: number;
 };
 
 export function GlowEffect({
@@ -37,6 +38,7 @@ export function GlowEffect({
   transition,
   scale = 1,
   duration = 5,
+  intensity = 1,
 }: GlowEffectProps) {
   const BASE_TRANSITION = {
     repeat: Infinity,
@@ -60,7 +62,7 @@ export function GlowEffect({
           `radial-gradient(circle at 50% 50%, ${color} 0%, transparent 100%)`
       ),
       scale: [1 * scale, 1.1 * scale, 1 * scale],
-      opacity: [0.5, 0.8, 0.5],
+      opacity: [0.5 * intensity, 0.8 * intensity, 0.5 * intensity],
       transition: {
         ...(transition ?? {
           ...BASE_TRANSITION,
@@ -136,8 +138,10 @@ export function GlowEffect({
         {
           ...style,
           '--scale': scale,
+          '--intensity': intensity,
           willChange: 'transform',
           backfaceVisibility: 'hidden',
+          opacity: intensity,
         } as React.CSSProperties
       }
       animate={animations[mode]}
