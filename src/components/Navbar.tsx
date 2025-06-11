@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { GlowEffect } from '@/components/ui/glow-effect';
 import NavLinks from './navbar/NavLinks';
 import NurseDropdown from './navbar/NurseDropdown';
 import UserMenu from './navbar/UserMenu';
@@ -99,13 +101,22 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
           
           {/* Authentication & CTA - Desktop */}
           <div className="hidden lg:flex items-center space-x-4 ml-auto">
-            {/* Request a Nurse Button */}
-            <Button
-              onClick={handleRequestNurseClick}
-              className="bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            >
-              Request a Nurse
-            </Button>
+            {/* Request a Nurse Button with Glow */}
+            <div className="relative">
+              <GlowEffect
+                colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
+                mode="colorShift"
+                blur="medium"
+                duration={4}
+                scale={1.1}
+              />
+              <Button
+                onClick={handleRequestNurseClick}
+                className="relative bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                Request a Nurse
+              </Button>
+            </div>
             
             <UserMenu shouldUseDarkText={isScrolled || !isHomePageRoute} />
           </div>
