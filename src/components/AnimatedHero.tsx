@@ -70,7 +70,7 @@ function Hero({
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
           <div className="flex flex-col justify-end max-w-3xl py-0 my-[40px]">
-            <h1 className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white md:px-0 md:my-[132px] md:mx-[19px] mx-0 px-[8px] font-extrabold my-[43px] lg:text-8xl">
+            <h1 className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white md:px-0 md:my-[132px] md:mx-[19px] mx-0 px-[8px] font-extrabold my-[76px] lg:text-8xl">
               <span className="text-white">Need a</span>
               <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
                 &nbsp;
