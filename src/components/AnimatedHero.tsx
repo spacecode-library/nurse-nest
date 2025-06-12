@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -30,13 +29,13 @@ function Hero({
     return (
       <div className="w-full text-left" style={{ position: 'relative' }}>
         <h1 className="text-4xl tracking-tighter font-regular text-white mb-4" style={{ 
-          paddingTop: '109px', 
-          paddingBottom: '109px',
-          marginTop: '121px',
+          paddingTop: '20px', 
+          paddingBottom: '20px',
+          marginTop: '0px',
           marginBottom: '4px',
           position: 'relative'
         }}>
-          <span className="text-white" style={{ marginTop: '217px', marginBottom: '217px', display: 'block' }}>Need a</span>
+          <span className="text-white" style={{ display: 'block' }}>Need a</span>
           <span className="relative flex w-full justify-start overflow-hidden text-left pb-2 pt-1" style={{ position: 'relative', height: '48px' }}>
             &nbsp;
             {titles.map((title, index) => (
