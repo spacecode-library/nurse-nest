@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BackgroundBeams } from './ui/background-beams';
 import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover-effects';
@@ -14,8 +13,8 @@ export default function HowItWorksSection() {
         <BackgroundBeams />
       </div>
       
-      {/* Lighter overlay to ensure text readability without hiding beams */}
-      <div className="absolute inset-0 bg-slate-900/40 z-10"></div>
+      {/* Very light overlay to ensure text readability while keeping beams bright */}
+      <div className="absolute inset-0 bg-slate-900/20 z-10"></div>
       
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent z-20"></div>
       
