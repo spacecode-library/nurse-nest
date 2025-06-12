@@ -1,11 +1,4 @@
 
-import { Button } from './ui/button';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Users, Clock, Star } from 'lucide-react';
-import '@/index.css';
-import AnimatedSection from './AnimatedSection';
-import { Hero } from './AnimatedHero';
-
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -19,8 +12,8 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Repositioned to bottom alignment */}
-      <div className="md:hidden w-full relative min-h-screen flex items-end pb-6">
+      {/* Mobile Layout - Stabilized positioning */}
+      <div className="md:hidden w-full relative h-screen flex items-end" style={{ paddingBottom: '24px' }}>
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
@@ -31,19 +24,21 @@ export default function HeroSection() {
           }}
         />
         
-        {/* Mobile Hero Content - Positioned at bottom */}
-        <div className="relative z-10 w-full px-4">
+        {/* Mobile Hero Content - Fixed positioning container */}
+        <div className="relative z-10 w-full px-4" style={{ position: 'relative', bottom: '0' }}>
           <Hero isMobile={true} />
         </div>
       </div>
       
-      {/* Desktop ANIMATED HERO CONTENT - Centered positioning */}
-      <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center">
-        <Hero isMobile={false} />
+      {/* Desktop ANIMATED HERO CONTENT - Stabilized centering */}
+      <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center" style={{ position: 'absolute', top: '0', left: '0', right: '0', bottom: '0' }}>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Hero isMobile={false} />
+        </div>
       </div>
       
-      {/* Trust Indicators - Preserved at bottom for desktop only */}
-      <div className="absolute bottom-8 left-0 right-0 hidden md:block z-10">
+      {/* Trust Indicators - Fixed bottom positioning */}
+      <div className="absolute z-10 hidden md:block" style={{ bottom: '32px', left: '0', right: '0', position: 'absolute' }}>
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
