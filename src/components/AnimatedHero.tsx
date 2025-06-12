@@ -1,18 +1,16 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlowEffect } from "@/components/ui/glow-effect";
-
 interface HeroProps {
   isMobile?: boolean;
 }
-
-function Hero({ isMobile = false }: HeroProps) {
+function Hero({
+  isMobile = false
+}: HeroProps) {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(() => ["Specialized", "Night", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
-  
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (titleNumber === titles.length - 1) {
@@ -23,29 +21,27 @@ function Hero({ isMobile = false }: HeroProps) {
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, [titleNumber, titles]);
-
   if (isMobile) {
-    return (
-      <div className="w-full text-left">
-        <h1 className="text-4xl tracking-tighter font-regular text-white mb-4">
+    return <div className="w-full text-left">
+        <h1 className="text-4xl tracking-tighter font-regular text-white mb-4 my-[233px]">
           <span className="text-white">Need a</span>
           <span className="relative flex w-full justify-start overflow-hidden text-left pb-2 pt-1">
             &nbsp;
-            {titles.map((title, index) => (
-              <motion.span
-                key={index}
-                className="absolute font-semibold text-blue-300"
-                initial={{ opacity: 0, y: "-100" }}
-                transition={{ type: "spring", stiffness: 50 }}
-                animate={
-                  titleNumber === index
-                    ? { y: 0, opacity: 1 }
-                    : { y: titleNumber > index ? -150 : 150, opacity: 0 }
-                }
-              >
+            {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" initial={{
+            opacity: 0,
+            y: "-100"
+          }} transition={{
+            type: "spring",
+            stiffness: 50
+          }} animate={titleNumber === index ? {
+            y: 0,
+            opacity: 1
+          } : {
+            y: titleNumber > index ? -150 : 150,
+            opacity: 0
+          }}>
                 {title}
-              </motion.span>
-            ))}
+              </motion.span>)}
           </span>
           <span className="text-white"> nurse?</span>
         </h1>
@@ -56,37 +52,21 @@ function Hero({ isMobile = false }: HeroProps) {
         
         <div className="flex flex-col gap-3 w-full">
           <div className="relative">
-            <GlowEffect 
-              colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} 
-              mode="rotate" 
-              blur="soft" 
-              duration={3} 
-              scale={1.05} 
-              intensity={0.2} 
-            />
+            <GlowEffect colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} mode="rotate" blur="soft" duration={3} scale={1.05} intensity={0.2} />
             <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full min-h-[48px] text-base px-6">
               Request a Nurse <PhoneCall className="w-4 h-4" />
             </Button>
           </div>
           <div className="relative">
-            <GlowEffect 
-              colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} 
-              mode="pulse" 
-              blur="soft" 
-              duration={2} 
-              scale={1.03} 
-            />
+            <GlowEffect colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} mode="pulse" blur="soft" duration={2} scale={1.03} />
             <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-full min-h-[48px] text-base px-6" variant="outline">
               Join as a Nurse <MoveRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="w-full">
+  return <div className="w-full">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
           <div className="flex flex-col justify-end max-w-3xl py-0 my-[40px]">
@@ -94,21 +74,21 @@ function Hero({ isMobile = false }: HeroProps) {
               <span className="text-white">Need a</span>
               <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
                 &nbsp;
-                {titles.map((title, index) => (
-                  <motion.span
-                    key={index}
-                    className="absolute font-semibold text-blue-300"
-                    initial={{ opacity: 0, y: "-100" }}
-                    transition={{ type: "spring", stiffness: 50 }}
-                    animate={
-                      titleNumber === index
-                        ? { y: 0, opacity: 1 }
-                        : { y: titleNumber > index ? -150 : 150, opacity: 0 }
-                    }
-                  >
+                {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" initial={{
+                opacity: 0,
+                y: "-100"
+              }} transition={{
+                type: "spring",
+                stiffness: 50
+              }} animate={titleNumber === index ? {
+                y: 0,
+                opacity: 1
+              } : {
+                y: titleNumber > index ? -150 : 150,
+                opacity: 0
+              }}>
                     {title}
-                  </motion.span>
-                ))}
+                  </motion.span>)}
               </span>
               <span className="text-white"> nurse?</span>
             </h1>
@@ -136,8 +116,6 @@ function Hero({ isMobile = false }: HeroProps) {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
-
 export { Hero };
