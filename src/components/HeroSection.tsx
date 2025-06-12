@@ -20,7 +20,7 @@ export default function HeroSection() {
       </div>
       
       {/* Mobile Layout - Fixed for proper display and positioned for lower content */}
-      <div className="md:hidden w-full relative min-h-screen flex items-end pb-20">
+      <div className="md:hidden w-full relative min-h-screen flex items-end pb-8">
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
