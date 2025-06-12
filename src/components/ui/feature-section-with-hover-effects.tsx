@@ -14,51 +14,51 @@ import {
 export function FeaturesSectionWithHoverEffects() {
   const features = [
     {
-      title: "Free to Start",
+      title: "Start Free, Pay When Needed",
       description:
-        "No upfront costs or hidden fees - Create your profile and browse qualified nurses completely free. Our small platform fee only applies when you pay nurses for completed care - no membership fees, setup costs, or monthly charges.",
+        "No setup fees, monthly charges, or hidden costs. Browse qualified nurses free—pay our small platform fee only when booking completed care.",
       icon: <IconCurrencyDollar />,
     },
     {
-      title: "Nurse-Owned & Operated",
+      title: "Founded by Nurses",
       description:
-        "By nurses, for better care - Founded and run by nursing professionals who understand your needs. Our nurse-led team ensures every aspect of our platform serves both caregivers and families with expertise.",
+        "Nurse-owned platform built by healthcare professionals who understand your needs. Our nursing team ensures every feature serves both families and caregivers.",
       icon: <IconHeart />,
     },
     {
-      title: "Hand-Selected Professionals",
+      title: "Handpicked Professionals",
       description:
-        "Personally sourced, not algorithms - Every nurse on our platform is manually recruited and vetted by our nursing team. We don't rely on automated systems - we personally know and approve each healthcare professional.",
+        "Every nurse personally recruited and vetted by our nursing team. We know each healthcare professional individually—no automated matching systems.",
       icon: <IconTerminal2 />,
     },
     {
-      title: "Flexible Vetting Options",
+      title: "Flexible Background Screening",
       description:
-        "Choose your comfort level - Select the level of background screening that fits your needs - from basic license verification to comprehensive background checks. You control the vetting requirements.",
+        "Choose your vetting level from basic license verification to comprehensive background checks. You control the screening requirements that fit your comfort level.",
       icon: <IconAdjustmentsBolt />,
     },
     {
-      title: "Secure Payment Processing",
+      title: "Bank-Level Payment Security",
       description:
-        "Trusted by millions worldwide - All payments are processed through Stripe, the same secure payment platform used by companies like Amazon, Google, and Shopify. Review and approve nurse invoices with confidence knowing your financial information is protected by industry-leading security.",
+        "Powered by Stripe, the same secure platform trusted by Amazon, Google, and Shopify. Review invoices confidently with industry-leading payment protection.",
       icon: <IconCloud />,
     },
     {
-      title: "Built-In Communication",
+      title: "Private Platform Communication",
       description:
-        "Message and video call safely - Connect with nurses directly through our platform via messaging and video calls - no need to share personal phone numbers or contact information.",
+        "Message and video call nurses directly through our secure platform. No need to share personal contact information.",
       icon: <IconHelp />,
     },
     {
-      title: "Specialized Care Matching",
+      title: "Specialized Nursing Expertise",
       description:
-        "Experts in every nursing specialty - From newborn night nursing to elderly care, wound care to post-operative recovery - find nurses with the exact specializations your situation requires.",
+        "Find nurses with exact specializations: newborn care, elderly support, wound care, post-op recovery, and more. Every nursing specialty covered.",
       icon: <IconEaseInOut />,
     },
     {
-      title: "24/7 Platform Access",
+      title: "24/7 Mobile Access",
       description:
-        "Care coordination around the clock - Manage your nursing care from anywhere, anytime. Our mobile-optimized platform ensures you're always connected to your healthcare team when you need them.",
+        "Manage your nursing care anytime, anywhere. Stay connected to your healthcare team around the clock from any device.",
       icon: <IconRouteAltLeft />,
     },
   ];

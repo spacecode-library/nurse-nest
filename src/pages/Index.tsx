@@ -4,7 +4,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
-import WhyChooseUsSection from "@/components/WhyChooseUsSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 import FloatingFaqButton from "@/components/FloatingFaqButton";
@@ -26,11 +25,8 @@ export default function Index() {
         {/* Hero Section with premium platform design */}
         <HeroSection />
         
-        {/* How It Works - Platform process - no gap */}
+        {/* Why Choose NurseNest Section - updated content */}
         <HowItWorksSection />
-        
-        {/* Why Choose NurseNest Section */}
-        <WhyChooseUsSection />
         
         {/* Statistics Section */}
         <StatisticsSection />
