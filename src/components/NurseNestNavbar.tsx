@@ -174,7 +174,7 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
 
           {/* Desktop Right Side Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            {/* Sign In Button - First */}
+            {/* Sign In Button */}
             {user ? (
               <Button
                 onClick={() => navigate('/dashboard')}
@@ -191,19 +191,19 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
             ) : (
               <Button
                 onClick={() => navigate('/auth')}
-                variant="ghost"
+                variant="outline"
                 className={cn(
-                  "transition-colors duration-300 ease-in-out",
+                  "transition-colors duration-300 ease-in-out border",
                   shouldUseDarkText
-                    ? "text-gray-700 hover:text-brand-primary hover:bg-neutral-light" 
-                    : "text-white hover:text-blue-200 hover:bg-white/10"
+                    ? "text-gray-700 border-gray-300 hover:bg-gray-50" 
+                    : "text-white border-white/30 hover:bg-white/10"
                 )}
               >
                 Sign In
               </Button>
             )}
             
-            {/* Request a Nurse Button - Second */}
+            {/* Request a Nurse Button */}
             <div className="relative">
               <GlowEffect
                 colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
@@ -381,15 +381,16 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
                     </button>
                   </div>
                 ) : (
-                  <button
+                  <Button
                     onClick={() => {
                       navigate('/auth');
                       setIsMobileMenuOpen(false);
                     }}
-                    className="block text-gray-700 hover:text-brand-primary font-medium"
+                    variant="outline"
+                    className="w-full text-gray-700 border-gray-300 hover:bg-gray-50"
                   >
                     Sign In
-                  </button>
+                  </Button>
                 )}
                 
                 <div className="relative">
