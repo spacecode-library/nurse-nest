@@ -18,7 +18,7 @@ function Hero() {
   }, [titleNumber, titles]);
   return <div className="w-full">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
+        <div className="flex gap-8 py-8 lg:py-40 items-end justify-end flex-col text-left">
           <div className="flex flex-col justify-end max-w-3xl py-0 my-[40px]">
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white px-4 md:px-0 my-8 md:my-[132px] md:mx-[19px]">
               <span className="text-white">Need a</span>
