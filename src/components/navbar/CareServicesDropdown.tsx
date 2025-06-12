@@ -22,7 +22,7 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
       <DropdownMenuTrigger asChild>
         <button 
           className={cn(
-            "font-medium flex items-center link-underline",
+            "font-medium flex items-center transition-colors duration-300 ease-in-out hover:scale-105",
             shouldUseDarkText
               ? "text-gray-700 hover:text-[#3b82f6]" 
               : "text-white hover:text-[#9bcbff]"
@@ -31,18 +31,30 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
           Care Services <ChevronDown className="ml-1 h-4 w-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-white shadow-lg rounded-md border border-gray-100 w-64 z-50">
-        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/newborn-nurse-support-guide')}>
-          Newborn Care
+      <DropdownMenuContent className="w-64">
+        <DropdownMenuItem 
+          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          onClick={() => navigate('/newborn-nurse-support-guide')}
+        >
+          <span className="font-medium text-gray-900">Newborn Care</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/elderly-care-nurse-services')}>
-          Elderly Care
+        <DropdownMenuItem 
+          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          onClick={() => navigate('/elderly-care-nurse-services')}
+        >
+          <span className="font-medium text-gray-900">Elderly Care</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/wound-care-nursing-guide')}>
-          Wound Care
+        <DropdownMenuItem 
+          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          onClick={() => navigate('/wound-care-nursing-guide')}
+        >
+          <span className="font-medium text-gray-900">Wound Care</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/best-products-for-home-healthcare')}>
-          Product Reviews
+        <DropdownMenuItem 
+          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          onClick={() => navigate('/best-products-for-home-healthcare')}
+        >
+          <span className="font-medium text-gray-900">Product Reviews</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

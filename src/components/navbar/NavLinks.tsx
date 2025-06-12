@@ -41,10 +41,10 @@ export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavCli
             isMobile 
               ? "font-medium text-gray-700 hover:text-brand-primary" 
               : cn(
-                "font-medium link-underline",
+                "font-medium transition-colors duration-300 ease-in-out hover:scale-105",
                 shouldUseDarkText
-                  ? "text-gray-700 hover:text-brand-primary" 
-                  : "text-white hover:text-blue-200"
+                  ? "text-gray-700 hover:text-[#3b82f6]" 
+                  : "text-white hover:text-[#9bcbff]"
               )
           )}
         >

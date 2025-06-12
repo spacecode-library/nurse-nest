@@ -5,13 +5,12 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { GlowEffect } from '@/components/ui/glow-effect';
-import { Menu, X, ChevronDown } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+import { Menu, X } from "lucide-react";
+import NavLinks from '@/components/navbar/NavLinks';
+import NurseDropdown from '@/components/navbar/NurseDropdown';
+import CareServicesDropdown from '@/components/navbar/CareServicesDropdown';
+import UserMenu from '@/components/navbar/UserMenu';
+import MobileMenu from '@/components/navbar/MobileMenu';
 
 interface NurseNestNavbarProps {
   isHomePage?: boolean;
@@ -79,159 +78,14 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-6">
-            {/* Home */}
-            <button
-              onClick={() => navigate('/')}
-              className={cn(
-                "font-medium transition-colors duration-300 ease-in-out hover:scale-105",
-                shouldUseDarkText
-                  ? "text-gray-700 hover:text-[#3b82f6]" 
-                  : "text-white hover:text-[#9bcbff]"
-              )}
-            >
-              Home
-            </button>
-
-            {/* Pricing */}
-            <button
-              onClick={() => navigate('/pricing')}
-              className={cn(
-                "font-medium transition-colors duration-300 ease-in-out hover:scale-105",
-                shouldUseDarkText
-                  ? "text-gray-700 hover:text-[#3b82f6]" 
-                  : "text-white hover:text-[#9bcbff]"
-              )}
-            >
-              Pricing
-            </button>
-
-            {/* For Nurses Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button 
-                  className={cn(
-                    "font-medium flex items-center transition-colors duration-300 ease-in-out hover:scale-105",
-                    shouldUseDarkText
-                      ? "text-gray-700 hover:text-[#3b82f6]" 
-                      : "text-white hover:text-[#9bcbff]"
-                  )}
-                >
-                  For Nurses <ChevronDown className="ml-1 h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64">
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={handleApplyNowClick}
-                >
-                  <span className="font-medium text-gray-900">Apply Now</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/nurse-llc-setup-guide')}
-                >
-                  <span className="font-medium text-gray-900">LLC Setup Guide</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/get-ein-nurse-business')}
-                >
-                  <span className="font-medium text-gray-900">EIN Applications</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/business-bank-account-for-nurses')}
-                >
-                  <span className="font-medium text-gray-900">Business Banking</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/malpractice-insurance-for-nurses')}
-                >
-                  <span className="font-medium text-gray-900">Malpractice Insurance</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/1099-tax-tips')}
-                >
-                  <span className="font-medium text-gray-900">1099 Tax Tips</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Care Services Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button 
-                  className={cn(
-                    "font-medium flex items-center transition-colors duration-300 ease-in-out hover:scale-105",
-                    shouldUseDarkText
-                      ? "text-gray-700 hover:text-[#3b82f6]" 
-                      : "text-white hover:text-[#9bcbff]"
-                  )}
-                >
-                  Care Services <ChevronDown className="ml-1 h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64">
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/newborn-nurse-support-guide')}
-                >
-                  <span className="font-medium text-gray-900">Newborn Care</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/elderly-care-nurse-services')}
-                >
-                  <span className="font-medium text-gray-900">Elderly Care</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/wound-care-nursing-guide')}
-                >
-                  <span className="font-medium text-gray-900">Wound Care</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-                  onClick={() => navigate('/best-products-for-home-healthcare')}
-                >
-                  <span className="font-medium text-gray-900">Product Reviews</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <NavLinks shouldUseDarkText={shouldUseDarkText} />
+            <NurseDropdown shouldUseDarkText={shouldUseDarkText} handleApplyNowClick={handleApplyNowClick} />
+            <CareServicesDropdown shouldUseDarkText={shouldUseDarkText} />
           </div>
 
           {/* Desktop Right Side Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            {/* Sign In Button */}
-            {user ? (
-              <Button
-                onClick={() => navigate('/dashboard')}
-                variant="ghost"
-                className={cn(
-                  "transition-all duration-300 ease-in-out hover:scale-105",
-                  shouldUseDarkText
-                    ? "text-gray-700 hover:bg-gray-100 hover:text-gray-700" 
-                    : "text-white hover:bg-white/10 hover:text-white"
-                )}
-              >
-                Dashboard
-              </Button>
-            ) : (
-              <Button
-                onClick={() => navigate('/auth')}
-                variant="outline"
-                className={cn(
-                  "transition-all duration-300 ease-in-out hover:scale-105 border",
-                  shouldUseDarkText
-                    ? "text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-700" 
-                    : "text-white border-white/30 hover:bg-white/10 hover:text-white"
-                )}
-              >
-                Sign In
-              </Button>
-            )}
+            <UserMenu shouldUseDarkText={shouldUseDarkText} />
             
             {/* Request a Nurse Button */}
             <div className="relative">
@@ -267,185 +121,13 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
         </div>
 
         {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg border-t border-gray-200/50 mx-4 rounded-b-2xl z-40">
-            <div className="px-6 py-4 space-y-4">
-              {/* Mobile Navigation Links */}
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    navigate('/');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="block font-medium text-gray-700 hover:text-brand-primary"
-                >
-                  Home
-                </button>
-                <button
-                  onClick={() => {
-                    navigate('/pricing');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="block font-medium text-gray-700 hover:text-brand-primary"
-                >
-                  Pricing
-                </button>
-                
-                {/* For Nurses Mobile */}
-                <div className="border-t pt-3">
-                  <p className="font-medium text-gray-700 mb-2">For Nurses</p>
-                  <div className="ml-4 space-y-2">
-                    <button
-                      onClick={() => {
-                        handleApplyNowClick();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      Apply Now
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/nurse-llc-setup-guide');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      LLC Setup Guide
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/get-ein-nurse-business');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      EIN Applications
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/business-bank-account-for-nurses');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      Business Banking
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/malpractice-insurance-for-nurses');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      Malpractice Insurance
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/1099-tax-tips');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      1099 Tax Tips
-                    </button>
-                  </div>
-                </div>
-
-                {/* Care Services Mobile */}
-                <div className="border-t pt-3">
-                  <p className="font-medium text-gray-700 mb-2">Care Services</p>
-                  <div className="ml-4 space-y-2">
-                    <button
-                      onClick={() => {
-                        navigate('/newborn-nurse-support-guide');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      Newborn Care
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/elderly-care-nurse-services');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      Elderly Care
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/wound-care-nursing-guide');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      Wound Care
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate('/best-products-for-home-healthcare');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block font-medium text-gray-600 hover:text-brand-primary"
-                    >
-                      Product Reviews
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Mobile Auth & CTA Section */}
-              <div className="border-t pt-4 space-y-3">
-                {user ? (
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => {
-                        navigate('/dashboard');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block text-gray-700 hover:text-brand-primary font-medium"
-                    >
-                      Dashboard
-                    </button>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      navigate('/auth');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    variant="outline"
-                    className="w-full text-gray-700 border-gray-300 hover:bg-gray-50"
-                  >
-                    Sign In
-                  </Button>
-                )}
-                
-                <div className="relative">
-                  <GlowEffect
-                    colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
-                    mode="colorShift"
-                    blur="medium"
-                    duration={4}
-                    scale={1.05}
-                    intensity={0.3}
-                  />
-                  <Button
-                    onClick={() => {
-                      handleRequestNurseClick();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="relative w-full bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold"
-                  >
-                    Request a Nurse
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <MobileMenu 
+          isOpen={isMobileMenuOpen}
+          setIsOpen={setIsMobileMenuOpen}
+          isNursePage={isHomePageRoute}
+          handleApplyNowClick={handleApplyNowClick}
+          handleRequestNurse={handleRequestNurseClick}
+        />
       </div>
     </nav>
   );
