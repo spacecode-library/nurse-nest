@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import WhatIsNurseNestSection from "@/components/WhatIsNurseNestSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 import FloatingFaqButton from "@/components/FloatingFaqButton";
@@ -27,6 +28,9 @@ export default function Index() {
         
         {/* How It Works - Platform process - no gap */}
         <HowItWorksSection />
+        
+        {/* What Is NurseNest Section */}
+        <WhatIsNurseNestSection />
         
         {/* Statistics Section */}
         <StatisticsSection />
