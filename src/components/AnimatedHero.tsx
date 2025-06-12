@@ -1,14 +1,11 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlowEffect } from "@/components/ui/glow-effect";
-
 function Hero() {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(() => ["Specialized", "Night", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
-  
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (titleNumber === titles.length - 1) {
@@ -19,39 +16,29 @@ function Hero() {
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, [titleNumber, titles]);
-  
-  return (
-    <div className="w-full">
+  return <div className="w-full">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
-          <div className="flex gap-4 flex-col max-w-3xl">
+          <div className="flex flex-col justify-end max-w-3xl py-0 my-[40px]">
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white px-4 md:px-0 my-8 md:my-[132px] md:mx-[19px]">
               <span className="text-white">Need a</span>
               <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
                 &nbsp;
-                {titles.map((title, index) => (
-                  <motion.span 
-                    key={index} 
-                    className="absolute font-semibold text-blue-300" 
-                    initial={{
-                      opacity: 0,
-                      y: "-100"
-                    }} 
-                    transition={{
-                      type: "spring",
-                      stiffness: 50
-                    }} 
-                    animate={titleNumber === index ? {
-                      y: 0,
-                      opacity: 1
-                    } : {
-                      y: titleNumber > index ? -150 : 150,
-                      opacity: 0
-                    }}
-                  >
+                {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" initial={{
+                opacity: 0,
+                y: "-100"
+              }} transition={{
+                type: "spring",
+                stiffness: 50
+              }} animate={titleNumber === index ? {
+                y: 0,
+                opacity: 1
+              } : {
+                y: titleNumber > index ? -150 : 150,
+                opacity: 0
+              }}>
                     {title}
-                  </motion.span>
-                ))}
+                  </motion.span>)}
               </span>
               <span className="text-white"> nurse?</span>
             </h1>
@@ -80,8 +67,6 @@ function Hero() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
-
 export { Hero };
