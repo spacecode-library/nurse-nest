@@ -119,24 +119,42 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
                   For Nurses <ChevronDown className="ml-1 h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white shadow-lg rounded-md border border-gray-100 w-64 z-50">
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={handleApplyNowClick}>
-                  Apply Now
+              <DropdownMenuContent className="w-64 bg-white shadow-xl border border-gray-100 rounded-xl p-2">
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={handleApplyNowClick}
+                >
+                  <span className="font-medium text-gray-900">Apply Now</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/nurse-llc-setup-guide')}>
-                  LLC Setup Guide
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/nurse-llc-setup-guide')}
+                >
+                  <span className="font-medium text-gray-900">LLC Setup Guide</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/get-ein-nurse-business')}>
-                  EIN Applications
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/get-ein-nurse-business')}
+                >
+                  <span className="font-medium text-gray-900">EIN Applications</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/business-bank-account-for-nurses')}>
-                  Business Banking
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/business-bank-account-for-nurses')}
+                >
+                  <span className="font-medium text-gray-900">Business Banking</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/malpractice-insurance-for-nurses')}>
-                  Malpractice Insurance
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/malpractice-insurance-for-nurses')}
+                >
+                  <span className="font-medium text-gray-900">Malpractice Insurance</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/1099-tax-tips')}>
-                  1099 Tax Tips
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/1099-tax-tips')}
+                >
+                  <span className="font-medium text-gray-900">1099 Tax Tips</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -155,18 +173,30 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
                   Care Services <ChevronDown className="ml-1 h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white shadow-lg rounded-md border border-gray-100 w-64 z-50">
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/newborn-nurse-support-guide')}>
-                  Newborn Care
+              <DropdownMenuContent className="w-64 bg-white shadow-xl border border-gray-100 rounded-xl p-2">
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/newborn-nurse-support-guide')}
+                >
+                  <span className="font-medium text-gray-900">Newborn Care</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/elderly-care-nurse-services')}>
-                  Elderly Care
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/elderly-care-nurse-services')}
+                >
+                  <span className="font-medium text-gray-900">Elderly Care</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/wound-care-nursing-guide')}>
-                  Wound Care
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/wound-care-nursing-guide')}
+                >
+                  <span className="font-medium text-gray-900">Wound Care</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-[#f0f9ff] px-4 py-2" onClick={() => navigate('/best-products-for-home-healthcare')}>
-                  Product Reviews
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 rounded-lg px-4 py-3 transition-colors" 
+                  onClick={() => navigate('/best-products-for-home-healthcare')}
+                >
+                  <span className="font-medium text-gray-900">Product Reviews</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -180,10 +210,10 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
                 onClick={() => navigate('/dashboard')}
                 variant="ghost"
                 className={cn(
-                  "transition-colors duration-300 ease-in-out",
+                  "transition-all duration-300 ease-in-out hover:scale-105",
                   shouldUseDarkText
-                    ? "text-gray-700 hover:text-brand-primary hover:bg-neutral-light" 
-                    : "text-white hover:text-blue-200 hover:bg-white/10"
+                    ? "text-gray-700 hover:bg-gray-100" 
+                    : "text-white hover:bg-white/10"
                 )}
               >
                 Dashboard
@@ -193,7 +223,7 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
                 onClick={() => navigate('/auth')}
                 variant="outline"
                 className={cn(
-                  "transition-colors duration-300 ease-in-out border",
+                  "transition-all duration-300 ease-in-out hover:scale-105 border",
                   shouldUseDarkText
                     ? "text-gray-700 border-gray-300 hover:bg-gray-50" 
                     : "text-white border-white/30 hover:bg-white/10"
