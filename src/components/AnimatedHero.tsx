@@ -46,7 +46,7 @@ function Hero({
           <span className="text-white"> nurse?</span>
         </h1>
 
-        <p className="text-base leading-relaxed tracking-tight text-blue-100 mb-6">
+        <p className="text-base leading-relaxed tracking-tight mb-6 text-slate-50">
           Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
         </p>
         
