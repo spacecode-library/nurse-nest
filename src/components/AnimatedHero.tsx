@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -24,8 +23,8 @@ function Hero({
   }, [titleNumber, titles]);
   if (isMobile) {
     return <div className="w-full text-left">
-        <h1 className="text-4xl tracking-tighter font-regular text-white mb-4 my-[120px] py-[54px]">
-          <span className="text-white">Need a</span>
+        <h1 className="text-4xl tracking-tighter font-regular text-white mb-4 my-[240px] py-[109px]">
+          <span className="text-white my-[217px]">Need a</span>
           <span className="relative flex w-full justify-start overflow-hidden text-left pb-2 pt-1">
             &nbsp;
             {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" initial={{
