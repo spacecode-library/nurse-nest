@@ -31,7 +31,7 @@ function Hero({
         marginTop: '0px',
         marginBottom: '4px',
         position: 'relative'
-      }} className="tracking-tighter font-regular text-white mb-4 text-5xl my-[198px]">
+      }} className="tracking-tighter font-regular text-white mb-4 text-5xl my-[183px]">
           <span className="text-white" style={{
           display: 'block'
         }}>Need a</span>
@@ -99,7 +99,7 @@ function Hero({
             marginLeft: '19px',
             marginRight: '19px',
             position: 'relative'
-          }} className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white font-extrabold my-[35px] lg:text-8xl">
+          }} className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white font-extrabold my-[27px] lg:text-8xl">
               <span className="text-white">Need a</span>
               <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1" style={{
               position: 'relative',
