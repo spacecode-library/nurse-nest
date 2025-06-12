@@ -1,3 +1,6 @@
+import { Shield, Users, Star, Clock } from "lucide-react";
+import { Hero } from "@/components/AnimatedHero";
+import AnimatedSection from "@/components/AnimatedSection";
 
 export default function HeroSection() {
   return (
