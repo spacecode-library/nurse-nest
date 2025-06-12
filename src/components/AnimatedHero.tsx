@@ -1,13 +1,16 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlowEffect } from "@/components/ui/glow-effect";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Hero() {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(() => ["Specialized", "Night", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -19,6 +22,22 @@ function Hero() {
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, [titleNumber, titles]);
+
+  const handleRequestNurseClick = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/apply');
+    }
+  };
+
+  const handleJoinAsNurseClick = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth', { state: { redirectAfterAuth: 'https://www.nursenest.us/nurseapplication' } });
+    }
+  };
   
   return (
     <div className="w-full">
@@ -56,22 +75,46 @@ function Hero() {
               <span className="text-white"> nurse?</span>
             </h1>
 
-            {/* Content block moved significantly lower on mobile */}
-            <div className="mt-8 md:mt-0 mb-16 md:mb-0">
-              <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left px-4 md:px-0 mb-6">
+            {/* Mobile: Move content lower, Desktop: keep original position */}
+            <div className="mt-16 md:mt-0 mb-20 md:mb-0">
+              <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left px-4 md:px-0 mb-8 md:mb-6">
                 Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
               </p>
               
+              {/* Mobile: Stack vertically with smaller buttons, Desktop: side by side */}
               <div className="flex flex-col md:flex-row gap-3 px-4 md:px-0 w-full md:w-auto">
                 <div className="relative">
-                  <GlowEffect colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} mode="rotate" blur="soft" duration={3} scale={1.1} intensity={0.35} />
-                  <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8">
+                  <GlowEffect 
+                    colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} 
+                    mode="rotate" 
+                    blur="soft" 
+                    duration={3} 
+                    scale={1.05} 
+                    intensity={0.2}
+                  />
+                  <Button 
+                    size="lg" 
+                    className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-3/4 md:w-auto min-h-[48px] text-base md:text-lg px-4 md:px-8"
+                    onClick={handleRequestNurseClick}
+                  >
                     Request a Nurse <PhoneCall className="w-4 h-4 md:w-5 md:h-5" />
                   </Button>
                 </div>
                 <div className="relative">
-                  <GlowEffect colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} mode="pulse" blur="soft" duration={2} scale={1.05} />
-                  <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8" variant="outline">
+                  <GlowEffect 
+                    colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} 
+                    mode="pulse" 
+                    blur="soft" 
+                    duration={2} 
+                    scale={1.05} 
+                    intensity={0.2}
+                  />
+                  <Button 
+                    size="lg" 
+                    className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-3/4 md:w-auto min-h-[48px] text-base md:text-lg px-4 md:px-8" 
+                    variant="outline"
+                    onClick={handleJoinAsNurseClick}
+                  >
                     Join as a Nurse <MoveRight className="w-4 h-4 md:w-5 md:h-5" />
                   </Button>
                 </div>

@@ -1,15 +1,7 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useScrollToSection } from '@/hooks/use-scroll-to-section';
 
-// Navigation links data with new structure
-const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'Pricing', path: '/pricing' },
-  { name: 'Pay Calculator', path: '/salary-calculator' },
-  { name: 'Contact', path: '/contact' },
-];
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface NavLinksProps {
   shouldUseDarkText: boolean;
@@ -18,40 +10,67 @@ interface NavLinksProps {
 }
 
 export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavClick }: NavLinksProps) {
-  const scrollToSection = useScrollToSection();
-  
-  const handleNavClick = (path: string) => {
+  const handleClick = (path: string) => {
     if (onNavClick) {
       onNavClick(path);
-    } else {
-      scrollToSection(path);
     }
   };
-  
+
+  const linkClass = cn(
+    "font-medium transition-colors duration-300 ease-in-out",
+    shouldUseDarkText 
+      ? "text-gray-700 hover:text-primary-500" 
+      : "text-white hover:text-primary-300"
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <Link 
+          to="/about" 
+          className={linkClass}
+          onClick={() => handleClick('/about')}
+        >
+          About
+        </Link>
+        <Link 
+          to="/pricing" 
+          className={linkClass}
+          onClick={() => handleClick('/pricing')}
+        >
+          Pricing
+        </Link>
+        <Link 
+          to="/blog" 
+          className={linkClass}
+          onClick={() => handleClick('/blog')}
+        >
+          Blog
+        </Link>
+        <Link 
+          to="/contact" 
+          className={linkClass}
+          onClick={() => handleClick('/contact')}
+        >
+          Contact
+        </Link>
+        <Link 
+          to="#faq" 
+          className={linkClass}
+          onClick={() => handleClick('#faq')}
+        >
+          FAQ
+        </Link>
+      </>
+    );
+  }
+
   return (
     <>
-      {navLinks.map((link) => (
-        <Link 
-          key={link.name}
-          to={link.path}
-          onClick={(e) => {
-            e.preventDefault();
-            handleNavClick(link.path);
-          }}
-          className={cn(
-            isMobile 
-              ? "font-medium text-gray-700 hover:text-brand-primary" 
-              : cn(
-                "font-medium link-underline",
-                shouldUseDarkText
-                  ? "text-gray-700 hover:text-brand-primary" 
-                  : "text-white hover:text-blue-200"
-              )
-          )}
-        >
-          {link.name}
-        </Link>
-      ))}
+      <Link to="/about" className={linkClass}>About</Link>
+      <Link to="/pricing" className={linkClass}>Pricing</Link>
+      <Link to="/blog" className={linkClass}>Blog</Link>
+      <Link to="/contact" className={linkClass}>Contact</Link>
     </>
   );
 }

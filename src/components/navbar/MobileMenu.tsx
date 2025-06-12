@@ -33,6 +33,7 @@ export default function MobileMenu({
   const handleLogout = async () => {
     await signOut();
     navigate('/');
+    setIsOpen(false);
   };
   
   return (
@@ -57,7 +58,7 @@ export default function MobileMenu({
       )}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-8">
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center" onClick={() => setIsOpen(false)}>
               <span className="text-2xl font-heading font-bold text-nurse-dark">
                 Nurse <span className="text-primary-500">Nest</span>
               </span>

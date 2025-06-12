@@ -54,13 +54,17 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
       // If user is not logged in, redirect to auth page
       navigate('/auth', { state: { redirectAfterAuth: 'https://www.nursenest.us/nurseapplication' } });
     } else {
-      // If user is logged in, redirect directly to the application
-      window.location.href = 'https://www.nursenest.us/nurseapplication';
+      // If user is logged in, redirect to dashboard
+      navigate('/dashboard');
     }
   };
 
   const handleRequestNurseClick = () => {
-    navigate('/apply');
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/apply');
+    }
   };
   
   return (
@@ -70,7 +74,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
         isScrolled 
           ? 'bg-white/95 backdrop-blur-xl shadow-lg border border-gray-200/50 py-3 mx-4 mt-4 rounded-2xl' 
           : isHomePageRoute
-            ? 'bg-transparent border-transparent py-6 mx-4 mt-4'
+            ? 'bg-black/20 backdrop-blur-sm border-transparent py-6 mx-4 mt-4'
             : 'bg-white border-transparent py-4 mx-4'
       )}>
         <div className="container mx-auto px-6 flex items-center justify-between">
@@ -97,6 +101,19 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
 
             {/* Care Services Dropdown */}
             <CareServicesDropdown shouldUseDarkText={isScrolled || !isHomePageRoute} />
+            
+            {/* FAQ Link - Desktop only */}
+            <a 
+              href="#faq" 
+              className={cn(
+                "font-medium transition-colors duration-300 ease-in-out",
+                isScrolled || !isHomePageRoute
+                  ? "text-gray-700 hover:text-primary-500" 
+                  : "text-white hover:text-primary-300"
+              )}
+            >
+              FAQ
+            </a>
           </nav>
           
           {/* Authentication & CTA - Desktop */}
@@ -109,7 +126,7 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
                 blur="medium"
                 duration={4}
                 scale={1.1}
-                intensity={0.35}
+                intensity={0.2}
               />
               <Button
                 onClick={handleRequestNurseClick}
