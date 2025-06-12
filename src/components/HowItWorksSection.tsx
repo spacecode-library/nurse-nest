@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BackgroundBeams } from './ui/background-beams';
 import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover-effects';
@@ -5,7 +6,7 @@ import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover
 export default function HowItWorksSection() {
   return (
     <section 
-      className="relative py-12 md:py-16 min-h-screen bg-slate-900" 
+      className="relative py-12 md:py-16 bg-slate-900 pb-8" 
       id="how-it-works"
     >
       {/* Background Beams Animation - Dark Version */}

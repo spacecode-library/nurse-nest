@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Phone } from 'lucide-react';
+import { BackgroundBeams } from './ui/background-beams';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -14,8 +14,16 @@ export default function Footer() {
   };
   
   return (
-    <footer className="bg-brand-navy py-12 text-white">
-      <div className="container mx-auto px-6">
+    <footer className="relative bg-brand-navy py-12 text-white">
+      {/* Background Beams Animation - Same as HowItWorksSection */}
+      <div className="absolute inset-0 z-0">
+        <BackgroundBeams />
+      </div>
+      
+      {/* Very light overlay to ensure text readability while keeping beams bright */}
+      <div className="absolute inset-0 bg-brand-navy/20 z-10"></div>
+      
+      <div className="container mx-auto px-6 relative z-30">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}

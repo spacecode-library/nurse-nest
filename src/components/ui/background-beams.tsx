@@ -95,22 +95,22 @@ export const BackgroundBeams = React.memo(
                 id={`linearGradient-${index}`}
                 key={`gradient-${index}`}
                 initial={{
-                  x1: "0%",
-                  x2: "0%",
-                  y1: "0%",
-                  y2: "0%",
+                  x1: "50%",
+                  x2: "50%",
+                  y1: "50%",
+                  y2: "50%",
                 }}
                 animate={{
-                  x1: ["0%", "100%"],
-                  x2: ["0%", "95%"],
-                  y1: ["0%", "100%"],
-                  y2: ["0%", `${93 + Math.random() * 8}%`],
+                  x1: ["50%", "100%", "0%"],
+                  x2: ["50%", "95%", "5%"],
+                  y1: ["50%", "100%", "0%"],
+                  y2: ["50%", `${93 + Math.random() * 8}%`, `${Math.random() * 8}%`],
                 }}
                 transition={{
                   duration: Math.random() * 10 + 10,
                   ease: "easeInOut",
                   repeat: Infinity,
-                  delay: Math.random() * 10,
+                  delay: Math.random() * 5,
                 }}
               >
                 <stop stopColor="#18CCFC" stopOpacity="0"></stop>
