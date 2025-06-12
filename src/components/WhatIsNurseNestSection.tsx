@@ -1,31 +1,22 @@
 
 import React from 'react';
 import { Shield, Users, Clock, CreditCard, MessageCircle, Star, Smartphone, DollarSign } from 'lucide-react';
-import { SparklesCore } from '@/components/ui/sparkles';
+import { BackgroundBeams } from '@/components/ui/background-beams';
 
 export default function WhatIsNurseNestSection() {
   return (
-    <section id="what-is" className="py-20 relative overflow-hidden">
-      {/* Sparkles Background with 70% opacity */}
+    <section id="what-is" className="py-20 relative overflow-hidden bg-slate-900">
+      {/* Background Beams with 70% opacity */}
       <div className="absolute inset-0 opacity-70">
-        <SparklesCore
-          id="tsparticleswhatissection"
-          background="transparent"
-          minSize={0.6}
-          maxSize={1.4}
-          particleDensity={100}
-          className="w-full h-full"
-          particleColor="#FFFFFF"
-          speed={1}
-        />
+        <BackgroundBeams />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            <div className="text-black">Nationwide Nurse Placement by a</div>
+            <div className="text-white">Nationwide Nurse Placement by a</div>
             <div className="text-primary-500">Nurse-Owned Agency</div>
-            <div className="text-black">You Can Trust</div>
+            <div className="text-white">You Can Trust</div>
           </h2>
           
           {/* Slightly bigger image */}
