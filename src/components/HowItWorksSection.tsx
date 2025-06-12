@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BeamsBackground } from './ui/beams-background';
+import { BackgroundBeams } from './ui/background-beams';
 import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover-effects';
 
 export default function HowItWorksSection() {
@@ -9,19 +9,22 @@ export default function HowItWorksSection() {
       className="relative py-12 md:py-16 min-h-auto h-auto" 
       id="how-it-works"
     >
-      {/* Beams Background Animation */}
+      {/* Background Beams Animation - Dark Version */}
       <div className="absolute inset-0">
-        <BeamsBackground />
+        <BackgroundBeams />
       </div>
       
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
       
       <div className="container mx-auto px-4 relative z-30">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            <div className="text-white">Why Choose</div>
-            <div className="text-blue-300">NurseNest?</div>
-          </h2>
+          <div className="flex justify-center mb-6">
+            <img 
+              src="/lovable-uploads/adaa6990-ba69-4586-88e7-03c12d0fd8b8.png" 
+              alt="Why Choose NurseNest" 
+              className="h-16 md:h-20 lg:h-24 w-auto"
+            />
+          </div>
         </div>
         
         <FeaturesSectionWithHoverEffects />
