@@ -14,8 +14,8 @@ export default function HowItWorksSection() {
         <BackgroundBeams />
       </div>
       
-      {/* Dark overlay to ensure proper contrast */}
-      <div className="absolute inset-0 bg-slate-900/80 z-10"></div>
+      {/* Lighter overlay to ensure text readability without hiding beams */}
+      <div className="absolute inset-0 bg-slate-900/40 z-10"></div>
       
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent z-20"></div>
       
