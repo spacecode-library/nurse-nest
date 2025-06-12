@@ -87,8 +87,8 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
             </span>
           </div>
           
-          {/* Desktop Navigation - centered */}
-          <nav className="hidden lg:flex items-center space-x-8 flex-grow justify-center">
+          {/* Desktop Navigation - centered with tighter spacing */}
+          <nav className="hidden lg:flex items-center space-x-6 flex-grow justify-center">
             <NavLinks shouldUseDarkText={isScrolled || !isHomePageRoute} />
 
             {/* For Nurses Dropdown */}
@@ -101,9 +101,12 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
             <CareServicesDropdown shouldUseDarkText={isScrolled || !isHomePageRoute} />
           </nav>
           
-          {/* Authentication & CTA - Desktop */}
+          {/* Authentication & CTA - Desktop - Reordered buttons */}
           <div className="hidden lg:flex items-center space-x-4 ml-auto">
-            {/* Request a Nurse Button with Reduced Glow */}
+            {/* Sign In/User Menu comes first now */}
+            <UserMenu shouldUseDarkText={isScrolled || !isHomePageRoute} />
+            
+            {/* Request a Nurse Button with Reduced Glow - now second */}
             <div className="relative">
               <GlowEffect
                 colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
@@ -120,8 +123,6 @@ export default function Navbar({ isHomePage = false }: NavbarProps) {
                 Request a Nurse
               </Button>
             </div>
-            
-            <UserMenu shouldUseDarkText={isScrolled || !isHomePageRoute} />
           </div>
           
           {/* Mobile Menu Button */}

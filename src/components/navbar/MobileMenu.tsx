@@ -1,15 +1,17 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { X, LogOut, LayoutDashboard } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { GlowEffect } from '@/components/ui/glow-effect';
 import NavLinks from './NavLinks';
+import NurseDropdown from './NurseDropdown';
+import CareServicesDropdown from './CareServicesDropdown';
 
 interface MobileMenuProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (open: boolean) => void;
   isNursePage: boolean;
   handleApplyNowClick: () => void;
   handleRequestNurse: () => void;
@@ -18,145 +20,164 @@ interface MobileMenuProps {
 export default function MobileMenu({ 
   isOpen, 
   setIsOpen, 
-  isNursePage,
+  isNursePage, 
   handleApplyNowClick,
   handleRequestNurse 
 }: MobileMenuProps) {
-  const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  
+
   const handleNavClick = (path: string) => {
     setIsOpen(false);
-    navigate(path);
   };
-  
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/');
-  };
-  
+
+  if (!isOpen) return null;
+
   return (
-    <div
-      className={cn(
-        'lg:hidden fixed inset-0 z-[99999] transform transition-transform duration-300 ease-in-out',
-        isOpen ? 'translate-x-0' : 'translate-x-full'
-      )}
-    >
-      {/* Overlay background - only shows when menu is open */}
-      {isOpen && (
-        <div 
-          className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-      
-      {/* Menu content */}
-      <div className={cn(
-        "absolute right-0 top-0 h-full w-80 max-w-[90vw] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out",
-        isOpen ? "translate-x-0" : "translate-x-full"
-      )}>
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-8">
-            <Link to="/" className="flex items-center">
-              <span className="text-2xl font-heading font-bold text-nurse-dark">
-                Nurse <span className="text-primary-500">Nest</span>
-              </span>
-            </Link>
-            
-            <button 
-              className="text-gray-600 focus:outline-none p-2 hover:bg-gray-100 rounded-lg z-50" 
-              onClick={() => setIsOpen(false)}
-            >
-              <X className="h-6 w-6" />
-            </button>
-          </div>
+    <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg border-t border-gray-200/50 mx-4 rounded-b-2xl z-40">
+      <div className="px-6 py-4 space-y-4">
+        {/* Navigation Links */}
+        <div className="space-y-3">
+          <NavLinks shouldUseDarkText={true} isMobile={true} onNavClick={handleNavClick} />
           
-          <nav className="flex flex-col space-y-6">
-            <NavLinks 
-              shouldUseDarkText={true} 
-              isMobile={true} 
-              onNavClick={handleNavClick} 
-            />
-            
-            {/* For Nurses Section in Mobile Menu */}
-            <div className="border-t border-b border-gray-100 py-4 space-y-4">
-              <h3 className="font-semibold text-gray-800">For Nurses</h3>
-              <Link 
-                to="#"
-                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsOpen(false);
+          {/* For Nurses Dropdown Mobile */}
+          <div className="border-t pt-3">
+            <p className="font-medium text-gray-700 mb-2">For Nurses</p>
+            <div className="ml-4 space-y-2">
+              <button
+                onClick={() => {
                   handleApplyNowClick();
+                  setIsOpen(false);
                 }}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
               >
                 Apply Now
-              </Link>
-              <Link 
-                to="/malpractice-insurance"
-                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
+              </button>
+              <Link
+                to="/nurse-llc-setup-guide"
                 onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
+              >
+                LLC Setup Guide
+              </Link>
+              <Link
+                to="/get-ein-nurse-business"
+                onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
+              >
+                EIN Applications
+              </Link>
+              <Link
+                to="/business-bank-account-for-nurses"
+                onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
+              >
+                Business Banking
+              </Link>
+              <Link
+                to="/malpractice-insurance-for-nurses"
+                onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
               >
                 Malpractice Insurance
               </Link>
-              <Link 
-                to="/llc-setup-help"
-                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
-                onClick={() => setIsOpen(false)}
-              >
-                LLC Setup Help
-              </Link>
-              <Link 
+              <Link
                 to="/1099-tax-tips"
-                className="font-medium text-gray-700 hover:text-primary-500 block pl-3"
                 onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
               >
                 1099 Tax Tips
               </Link>
             </div>
-            
-            {user ? (
-              <>
-                <Link 
-                  to="/dashboard" 
-                  className="font-medium text-gray-700 hover:text-primary-500"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <LayoutDashboard className="h-4 w-4 mr-2 inline" />
-                  Dashboard
-                </Link>
-                <Button 
-                  variant="ghost" 
-                  className="justify-start px-0 text-gray-700 hover:text-primary-500"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
-              </>
-            ) : (
-              <Link 
-                to="/auth"
-                className="font-medium text-gray-700 hover:text-primary-500"
+          </div>
+
+          {/* Care Services Dropdown Mobile */}
+          <div className="border-t pt-3">
+            <p className="font-medium text-gray-700 mb-2">Care Services</p>
+            <div className="ml-4 space-y-2">
+              <Link
+                to="/newborn-nurse-support-guide"
                 onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
               >
-                Sign In
+                Newborn Care
               </Link>
-            )}
-            
-            {/* CTA Button - Only show if not on nurse pages */}
-            {!isNursePage && (
-              <Button 
-                className="bg-primary-500 hover:bg-primary-600 w-full mt-4 button-hover-effect min-h-[48px] text-base"
-                onClick={() => {
-                  setIsOpen(false);
-                  handleRequestNurse();
-                }}
+              <Link
+                to="/elderly-care-nurse-services"
+                onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
               >
-                Request a Nurse
-              </Button>
-            )}
-          </nav>
+                Elderly Care
+              </Link>
+              <Link
+                to="/wound-care-nursing-guide"
+                onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
+              >
+                Wound Care
+              </Link>
+              <Link
+                to="/best-products-for-home-healthcare"
+                onClick={() => setIsOpen(false)}
+                className="block font-medium text-gray-600 hover:text-brand-primary"
+              >
+                Product Reviews
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Authentication & CTA Section - Reordered */}
+        <div className="border-t pt-4 space-y-3">
+          {/* Sign In/User Menu first */}
+          {user ? (
+            <div className="space-y-2">
+              <Link
+                to="/dashboard"
+                onClick={() => setIsOpen(false)}
+                className="block text-gray-700 hover:text-brand-primary font-medium"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  signOut();
+                  setIsOpen(false);
+                }}
+                className="block w-full text-left text-gray-700 hover:text-brand-primary font-medium"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/auth"
+              onClick={() => setIsOpen(false)}
+              className="block text-gray-700 hover:text-brand-primary font-medium"
+            >
+              Sign In
+            </Link>
+          )}
+          
+          {/* Request a Nurse Button second */}
+          <div className="relative">
+            <GlowEffect
+              colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
+              mode="colorShift"
+              blur="medium"
+              duration={4}
+              scale={1.05}
+              intensity={0.3}
+            />
+            <Button
+              onClick={() => {
+                handleRequestNurse();
+                setIsOpen(false);
+              }}
+              className="relative w-full bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold"
+            >
+              Request a Nurse
+            </Button>
+          </div>
         </div>
       </div>
     </div>

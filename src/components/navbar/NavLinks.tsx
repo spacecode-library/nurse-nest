@@ -1,14 +1,13 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useScrollToSection } from '@/hooks/use-scroll-to-section';
 
-// Navigation links data with new structure
+// Navigation links data with removed items
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Pricing', path: '/pricing' },
-  { name: 'Pay Calculator', path: '/salary-calculator' },
-  { name: 'Contact', path: '/contact' },
 ];
 
 interface NavLinksProps {
