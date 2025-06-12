@@ -15,8 +15,8 @@ interface PricingFeature {
 interface PricingCardProps {
   title: string;
   description: string;
-  price: string;
-  originalPrice?: string;
+  price: string | number;
+  originalPrice?: string | number;
   features: PricingFeature[];
 }
 
@@ -75,14 +75,14 @@ export function PricingCard({
   };
 
   return (
-    <motion.section
+    <motion.div
       ref={containerRef}
-      className="container py-12"
+      className="w-full"
       initial="hidden"
       animate={hasAnimated ? "visible" : "hidden"}
       variants={containerVariants}
     >
-      <Card className="relative mx-auto w-full max-w-6xl overflow-hidden shadow-lg border-[#e2e8f0]">
+      <Card className="relative mx-auto w-full overflow-hidden shadow-lg border-[#e2e8f0]">
         <div className="flex flex-col lg:flex-row">
           <motion.div
             className="flex flex-col justify-between p-8 lg:w-2/5 lg:p-12 bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9]"
@@ -99,10 +99,10 @@ export function PricingCard({
               </CardHeader>
               <motion.div className="mt-8 space-y-4" variants={itemVariants}>
                 <div className="flex items-baseline">
-                  <span className="text-5xl font-light text-[#1e293b]">{price}</span>
+                  <span className="text-5xl font-light text-[#1e293b]">${price}</span>
                   {originalPrice && (
                     <span className="ml-2 text-xl text-[#64748b] line-through">
-                      {originalPrice}
+                      ${originalPrice}
                     </span>
                   )}
                 </div>
@@ -141,6 +141,6 @@ export function PricingCard({
           </motion.div>
         </div>
       </Card>
-    </motion.section>
+    </motion.div>
   );
 }

@@ -15,8 +15,10 @@ export interface PricingFeature {
 export interface PricingPlan {
   name: string
   level: PlanLevel
-  price: number
-  savings?: string
+  price: {
+    monthly: number
+    yearly: number
+  }
   popular?: boolean
 }
 
@@ -69,14 +71,9 @@ export function PricingTable({
               )}
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xl font-medium text-[#1e293b]">{plan.name}</span>
-                {plan.savings && (
-                  <span className="text-xs bg-[#e6f4ea] text-[#1a7f37] px-2 py-1 rounded-full font-medium">
-                    {plan.savings}
-                  </span>
-                )}
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-light text-[#1e293b]">${plan.price}</span>
+                <span className="text-4xl font-light text-[#1e293b]">${plan.price.monthly}</span>
               </div>
             </button>
           ))}
@@ -86,7 +83,7 @@ export function PricingTable({
           <div className="overflow-x-auto">
             <div className="min-w-[640px] divide-y divide-[#e2e8f0]">
               <div className="flex items-center p-6 bg-gradient-to-r from-[#f8fafc] to-[#f1f5f9]">
-                <div className="flex-1 text-lg font-medium text-[#1e293b]">Includes</div>
+                <div className="flex-1 text-lg font-medium text-[#1e293b]">Features</div>
                 <div className="flex items-center gap-8 text-sm">
                   {plans.map((plan) => (
                     <div
