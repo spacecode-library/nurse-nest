@@ -19,8 +19,8 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Fixed for proper display and positioned for lower content */}
-      <div className="md:hidden w-full relative min-h-screen flex items-end pb-8">
+      {/* Mobile Layout - Repositioned to bottom alignment */}
+      <div className="md:hidden w-full relative min-h-screen flex items-end pb-6">
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
@@ -30,14 +30,19 @@ export default function HeroSection() {
             backgroundRepeat: 'no-repeat'
           }}
         />
+        
+        {/* Mobile Hero Content - Positioned at bottom */}
+        <div className="relative z-10 w-full px-4">
+          <Hero isMobile={true} />
+        </div>
       </div>
       
-      {/* ANIMATED HERO CONTENT - Uses nursing-specific content */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center md:items-center">
-        <Hero />
+      {/* Desktop ANIMATED HERO CONTENT - Centered positioning */}
+      <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center">
+        <Hero isMobile={false} />
       </div>
       
-      {/* Trust Indicators - Preserved at bottom */}
+      {/* Trust Indicators - Preserved at bottom for desktop only */}
       <div className="absolute bottom-8 left-0 right-0 hidden md:block z-10">
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="container mx-auto px-4">
