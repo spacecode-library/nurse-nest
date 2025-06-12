@@ -3,17 +3,14 @@ import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlowEffect } from "@/components/ui/glow-effect";
-
 interface HeroProps {
   isMobile?: boolean;
 }
-
 function Hero({
   isMobile = false
 }: HeroProps) {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(() => ["Specialized", "Night", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (titleNumber === titles.length - 1) {
@@ -24,44 +21,44 @@ function Hero({
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, [titleNumber, titles]);
-
   if (isMobile) {
-    return (
-      <div className="w-full text-left" style={{ position: 'relative' }}>
-        <h1 className="text-4xl tracking-tighter font-regular text-white mb-4" style={{ 
-          paddingTop: '20px', 
-          paddingBottom: '20px',
-          marginTop: '0px',
-          marginBottom: '4px',
-          position: 'relative'
+    return <div className="w-full text-left" style={{
+      position: 'relative'
+    }}>
+        <h1 style={{
+        paddingTop: '20px',
+        paddingBottom: '20px',
+        marginTop: '0px',
+        marginBottom: '4px',
+        position: 'relative'
+      }} className="tracking-tighter font-regular text-white mb-4 text-5xl my-[198px]">
+          <span className="text-white" style={{
+          display: 'block'
+        }}>Need a</span>
+          <span className="relative flex w-full justify-start overflow-hidden text-left pb-2 pt-1" style={{
+          position: 'relative',
+          height: '48px'
         }}>
-          <span className="text-white" style={{ display: 'block' }}>Need a</span>
-          <span className="relative flex w-full justify-start overflow-hidden text-left pb-2 pt-1" style={{ position: 'relative', height: '48px' }}>
             &nbsp;
-            {titles.map((title, index) => (
-              <motion.span 
-                key={index} 
-                className="absolute font-semibold text-blue-300" 
-                style={{ position: 'absolute', left: '0', top: '0' }}
-                initial={{
-                  opacity: 0,
-                  y: "-100"
-                }} 
-                transition={{
-                  type: "spring",
-                  stiffness: 50
-                }} 
-                animate={titleNumber === index ? {
-                  y: 0,
-                  opacity: 1
-                } : {
-                  y: titleNumber > index ? -150 : 150,
-                  opacity: 0
-                }}
-              >
+            {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" style={{
+            position: 'absolute',
+            left: '0',
+            top: '0'
+          }} initial={{
+            opacity: 0,
+            y: "-100"
+          }} transition={{
+            type: "spring",
+            stiffness: 50
+          }} animate={titleNumber === index ? {
+            y: 0,
+            opacity: 1
+          } : {
+            y: titleNumber > index ? -150 : 150,
+            opacity: 0
+          }}>
                 {title}
-              </motion.span>
-            ))}
+              </motion.span>)}
           </span>
           <span className="text-white"> nurse?</span>
         </h1>
@@ -84,57 +81,51 @@ function Hero({
             </Button>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="w-full" style={{ position: 'relative' }}>
+  return <div className="w-full" style={{
+    position: 'relative'
+  }}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
-          <div className="flex flex-col justify-end max-w-3xl py-0" style={{ 
-            marginTop: '40px',
-            marginBottom: '40px',
+          <div style={{
+          marginTop: '40px',
+          marginBottom: '40px',
+          position: 'relative'
+        }} className="flex flex-col justify-end max-w-3xl my-0 py-[11px]">
+            <h1 style={{
+            marginTop: '132px',
+            marginBottom: '132px',
+            marginLeft: '19px',
+            marginRight: '19px',
             position: 'relative'
-          }}>
-            <h1 className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white font-extrabold lg:text-8xl" style={{
-              marginTop: '132px',
-              marginBottom: '132px',
-              marginLeft: '19px',
-              marginRight: '19px',
-              position: 'relative'
-            }}>
+          }} className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white font-extrabold my-[35px] lg:text-8xl">
               <span className="text-white">Need a</span>
-              <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1" style={{ 
-                position: 'relative', 
-                height: '120px',
-                overflow: 'hidden'
-              }}>
+              <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1" style={{
+              position: 'relative',
+              height: '120px',
+              overflow: 'hidden'
+            }}>
                 &nbsp;
-                {titles.map((title, index) => (
-                  <motion.span 
-                    key={index} 
-                    className="absolute font-semibold text-blue-300" 
-                    style={{ position: 'absolute', left: '0', top: '0' }}
-                    initial={{
-                      opacity: 0,
-                      y: "-100"
-                    }} 
-                    transition={{
-                      type: "spring",
-                      stiffness: 50
-                    }} 
-                    animate={titleNumber === index ? {
-                      y: 0,
-                      opacity: 1
-                    } : {
-                      y: titleNumber > index ? -150 : 150,
-                      opacity: 0
-                    }}
-                  >
+                {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" style={{
+                position: 'absolute',
+                left: '0',
+                top: '0'
+              }} initial={{
+                opacity: 0,
+                y: "-100"
+              }} transition={{
+                type: "spring",
+                stiffness: 50
+              }} animate={titleNumber === index ? {
+                y: 0,
+                opacity: 1
+              } : {
+                y: titleNumber > index ? -150 : 150,
+                opacity: 0
+              }}>
                     {title}
-                  </motion.span>
-                ))}
+                  </motion.span>)}
               </span>
               <span className="text-white"> nurse?</span>
             </h1>
@@ -162,8 +153,6 @@ function Hero({
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
-
 export { Hero };
