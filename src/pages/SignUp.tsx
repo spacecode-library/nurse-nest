@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,6 +20,8 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { signUp, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
+import { OptimizedBackground } from '@/components/ui/OptimizedBackground';
+import { useImagePreloader } from '@/hooks/useImagePreloader';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -32,6 +33,9 @@ export default function SignUp() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  
+  // Preload the background image
+  useImagePreloader('/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png', { priority: 'high' });
   
   useEffect(() => {
     const checkSession = async () => {
@@ -114,20 +118,17 @@ export default function SignUp() {
   
   return (
     <div className="min-h-screen bg-white flex">
-      {/* Left Side - Architectural Image */}
+      {/* Left Side - Optimized Architectural Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
-        <div 
-          className="w-full h-screen relative"
-          style={{
-            backgroundImage: `url('/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png')`,
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center center',
-          }}
+        <OptimizedBackground
+          src="/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png"
+          alt="Architectural background"
+          priority={true}
+          blur={true}
+          overlay={true}
+          overlayClassName="bg-black/30"
+          className="w-full h-screen"
         >
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black/30"></div>
-          
           {/* Return to Home Button */}
           <div className="absolute top-8 left-8 z-10">
             <Link to="/">
@@ -146,7 +147,7 @@ export default function SignUp() {
               </div>
             </Link>
           </div>
-        </div>
+        </OptimizedBackground>
       </div>
 
       {/* Right Side - Sign Up Form */}
