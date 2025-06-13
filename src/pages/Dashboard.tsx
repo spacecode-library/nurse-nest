@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,7 +17,7 @@ export default function Dashboard() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [userRole, setUserRole] = useState<"nurse" | "client" | null>(null);
+  const [userRole, setUserRole] = useState<"nurse" | "client" | "admin" | null>(null);
   
   // Redirect if not authenticated
   useEffect(() => {
@@ -31,6 +32,19 @@ export default function Dashboard() {
       if (!user) return;
       
       try {
+        // First check user_metadata to get user type
+        const { data: userMetadata } = await supabase
+          .from('user_metadata')
+          .select('user_type')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (userMetadata?.user_type === 'admin') {
+          // Redirect admin users to admin portal
+          navigate('/admin');
+          return;
+        }
+        
         // Fetch from nurse_profiles first
         const { data: nurseProfile, error: nurseError } = await supabase
           .from('nurse_profiles')
@@ -46,7 +60,7 @@ export default function Dashboard() {
             last_name: nurseProfile.last_name,
             email: user.email || '',
             role: 'nurse',
-            bio: nurseProfile.bio || '' // Use the bio field if available
+            bio: nurseProfile.bio || ''
           });
           return;
         }
@@ -66,13 +80,12 @@ export default function Dashboard() {
             last_name: clientProfile.last_name,
             email: user.email || '',
             role: 'client',
-            bio: '' // Clients might not have bio field
+            bio: ''
           });
           return;
         }
         
         // Fallback for demo purposes if no profile exists yet
-        // In a real app, you might want to redirect to a profile creation page
         if (!nurseProfile && !clientProfile) {
           setUserRole(user.email?.includes('nurse') ? 'nurse' : 'client');
           setProfile({
@@ -81,7 +94,7 @@ export default function Dashboard() {
             last_name: 'User',
             email: user.email || '',
             role: user.email?.includes('nurse') ? 'nurse' : 'client',
-            bio: '' // Default empty bio
+            bio: ''
           });
         }
       } catch (error) {
@@ -90,7 +103,7 @@ export default function Dashboard() {
     };
     
     fetchProfile();
-  }, [user]);
+  }, [user, navigate]);
 
   if (loading || !profile) {
     return (

@@ -42,6 +42,7 @@ import NurseLlcFormationGuide from "./pages/NurseLlcFormationGuide";
 import EinApplicationsGuide from "./pages/EinApplicationsGuide";
 import BusinessBankingSetupGuide from "./pages/BusinessBankingSetupGuide";
 import NewbornCareGuide from "./pages/NewbornCareGuide";
+import AdminPortal from "./components/AdminPortal";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/admin" element={<AdminPortal />} />
                 <Route path="/apply" element={<Apply />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/vetting-options" element={<VettingOptions />} />
