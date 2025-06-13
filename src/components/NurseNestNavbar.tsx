@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { GlowEffect } from '@/components/ui/glow-effect';
 import { Menu, X } from "lucide-react";
 import NavLinks from '@/components/navbar/NavLinks';
 import NurseDropdown from '@/components/navbar/NurseDropdown';
@@ -19,6 +18,7 @@ interface NurseNestNavbarProps {
 export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showRequestButton, setShowRequestButton] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -35,6 +35,32 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isHomePageRoute) {
+      setShowRequestButton(true);
+      return;
+    }
+
+    // Intersection Observer for hero section
+    const heroSection = document.querySelector('section');
+    if (!heroSection) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When hero section is not visible (scrolled past), show button
+        setShowRequestButton(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '-10% 0px -10% 0px'
+      }
+    );
+
+    observer.observe(heroSection);
+
+    return () => observer.disconnect();
+  }, [isHomePageRoute]);
 
   const handleApplyNowClick = () => {
     if (!user) {
@@ -87,19 +113,17 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
           <div className="hidden lg:flex items-center space-x-4">
             <UserMenu shouldUseDarkText={shouldUseDarkText} />
             
-            {/* Request a Nurse Button */}
-            <div className="relative">
-              <GlowEffect
-                colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
-                mode="colorShift"
-                blur="medium"
-                duration={4}
-                scale={1.1}
-                intensity={0.35}
-              />
+            {/* Request a Nurse Button - Hero style without glow */}
+            <div className={cn(
+              "transition-all duration-500 ease-in-out",
+              showRequestButton 
+                ? "opacity-100 translate-y-0 pointer-events-auto" 
+                : "opacity-0 translate-y-2 pointer-events-none"
+            )}>
               <Button
                 onClick={handleRequestNurseClick}
-                className="relative bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                size="lg"
+                className="gap-4 text-white bg-sky-300 hover:bg-sky-200 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 min-h-[48px] text-base"
               >
                 Request a Nurse
               </Button>
