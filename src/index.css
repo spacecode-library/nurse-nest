@@ -7,7 +7,8 @@
 
 /* MOBILE HERO POSITIONING PROTECTION - DO NOT MODIFY */
 @media (max-width: 767px) {
-  .mobile-hero-header {
+  .mobile-hero-header,
+  .mobile-hero-header-locked {
     position: absolute !important;
     top: 25vh !important;
     left: 16px !important;
@@ -15,13 +16,15 @@
     z-index: 20 !important;
   }
   
-  .mobile-hero-header h1 {
+  .mobile-hero-header h1,
+  .mobile-hero-header-locked h1 {
     pointer-events: auto !important;
   }
   
-  .mobile-hero-bottom {
+  .mobile-hero-bottom,
+  .mobile-hero-bottom-aligned {
     position: absolute !important;
-    bottom: 80px !important;
+    bottom: 20px !important;
     left: 5% !important;
     right: 5% !important;
     width: 90% !important;
@@ -29,10 +32,20 @@
     pointer-events: auto !important;
   }
   
-  /* Fix rotating text container to prevent overflow */
-  .mobile-hero-header span[class*="relative"] {
-    height: 48px !important;
-    overflow: hidden !important;
+  /* Fix rotating text container to prevent cutoff - CRITICAL */
+  .mobile-hero-header span[class*="relative"],
+  .mobile-hero-header-locked span[class*="relative"] {
+    height: 60px !important;
+    overflow: visible !important;
+    line-height: 1.3 !important;
+    padding-bottom: 8px !important;
+  }
+  
+  /* Ensure rotating text motion spans have proper spacing */
+  .mobile-hero-header motion-span,
+  .mobile-hero-header-locked motion-span {
+    line-height: 1.3 !important;
+    padding-bottom: 8px !important;
   }
 }
 

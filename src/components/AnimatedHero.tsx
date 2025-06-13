@@ -27,9 +27,9 @@ function Hero({ isMobile = false }: HeroProps) {
   if (isMobile) {
     return (
       <div className="w-full relative h-screen">
-        {/* HEADER POSITION LOCKED - DO NOT MODIFY */}
+        {/* MOBILE HEADER - POSITION LOCKED - DO NOT MODIFY */}
         <div 
-          className="mobile-hero-header"
+          className="mobile-hero-header-locked"
           style={{
             position: 'absolute !important' as any,
             top: '25vh !important',
@@ -41,10 +41,12 @@ function Hero({ isMobile = false }: HeroProps) {
           <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
             <span className="block text-white">Need a</span>
             <span 
-              className="relative flex w-full justify-start overflow-hidden text-left items-center"
+              className="relative flex w-full justify-start overflow-visible text-left items-center"
               style={{
-                height: '48px !important' as any,
-                overflow: 'hidden !important'
+                height: '60px !important' as any,
+                overflow: 'visible !important',
+                lineHeight: '1.3 !important',
+                paddingBottom: '8px !important'
               }}
             >
               &nbsp;
@@ -52,6 +54,10 @@ function Hero({ isMobile = false }: HeroProps) {
                 <motion.span 
                   key={index} 
                   className="absolute font-semibold text-blue-300 left-0 top-0"
+                  style={{
+                    lineHeight: '1.3 !important',
+                    paddingBottom: '8px !important'
+                  }}
                   initial={{ opacity: 0, y: "-100" }}
                   transition={{ type: "spring", stiffness: 50 }}
                   animate={titleNumber === index ? {
@@ -70,12 +76,12 @@ function Hero({ isMobile = false }: HeroProps) {
           </h1>
         </div>
 
-        {/* Description and Buttons - Bottom Positioned */}
+        {/* Mobile Description and Buttons - Aligned with FAQ Button */}
         <div 
-          className="mobile-hero-bottom"
+          className="mobile-hero-bottom-aligned"
           style={{
             position: 'absolute !important' as any,
-            bottom: '80px !important',
+            bottom: '20px !important',
             left: '5% !important',
             right: '5% !important',
             width: '90% !important',
@@ -150,35 +156,38 @@ function Hero({ isMobile = false }: HeroProps) {
               <span className="block text-white">nurse?</span>
             </h1>
 
-            <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl">
-              Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
-            </p>
-            
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative">
-                <GlowEffect 
-                  colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} 
-                  mode="rotate" 
-                  blur="soft" 
-                  duration={3} 
-                  scale={1.1} 
-                  intensity={0.35} 
-                />
-                <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8">
-                  Request a Nurse <PhoneCall className="w-4 h-4 md:w-5 md:h-5" />
-                </Button>
-              </div>
-              <div className="relative">
-                <GlowEffect 
-                  colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} 
-                  mode="pulse" 
-                  blur="soft" 
-                  duration={2} 
-                  scale={1.05} 
-                />
-                <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8" variant="outline">
-                  Join as a Nurse <MoveRight className="w-4 h-4 md:w-5 md:h-5" />
-                </Button>
+            {/* Desktop Description and Buttons - Moved Down Slightly */}
+            <div className="mt-8 md:mt-12 lg:mt-16 space-y-6">
+              <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl">
+                Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
+              </p>
+              
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative">
+                  <GlowEffect 
+                    colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} 
+                    mode="rotate" 
+                    blur="soft" 
+                    duration={3} 
+                    scale={1.1} 
+                    intensity={0.35} 
+                  />
+                  <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8">
+                    Request a Nurse <PhoneCall className="w-4 h-4 md:w-5 md:h-5" />
+                  </Button>
+                </div>
+                <div className="relative">
+                  <GlowEffect 
+                    colors={['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1']} 
+                    mode="pulse" 
+                    blur="soft" 
+                    duration={2} 
+                    scale={1.05} 
+                  />
+                  <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8" variant="outline">
+                    Join as a Nurse <MoveRight className="w-4 h-4 md:w-5 md:h-5" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
