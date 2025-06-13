@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -8,6 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Apply from "./pages/Apply";
 import Auth from "./pages/Auth";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Payment from "./pages/Payment";
@@ -49,6 +50,8 @@ export default function App() {
               <Route path="/" element={<Index />} />
               <Route path="/apply" element={<Apply />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/sign-in" element={<SignIn />} />
+              <Route path="/sign-up" element={<SignUp />} />
               <Route path="/about" element={<About />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/payment" element={<Payment />} />
