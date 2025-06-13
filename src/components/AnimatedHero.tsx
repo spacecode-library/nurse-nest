@@ -1,20 +1,16 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlowEffect } from "@/components/ui/glow-effect";
-
 interface HeroProps {
   isMobile?: boolean;
 }
-
 function Hero({
   isMobile = false
 }: HeroProps) {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(() => ["Specialized", "Night", "Private Duty", "Compassionate", "Newborn", "Home Care", "Reliable", "Wound Care", "Post-Surgery", "Gentle"], []);
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (titleNumber === titles.length - 1) {
@@ -25,44 +21,45 @@ function Hero({
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, [titleNumber, titles]);
-
   if (isMobile) {
-    return (
-      <div className="w-full h-screen relative">
+    return <div className="w-full h-screen relative">
         {/* Mobile Header - Locked Position */}
-        <div className="mobile-hero-header-locked absolute w-full px-4" style={{ top: '25vh', zIndex: 20 }}>
-          <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
+        <div className="mobile-hero-header-locked absolute w-full px-4" style={{
+        top: '25vh',
+        zIndex: 20
+      }}>
+          <h1 className="tracking-tighter font-regular text-white leading-tight text-4xl">
             <span className="block text-white mb-2">Need a</span>
             
             {/* Mobile rotating text with increased height and proper padding */}
-            <div className="rotating-text-mobile relative w-full mb-2" style={{ height: '64px', overflow: 'visible' }}>
+            <div className="rotating-text-mobile relative w-full mb-2" style={{
+            height: '64px',
+            overflow: 'visible'
+          }}>
               <span className="text-white">&nbsp;</span>
-              {titles.map((title, index) => (
-                <motion.span
-                  key={index}
-                  className="absolute font-semibold text-blue-300 left-0"
-                  style={{
-                    position: 'absolute',
-                    top: '0',
-                    left: '0',
-                    width: 'max-content',
-                    lineHeight: '1.2',
-                    paddingTop: '4px',
-                    paddingBottom: '8px'
-                  }}
-                  initial={{ opacity: 0, y: 56 }}
-                  transition={{ type: "spring", stiffness: 50 }}
-                  animate={titleNumber === index ? {
-                    y: 0,
-                    opacity: 1
-                  } : {
-                    y: titleNumber > index ? -56 : 56,
-                    opacity: 0
-                  }}
-                >
+              {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300 left-0" style={{
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              width: 'max-content',
+              lineHeight: '1.2',
+              paddingTop: '4px',
+              paddingBottom: '8px'
+            }} initial={{
+              opacity: 0,
+              y: 56
+            }} transition={{
+              type: "spring",
+              stiffness: 50
+            }} animate={titleNumber === index ? {
+              y: 0,
+              opacity: 1
+            } : {
+              y: titleNumber > index ? -56 : 56,
+              opacity: 0
+            }}>
                   {title}
-                </motion.span>
-              ))}
+                </motion.span>)}
             </div>
             
             <span className="block text-white">nurse?</span>
@@ -70,7 +67,10 @@ function Hero({
         </div>
 
         {/* Mobile Description/Buttons - Bottom positioned */}
-        <div className="mobile-hero-bottom-content absolute w-full px-4" style={{ bottom: '20px', zIndex: 20 }}>
+        <div className="mobile-hero-bottom-content absolute w-full px-4" style={{
+        bottom: '20px',
+        zIndex: 20
+      }}>
           <p className="text-base leading-relaxed tracking-tight mb-6 text-slate-50">
             Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
           </p>
@@ -90,13 +90,11 @@ function Hero({
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // Desktop layout
-  return (
-    <div className="w-full relative">
+  return <div className="w-full relative">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
           <div className="flex flex-col justify-start max-w-3xl">
@@ -108,30 +106,31 @@ function Hero({
               <span className="text-white block">
                 <span className="inline-block">
                   <span className="text-white"> </span>
-                  <span className="relative inline-block" style={{ width: '300px', height: '80px', overflow: 'visible' }}>
-                    {titles.map((title, index) => (
-                      <motion.span 
-                        key={index} 
-                        className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap"
-                        style={{ 
-                          lineHeight: '1.1',
-                          verticalAlign: 'baseline',
-                          paddingTop: '4px',
-                          paddingBottom: '8px'
-                        }}
-                        initial={{ opacity: 0, y: 64 }} 
-                        transition={{ type: "spring", stiffness: 50 }} 
-                        animate={titleNumber === index ? {
-                          y: 0,
-                          opacity: 1
-                        } : {
-                          y: titleNumber > index ? -64 : 64,
-                          opacity: 0
-                        }}
-                      >
+                  <span className="relative inline-block" style={{
+                  width: '300px',
+                  height: '80px',
+                  overflow: 'visible'
+                }}>
+                    {titles.map((title, index) => <motion.span key={index} className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap" style={{
+                    lineHeight: '1.1',
+                    verticalAlign: 'baseline',
+                    paddingTop: '4px',
+                    paddingBottom: '8px'
+                  }} initial={{
+                    opacity: 0,
+                    y: 64
+                  }} transition={{
+                    type: "spring",
+                    stiffness: 50
+                  }} animate={titleNumber === index ? {
+                    y: 0,
+                    opacity: 1
+                  } : {
+                    y: titleNumber > index ? -64 : 64,
+                    opacity: 0
+                  }}>
                         {title}
-                      </motion.span>
-                    ))}
+                      </motion.span>)}
                   </span>
                 </span>
               </span>
@@ -163,8 +162,6 @@ function Hero({
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
-
 export { Hero };
