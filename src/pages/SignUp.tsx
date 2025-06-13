@@ -116,12 +116,12 @@ export default function SignUp() {
       {/* Left Side - Architectural Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <div 
-          className="w-full h-screen bg-cover bg-center bg-fixed relative"
+          className="w-full h-screen relative"
           style={{
             backgroundImage: `url('/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png')`,
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
-            backgroundAttachment: 'fixed'
           }}
         >
           {/* Dark overlay */}
