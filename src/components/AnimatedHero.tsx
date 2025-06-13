@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -26,23 +25,8 @@ function Hero({ isMobile = false }: HeroProps) {
 
   if (isMobile) {
     return (
-      <div className="w-full text-left flex flex-col min-h-[60vh] px-4 relative">
-        {/* HEADER POSITION LOCKED - DO NOT MODIFY */}
-        {/* This header positioning is PERFECT and must be preserved */}
-        <div 
-          className="header-position-locked"
-          style={{
-            /* HEADER POSITION PROTECTION - CRITICAL: DO NOT CHANGE */
-            position: 'absolute !important',
-            top: '25% !important',
-            left: '16px !important',
-            right: '16px !important',
-            zIndex: '20 !important',
-            transform: 'none !important',
-            margin: '0 !important',
-            padding: '0 !important'
-          }}
-        >
+      <div className="w-full text-left flex flex-col justify-center min-h-[60vh] px-4">
+        <div className="space-y-6">
           <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
             <span className="block text-white">Need a</span>
             <span className="relative flex w-full justify-start overflow-hidden text-left h-12 items-center">
@@ -67,23 +51,8 @@ function Hero({ isMobile = false }: HeroProps) {
             </span>
             <span className="block text-white">nurse?</span>
           </h1>
-        </div>
 
-        {/* DESCRIPTION AND BUTTONS - REPOSITIONED TO BOTTOM */}
-        {/* Using absolute positioning to override container constraints */}
-        <div 
-          className="description-buttons-repositioned"
-          style={{
-            /* DESCRIPTION/BUTTONS POSITIONING - Move to bottom */
-            position: 'absolute !important',
-            bottom: '8vh !important', /* Align with FAQ button position */
-            left: '16px !important',
-            right: '16px !important',
-            zIndex: '15 !important',
-            transform: 'none !important'
-          }}
-        >
-          <div className="space-y-6">
+          <div className="pt-16 space-y-6">
             <p className="text-base leading-relaxed tracking-tight text-slate-50 max-w-lg">
               Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
             </p>
@@ -124,7 +93,7 @@ function Hero({ isMobile = false }: HeroProps) {
   return (
     <div className="w-full flex items-center justify-start min-h-screen">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-start justify-center text-left max-w-4xl ml-0">
+        <div className="flex flex-col items-start justify-center text-left max-w-4xl">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter font-regular text-white leading-tight">
               <span className="block text-white mb-1">Need a</span>
