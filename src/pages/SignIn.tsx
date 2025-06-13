@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -90,6 +89,25 @@ export default function SignIn() {
   
   return (
     <div className="min-h-screen bg-white flex">
+      {/* Mobile Return to Home Button - Visible only on mobile */}
+      <div className="lg:hidden absolute top-4 left-4 z-50">
+        <Link to="/">
+          <div className="relative group">
+            {/* Glow effect */}
+            <div className="absolute -inset-2 bg-blue-500/20 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+            
+            {/* Button */}
+            <Button
+              variant="ghost"
+              className="relative bg-white/90 backdrop-blur-md border border-gray-200 text-gray-700 hover:bg-white hover:text-gray-900 transition-all duration-300 rounded-xl px-4 py-2 shadow-lg"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Home
+            </Button>
+          </div>
+        </Link>
+      </div>
+
       {/* Left Side - Architectural Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <div 
@@ -104,7 +122,7 @@ export default function SignIn() {
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30"></div>
           
-          {/* Return to Home Button */}
+          {/* Return to Home Button - Desktop */}
           <div className="absolute top-8 left-8 z-10">
             <Link to="/">
               <div className="relative group">
@@ -130,7 +148,7 @@ export default function SignIn() {
         {/* Background Beams - Light Mode */}
         <BeamsBackground mode="light" intensity="subtle" className="absolute inset-0" />
         
-        <div className="w-full max-w-md space-y-6 relative z-10">
+        <div className="w-full max-w-md space-y-6 relative z-10 mt-16 lg:mt-0">
           
           {/* Header */}
           <div className="text-center">
