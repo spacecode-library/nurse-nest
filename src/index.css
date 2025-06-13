@@ -140,6 +140,39 @@
   .gradient-subtle {
     @apply bg-subtle-gradient;
   }
+
+  /* MOBILE HERO POSITIONING PROTECTION - CRITICAL CSS */
+  /* HEADER POSITION LOCKED - DO NOT MODIFY */
+  @media (max-width: 768px) {
+    .header-position-locked {
+      position: absolute !important;
+      top: 25% !important;
+      left: 16px !important;
+      right: 16px !important;
+      z-index: 20 !important;
+      transform: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    .header-position-locked h1 {
+      position: relative !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: none !important;
+    }
+    
+    /* DESCRIPTION/BUTTONS REPOSITIONING */
+    .description-buttons-repositioned {
+      position: absolute !important;
+      bottom: 8vh !important;
+      left: 16px !important;
+      right: 16px !important;
+      z-index: 15 !important;
+      transform: none !important;
+      margin: 0 !important;
+    }
+  }
 }
 
 @layer utilities {
