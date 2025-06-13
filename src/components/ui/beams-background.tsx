@@ -9,6 +9,8 @@ interface AnimatedGradientBackgroundProps {
     className?: string;
     children?: React.ReactNode;
     intensity?: "subtle" | "medium" | "strong";
+    mode?: "dark" | "white";
+    startMidAnimation?: boolean;
 }
 
 interface Beam {
@@ -24,11 +26,13 @@ interface Beam {
     pulseSpeed: number;
 }
 
-function createBeam(width: number, height: number): Beam {
+function createBeam(width: number, height: number, startMidAnimation: boolean = false): Beam {
     const angle = -35 + Math.random() * 10;
     return {
         x: Math.random() * width * 1.5 - width * 0.25,
-        y: Math.random() * height * 1.5 - height * 0.25,
+        y: startMidAnimation 
+            ? Math.random() * height * 0.5 // Start beams mid-screen for immediate visibility
+            : Math.random() * height * 1.5 - height * 0.25,
         width: 30 + Math.random() * 60,
         length: height * 2.5,
         angle: angle,
@@ -43,6 +47,8 @@ function createBeam(width: number, height: number): Beam {
 export function BeamsBackground({
     className,
     intensity = "strong",
+    mode = "dark",
+    startMidAnimation = false,
 }: AnimatedGradientBackgroundProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const beamsRef = useRef<Beam[]>([]);
@@ -53,6 +59,16 @@ export function BeamsBackground({
         subtle: 0.7,
         medium: 0.85,
         strong: 1,
+    };
+
+    const backgroundColors = {
+        dark: "bg-neutral-950",
+        white: "bg-white",
+    };
+
+    const overlayColors = {
+        dark: "bg-neutral-950/5",
+        white: "bg-white/5",
     };
 
     useEffect(() => {
@@ -72,7 +88,7 @@ export function BeamsBackground({
 
             const totalBeams = MINIMUM_BEAMS * 1.5;
             beamsRef.current = Array.from({ length: totalBeams }, () =>
-                createBeam(canvas.width, canvas.height)
+                createBeam(canvas.width, canvas.height, startMidAnimation)
             );
         };
 
@@ -92,7 +108,7 @@ export function BeamsBackground({
                 (Math.random() - 0.5) * spacing * 0.5;
             beam.width = 100 + Math.random() * 100;
             beam.speed = 0.5 + Math.random() * 0.4;
-            beam.hue = 190 + (index * 70) / totalBeams;
+            beam.hue = mode === "white" ? 200 + (index * 30) / totalBeams : 190 + (index * 70) / totalBeams;
             beam.opacity = 0.2 + Math.random() * 0.1;
             return beam;
         }
@@ -110,25 +126,29 @@ export function BeamsBackground({
 
             const gradient = ctx.createLinearGradient(0, 0, 0, beam.length);
 
+            // Different colors for white mode
+            const saturation = mode === "white" ? "70%" : "85%";
+            const lightness = mode === "white" ? "80%" : "65%";
+
             // Enhanced gradient with multiple color stops
-            gradient.addColorStop(0, `hsla(${beam.hue}, 85%, 65%, 0)`);
+            gradient.addColorStop(0, `hsla(${beam.hue}, ${saturation}, ${lightness}, 0)`);
             gradient.addColorStop(
                 0.1,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity * 0.5})`
+                `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity * 0.5})`
             );
             gradient.addColorStop(
                 0.4,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity})`
+                `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity})`
             );
             gradient.addColorStop(
                 0.6,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity})`
+                `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity})`
             );
             gradient.addColorStop(
                 0.9,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity * 0.5})`
+                `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity * 0.5})`
             );
-            gradient.addColorStop(1, `hsla(${beam.hue}, 85%, 65%, 0)`);
+            gradient.addColorStop(1, `hsla(${beam.hue}, ${saturation}, ${lightness}, 0)`);
 
             ctx.fillStyle = gradient;
             ctx.fillRect(-beam.width / 2, 0, beam.width, beam.length);
@@ -165,12 +185,13 @@ export function BeamsBackground({
                 cancelAnimationFrame(animationFrameRef.current);
             }
         };
-    }, [intensity]);
+    }, [intensity, mode, startMidAnimation]);
 
     return (
         <div
             className={cn(
-                "absolute inset-0 w-full h-full overflow-hidden bg-neutral-950",
+                "absolute inset-0 w-full h-full overflow-hidden",
+                backgroundColors[mode],
                 className
             )}
         >
@@ -181,7 +202,7 @@ export function BeamsBackground({
             />
 
             <motion.div
-                className="absolute inset-0 bg-neutral-950/5"
+                className={cn("absolute inset-0", overlayColors[mode])}
                 animate={{
                     opacity: [0.05, 0.15, 0.05],
                 }}
