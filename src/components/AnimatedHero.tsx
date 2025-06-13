@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -29,27 +28,13 @@ function Hero({
   if (isMobile) {
     return (
       <div className="w-full h-screen relative">
-        {/* PHASE 3: Header Position Lock - Fixed at 25% from top */}
-        <div 
-          className="absolute w-full px-4 mobile-hero-header-locked"
-          style={{ 
-            top: '25vh',
-            position: 'absolute',
-            zIndex: 20
-          }}
-        >
-          {/* PHASE 1: Fix Text Corruption - Proper container with overflow control */}
+        {/* Mobile Header - Locked Position */}
+        <div className="mobile-hero-header-locked absolute w-full px-4" style={{ top: '25vh', zIndex: 20 }}>
           <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
             <span className="block text-white mb-2">Need a</span>
             
-            {/* Fixed rotating text container with original tight bounds */}
-            <div 
-              className="relative w-full overflow-hidden mb-2"
-              style={{ 
-                height: '48px', /* Original container height restored */
-                position: 'relative'
-              }}
-            >
+            {/* Mobile rotating text with restored bounds */}
+            <div className="rotating-text-mobile relative w-full overflow-hidden mb-2" style={{ height: '48px' }}>
               <span className="text-white">&nbsp;</span>
               {titles.map((title, index) => (
                 <motion.span
@@ -60,8 +45,8 @@ function Hero({
                     top: '0',
                     left: '0',
                     width: 'max-content',
-                    lineHeight: '1.2', /* Restored original line-height */
-                    paddingBottom: '3px' /* Minimal padding for descenders only */
+                    lineHeight: '1.3',
+                    paddingBottom: '3px'
                   }}
                   initial={{ opacity: 0, y: 48 }}
                   transition={{ type: "spring", stiffness: 50 }}
@@ -69,7 +54,7 @@ function Hero({
                     y: 0,
                     opacity: 1
                   } : {
-                    y: titleNumber > index ? -48 : 48, /* Keep within original bounds */
+                    y: titleNumber > index ? -48 : 48,
                     opacity: 0
                   }}
                 >
@@ -82,15 +67,8 @@ function Hero({
           </h1>
         </div>
 
-        {/* PHASE 4: Description/Buttons Bottom Positioning - Aligned with FAQ button */}
-        <div 
-          className="absolute w-full px-4 mobile-hero-bottom-content"
-          style={{ 
-            bottom: '20px', /* Matches FAQ button positioning */
-            position: 'absolute',
-            zIndex: 20
-          }}
-        >
+        {/* Mobile Description/Buttons - Bottom positioned */}
+        <div className="mobile-hero-bottom-content absolute w-full px-4" style={{ bottom: '20px', zIndex: 20 }}>
           <p className="text-base leading-relaxed tracking-tight mb-6 text-slate-50">
             Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
           </p>
@@ -114,32 +92,31 @@ function Hero({
     );
   }
 
-  // Desktop layout - COMPLETELY REFACTORED to remove inline styles
+  // Desktop layout
   return (
     <div className="w-full relative">
       <div className="container mx-auto px-4 md:px-6">
-        {/* STEP 1: Desktop Gap Elimination - Removed massive 132px margins */}
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
-          <div className="flex flex-col justify-start max-w-3xl space-y-4">
-            {/* STEP 3: Desktop Layout Modernization - Clean Tailwind spacing */}
-            <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-none">
+          <div className="flex flex-col justify-start max-w-3xl">
+            {/* Desktop Header - Keep exact position */}
+            <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-none mb-8">
               <span className="text-white block">Need a</span>
               
-              {/* Desktop rotating text with proper bounds */}
+              {/* Desktop rotating text - Fixed implementation */}
               <span className="relative flex w-full justify-start overflow-hidden text-left">
                 <span className="w-4">&nbsp;</span>
-                <div className="relative h-[1.2em] overflow-hidden">
+                <div className="rotating-text-desktop relative overflow-hidden" style={{ height: '1.2em' }}>
                   {titles.map((title, index) => (
                     <motion.span 
                       key={index} 
                       className="absolute font-semibold text-blue-300 left-0 top-0" 
-                      initial={{ opacity: 0, y: "-100" }} 
+                      initial={{ opacity: 0, y: "-100%" }} 
                       transition={{ type: "spring", stiffness: 50 }} 
                       animate={titleNumber === index ? {
                         y: 0,
                         opacity: 1
                       } : {
-                        y: titleNumber > index ? -60 : 60,
+                        y: titleNumber > index ? "-100%" : "100%",
                         opacity: 0
                       }}
                     >
@@ -152,8 +129,8 @@ function Hero({
               <span className="text-white block">nurse?</span>
             </h1>
 
-            {/* STEP 1: Desktop Gap Fix - Proper spacing between header and content */}
-            <div className="mt-8 space-y-6">
+            {/* Desktop Description/Buttons - Moved lower with increased spacing */}
+            <div className="mt-16 space-y-6">
               <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left">
                 Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
               </p>

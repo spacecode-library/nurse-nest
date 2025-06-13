@@ -19,6 +19,7 @@ interface NurseNestNavbarProps {
 export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showNavbarButton, setShowNavbarButton] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -35,6 +36,34 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Intersection Observer for hero section
+  useEffect(() => {
+    if (!isHomePageRoute) {
+      setShowNavbarButton(true);
+      return;
+    }
+
+    const heroSection = document.querySelector('section');
+    if (!heroSection) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Show button when hero section is NOT visible (scrolled past it)
+        setShowNavbarButton(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '-10% 0px -10% 0px'
+      }
+    );
+
+    observer.observe(heroSection);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isHomePageRoute]);
 
   const handleApplyNowClick = () => {
     if (!user) {
@@ -87,19 +116,16 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
           <div className="hidden lg:flex items-center space-x-4">
             <UserMenu shouldUseDarkText={shouldUseDarkText} />
             
-            {/* Request a Nurse Button */}
-            <div className="relative">
-              <GlowEffect
-                colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
-                mode="colorShift"
-                blur="medium"
-                duration={4}
-                scale={1.1}
-                intensity={0.35}
-              />
+            {/* Request a Nurse Button - with fade behavior */}
+            <div className={cn(
+              "relative transition-all duration-500 ease-in-out",
+              showNavbarButton 
+                ? "opacity-100 translate-y-0 pointer-events-auto" 
+                : "opacity-0 translate-y-2 pointer-events-none"
+            )}>
               <Button
                 onClick={handleRequestNurseClick}
-                className="relative bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="relative bg-sky-300 hover:bg-sky-200 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 Request a Nurse
               </Button>
