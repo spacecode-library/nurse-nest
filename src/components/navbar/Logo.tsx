@@ -33,7 +33,7 @@ export default function Logo({ shouldUseDarkText }: LogoProps) {
           alt="Nurse Nest"
           className="h-8 w-auto md:h-10 transition-all duration-300"
           loading="eager"
-          fetchPriority="high"
+          fetchpriority="high"
         />
       </picture>
     </Link>

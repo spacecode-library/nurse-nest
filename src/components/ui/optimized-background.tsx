@@ -32,8 +32,16 @@ export function OptimizedBackground({
       };
       img.onerror = () => {
         // Fallback to original if WebP fails
-        setOptimizedSrc(src);
-        setImageLoaded(true);
+        const fallbackImg = new Image();
+        fallbackImg.onload = () => {
+          setOptimizedSrc(src);
+          setImageLoaded(true);
+        };
+        fallbackImg.onerror = () => {
+          // If original also fails, still show content
+          setImageLoaded(true);
+        };
+        fallbackImg.src = src;
       };
       
       if (priority) {
@@ -50,6 +58,9 @@ export function OptimizedBackground({
         const element = document.querySelector(`[data-bg-src="${src}"]`);
         if (element) {
           observer.observe(element);
+        } else {
+          // If element not found, load immediately
+          img.src = webpSrc;
         }
       }
     };
