@@ -21,6 +21,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { signUp, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
+import { BeamsBackground } from '@/components/ui/beams-background';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -150,8 +151,11 @@ export default function SignUp() {
       </div>
 
       {/* Right Side - Sign Up Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden">
-        <div className="w-full max-w-md space-y-5">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
+        {/* Background Beams - Light Mode */}
+        <BeamsBackground mode="light" intensity="subtle" className="absolute inset-0" />
+        
+        <div className="w-full max-w-md space-y-5 relative z-10">
           
           {/* Header */}
           <div className="text-center">
@@ -217,7 +221,7 @@ export default function SignUp() {
                     userType === 'client' 
                       ? 'border-[#9bcbff] bg-blue-50' 
                       : 'border-gray-200'
-                  }`} onClick={() => setUserType('client')}>
+                  }`}>
                     <RadioGroupItem value="client" id="client" className="text-[#9bcbff]" />
                     <Building2 className="h-4 w-4 text-green-600" />
                     <div className="flex-1">
@@ -232,7 +236,7 @@ export default function SignUp() {
                     userType === 'nurse' 
                       ? 'border-[#9bcbff] bg-blue-50' 
                       : 'border-gray-200'
-                  }`} onClick={() => setUserType('nurse')}>
+                  }`}>
                     <RadioGroupItem value="nurse" id="nurse" className="text-[#9bcbff]" />
                     <Stethoscope className="h-4 w-4 text-blue-600" />
                     <div className="flex-1">
@@ -247,7 +251,7 @@ export default function SignUp() {
                     userType === 'admin' 
                       ? 'border-[#9bcbff] bg-blue-50' 
                       : 'border-gray-200'
-                  }`} onClick={() => setUserType('admin')}>
+                  }`}>
                     <RadioGroupItem value="admin" id="admin" className="text-[#9bcbff]" />
                     <Shield className="h-4 w-4 text-purple-600" />
                     <div className="flex-1">

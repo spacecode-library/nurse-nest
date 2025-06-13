@@ -9,6 +9,7 @@ interface AnimatedGradientBackgroundProps {
     className?: string;
     children?: React.ReactNode;
     intensity?: "subtle" | "medium" | "strong";
+    mode?: "dark" | "light";
 }
 
 interface Beam {
@@ -24,11 +25,16 @@ interface Beam {
     pulseSpeed: number;
 }
 
-function createBeam(width: number, height: number): Beam {
+function createBeam(width: number, height: number, startMidAnimation = false): Beam {
     const angle = -35 + Math.random() * 10;
+    // Start beams at 50% of their travel distance if startMidAnimation is true
+    const yPosition = startMidAnimation 
+        ? Math.random() * height * 0.5  // Start beams halfway through their journey
+        : Math.random() * height * 1.5 - height * 0.25;
+    
     return {
         x: Math.random() * width * 1.5 - width * 0.25,
-        y: Math.random() * height * 1.5 - height * 0.25,
+        y: yPosition,
         width: 30 + Math.random() * 60,
         length: height * 2.5,
         angle: angle,
@@ -43,6 +49,7 @@ function createBeam(width: number, height: number): Beam {
 export function BeamsBackground({
     className,
     intensity = "strong",
+    mode = "dark",
 }: AnimatedGradientBackgroundProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const beamsRef = useRef<Beam[]>([]);
@@ -72,7 +79,7 @@ export function BeamsBackground({
 
             const totalBeams = MINIMUM_BEAMS * 1.5;
             beamsRef.current = Array.from({ length: totalBeams }, () =>
-                createBeam(canvas.width, canvas.height)
+                createBeam(canvas.width, canvas.height, true) // Start mid-animation
             );
         };
 
@@ -92,7 +99,7 @@ export function BeamsBackground({
                 (Math.random() - 0.5) * spacing * 0.5;
             beam.width = 100 + Math.random() * 100;
             beam.speed = 0.5 + Math.random() * 0.4;
-            beam.hue = 190 + (index * 70) / totalBeams;
+            beam.hue = mode === "light" ? 220 + (index * 40) / totalBeams : 190 + (index * 70) / totalBeams;
             beam.opacity = 0.2 + Math.random() * 0.1;
             return beam;
         }
@@ -110,25 +117,47 @@ export function BeamsBackground({
 
             const gradient = ctx.createLinearGradient(0, 0, 0, beam.length);
 
-            // Enhanced gradient with multiple color stops
-            gradient.addColorStop(0, `hsla(${beam.hue}, 85%, 65%, 0)`);
-            gradient.addColorStop(
-                0.1,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity * 0.5})`
-            );
-            gradient.addColorStop(
-                0.4,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity})`
-            );
-            gradient.addColorStop(
-                0.6,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity})`
-            );
-            gradient.addColorStop(
-                0.9,
-                `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity * 0.5})`
-            );
-            gradient.addColorStop(1, `hsla(${beam.hue}, 85%, 65%, 0)`);
+            if (mode === "light") {
+                // Light mode - softer, more subtle beams
+                gradient.addColorStop(0, `hsla(${beam.hue}, 60%, 85%, 0)`);
+                gradient.addColorStop(
+                    0.1,
+                    `hsla(${beam.hue}, 60%, 85%, ${pulsingOpacity * 0.3})`
+                );
+                gradient.addColorStop(
+                    0.4,
+                    `hsla(${beam.hue}, 60%, 85%, ${pulsingOpacity * 0.6})`
+                );
+                gradient.addColorStop(
+                    0.6,
+                    `hsla(${beam.hue}, 60%, 85%, ${pulsingOpacity * 0.6})`
+                );
+                gradient.addColorStop(
+                    0.9,
+                    `hsla(${beam.hue}, 60%, 85%, ${pulsingOpacity * 0.3})`
+                );
+                gradient.addColorStop(1, `hsla(${beam.hue}, 60%, 85%, 0)`);
+            } else {
+                // Dark mode - original colors
+                gradient.addColorStop(0, `hsla(${beam.hue}, 85%, 65%, 0)`);
+                gradient.addColorStop(
+                    0.1,
+                    `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity * 0.5})`
+                );
+                gradient.addColorStop(
+                    0.4,
+                    `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity})`
+                );
+                gradient.addColorStop(
+                    0.6,
+                    `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity})`
+                );
+                gradient.addColorStop(
+                    0.9,
+                    `hsla(${beam.hue}, 85%, 65%, ${pulsingOpacity * 0.5})`
+                );
+                gradient.addColorStop(1, `hsla(${beam.hue}, 85%, 65%, 0)`);
+            }
 
             ctx.fillStyle = gradient;
             ctx.fillRect(-beam.width / 2, 0, beam.width, beam.length);
@@ -139,7 +168,7 @@ export function BeamsBackground({
             if (!canvas || !ctx) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.filter = "blur(35px)";
+            ctx.filter = mode === "light" ? "blur(25px)" : "blur(35px)";
 
             const totalBeams = beamsRef.current.length;
             beamsRef.current.forEach((beam, index) => {
@@ -165,23 +194,27 @@ export function BeamsBackground({
                 cancelAnimationFrame(animationFrameRef.current);
             }
         };
-    }, [intensity]);
+    }, [intensity, mode]);
+
+    const bgColor = mode === "light" ? "bg-white" : "bg-neutral-950";
+    const overlayColor = mode === "light" ? "bg-white/10" : "bg-neutral-950/5";
 
     return (
         <div
             className={cn(
-                "absolute inset-0 w-full h-full overflow-hidden bg-neutral-950",
+                "absolute inset-0 w-full h-full overflow-hidden",
+                bgColor,
                 className
             )}
         >
             <canvas
                 ref={canvasRef}
                 className="absolute inset-0"
-                style={{ filter: "blur(15px)" }}
+                style={{ filter: mode === "light" ? "blur(10px)" : "blur(15px)" }}
             />
 
             <motion.div
-                className="absolute inset-0 bg-neutral-950/5"
+                className={cn("absolute inset-0", overlayColor)}
                 animate={{
                     opacity: [0.05, 0.15, 0.05],
                 }}

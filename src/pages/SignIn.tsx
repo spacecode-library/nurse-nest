@@ -16,6 +16,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { signIn, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
+import { BeamsBackground } from '@/components/ui/beams-background';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -125,8 +126,11 @@ export default function SignIn() {
       </div>
 
       {/* Right Side - Sign In Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden">
-        <div className="w-full max-w-md space-y-6">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
+        {/* Background Beams - Light Mode */}
+        <BeamsBackground mode="light" intensity="subtle" className="absolute inset-0" />
+        
+        <div className="w-full max-w-md space-y-6 relative z-10">
           
           {/* Header */}
           <div className="text-center">
