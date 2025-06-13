@@ -34,8 +34,8 @@ function Hero({
           <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
             <span className="block text-white mb-2">Need a</span>
             
-            {/* Mobile rotating text with restored bounds */}
-            <div className="rotating-text-mobile relative w-full overflow-hidden mb-2" style={{ height: '48px' }}>
+            {/* Mobile rotating text with increased height and proper padding */}
+            <div className="rotating-text-mobile relative w-full mb-2" style={{ height: '64px', overflow: 'visible' }}>
               <span className="text-white">&nbsp;</span>
               {titles.map((title, index) => (
                 <motion.span
@@ -46,16 +46,17 @@ function Hero({
                     top: '0',
                     left: '0',
                     width: 'max-content',
-                    lineHeight: '1.3',
-                    paddingBottom: '3px'
+                    lineHeight: '1.2',
+                    paddingTop: '4px',
+                    paddingBottom: '8px'
                   }}
-                  initial={{ opacity: 0, y: 48 }}
+                  initial={{ opacity: 0, y: 56 }}
                   transition={{ type: "spring", stiffness: 50 }}
                   animate={titleNumber === index ? {
                     y: 0,
                     opacity: 1
                   } : {
-                    y: titleNumber > index ? -48 : 48,
+                    y: titleNumber > index ? -56 : 56,
                     opacity: 0
                   }}
                 >
@@ -107,22 +108,24 @@ function Hero({
               <span className="text-white block">
                 <span className="inline-block">
                   <span className="text-white"> </span>
-                  <span className="relative inline-block" style={{ width: '300px', height: '60px' }}>
+                  <span className="relative inline-block" style={{ width: '300px', height: '80px', overflow: 'visible' }}>
                     {titles.map((title, index) => (
                       <motion.span 
                         key={index} 
                         className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap"
                         style={{ 
-                          lineHeight: '1',
-                          verticalAlign: 'baseline'
+                          lineHeight: '1.1',
+                          verticalAlign: 'baseline',
+                          paddingTop: '4px',
+                          paddingBottom: '8px'
                         }}
-                        initial={{ opacity: 0, y: 48 }} 
+                        initial={{ opacity: 0, y: 64 }} 
                         transition={{ type: "spring", stiffness: 50 }} 
                         animate={titleNumber === index ? {
                           y: 0,
                           opacity: 1
                         } : {
-                          y: titleNumber > index ? -48 : 48,
+                          y: titleNumber > index ? -64 : 64,
                           opacity: 0
                         }}
                       >

@@ -19,7 +19,18 @@ interface NavLinksProps {
 export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavClick }: NavLinksProps) {
   const scrollToSection = useScrollToSection();
   
-  const handleNavClick = (path: string) => {
+  const handleNavClick = (path: string, e: React.MouseEvent) => {
+    // For Home and Pricing, allow normal navigation
+    if (path === '/' || path === '/pricing') {
+      // Don't prevent default for these routes
+      if (onNavClick) {
+        onNavClick(path);
+      }
+      return;
+    }
+    
+    // For other paths (with #), prevent default and use scroll
+    e.preventDefault();
     if (onNavClick) {
       onNavClick(path);
     } else {
@@ -35,10 +46,7 @@ export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavCli
           <div key={link.name}>
             <Link 
               to={link.path}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick(link.path);
-              }}
+              onClick={(e) => handleNavClick(link.path, e)}
               className="block font-medium text-gray-700 hover:text-brand-primary py-2"
             >
               {link.name}
@@ -56,10 +64,7 @@ export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavCli
         <Link 
           key={link.name}
           to={link.path}
-          onClick={(e) => {
-            e.preventDefault();
-            handleNavClick(link.path);
-          }}
+          onClick={(e) => handleNavClick(link.path, e)}
           className={cn(
             "font-medium transition-colors duration-300 ease-in-out hover:scale-105",
             shouldUseDarkText
