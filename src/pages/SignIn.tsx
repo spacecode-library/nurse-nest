@@ -92,9 +92,12 @@ export default function SignIn() {
       {/* Left Side - Architectural Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <div 
-          className="w-full h-full bg-cover bg-center relative"
+          className="w-full h-screen bg-cover bg-center bg-fixed relative"
           style={{
-            backgroundImage: `url('/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png')`
+            backgroundImage: `url('/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundAttachment: 'fixed'
           }}
         >
           {/* Dark overlay */}
@@ -122,39 +125,39 @@ export default function SignIn() {
       </div>
 
       {/* Right Side - Sign In Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden">
+        <div className="w-full max-w-md space-y-6">
           
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h1>
-            <p className="text-lg text-gray-600">Your trusted healthcare community awaits</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back!</h1>
+            <p className="text-base text-gray-600">Your trusted healthcare community awaits</p>
           </div>
 
           {/* Error Display */}
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
+              <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
               <span className="text-red-700 text-sm">{error}</span>
             </div>
           )}
           
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             
             {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-700 font-medium">
+            <div className="space-y-1">
+              <Label htmlFor="email" className="text-gray-700 font-medium text-sm">
                 Email Address
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 pl-10 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white"
+                  className="h-10 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="Enter your email"
                 />
@@ -162,39 +165,39 @@ export default function SignIn() {
             </div>
             
             {/* Password Field */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-gray-700 font-medium">
+                <Label htmlFor="password" className="text-gray-700 font-medium text-sm">
                   Password
                 </Label>
                 <button
                   type="button"
-                  className="text-sm text-[#9bcbff] hover:text-blue-700 font-medium transition-colors"
+                  className="text-xs text-[#9bcbff] hover:text-blue-700 font-medium transition-colors"
                   onClick={() => navigate('/auth/reset-password')}
                 >
                   Forgot password?
                 </button>
               </div>
               <div className="relative">
-                <LockKeyhole className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <LockKeyhole className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 pl-10 pr-10 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white"
+                  className="h-10 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-5 w-5" />
+                    <Eye className="h-4 w-4" />
                   )}
                 </button>
               </div>
@@ -205,22 +208,22 @@ export default function SignIn() {
               <input
                 type="checkbox"
                 id="remember"
-                className="h-4 w-4 text-[#9bcbff] rounded border-gray-300 focus:ring-[#9bcbff]"
+                className="h-3 w-3 text-[#9bcbff] rounded border-gray-300 focus:ring-[#9bcbff]"
               />
-              <Label htmlFor="remember" className="text-sm text-gray-600 cursor-pointer">
+              <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer">
                 Remember me for 30 days
               </Label>
             </div>
             
             {/* Sign In Button */}
             <Button
-              className="w-full h-12 bg-[#9bcbff] hover:bg-[#7bb3ff] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+              className="w-full h-10 bg-[#9bcbff] hover:bg-[#7bb3ff] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
               disabled={loading}
               type="submit"
             >
               {loading ? (
                 <div className="flex items-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Signing in...</span>
                 </div>
               ) : (
@@ -231,7 +234,7 @@ export default function SignIn() {
           
           {/* Footer */}
           <div className="text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               Don't have an account?{' '}
               <Link
                 to="/sign-up"
@@ -244,8 +247,8 @@ export default function SignIn() {
 
           {/* Security Badge */}
           <div className="text-center">
-            <div className="inline-flex items-center space-x-2 text-sm text-gray-500">
-              <CheckCircle className="h-4 w-4 text-green-500" />
+            <div className="inline-flex items-center space-x-2 text-xs text-gray-500">
+              <CheckCircle className="h-3 w-3 text-green-500" />
               <span>SSL Secured</span>
             </div>
           </div>
