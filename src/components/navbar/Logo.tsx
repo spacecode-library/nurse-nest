@@ -19,13 +19,23 @@ export default function Logo({ shouldUseDarkText }: LogoProps) {
     }
   };
 
+  const getOptimizedLogoSrc = () => {
+    const originalSrc = getLogoSrc();
+    return originalSrc.replace('.png', '.webp');
+  };
+
   return (
     <Link to="/" className="flex items-center transition-all duration-300 hover:scale-105">
-      <img 
-        src={getLogoSrc()}
-        alt="Nurse Nest"
-        className="h-8 w-auto md:h-10 transition-all duration-300"
-      />
+      <picture>
+        <source srcSet={getOptimizedLogoSrc()} type="image/webp" />
+        <img 
+          src={getLogoSrc()}
+          alt="Nurse Nest"
+          className="h-8 w-auto md:h-10 transition-all duration-300"
+          loading="eager"
+          fetchPriority="high"
+        />
+      </picture>
     </Link>
   );
 }

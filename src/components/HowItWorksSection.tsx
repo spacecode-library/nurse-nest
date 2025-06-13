@@ -1,8 +1,12 @@
+
 import React from 'react';
 import { BackgroundBeams } from './ui/background-beams';
 import { FeaturesSectionWithHoverEffects } from './ui/feature-section-with-hover-effects';
+import { OptimizedImage } from './ui/optimized-image';
+
 export default function HowItWorksSection() {
-  return <section className="relative py-12 md:py-16 bg-slate-900 pb-8" id="how-it-works">
+  return (
+    <section className="relative py-12 md:py-16 bg-slate-900 pb-8" id="how-it-works">
       {/* Background Beams Animation - Dark Version */}
       <div className="absolute inset-0 z-0">
         <BackgroundBeams />
@@ -16,11 +20,17 @@ export default function HowItWorksSection() {
       <div className="container mx-auto px-4 relative z-30">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
-            <img src="/lovable-uploads/adaa6990-ba69-4586-88e7-03c12d0fd8b8.png" alt="Why Choose NurseNest" className="h-28 md:h-32 lg:h-36 w-auto" />
+            <OptimizedImage
+              src="/lovable-uploads/adaa6990-ba69-4586-88e7-03c12d0fd8b8.png"
+              alt="Why Choose NurseNest"
+              className="h-28 md:h-32 lg:h-36 w-auto"
+              sizes="(max-width: 768px) 200px, 300px"
+            />
           </div>
         </div>
         
         <FeaturesSectionWithHoverEffects />
       </div>
-    </section>;
+    </section>
+  );
 }
