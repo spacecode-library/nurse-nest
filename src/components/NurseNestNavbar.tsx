@@ -93,7 +93,7 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div 
-            className="flex items-center cursor-pointer" 
+            className="flex items-center cursor-pointer focus-visible:outline-none" 
             onClick={() => navigate('/')}
           >
             <span className="text-3xl md:text-4xl font-bold">
@@ -125,7 +125,7 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
             )}>
               <Button
                 onClick={handleRequestNurseClick}
-                className="relative bg-sky-300 hover:bg-sky-200 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="relative bg-sky-300 hover:bg-sky-200 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus-visible:outline-none"
               >
                 Request a Nurse
               </Button>
@@ -137,7 +137,7 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={cn(
-                "p-2 transition-colors duration-300",
+                "p-2 transition-colors duration-300 focus-visible:outline-none",
                 shouldUseDarkText ? "text-gray-800" : "text-white"
               )}
             >

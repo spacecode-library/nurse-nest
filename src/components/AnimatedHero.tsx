@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -97,7 +98,7 @@ function Hero({
   return <div className="w-full relative">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
-          <div className="flex flex-col justify-start max-w-3xl">
+          <div className="flex flex-col justify-start max-w-3xl mt-12">
             {/* Desktop Header - FIXED rotating text alignment */}
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-tight mb-8">
               <span className="text-white block">Need a</span>
