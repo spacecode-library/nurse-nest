@@ -99,33 +99,39 @@ function Hero({
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
           <div className="flex flex-col justify-start max-w-3xl">
-            {/* Desktop Header - Keep exact position */}
-            <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-none mb-8">
+            {/* Desktop Header - FIXED rotating text alignment */}
+            <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-tight mb-8">
               <span className="text-white block">Need a</span>
               
-              {/* Desktop rotating text - FIXED implementation */}
-              <div className="relative flex items-center justify-start w-full text-left">
-                <span className="text-white mr-4">&nbsp;</span>
-                <div className="relative inline-block min-w-[200px] h-[1.2em] overflow-hidden">
-                  {titles.map((title, index) => (
-                    <motion.span 
-                      key={index} 
-                      className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap" 
-                      initial={{ opacity: 0, y: 60 }} 
-                      transition={{ type: "spring", stiffness: 50 }} 
-                      animate={titleNumber === index ? {
-                        y: 0,
-                        opacity: 1
-                      } : {
-                        y: titleNumber > index ? -60 : 60,
-                        opacity: 0
-                      }}
-                    >
-                      {title}
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
+              {/* COMPLETELY RESTRUCTURED Desktop rotating text for perfect alignment */}
+              <span className="text-white block">
+                <span className="inline-block">
+                  <span className="text-white"> </span>
+                  <span className="relative inline-block" style={{ width: '300px', height: '60px' }}>
+                    {titles.map((title, index) => (
+                      <motion.span 
+                        key={index} 
+                        className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap"
+                        style={{ 
+                          lineHeight: '1',
+                          verticalAlign: 'baseline'
+                        }}
+                        initial={{ opacity: 0, y: 48 }} 
+                        transition={{ type: "spring", stiffness: 50 }} 
+                        animate={titleNumber === index ? {
+                          y: 0,
+                          opacity: 1
+                        } : {
+                          y: titleNumber > index ? -48 : 48,
+                          opacity: 0
+                        }}
+                      >
+                        {title}
+                      </motion.span>
+                    ))}
+                  </span>
+                </span>
+              </span>
               
               <span className="text-white block">nurse?</span>
             </h1>
