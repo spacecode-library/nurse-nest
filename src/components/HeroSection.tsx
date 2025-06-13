@@ -1,3 +1,4 @@
+
 import { Shield, Users, Star, Clock } from "lucide-react";
 import { Hero } from "@/components/AnimatedHero";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -15,8 +16,9 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Stabilized positioning */}
-      <div className="md:hidden w-full relative h-screen flex items-end" style={{ paddingBottom: '24px' }}>
+      {/* PHASE 2: Restructured Mobile Layout - No more centering conflicts */}
+      <div className="md:hidden w-full relative h-screen">
+        {/* Mobile background image */}
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
@@ -27,8 +29,8 @@ export default function HeroSection() {
           }}
         />
         
-        {/* Mobile Hero Content - Fixed positioning container */}
-        <div className="relative z-10 w-full px-4" style={{ position: 'relative', bottom: '0' }}>
+        {/* PHASE 5: Emergency Fallback Strategy - Separate mobile hero component */}
+        <div className="relative z-10 w-full h-full">
           <Hero isMobile={true} />
         </div>
       </div>
