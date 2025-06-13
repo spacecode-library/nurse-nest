@@ -31,7 +31,7 @@ function Hero({
         marginTop: '0px',
         marginBottom: '4px',
         position: 'relative'
-      }} className="tracking-tighter font-regular text-white mb-4 text-5xl my-[183px]">
+      }} className="tracking-tighter font-regular text-white mb-4 text-5xl my-[172px]">
           <span className="text-white" style={{
           display: 'block'
         }}>Need a</span>
