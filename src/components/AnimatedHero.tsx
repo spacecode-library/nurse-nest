@@ -26,12 +26,12 @@ function Hero({
       position: 'relative'
     }}>
         <h1 style={{
-        paddingTop: '20px',
+        paddingTop: '0px',
         paddingBottom: '20px',
         marginTop: '0px',
         marginBottom: '4px',
         position: 'relative'
-      }} className="tracking-tighter font-regular text-white mb-4 text-5xl my-[172px]">
+      }} className="tracking-tighter font-regular text-white mb-4 text-5xl">
           <span className="text-white" style={{
           display: 'block'
         }}>Need a</span>
