@@ -21,7 +21,6 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { signUp, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
-import { BeamsBackground } from '@/components/ui/beams-background';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -151,16 +150,8 @@ export default function SignUp() {
       </div>
 
       {/* Right Side - Sign Up Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
-        {/* White Beams Background */}
-        <BeamsBackground 
-          mode="white" 
-          intensity="subtle" 
-          startMidAnimation={true}
-          className="absolute inset-0"
-        />
-        
-        <div className="w-full max-w-md space-y-5 relative z-10">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden">
+        <div className="w-full max-w-md space-y-5">
           
           {/* Header */}
           <div className="text-center">
@@ -190,7 +181,7 @@ export default function SignUp() {
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="h-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm text-sm"
+                  className="h-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="First name"
                 />
@@ -204,7 +195,7 @@ export default function SignUp() {
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="h-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm text-sm"
+                  className="h-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="Last name"
                 />
@@ -222,11 +213,11 @@ export default function SignUp() {
                 className="space-y-2"
               >
                 <div className="relative">
-                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 bg-white/80 backdrop-blur-sm ${
+                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
                     userType === 'client' 
                       ? 'border-[#9bcbff] bg-blue-50' 
                       : 'border-gray-200'
-                  }`}>
+                  }`} onClick={() => setUserType('client')}>
                     <RadioGroupItem value="client" id="client" className="text-[#9bcbff]" />
                     <Building2 className="h-4 w-4 text-green-600" />
                     <div className="flex-1">
@@ -237,11 +228,11 @@ export default function SignUp() {
                 </div>
                 
                 <div className="relative">
-                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 bg-white/80 backdrop-blur-sm ${
+                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
                     userType === 'nurse' 
                       ? 'border-[#9bcbff] bg-blue-50' 
                       : 'border-gray-200'
-                  }`}>
+                  }`} onClick={() => setUserType('nurse')}>
                     <RadioGroupItem value="nurse" id="nurse" className="text-[#9bcbff]" />
                     <Stethoscope className="h-4 w-4 text-blue-600" />
                     <div className="flex-1">
@@ -252,11 +243,11 @@ export default function SignUp() {
                 </div>
                 
                 <div className="relative">
-                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 bg-white/80 backdrop-blur-sm ${
+                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
                     userType === 'admin' 
                       ? 'border-[#9bcbff] bg-blue-50' 
                       : 'border-gray-200'
-                  }`}>
+                  }`} onClick={() => setUserType('admin')}>
                     <RadioGroupItem value="admin" id="admin" className="text-[#9bcbff]" />
                     <Shield className="h-4 w-4 text-purple-600" />
                     <div className="flex-1">
@@ -283,7 +274,7 @@ export default function SignUp() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-9 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm text-sm"
+                  className="h-9 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="Enter your email"
                 />
@@ -302,7 +293,7 @@ export default function SignUp() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-9 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm text-sm"
+                  className="h-9 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="Create a password"
                 />

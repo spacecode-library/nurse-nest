@@ -16,7 +16,6 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { signIn, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
-import { BeamsBackground } from '@/components/ui/beams-background';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -126,16 +125,8 @@ export default function SignIn() {
       </div>
 
       {/* Right Side - Sign In Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
-        {/* White Beams Background */}
-        <BeamsBackground 
-          mode="white" 
-          intensity="subtle" 
-          startMidAnimation={true}
-          className="absolute inset-0"
-        />
-        
-        <div className="w-full max-w-md space-y-6 relative z-10">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden">
+        <div className="w-full max-w-md space-y-6">
           
           {/* Header */}
           <div className="text-center">
@@ -166,7 +157,7 @@ export default function SignIn() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-10 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm text-sm"
+                  className="h-10 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="Enter your email"
                 />
@@ -194,7 +185,7 @@ export default function SignIn() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-10 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white/80 backdrop-blur-sm text-sm"
+                  className="h-10 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
                   required
                   placeholder="Enter your password"
                 />
