@@ -4,7 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Menu, X, PhoneCall } from "lucide-react";
+import { GlowEffect } from '@/components/ui/glow-effect';
+import { Menu, X } from "lucide-react";
 import NavLinks from '@/components/navbar/NavLinks';
 import NurseDropdown from '@/components/navbar/NurseDropdown';
 import CareServicesDropdown from '@/components/navbar/CareServicesDropdown';
@@ -18,7 +19,6 @@ interface NurseNestNavbarProps {
 export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showNavButton, setShowNavButton] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -35,36 +35,6 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Intersection observer for hero section visibility
-  useEffect(() => {
-    if (!isHomePageRoute) {
-      setShowNavButton(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Show navbar button when hero is NOT visible
-        setShowNavButton(!entry.isIntersecting);
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '-20px 0px'
-      }
-    );
-
-    const heroSection = document.getElementById('hero-section');
-    if (heroSection) {
-      observer.observe(heroSection);
-    }
-
-    return () => {
-      if (heroSection) {
-        observer.unobserve(heroSection);
-      }
-    };
-  }, [isHomePageRoute]);
 
   const handleApplyNowClick = () => {
     if (!user) {
@@ -117,18 +87,21 @@ export default function NurseNestNavbar({ isHomePage = false }: NurseNestNavbarP
           <div className="hidden lg:flex items-center space-x-4">
             <UserMenu shouldUseDarkText={shouldUseDarkText} />
             
-            {/* Request a Nurse Button - with scroll-based visibility */}
-            <div 
-              className={cn(
-                "relative transition-all duration-300 ease-in-out",
-                showNavButton ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
-              )}
-            >
+            {/* Request a Nurse Button */}
+            <div className="relative">
+              <GlowEffect
+                colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}
+                mode="colorShift"
+                blur="medium"
+                duration={4}
+                scale={1.1}
+                intensity={0.35}
+              />
               <Button
                 onClick={handleRequestNurseClick}
-                className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="relative bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
-                Request a Nurse <PhoneCall className="w-4 h-4" />
+                Request a Nurse
               </Button>
             </div>
           </div>
