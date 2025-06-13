@@ -12,11 +12,10 @@ export default function HeroSection() {
           src="/lovable-uploads/7d6005a3-1dca-4980-bf11-bb34da3a852e.png" 
           alt="Professional nurse providing care" 
           className="w-full h-full object-cover object-center" 
-          style={{ transform: 'none' }} 
         />
       </div>
       
-      {/* PHASE 2: Restructured Mobile Layout - No more centering conflicts */}
+      {/* PHASE 2: Mobile Layout - Clean structure without positioning conflicts */}
       <div className="md:hidden w-full relative h-screen">
         {/* Mobile background image */}
         <div 
@@ -29,22 +28,22 @@ export default function HeroSection() {
           }}
         />
         
-        {/* PHASE 5: Emergency Fallback Strategy - Separate mobile hero component */}
+        {/* PHASE 5: Mobile hero component with locked positioning */}
         <div className="relative z-10 w-full h-full">
           <Hero isMobile={true} />
         </div>
       </div>
       
-      {/* Desktop ANIMATED HERO CONTENT - Stabilized centering */}
-      <div className="hidden md:flex absolute inset-0 z-10 items-center justify-center" style={{ position: 'absolute', top: '0', left: '0', right: '0', bottom: '0' }}>
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      {/* Desktop HERO CONTENT - STEP 3: Clean container structure */}
+      <div className="hidden md:flex absolute inset-0 z-10 items-center justify-start">
+        <div className="w-full">
           <Hero isMobile={false} />
         </div>
       </div>
       
-      {/* Trust Indicators - Fixed bottom positioning */}
-      <div className="absolute z-10 hidden md:block" style={{ bottom: '32px', left: '0', right: '0', position: 'absolute' }}>
-        <AnimatedSection animation="fade-up" delay={400}>
+      {/* Trust Indicators - STEP 3: Auto-display without scroll trigger */}
+      <div className="absolute z-10 hidden md:block bottom-8 left-0 right-0 opacity-100">
+        <AnimatedSection animation="fade-up" delay={1000}>
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
               <div className="flex items-center space-x-2">

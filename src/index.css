@@ -1,4 +1,3 @@
-
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -139,6 +138,44 @@
   
   .gradient-subtle {
     @apply bg-subtle-gradient;
+  }
+  
+  /* STEP 4: Mobile Hero Protection CSS - Prevent future layout breaks */
+  .mobile-hero-header-locked {
+    position: absolute !important;
+    top: 25vh !important;
+    z-index: 20 !important;
+    width: 100% !important;
+  }
+  
+  .mobile-hero-bottom-content {
+    position: absolute !important;
+    bottom: 20px !important;
+    z-index: 20 !important;
+    width: 100% !important;
+  }
+  
+  /* STEP 4: Desktop Hero Layout Protection */
+  @media (min-width: 768px) {
+    .desktop-hero-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+    }
+  }
+  
+  /* STEP 2: Rotating Text Bounds Protection */
+  .rotating-text-mobile {
+    height: 48px !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+  
+  .rotating-text-desktop {
+    height: 1.2em !important;
+    overflow: hidden !important;
+    position: relative !important;
   }
 }
 

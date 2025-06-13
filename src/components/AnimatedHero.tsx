@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -30,7 +31,7 @@ function Hero({
       <div className="w-full h-screen relative">
         {/* PHASE 3: Header Position Lock - Fixed at 25% from top */}
         <div 
-          className="absolute w-full px-4"
+          className="absolute w-full px-4 mobile-hero-header-locked"
           style={{ 
             top: '25vh',
             position: 'absolute',
@@ -41,11 +42,11 @@ function Hero({
           <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
             <span className="block text-white mb-2">Need a</span>
             
-            {/* Fixed rotating text container with proper height and overflow control */}
+            {/* Fixed rotating text container with original tight bounds */}
             <div 
               className="relative w-full overflow-hidden mb-2"
               style={{ 
-                height: '60px', /* Increased from 48px to prevent cutoff */
+                height: '48px', /* Original container height restored */
                 position: 'relative'
               }}
             >
@@ -58,15 +59,17 @@ function Hero({
                     position: 'absolute',
                     top: '0',
                     left: '0',
-                    width: 'max-content'
+                    width: 'max-content',
+                    lineHeight: '1.2', /* Restored original line-height */
+                    paddingBottom: '3px' /* Minimal padding for descenders only */
                   }}
-                  initial={{ opacity: 0, y: 60 }}
+                  initial={{ opacity: 0, y: 48 }}
                   transition={{ type: "spring", stiffness: 50 }}
                   animate={titleNumber === index ? {
                     y: 0,
                     opacity: 1
                   } : {
-                    y: titleNumber > index ? -60 : 60, /* Reduced from 150 to stay within bounds */
+                    y: titleNumber > index ? -48 : 48, /* Keep within original bounds */
                     opacity: 0
                   }}
                 >
@@ -81,9 +84,9 @@ function Hero({
 
         {/* PHASE 4: Description/Buttons Bottom Positioning - Aligned with FAQ button */}
         <div 
-          className="absolute w-full px-4"
+          className="absolute w-full px-4 mobile-hero-bottom-content"
           style={{ 
-            bottom: '80px', /* Matches FAQ button level at bottom-6 (24px) + button height */
+            bottom: '20px', /* Matches FAQ button positioning */
             position: 'absolute',
             zIndex: 20
           }}
@@ -111,62 +114,51 @@ function Hero({
     );
   }
 
-  // Desktop layout remains unchanged
+  // Desktop layout - COMPLETELY REFACTORED to remove inline styles
   return (
-    <div className="w-full" style={{ position: 'relative' }}>
+    <div className="w-full relative">
       <div className="container mx-auto px-4 md:px-6">
+        {/* STEP 1: Desktop Gap Elimination - Removed massive 132px margins */}
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
-          <div style={{
-            marginTop: '40px',
-            marginBottom: '40px',
-            position: 'relative'
-          }} className="flex flex-col justify-end max-w-3xl my-0 py-[11px]">
-            <h1 style={{
-              marginTop: '132px',
-              marginBottom: '132px',
-              marginLeft: '19px',
-              marginRight: '19px',
-              position: 'relative'
-            }} className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white font-extrabold my-[15px] lg:text-7xl">
-              <span className="text-white">Need a</span>
-              <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1" style={{
-                position: 'relative',
-                height: '120px',
-                overflow: 'hidden'
-              }}>
-                &nbsp;
-                {titles.map((title, index) => (
-                  <motion.span 
-                    key={index} 
-                    className="absolute font-semibold text-blue-300" 
-                    style={{
-                      position: 'absolute',
-                      left: '0',
-                      top: '0'
-                    }} 
-                    initial={{ opacity: 0, y: "-100" }} 
-                    transition={{ type: "spring", stiffness: 50 }} 
-                    animate={titleNumber === index ? {
-                      y: 0,
-                      opacity: 1
-                    } : {
-                      y: titleNumber > index ? -150 : 150,
-                      opacity: 0
-                    }}
-                  >
-                    {title}
-                  </motion.span>
-                ))}
+          <div className="flex flex-col justify-start max-w-3xl space-y-4">
+            {/* STEP 3: Desktop Layout Modernization - Clean Tailwind spacing */}
+            <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-none">
+              <span className="text-white block">Need a</span>
+              
+              {/* Desktop rotating text with proper bounds */}
+              <span className="relative flex w-full justify-start overflow-hidden text-left">
+                <span className="w-4">&nbsp;</span>
+                <div className="relative h-[1.2em] overflow-hidden">
+                  {titles.map((title, index) => (
+                    <motion.span 
+                      key={index} 
+                      className="absolute font-semibold text-blue-300 left-0 top-0" 
+                      initial={{ opacity: 0, y: "-100" }} 
+                      transition={{ type: "spring", stiffness: 50 }} 
+                      animate={titleNumber === index ? {
+                        y: 0,
+                        opacity: 1
+                      } : {
+                        y: titleNumber > index ? -60 : 60,
+                        opacity: 0
+                      }}
+                    >
+                      {title}
+                    </motion.span>
+                  ))}
+                </div>
               </span>
-              <span className="text-white"> nurse?</span>
+              
+              <span className="text-white block">nurse?</span>
             </h1>
 
-            <div className="mt-8 md:mt-0 mb-16 md:mb-0">
-              <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left px-4 md:px-0 mb-6">
+            {/* STEP 1: Desktop Gap Fix - Proper spacing between header and content */}
+            <div className="mt-8 space-y-6">
+              <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left">
                 Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
               </p>
               
-              <div className="flex flex-col md:flex-row gap-3 px-4 md:px-0 w-full md:w-auto">
+              <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                 <div className="relative">
                   <GlowEffect colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} mode="rotate" blur="soft" duration={3} scale={1.1} intensity={0.35} />
                   <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full md:w-auto min-h-[48px] text-base md:text-lg px-6 md:px-8">
