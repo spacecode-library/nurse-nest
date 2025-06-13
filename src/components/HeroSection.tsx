@@ -1,30 +1,31 @@
+
 import { Shield, Users, Star, Clock } from "lucide-react";
 import { Hero } from "@/components/AnimatedHero";
 import AnimatedSection from "@/components/AnimatedSection";
-import { OptimizedImage } from "@/components/ui/optimized-image";
-import { OptimizedBackground } from "@/components/ui/optimized-background";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Desktop Background - Optimized */}
+      {/* Desktop Background - Preserved */}
       <div className="hidden md:block absolute inset-0">
-        <OptimizedImage
-          src="/lovable-uploads/7d6005a3-1dca-4980-bf11-bb34da3a852e.png"
-          alt="Professional nurse providing care"
-          priority={true}
-          className="w-full h-full object-cover object-center"
-          sizes="50vw"
+        <img 
+          src="/lovable-uploads/7d6005a3-1dca-4980-bf11-bb34da3a852e.png" 
+          alt="Professional nurse providing care" 
+          className="w-full h-full object-cover object-center" 
         />
       </div>
       
       {/* PHASE 2: Mobile Layout - Clean structure without positioning conflicts */}
       <div className="md:hidden w-full relative h-screen">
         {/* Mobile background image */}
-        <OptimizedBackground
-          src="/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png"
-          priority={true}
+        <div 
           className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url('/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
         />
         
         {/* PHASE 5: Mobile hero component with locked positioning */}
