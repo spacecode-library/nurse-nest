@@ -22,12 +22,29 @@ function Hero({
     return () => clearTimeout(timeoutId);
   }, [titleNumber, titles]);
   if (isMobile) {
-    return <div className="w-full text-left">
-        <h1 className="text-4xl tracking-tighter font-regular text-white mb-4 py-[109px] my-[121px]">
-          <span className="text-white my-[217px]">Need a</span>
-          <span className="relative flex w-full justify-start overflow-hidden text-left pb-2 pt-1">
+    return <div className="w-full text-left" style={{
+      position: 'relative'
+    }}>
+        <h1 style={{
+        paddingTop: '20px',
+        paddingBottom: '20px',
+        marginTop: '0px',
+        marginBottom: '4px',
+        position: 'relative'
+      }} className="tracking-tighter font-regular text-white mb-4 text-5xl my-[172px]">
+          <span className="text-white" style={{
+          display: 'block'
+        }}>Need a</span>
+          <span className="relative flex w-full justify-start overflow-hidden text-left pb-2 pt-1" style={{
+          position: 'relative',
+          height: '48px'
+        }}>
             &nbsp;
-            {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" initial={{
+            {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" style={{
+            position: 'absolute',
+            left: '0',
+            top: '0'
+          }} initial={{
             opacity: 0,
             y: "-100"
           }} transition={{
@@ -66,15 +83,35 @@ function Hero({
         </div>
       </div>;
   }
-  return <div className="w-full">
+  return <div className="w-full" style={{
+    position: 'relative'
+  }}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
-          <div className="flex flex-col justify-end max-w-3xl py-0 my-[40px]">
-            <h1 className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white md:px-0 md:my-[132px] md:mx-[19px] mx-0 px-[8px] font-extrabold my-[35px] lg:text-8xl">
+          <div style={{
+          marginTop: '40px',
+          marginBottom: '40px',
+          position: 'relative'
+        }} className="flex flex-col justify-end max-w-3xl my-0 py-[11px]">
+            <h1 style={{
+            marginTop: '132px',
+            marginBottom: '132px',
+            marginLeft: '19px',
+            marginRight: '19px',
+            position: 'relative'
+          }} className="text-4xl md:text-5xl tracking-tighter text-left font-regular text-white font-extrabold my-[15px] lg:text-7xl">
               <span className="text-white">Need a</span>
-              <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
+              <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1" style={{
+              position: 'relative',
+              height: '120px',
+              overflow: 'hidden'
+            }}>
                 &nbsp;
-                {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" initial={{
+                {titles.map((title, index) => <motion.span key={index} className="absolute font-semibold text-blue-300" style={{
+                position: 'absolute',
+                left: '0',
+                top: '0'
+              }} initial={{
                 opacity: 0,
                 y: "-100"
               }} transition={{
