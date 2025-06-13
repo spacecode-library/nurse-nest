@@ -41,12 +41,11 @@ function Hero({ isMobile = false }: HeroProps) {
           <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
             <span className="block text-white">Need a</span>
             <span 
-              className="relative flex w-full justify-start overflow-visible text-left items-center"
+              className="relative flex w-full justify-start overflow-hidden text-left items-center"
               style={{
                 height: '60px !important' as any,
-                overflow: 'visible !important',
                 lineHeight: '1.3 !important',
-                paddingBottom: '8px !important'
+                paddingBottom: '3px !important'
               }}
             >
               &nbsp;
@@ -56,7 +55,7 @@ function Hero({ isMobile = false }: HeroProps) {
                   className="absolute font-semibold text-blue-300 left-0 top-0"
                   style={{
                     lineHeight: '1.3 !important',
-                    paddingBottom: '8px !important'
+                    paddingBottom: '3px !important'
                   }}
                   initial={{ opacity: 0, y: "-100" }}
                   transition={{ type: "spring", stiffness: 50 }}
@@ -76,7 +75,7 @@ function Hero({ isMobile = false }: HeroProps) {
           </h1>
         </div>
 
-        {/* Mobile Description and Buttons - Aligned with FAQ Button */}
+        {/* Mobile Description and Buttons - Bottom Aligned with FAQ */}
         <div 
           className="mobile-hero-bottom-aligned"
           style={{
@@ -156,8 +155,8 @@ function Hero({ isMobile = false }: HeroProps) {
               <span className="block text-white">nurse?</span>
             </h1>
 
-            {/* Desktop Description and Buttons - Moved Down Slightly */}
-            <div className="mt-8 md:mt-12 lg:mt-16 space-y-6">
+            {/* Desktop Description and Buttons - Moved Down More */}
+            <div className="mt-12 md:mt-16 lg:mt-20 space-y-6">
               <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl">
                 Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
               </p>
