@@ -1,53 +1,10 @@
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
 /* Import Roboto fonts - Black 900, ExtraBold 800 Italic, and Regular 400 */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,800&display=swap');
-
-/* MOBILE HERO POSITIONING PROTECTION - DO NOT MODIFY */
-@media (max-width: 767px) {
-  .mobile-hero-header,
-  .mobile-hero-header-locked {
-    position: absolute !important;
-    top: 25vh !important;
-    left: 16px !important;
-    right: 16px !important;
-    z-index: 20 !important;
-  }
-  
-  .mobile-hero-header h1,
-  .mobile-hero-header-locked h1 {
-    pointer-events: auto !important;
-  }
-  
-  .mobile-hero-bottom,
-  .mobile-hero-bottom-aligned {
-    position: absolute !important;
-    bottom: 20px !important;
-    left: 5% !important;
-    right: 5% !important;
-    width: 90% !important;
-    z-index: 20 !important;
-    pointer-events: auto !important;
-  }
-  
-  /* Rotating text container - RESTORE ORIGINAL TIGHT BOUNDS + MINIMAL PADDING */
-  .mobile-hero-header span[class*="relative"],
-  .mobile-hero-header-locked span[class*="relative"] {
-    height: 60px !important;
-    overflow: hidden !important;
-    line-height: 1.3 !important;
-    padding-bottom: 3px !important;
-  }
-  
-  /* Ensure rotating text motion spans stay within bounds with minimal descender fix */
-  .mobile-hero-header motion-span,
-  .mobile-hero-header-locked motion-span {
-    line-height: 1.3 !important;
-    padding-bottom: 3px !important;
-  }
-}
 
 @layer base {
   :root {

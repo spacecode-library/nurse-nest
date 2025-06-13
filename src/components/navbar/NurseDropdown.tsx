@@ -41,9 +41,9 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         </DropdownMenuItem>
         <DropdownMenuItem 
           className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
-          onClick={() => navigate('/blog/nurse-llc-formation-guide')}
+          onClick={() => navigate('/nurse-llc-setup-guide')}
         >
-          <span className="font-medium text-gray-900">LLC Formation Guide</span>
+          <span className="font-medium text-gray-900">LLC Setup Guide</span>
         </DropdownMenuItem>
         <DropdownMenuItem 
           className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 

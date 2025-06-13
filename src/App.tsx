@@ -1,102 +1,97 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
-import { HelmetProvider } from 'react-helmet-async';
+import { AuthProvider } from "./contexts/AuthContext";
+import { Toaster } from "./components/ui/toaster";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
 import Apply from "./pages/Apply";
+import Auth from "./pages/Auth";
+import About from "./pages/About";
 import Pricing from "./pages/Pricing";
-import VettingOptions from "./pages/VettingOptions";
 import Payment from "./pages/Payment";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import About from "./pages/About";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Disclaimer from "./pages/Disclaimer";
+import SalaryCalculator from "./pages/SalaryCalculator";
+import SalaryResult from "./pages/SalaryResult";
+import PreResult from "./pages/PreResult";
+import VettingOptions from "./pages/VettingOptions";
 import NurseApplication from "./pages/NurseApplication";
+import MalpracticeInsurance from "./pages/MalpracticeInsurance";
+import LlcSetupHelp from "./pages/LlcSetupHelp";
+import TaxTips from "./pages/TaxTips";
 import NurseOnboarding from "./pages/NurseOnboarding";
 import ClientOnboarding from "./pages/ClientOnboarding";
-import NotFound from "./pages/NotFound";
-import PreResult from "./pages/PreResult";
-import SalaryResult from "./pages/SalaryResult";
-import SalaryCalculator from "./pages/SalaryCalculator";
-import BookingPage from "./pages/BookingPage";
-import Apartments from "./pages/Apartments";
-import Gallery from "./pages/Gallery";
-import Amenities from "./pages/Amenities";
-import LlcSetupHelp from "./pages/LlcSetupHelp";
+import AdminPortal from "./components/AdminPortal";
+import EnhancedAdminPortal from "./components/admin/EnhancedAdminPortal";
+import NurseDashboard from "./components/dashboard/NurseDashboard";
+import DashboardRouter from "./components/DashboardRouter";
+import ClientDashboard from "./components/dashboard/ClientDashboard";
+import PendingApprovalPage from "./components/PendingApprovalPage";
+
+// New page imports
 import NurseLlcSetup from "./pages/NurseLlcSetup";
 import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
-import MalpracticeInsurance from "./pages/MalpracticeInsurance";
-import TaxTips from "./pages/TaxTips";
-import NurseLlcFormationGuide from "./pages/NurseLlcFormationGuide";
-import EinApplicationsGuide from "./pages/EinApplicationsGuide";
-import BusinessBankingSetupGuide from "./pages/BusinessBankingSetupGuide";
-import NewbornCareGuide from "./pages/NewbornCareGuide";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
+export default function App() {
+  return (
+    <ErrorBoundary>
       <LanguageProvider>
         <AuthProvider>
-          <TooltipProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/apply" element={<Apply />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:postId" element={<BlogPost />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/salary-calculator" element={<SalaryCalculator />} />
+              <Route path="/pre-result" element={<PreResult />} />
+              <Route path="/salary-result" element={<SalaryResult />} />
+              
+              {/* Dashboard Routes - Updated to handle different user types */}
+              <Route path="/dashboard" element={<DashboardRouter />} />
+              <Route path="/dashboard/nurse" element={<NurseDashboard />} />
+              <Route path="/dashboard/client" element={<ClientDashboard />} />
+              <Route path="/pending-approval" element={<PendingApprovalPage />} />
+              
+              <Route path="/vetting-options" element={<VettingOptions />} />
+              <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
+              <Route path="/onboarding/client" element={<ClientOnboarding />} />
+              <Route path="/admin" element={<EnhancedAdminPortal />} />
+              
+              {/* Nurse Resources Routes */}
+              <Route path="/nurse-application" element={<NurseApplication />} />
+              <Route path="/malpractice-insurance" element={<MalpracticeInsurance />} />
+              <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
+              <Route path="/1099-tax-tips" element={<TaxTips />} />
+              
+              {/* New Nurse Business Setup Routes */}
+              <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
+              <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
+              
+              {/* Catch-all route for 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            
             <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/apply" element={<Apply />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/vetting-options" element={<VettingOptions />} />
-                <Route path="/payment" element={<Payment />} />
-                <Route path="/payment-success" element={<PaymentSuccess />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
-                <Route path="/blog/nurse-llc-formation-guide" element={<NurseLlcFormationGuide />} />
-                <Route path="/blog/ein-applications-independent-contract-nurses" element={<EinApplicationsGuide />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/disclaimer" element={<Disclaimer />} />
-                <Route path="/nurse-application" element={<NurseApplication />} />
-                <Route path="/nurse-onboarding" element={<NurseOnboarding />} />
-                <Route path="/client-onboarding" element={<ClientOnboarding />} />
-                <Route path="/pre-result" element={<PreResult />} />
-                <Route path="/salary-result" element={<SalaryResult />} />
-                <Route path="/salary-calculator" element={<SalaryCalculator />} />
-                <Route path="/booking" element={<BookingPage />} />
-                <Route path="/apartments" element={<Apartments />} />
-                <Route path="/gallery" element={<Gallery />} />
-                <Route path="/amenities" element={<Amenities />} />
-                <Route path="/nurse-llc-setup-guide" element={<LlcSetupHelp />} />
-                <Route path="/nurse-llc-setup" element={<NurseLlcSetup />} />
-                <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
-                <Route path="/business-bank-account-for-nurses" element={<BusinessBankingSetupGuide />} />
-                <Route path="/newborn-nurse-support-guide" element={<NewbornCareGuide />} />
-                <Route path="/malpractice-insurance-for-nurses" element={<MalpracticeInsurance />} />
-                <Route path="/1099-tax-tips" element={<TaxTips />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+          </BrowserRouter>
         </AuthProvider>
       </LanguageProvider>
-    </HelmetProvider>
-  </QueryClientProvider>
-);
-
-export default App;
+    </ErrorBoundary>
+  );
+}
