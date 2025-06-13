@@ -39,6 +39,7 @@ import MalpracticeInsurance from "./pages/MalpracticeInsurance";
 import TaxTips from "./pages/TaxTips";
 import NurseLlcFormationGuide from "./pages/NurseLlcFormationGuide";
 import EinApplicationsGuide from "./pages/EinApplicationsGuide";
+import BusinessBankingSetupGuide from "./pages/BusinessBankingSetupGuide";
 
 const queryClient = new QueryClient();
 
