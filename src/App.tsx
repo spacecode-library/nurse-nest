@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -39,6 +38,7 @@ import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
 import MalpracticeInsurance from "./pages/MalpracticeInsurance";
 import TaxTips from "./pages/TaxTips";
 import NurseLlcFormationGuide from "./pages/NurseLlcFormationGuide";
+import EinApplicationsGuide from "./pages/EinApplicationsGuide";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +64,7 @@ const App = () => (
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/blog/nurse-llc-formation-guide" element={<NurseLlcFormationGuide />} />
+                <Route path="/blog/ein-applications-independent-contract-nurses" element={<EinApplicationsGuide />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
@@ -80,7 +81,7 @@ const App = () => (
                 <Route path="/amenities" element={<Amenities />} />
                 <Route path="/nurse-llc-setup-guide" element={<LlcSetupHelp />} />
                 <Route path="/nurse-llc-setup" element={<NurseLlcSetup />} />
-                <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
+                <Route path="/get-ein-nurse-business" element={<EinApplicationsGuide />} />
                 <Route path="/business-bank-account-for-nurses" element={<GetEinNurseBusiness />} />
                 <Route path="/malpractice-insurance-for-nurses" element={<MalpracticeInsurance />} />
                 <Route path="/1099-tax-tips" element={<TaxTips />} />
