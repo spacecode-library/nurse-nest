@@ -37,7 +37,7 @@ export default function HeroSection() {
         <Hero isMobile={false} />
       </div>
       
-      {/* Trust Indicators - Make visible immediately on load */}
+      {/* Trust Indicators - Visible immediately on desktop */}
       <div className="absolute bottom-8 left-0 right-0 z-10 hidden md:block opacity-100">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">

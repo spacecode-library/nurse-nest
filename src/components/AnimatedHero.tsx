@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -25,11 +26,27 @@ function Hero({ isMobile = false }: HeroProps) {
 
   if (isMobile) {
     return (
-      <div className="w-full text-left flex flex-col justify-center min-h-[60vh] px-4">
-        <div className="space-y-6">
+      <div className="w-full relative h-screen">
+        {/* HEADER POSITION LOCKED - DO NOT MODIFY */}
+        <div 
+          className="mobile-hero-header"
+          style={{
+            position: 'absolute !important' as any,
+            top: '25vh !important',
+            left: '16px !important',
+            right: '16px !important',
+            zIndex: 20
+          }}
+        >
           <h1 className="tracking-tighter font-regular text-white text-5xl leading-tight">
             <span className="block text-white">Need a</span>
-            <span className="relative flex w-full justify-start overflow-hidden text-left h-12 items-center">
+            <span 
+              className="relative flex w-full justify-start overflow-hidden text-left items-center"
+              style={{
+                height: '48px !important' as any,
+                overflow: 'hidden !important'
+              }}
+            >
               &nbsp;
               {titles.map((title, index) => (
                 <motion.span 
@@ -51,13 +68,26 @@ function Hero({ isMobile = false }: HeroProps) {
             </span>
             <span className="block text-white">nurse?</span>
           </h1>
+        </div>
 
-          <div className="pt-16 space-y-6">
-            <p className="text-base leading-relaxed tracking-tight text-slate-50 max-w-lg">
+        {/* Description and Buttons - Bottom Positioned */}
+        <div 
+          className="mobile-hero-bottom"
+          style={{
+            position: 'absolute !important' as any,
+            bottom: '80px !important',
+            left: '5% !important',
+            right: '5% !important',
+            width: '90% !important',
+            zIndex: 20
+          }}
+        >
+          <div className="space-y-6">
+            <p className="text-base leading-relaxed tracking-tight text-slate-50">
               Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
             </p>
             
-            <div className="flex flex-col gap-3 w-full max-w-sm">
+            <div className="flex flex-col gap-3 w-full">
               <div className="relative">
                 <GlowEffect 
                   colors={['#2563eb', '#3b82f6', '#1d4ed8', '#60a5fa']} 
@@ -93,7 +123,7 @@ function Hero({ isMobile = false }: HeroProps) {
   return (
     <div className="w-full flex items-center justify-start min-h-screen">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-start justify-center text-left max-w-4xl">
+        <div className="flex flex-col items-start justify-center text-left max-w-4xl ml-0">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter font-regular text-white leading-tight">
               <span className="block text-white mb-1">Need a</span>

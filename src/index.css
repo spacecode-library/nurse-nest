@@ -1,10 +1,40 @@
-
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
 /* Import Roboto fonts - Black 900, ExtraBold 800 Italic, and Regular 400 */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,800&display=swap');
+
+/* MOBILE HERO POSITIONING PROTECTION - DO NOT MODIFY */
+@media (max-width: 767px) {
+  .mobile-hero-header {
+    position: absolute !important;
+    top: 25vh !important;
+    left: 16px !important;
+    right: 16px !important;
+    z-index: 20 !important;
+  }
+  
+  .mobile-hero-header h1 {
+    pointer-events: auto !important;
+  }
+  
+  .mobile-hero-bottom {
+    position: absolute !important;
+    bottom: 80px !important;
+    left: 5% !important;
+    right: 5% !important;
+    width: 90% !important;
+    z-index: 20 !important;
+    pointer-events: auto !important;
+  }
+  
+  /* Fix rotating text container to prevent overflow */
+  .mobile-hero-header span[class*="relative"] {
+    height: 48px !important;
+    overflow: hidden !important;
+  }
+}
 
 @layer base {
   :root {
