@@ -95,7 +95,7 @@ export default function SignIn() {
           className="w-full h-screen relative"
           style={{
             backgroundImage: `url('/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png')`,
-            backgroundSize: 'contain',
+            backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
           }}
