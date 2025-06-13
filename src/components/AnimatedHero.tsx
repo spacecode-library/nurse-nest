@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight, PhoneCall } from "lucide-react";
@@ -102,21 +103,21 @@ function Hero({
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-none mb-8">
               <span className="text-white block">Need a</span>
               
-              {/* Desktop rotating text - Fixed implementation */}
-              <span className="relative flex w-full justify-start overflow-hidden text-left">
-                <span className="w-4">&nbsp;</span>
-                <div className="rotating-text-desktop relative overflow-hidden" style={{ height: '1.2em' }}>
+              {/* Desktop rotating text - FIXED implementation */}
+              <div className="relative flex items-center justify-start w-full text-left">
+                <span className="text-white mr-4">&nbsp;</span>
+                <div className="relative inline-block min-w-[200px] h-[1.2em] overflow-hidden">
                   {titles.map((title, index) => (
                     <motion.span 
                       key={index} 
-                      className="absolute font-semibold text-blue-300 left-0 top-0" 
-                      initial={{ opacity: 0, y: "-100%" }} 
+                      className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap" 
+                      initial={{ opacity: 0, y: 60 }} 
                       transition={{ type: "spring", stiffness: 50 }} 
                       animate={titleNumber === index ? {
                         y: 0,
                         opacity: 1
                       } : {
-                        y: titleNumber > index ? "-100%" : "100%",
+                        y: titleNumber > index ? -60 : 60,
                         opacity: 0
                       }}
                     >
@@ -124,13 +125,13 @@ function Hero({
                     </motion.span>
                   ))}
                 </div>
-              </span>
+              </div>
               
               <span className="text-white block">nurse?</span>
             </h1>
 
             {/* Desktop Description/Buttons - Moved lower with increased spacing */}
-            <div className="mt-16 space-y-6">
+            <div className="mt-20 space-y-6">
               <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left">
                 Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
               </p>
