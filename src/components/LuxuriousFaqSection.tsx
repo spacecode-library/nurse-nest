@@ -351,16 +351,22 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
         <div className="flex flex-col md:flex-row md:gap-8">
           {/* Sidebar */}
           <div className="w-full md:w-[260px] md:pr-4 mb-10 md:mb-0 flex-shrink-0 flex flex-col items-center">
+            {/* Table of Contents Heading (centered, bigger) */}
             <div className="mb-5 w-full flex flex-col items-center">
-              {/* Centered and larger TOC heading */}
-              <div className="text-xl md:text-2xl font-black text-gray-900 mb-1 text-center"
-                   style={{ letterSpacing: "-0.01em", lineHeight: 1.2 }}>
+              <div
+                className="text-2xl md:text-3xl font-black text-gray-900 mb-1 text-center w-full"
+                style={{
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.2
+                }}
+              >
                 Table of Contents
               </div>
               <div className="bg-gray-100 h-[2px] w-14 mx-auto my-2 rounded-full"/>
             </div>
+            {/* Categories */}
             <nav aria-label="Table of Contents" className="w-full">
-              <ul className="space-y-1 w-full">
+              <ul className="space-y-1 w-full flex flex-col items-center">
                 {faqCategories.map(cat => (
                   <li key={cat.id} className="w-full">
                     <button
@@ -370,20 +376,15 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         setSearchTerm('');
                       }}
                       className={cn(
-                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-base md:text-[15px] tracking-tight",
+                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-sm md:text-sm tracking-tight",
                         selected?.id === cat.id
-                          ? "text-blue-700 font-bold bg-transparent"
+                          ? "text-blue-700 font-black"
                           : "text-gray-700 hover:text-blue-700"
                       )}
-                      style={
-                        selected?.id === cat.id
-                          // Only highlight text color, no underline, box, or background highlight
-                          ? { background: "transparent", boxShadow: "none", textDecoration: "underline", textUnderlineOffset: 2 }
-                          : undefined
-                      }
+                      // REMOVE underline styling and highlight/box:
+                      style={undefined}
                       aria-current={selected?.id === cat.id ? 'page' : undefined}
                     >
-                      {/* No emoji */}
                       {cat.title}
                     </button>
                   </li>
