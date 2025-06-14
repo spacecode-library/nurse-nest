@@ -321,7 +321,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
 
   return (
     <section
-      className="bg-white py-16 md:py-24 border-t border-gray-100"
+      className="bg-white pt-24 md:pt-32 pb-16 md:pb-24 border-t border-gray-100"
       id="faq-section"
     >
       <div className="max-w-7xl mx-auto px-4">
