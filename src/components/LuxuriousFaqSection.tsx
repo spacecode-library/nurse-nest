@@ -19,7 +19,7 @@ interface LuxuriousFaqSectionProps {
   onClose: () => void;
 }
 
-export default function LuxuriousFaqSection({ isVisible }: LuxuriousFaqSectionProps) {
+export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaqSectionProps) {
   const [activeCategory, setActiveCategory] = useState('getting-started');
   const [open, setOpen] = useState<{ [key: string]: boolean }>({});
   const [searchTerm, setSearchTerm] = useState('');
@@ -314,11 +314,14 @@ export default function LuxuriousFaqSection({ isVisible }: LuxuriousFaqSectionPr
     filteredCategories[0] ||
     null;
 
-  // If FAQ should not be shown (controlled by Index page show/hide logic), hide it.
+  // If FAQ should not be shown, hide it
   if (!isVisible) return null;
 
   return (
-    <section className="bg-white py-16 md:py-24 border-t border-gray-100" id="faq">
+    <section
+      className="bg-white py-16 md:py-24 border-t border-gray-100"
+      id="faq-section"
+    >
       <div className="max-w-7xl mx-auto px-4">
         <div className="max-w-2xl mx-auto text-center mb-14">
           <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight">
@@ -334,6 +337,14 @@ export default function LuxuriousFaqSection({ isVisible }: LuxuriousFaqSectionPr
             </a>
             !
           </div>
+          {/* Show close button */}
+          <button
+            className="mt-8 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm px-6 py-2 rounded-lg shadow-sm font-semibold transition"
+            onClick={onClose}
+            data-testid="close-faq-button"
+          >
+            Close FAQ
+          </button>
         </div>
         {/* Layout: Sidebar + Main */}
         <div className="flex flex-col md:flex-row md:gap-8">

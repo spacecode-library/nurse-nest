@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import NurseNestNavbar from "@/components/NurseNestNavbar";
 import Footer from "@/components/Footer";
@@ -10,32 +11,52 @@ import FloatingFaqButton from "@/components/FloatingFaqButton";
 export default function Index() {
   const [isFaqVisible, setIsFaqVisible] = useState(false);
 
-  const toggleFaq = () => {
-    setIsFaqVisible(!isFaqVisible);
+  // Show FAQ and scroll into view
+  const showFaqAndScroll = () => {
+    setIsFaqVisible(true);
+    setTimeout(() => {
+      const faqSection = document.getElementById('faq-section');
+      if (faqSection) {
+        faqSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Pass isHomePage prop to Navbar */}
       <NurseNestNavbar isHomePage={true} />
-      
+
       <main className="flex-1">
-        {/* Hero Section with premium platform design */}
         <HeroSection />
-        
-        {/* Why Choose NurseNest Section - updated content */}
         <HowItWorksSection />
-        
-        {/* Statistics Section */}
         <StatisticsSection />
-        
-        {/* FAQ Section now always visible */}
-        <LuxuriousFaqSection isVisible={true} onClose={() => {}} />
+
+        {/* Browse FAQ's Button, only show if FAQ is not visible */}
+        {!isFaqVisible && (
+          <div className="flex justify-center my-8">
+            <button
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold text-lg shadow-md hover:bg-blue-700 transition"
+              onClick={showFaqAndScroll}
+              data-testid="browse-faq-button"
+            >
+              Browse FAQ's
+            </button>
+          </div>
+        )}
+
+        {/* FAQ Section with controlled visibility */}
+        <LuxuriousFaqSection
+          isVisible={isFaqVisible}
+          onClose={() => setIsFaqVisible(false)}
+        />
       </main>
-      
-      {/* Floating FAQ Button */}
-      <FloatingFaqButton onClick={() => {}} isOpen={false} />
-      
+
+      {/* Floating FAQ Button always available */}
+      <FloatingFaqButton
+        onClick={showFaqAndScroll}
+        isOpen={isFaqVisible}
+      />
+
       <Footer />
     </div>
   );

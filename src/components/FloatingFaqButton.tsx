@@ -23,15 +23,13 @@ export default function FloatingFaqButton({ onClick, isOpen }: FloatingFaqButton
 
   const handleClick = () => {
     onClick();
-    // Scroll to FAQ section when it opens
-    if (!isOpen) {
-      setTimeout(() => {
-        const faqSection = document.getElementById('faq-section');
-        if (faqSection) {
-          faqSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    }
+    // Always scroll to FAQ section after opening
+    setTimeout(() => {
+      const faqSection = document.getElementById('faq-section');
+      if (faqSection) {
+        faqSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 150);
   };
 
   return (
@@ -49,7 +47,8 @@ export default function FloatingFaqButton({ onClick, isOpen }: FloatingFaqButton
       style={{
         boxShadow: '0 4px 20px rgba(59, 130, 246, 0.3)'
       }}
-      aria-label="Toggle FAQ"
+      aria-label="Browse FAQ"
+      data-testid="floating-faq-button"
     >
       <MessageCircleQuestion size={24} />
     </button>
