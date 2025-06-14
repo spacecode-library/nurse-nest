@@ -341,7 +341,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
           </div>
           {/* Show close button */}
           <button
-            className="mt-8 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm px-6 py-2 rounded-lg shadow-sm font-semibold transition"
+            className="mt-8 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm px-6 py-2 rounded-lg shadow-sm font-semibold transition focus:outline-none focus-visible:outline-none"
             onClick={onClose}
             data-testid="close-faq-button"
           >
@@ -376,7 +376,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         setSearchTerm('');
                       }}
                       className={cn(
-                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-xs md:text-sm tracking-tight",
+                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-xs md:text-sm tracking-tight focus:outline-none focus-visible:outline-none",
                         activeCategory === cat.id
                           ? "text-[#9bcbff] font-black"
                           : "text-gray-700",
@@ -400,7 +400,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
               </div>
               <input
                 type="text"
-                className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all text-base"
+                className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all text-base focus:outline-none focus-visible:outline-none"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 placeholder="Search questions..."
@@ -421,7 +421,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         <div className="border-b last:border-b-0">
                           <button
                             className={cn(
-                              "w-full text-left flex items-start py-5 px-0 md:px-1 focus:outline-none transition-colors group",
+                              "w-full text-left flex items-start py-5 px-0 md:px-1 focus:outline-none focus-visible:outline-none transition-colors group",
                               isOpen ? "text-[#9bcbff]" : "text-gray-900",
                               "hover:text-[#9bcbff] focus:text-[#9bcbff]"
                             )}

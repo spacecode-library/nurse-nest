@@ -31,7 +31,7 @@ export default function UserMenu({ shouldUseDarkText }: UserMenuProps) {
         <Button 
           variant="outline"
           className={cn(
-            "transition-all duration-300 ease-in-out hover:scale-105 border",
+            "transition-all duration-300 ease-in-out hover:scale-105 border focus:outline-none focus-visible:outline-none",
             shouldUseDarkText
               ? "text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-700" 
               : "text-white border-white/30 hover:bg-white/10 hover:text-white"
@@ -49,7 +49,7 @@ export default function UserMenu({ shouldUseDarkText }: UserMenuProps) {
         <Button 
           variant="ghost"
           className={cn(
-            "transition-all duration-300 ease-in-out hover:scale-105",
+            "transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus-visible:outline-none",
             shouldUseDarkText
               ? "text-gray-700 hover:bg-gray-100 hover:text-gray-700" 
               : "text-white hover:bg-white/10 hover:text-white"

@@ -43,7 +43,7 @@ export default function FloatingFaqButton({ onClick, isOpen }: FloatingFaqButton
         isOpen 
           ? 'bg-blue-600 text-white' 
           : 'bg-white text-blue-600 hover:bg-blue-50'
-      }`}
+      } focus:outline-none focus-visible:outline-none`}
       style={{
         boxShadow: '0 4px 20px rgba(59, 130, 246, 0.3)'
       }}

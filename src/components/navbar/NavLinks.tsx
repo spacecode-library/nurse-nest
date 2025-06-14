@@ -40,7 +40,7 @@ export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavCli
             <Link 
               to={link.path}
               onClick={(e) => handleNavClick(link.path, e)}
-              className="block font-medium text-gray-700 hover:text-brand-primary py-2 focus-visible:outline-none"
+              className="block font-medium text-gray-700 hover:text-brand-primary py-2 focus:outline-none focus-visible:outline-none"
             >
               {link.name}
             </Link>
@@ -58,7 +58,7 @@ export default function NavLinks({ shouldUseDarkText, isMobile = false, onNavCli
           to={link.path}
           onClick={(e) => handleNavClick(link.path, e)}
           className={cn(
-            "font-medium transition-colors duration-300 ease-in-out hover:scale-105 focus-visible:outline-none",
+            "font-medium transition-colors duration-300 ease-in-out hover:scale-105 focus:outline-none focus-visible:outline-none",
             shouldUseDarkText
               ? "text-gray-700 hover:text-[#3b82f6]" 
               : "text-white hover:text-[#9bcbff]"

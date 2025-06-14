@@ -23,7 +23,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
       <DropdownMenuTrigger asChild>
         <button 
           className={cn(
-            "font-medium flex items-center transition-colors duration-300 ease-in-out hover:scale-105",
+            "font-medium flex items-center transition-colors duration-300 ease-in-out hover:scale-105 focus:outline-none focus-visible:outline-none",
             shouldUseDarkText
               ? "text-gray-700 hover:text-[#3b82f6]" 
               : "text-white hover:text-[#9bcbff]"
