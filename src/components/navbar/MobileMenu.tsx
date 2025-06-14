@@ -1,11 +1,20 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { GlowEffect } from '@/components/ui/glow-effect';
 import NavLinks from './NavLinks';
-import { nurseDropdownSections, careServicesDropdownSections } from '@/config/navigation';
+import {
+  nurseDropdownSections,
+  careServicesDropdownSections,
+} from '@/config/navigation';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -15,74 +24,126 @@ interface MobileMenuProps {
   handleRequestNurse: () => void;
 }
 
-export default function MobileMenu({ 
-  isOpen, 
-  setIsOpen, 
-  isNursePage, 
+export default function MobileMenu({
+  isOpen,
+  setIsOpen,
+  isNursePage,
   handleApplyNowClick,
-  handleRequestNurse 
+  handleRequestNurse,
 }: MobileMenuProps) {
   const { user, signOut } = useAuth();
+  // Manage open accordion: "nurse", "care", or null
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   const handleNavClick = (path: string) => {
     setIsOpen(false);
+    setOpenAccordion(null);
   };
+
+  // Reset dropdowns closed when menu opens
+  React.useEffect(() => {
+    if (isOpen) setOpenAccordion(null);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg border-t border-gray-200/50 mx-4 rounded-b-2xl z-40">
       <div className="px-6 py-4 space-y-4">
-        {/* Navigation Links */}
-        <div className="space-y-3">
-          <NavLinks shouldUseDarkText={true} isMobile={true} onNavClick={handleNavClick} />
-          
-          {/* For Nurses Dropdown Mobile */}
-          <div className="border-t pt-3">
-            <p className="font-medium text-gray-700 mb-2">For Nurses</p>
-            <div className="ml-4 space-y-2">
-              <button
-                onClick={() => {
-                  handleApplyNowClick();
-                  setIsOpen(false);
-                }}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                Apply Now
-              </button>
-              {nurseDropdownSections.slice(1).map((section) => 
-                section.links.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.path}
-                    onClick={() => setIsOpen(false)}
-                    className="block font-medium text-gray-600 hover:text-brand-primary"
-                  >
-                    {link.name}
-                  </Link>
-                ))
-              )}
-            </div>
-          </div>
+        {/* Navigation Links (now with Sign In between Home and Pricing) */}
+        <div className="space-y-2">
+          {/* Home */}
+          <Link
+            to="/"
+            onClick={() => handleNavClick('/')}
+            className="block font-medium text-gray-700 hover:text-brand-primary py-2"
+          >
+            Home
+          </Link>
 
-          {/* Care Services Dropdown Mobile */}
-          <div className="border-t pt-3">
-            <p className="font-medium text-gray-700 mb-2">Care Services</p>
-            <div className="ml-4 space-y-2">
-              {careServicesDropdownSections.map((section) => 
-                section.links.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.path}
-                    onClick={() => setIsOpen(false)}
+          {/* Sign In */}
+          {!user && (
+            <Link
+              to="/sign-in"
+              onClick={() => handleNavClick('/sign-in')}
+              className="block font-medium text-gray-700 hover:text-brand-primary py-2"
+            >
+              Sign In
+            </Link>
+          )}
+
+          {/* Pricing */}
+          <Link
+            to="/pricing"
+            onClick={() => handleNavClick('/pricing')}
+            className="block font-medium text-gray-700 hover:text-brand-primary py-2"
+          >
+            Pricing
+          </Link>
+
+          {/* Accordion Dropdowns */}
+          <Accordion
+            type="single"
+            collapsible
+            value={openAccordion ?? ''}
+            onValueChange={(val) => setOpenAccordion(val ? val : null)}
+            className="w-full"
+          >
+            {/* For Nurses Dropdown */}
+            <AccordionItem value="nurse">
+              <AccordionTrigger className="py-2 px-0 font-medium text-gray-700 hover:text-brand-primary focus:outline-none">
+                For Nurses
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="ml-3 space-y-2">
+                  <button
+                    onClick={() => {
+                      handleApplyNowClick();
+                      setIsOpen(false);
+                    }}
                     className="block font-medium text-gray-600 hover:text-brand-primary"
                   >
-                    {link.name}
-                  </Link>
-                ))
-              )}
-            </div>
-          </div>
+                    Apply Now
+                  </button>
+                  {nurseDropdownSections.slice(1).map((section) =>
+                    section.links.map((link) => (
+                      <Link
+                        key={link.name}
+                        to={link.path}
+                        onClick={() => handleNavClick(link.path)}
+                        className="block font-medium text-gray-600 hover:text-brand-primary"
+                      >
+                        {link.name}
+                      </Link>
+                    ))
+                  )}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Care Services Dropdown */}
+            <AccordionItem value="care">
+              <AccordionTrigger className="py-2 px-0 font-medium text-gray-700 hover:text-brand-primary focus:outline-none">
+                Care Services
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="ml-3 space-y-2">
+                  {careServicesDropdownSections.map((section) =>
+                    section.links.map((link) => (
+                      <Link
+                        key={link.name}
+                        to={link.path}
+                        onClick={() => handleNavClick(link.path)}
+                        className="block font-medium text-gray-600 hover:text-brand-primary"
+                      >
+                        {link.name}
+                      </Link>
+                    ))
+                  )}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
 
         {/* Authentication & CTA Section */}
@@ -91,7 +152,7 @@ export default function MobileMenu({
             <div className="space-y-2">
               <Link
                 to="/dashboard"
-                onClick={() => setIsOpen(false)}
+                onClick={() => handleNavClick('/dashboard')}
                 className="block text-gray-700 hover:text-brand-primary font-medium"
               >
                 Dashboard
@@ -106,16 +167,8 @@ export default function MobileMenu({
                 Sign Out
               </button>
             </div>
-          ) : (
-            <Link
-              to="/auth"
-              onClick={() => setIsOpen(false)}
-              className="block text-gray-700 hover:text-brand-primary font-medium"
-            >
-              Sign In
-            </Link>
-          )}
-          
+          ) : null}
+
           {/* Request a Nurse Button */}
           <div className="relative">
             <GlowEffect
