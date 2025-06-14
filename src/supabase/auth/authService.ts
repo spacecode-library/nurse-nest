@@ -1,6 +1,6 @@
 // src/supabase/auth/authService.ts
 import { supabase } from '@/integrations/supabase/client';
-import { AuthError, PostgrestError } from '@supabase/supabase-js';
+import { AuthError, PostgrestError, User } from '@supabase/supabase-js';
 
 /**
  * User types supported by the application
@@ -11,6 +11,7 @@ export type UserType = 'nurse' | 'client' | 'admin';
  * Interface for sign-up metadata
  */
 export interface SignUpMetadata {
+//   user_type: UserType;
   first_name?: string;
   last_name?: string;
   [key: string]: any;
@@ -22,7 +23,7 @@ export interface SignUpMetadata {
 export async function signUp(
   email: string, 
   password: string, 
-  userType: UserType, 
+  userType: 'nurse' | 'client' | 'admin', 
   metadata: Partial<SignUpMetadata> = {}
 ) {
   try {
@@ -31,32 +32,24 @@ export async function signUp(
       ...metadata
     };
 
-    // Set up email redirect (required for Supabase)
-    const emailRedirectTo = `${window.location.origin}/sign-in`;
-
-    // Register the user with Supabase Auth, always set emailRedirectTo for verification emails
+    // Register the user with Supabase Auth
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: fullMetadata,
-        emailRedirectTo // Always set, fixes verify flow
+        data: fullMetadata
       }
     });
 
     if (error) throw error;
 
-    // Nurses get 'pending' status; others will be 'active' by default
-    const isNurse = userType === 'nurse';
-    const account_status = isNurse ? 'pending' : 'active';
-
-    // Create metadata record for user type/role and onboarding status
+    const { data: metaData, error: metaError } = await supabase
+    .from('user_metadata')
+    .insert({user_id:data.user.id,user_type:userType ,account_status:'active' })
+    .select()
+    
+    // If registration successful, create corresponding profile
     if (data.user) {
-      await supabase
-        .from('user_metadata')
-        .insert({ user_id: data.user.id, user_type: userType, account_status })
-        .select();
-
       if (userType === 'nurse') {
         // Create initial nurse profile
         await createInitialNurseProfile(data.user.id, metadata);
@@ -66,13 +59,10 @@ export async function signUp(
       }
     }
 
-    // NOTE: if Confirmation email is required (Supabase setting), user.session/user will be null
-    const emailConfirmationRequired = !data.user;
-
-    return { data, error: null, emailConfirmationRequired };
+    return { data, error: null };
   } catch (error) {
     console.error('Error signing up:', error);
-    return { data: null, error: error as AuthError, emailConfirmationRequired: false };
+    return { data: null, error: error as AuthError };
   }
 }
 
