@@ -24,11 +24,12 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
   const [open, setOpen] = useState<{ [key: string]: boolean }>({});
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Remove emojis from all category titles and objects for display
   const faqCategories: FAQCategory[] = [
     {
       id: "getting-started",
       title: "Getting Started & Medical Requirements",
-      icon: "🚀",
+      icon: "",
       faqs: [
         {
           question: "When should I request a nurse match?",
@@ -79,7 +80,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
     {
       id: "finding-hiring",
       title: "Finding & Hiring Your Nurse",
-      icon: "👩‍⚕️",
+      icon: "",
       faqs: [
         {
           question: "What if no nurse applies to my job?",
@@ -134,7 +135,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
     {
       id: "safety-privacy",
       title: "Safety & Privacy",
-      icon: "🔒",
+      icon: "",
       faqs: [
         {
           question: "Are nurses vetted?",
@@ -169,7 +170,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
     {
       id: "time-tracking",
       title: "Time Tracking & Getting Paid",
-      icon: "💳",
+      icon: "",
       faqs: [
         {
           question: "How do invoice verifications work?",
@@ -220,7 +221,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
     {
       id: "costs-policies",
       title: "Costs & Policies",
-      icon: "💸",
+      icon: "",
       faqs: [
         {
           question: "What fees do clients pay?",
@@ -259,7 +260,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
     {
       id: "help-rewards",
       title: "Help & Rewards",
-      icon: "⭐",
+      icon: "",
       faqs: [
         {
           question: "I'm having trouble uploading documents. What should I do?",
@@ -349,14 +350,19 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
         {/* Layout: Sidebar + Main */}
         <div className="flex flex-col md:flex-row md:gap-8">
           {/* Sidebar */}
-          <div className="hidden md:block md:w-1/4 md:pr-4">
-            <nav aria-label="Table of Contents" className="sticky top-28">
-              <div className="text-base font-bold mb-3 text-gray-900">
+          <div className="w-full md:w-[260px] md:pr-4 mb-10 md:mb-0 flex-shrink-0 flex flex-col items-center">
+            <div className="mb-5 w-full flex flex-col items-center">
+              {/* Centered and larger TOC heading */}
+              <div className="text-xl md:text-2xl font-black text-gray-900 mb-1 text-center"
+                   style={{ letterSpacing: "-0.01em", lineHeight: 1.2 }}>
                 Table of Contents
               </div>
-              <ul className="space-y-1">
+              <div className="bg-gray-100 h-[2px] w-14 mx-auto my-2 rounded-full"/>
+            </div>
+            <nav aria-label="Table of Contents" className="w-full">
+              <ul className="space-y-1 w-full">
                 {faqCategories.map(cat => (
-                  <li key={cat.id}>
+                  <li key={cat.id} className="w-full">
                     <button
                       onClick={() => {
                         setActiveCategory(cat.id);
@@ -364,14 +370,20 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         setSearchTerm('');
                       }}
                       className={cn(
-                        'w-full text-left py-2 px-3 rounded transition-colors',
+                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-base md:text-[15px] tracking-tight",
                         selected?.id === cat.id
-                          ? 'bg-blue-50 text-blue-700 font-semibold underline underline-offset-4'
-                          : 'hover:bg-gray-100 text-gray-700'
+                          ? "text-blue-700 font-bold bg-transparent"
+                          : "text-gray-700 hover:text-blue-700"
                       )}
+                      style={
+                        selected?.id === cat.id
+                          // Only highlight text color, no underline, box, or background highlight
+                          ? { background: "transparent", boxShadow: "none", textDecoration: "underline", textUnderlineOffset: 2 }
+                          : undefined
+                      }
                       aria-current={selected?.id === cat.id ? 'page' : undefined}
                     >
-                      <span className="mr-2">{cat.icon}</span>
+                      {/* No emoji */}
                       {cat.title}
                     </button>
                   </li>
@@ -408,8 +420,8 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         <div className="border-b last:border-b-0">
                           <button
                             className={cn(
-                              'w-full text-left flex items-start py-5 px-0 md:px-1 focus:outline-none transition-colors',
-                              open[key] ? 'text-blue-700' : 'text-gray-900 hover:text-blue-600'
+                              "w-full text-left flex items-start py-5 px-0 md:px-1 focus:outline-none transition-colors group",
+                              open[key] ? "text-blue-700" : "text-gray-900 hover:text-blue-600"
                             )}
                             onClick={() =>
                               setOpen(prev => ({
@@ -428,9 +440,14 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                             </span>
                             <span
                               className={cn(
-                                'text-base md:text-lg font-semibold',
-                                open[key] && 'underline underline-offset-4 text-blue-700'
+                                "text-base md:text-lg font-bold md:font-extrabold group-hover:text-blue-600 transition-colors",
+                                open[key] && "text-blue-700"
                               )}
+                              style={
+                                open[key]
+                                  ? { textDecoration: "underline", textUnderlineOffset: 3 }
+                                  : undefined
+                              }
                             >
                               {faq.question}
                             </span>
