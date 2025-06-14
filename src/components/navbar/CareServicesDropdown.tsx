@@ -16,7 +16,11 @@ interface CareServicesDropdownProps {
 
 export default function CareServicesDropdown({ shouldUseDarkText }: CareServicesDropdownProps) {
   const navigate = useNavigate();
-  
+
+  const hoverTextClass = shouldUseDarkText
+    ? "hover:text-[#3b82f6]"
+    : "hover:text-[#9bcbff]";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,28 +37,36 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         <DropdownMenuItem 
-          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          className="cursor-pointer py-3"
           onClick={() => navigate('/newborn-nurse-support-guide')}
         >
-          <span className="font-medium text-gray-900">Newborn Care</span>
+          <span className={cn("font-medium text-gray-900 transition-colors duration-200", hoverTextClass)}>
+            Newborn Care
+          </span>
         </DropdownMenuItem>
         <DropdownMenuItem 
-          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          className="cursor-pointer py-3"
           onClick={() => navigate('/elderly-care-nurse-services')}
         >
-          <span className="font-medium text-gray-900">Elderly Care</span>
+          <span className={cn("font-medium text-gray-900 transition-colors duration-200", hoverTextClass)}>
+            Elderly Care
+          </span>
         </DropdownMenuItem>
         <DropdownMenuItem 
-          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          className="cursor-pointer py-3"
           onClick={() => navigate('/wound-care-nursing-guide')}
         >
-          <span className="font-medium text-gray-900">Wound Care</span>
+          <span className={cn("font-medium text-gray-900 transition-colors duration-200", hoverTextClass)}>
+            Wound Care
+          </span>
         </DropdownMenuItem>
         <DropdownMenuItem 
-          className="cursor-pointer focus:bg-blue-50 hover:bg-blue-50 py-3" 
+          className="cursor-pointer py-3"
           onClick={() => navigate('/best-products-for-home-healthcare')}
         >
-          <span className="font-medium text-gray-900">Product Reviews</span>
+          <span className={cn("font-medium text-gray-900 transition-colors duration-200", hoverTextClass)}>
+            Product Reviews
+          </span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
