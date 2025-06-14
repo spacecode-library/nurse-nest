@@ -27,22 +27,27 @@ export default function MobileMenuDropdown({
   onNavClick,
   topLinkFirst = false,
 }: DropdownSection) {
+  // NOTE: We'll use a sibling chevron on the left with label on right
   return (
     <AccordionItem value={value} className="border-b-0">
-      <AccordionTrigger className={styles.mobileMenuTrigger} tabIndex={0}>
-        <span className="flex items-center gap-2">
-          <span className={styles.mobileTriggerIcon}>
-            {icon}
-          </span>
-          <span>{label}</span>
+      <AccordionTrigger
+        className={`${styles.mobileMenuTrigger} group px-2 py-1 flex items-center gap-2 transition-colors duration-200 hover:text-brand-primary focus:text-brand-primary`}
+        tabIndex={0}
+        // pass data-state for CSS animation on chevron
+        data-state={undefined}
+      >
+        <span className="mr-2 flex">
+          {/* left-positioned chevron: animate on open using [data-state='open'] */}
+          {icon}
         </span>
+        <span className="font-medium">{label}</span>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="ml-3 sm:ml-4 space-y-2">
+        <div className="ml-3 sm:ml-4 space-y-2 animate-fade-in">
           {onSpecialTopAction && specialTopLabel && (
             <button
               onClick={onSpecialTopAction}
-              className="block font-medium text-gray-600 hover:text-brand-primary py-1 px-0"
+              className="block font-medium text-gray-600 hover:text-brand-primary py-1 px-0 transition-colors duration-200 focus:outline-none"
             >
               {specialTopLabel}
             </button>
@@ -57,7 +62,7 @@ export default function MobileMenuDropdown({
                   key={link.path}
                   to={link.path}
                   onClick={() => onNavClick(link.path)}
-                  className="block font-medium text-gray-600 hover:text-brand-primary py-1 px-0"
+                  className="block font-medium text-gray-600 hover:text-brand-primary py-1 px-0 transition-colors duration-200 focus:outline-none"
                 >
                   {link.name}
                 </Link>

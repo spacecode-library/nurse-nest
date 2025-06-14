@@ -21,7 +21,6 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
     ? "hover:text-[#3b82f6] focus:text-[#3b82f6]"
     : "hover:text-[#9bcbff] focus:text-[#9bcbff]";
 
-  // Remove ALL box, ring, border, and outline highlights on menu items
   const itemClass =
     "cursor-pointer py-3 bg-transparent hover:bg-transparent focus:bg-transparent border-none outline-none ring-0 focus:ring-0 focus-visible:outline-none focus:outline-none focus:border-none shadow-none";
 
@@ -33,16 +32,25 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "font-medium flex items-center transition-colors duration-300 ease-in-out hover:scale-105 focus:outline-none focus-visible:outline-none bg-transparent",
+            "font-medium flex items-center transition-colors duration-300 ease-in-out hover:scale-105 focus:outline-none focus-visible:outline-none bg-transparent group px-2 py-1",
             shouldUseDarkText
               ? "text-gray-700 hover:text-[#3b82f6]"
               : "text-white hover:text-[#9bcbff]"
           )}
         >
-          Care Services <ChevronDown className="ml-1 h-4 w-4" />
+          <span className="mr-2 flex">
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 transition-transform duration-200 origin-center",
+                "group-data-[state=open]:rotate-180"
+              )}
+              aria-hidden="true"
+            />
+          </span>
+          Care Services
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64">
+      <DropdownMenuContent className="w-64 animate-fade-in z-40">
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/newborn-nurse-support-guide')}
