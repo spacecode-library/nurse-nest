@@ -27,7 +27,7 @@ export default function HowItWorksSection() {
               alt="Why Choose NurseNest" 
               className={`w-auto object-contain ${
                 isMobile 
-                  ? 'h-16 max-w-[280px]' 
+                  ? 'h-28 max-w-[320px]' 
                   : 'h-28 md:h-32 lg:h-36'
               }`}
             />
