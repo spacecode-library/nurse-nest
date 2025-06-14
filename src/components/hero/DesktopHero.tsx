@@ -1,4 +1,3 @@
-
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlowEffect } from "@/components/ui/glow-effect";
@@ -15,7 +14,7 @@ export function DesktopHero({ titles, titleNumber }: DesktopHeroProps) {
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
           <div className="flex flex-col justify-start max-w-3xl mt-12">
             {/* Desktop Header */}
-            <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-tight mb-8">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-none mb-2">
               <span className="text-white block">Need a</span>
               
               <RotatingText titles={titles} titleNumber={titleNumber} isMobile={false} />

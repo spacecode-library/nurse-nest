@@ -1,4 +1,3 @@
-
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlowEffect } from "@/components/ui/glow-effect";
@@ -17,11 +16,9 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
         style={{ top: '25vh' }}
         role="banner"
       >
-        <h1 className="tracking-tighter font-regular text-white leading-tight text-4xl">
-          <span className="block text-white mt-1">Need a</span>
-          
+        <h1 className="tracking-tighter font-regular text-white leading-none text-4xl">
+          <span className="block text-white">Need a</span>
           <RotatingText titles={titles} titleNumber={titleNumber} isMobile={true} />
-          
           <span className="block text-white">nurse?</span>
         </h1>
       </header>
