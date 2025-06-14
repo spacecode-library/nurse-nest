@@ -1,7 +1,5 @@
-
 import { useState, useRef, useEffect } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { ChevronUp, Search, ArrowUp } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AnimatedSection from './AnimatedSection';
 import { 
@@ -137,189 +135,157 @@ export default function TabFaqSection() {
     })).filter(tab => tab.faqs.length > 0);
   };
 
-  const filteredFaqTabs = getFilteredFaqs();
-  
-  // Scroll to top function for mobile
-  const scrollToTop = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const filteredFaqTabs = (() => {
+    if (searchTerm.trim() === "") return faqTabs;
+    return faqTabs.map(tab => ({
+      ...tab,
+      faqs: tab.faqs.filter(faq =>
+        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    })).filter(tab => tab.faqs.length > 0);
+  })();
 
+  // Helper: get active tab index for navigation highlight
+  const getNavTabIndex = () => faqTabs.findIndex(tab => tab.id === activeTab);
+
+  // Desktop: Table of Contents sidebar
+  function SidebarNav() {
+    return (
+      <nav className="rounded-xl mb-8 md:mb-0 bg-white md:bg-transparent shadow md:shadow-none px-0 py-6">
+        <div className="text-lg font-semibold px-6 mb-2 text-gray-800">Table of Contents</div>
+        <ul className="space-y-1">
+          {faqTabs.map((tab, idx) => (
+            <li key={tab.id}>
+              <button
+                className={cn(
+                  "w-full flex items-center px-6 py-2.5 text-left rounded-lg transition-colors",
+                  activeTab === tab.id
+                    ? "bg-blue-50 text-blue-700 font-bold"
+                    : "text-gray-700 hover:bg-gray-100"
+                )}
+                style={{
+                  fontWeight: activeTab === tab.id ? 700 : 400
+                }}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span className="mr-3 text-base">{tab.icon}</span>
+                <span className={activeTab === tab.id ? "underline underline-offset-4" : ""}>
+                  {tab.title}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    );
+  }
+
+  // Desktop: FAQ List for active category
+  function FaqList({ tab }: { tab: FaqTab }) {
+    return (
+      <div>
+        {tab.faqs.length === 0 ? (
+          <div className="py-12 text-center text-gray-500">
+            No results found. Try a different search.
+          </div>
+        ) : (
+          <dl className="divide-y divide-gray-200">
+            {tab.faqs.map((faq, faqIdx) => (
+              <details key={faq.question} className="group py-5">
+                <summary className={cn(
+                  "flex items-center cursor-pointer list-none outline-none focus:outline-none select-none transition-colors px-2",
+                  "hover:bg-blue-50 rounded-md"
+                )}>
+                  <span className="flex-1 text-lg md:text-xl font-semibold text-gray-900">
+                    {faq.question}
+                  </span>
+                  <span className="ml-3 transition-transform text-blue-500 group-open:rotate-45 group-open:text-blue-700">
+                    <ChevronRight
+                      className={
+                        "w-6 h-6 transition-transform group-open:rotate-90 group-open:text-blue-700"
+                      }
+                    />
+                  </span>
+                </summary>
+                <div className="mt-3 pl-1 md:pl-2 text-base text-gray-700">
+                  {faq.answer}
+                </div>
+              </details>
+            ))}
+          </dl>
+        )}
+      </div>
+    );
+  }
+
+  // -- MAIN RETURN --
   return (
-    <section className="section-padding bg-nurse-light" id="faq" ref={scrollRef}>
-      <div className="container-custom">
-        <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            <span className="text-primary-500">Frequently</span> Asked Questions
-          </h2>
-          <p className="text-lg text-gray-700 mb-8">
-            Find answers to commonly asked questions about our nurse matching service.
-          </p>
-          
-          {/* Search Bar */}
-          <div className="relative max-w-md mx-auto mb-8">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search questions..."
-              className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-all"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </AnimatedSection>
-        
-        {/* Desktop Tabs */}
-        <div className="max-w-4xl mx-auto">
-          {/* Show regular tabs on desktop, hide on mobile */}
-          <div className="hidden md:block">
-            <Tabs 
-              defaultValue="getting-started" 
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <AnimatedSection animation="fade-up" delay={100}>
-                <TabsList className="w-full bg-white/80 backdrop-blur-sm rounded-lg p-1.5">
-                  {faqTabs.map((tab) => (
-                    <TabsTrigger
-                      key={tab.id}
-                      value={tab.id}
-                      className="text-sm py-2.5 px-3 data-[state=active]:bg-primary-500 data-[state=active]:text-white transition-all duration-300"
-                    >
-                      <span className="mr-2">{tab.icon}</span>
-                      <span>{tab.title}</span>
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </AnimatedSection>
-              
-              {faqTabs.map((tab, tabIndex) => (
-                <TabsContent key={tab.id} value={tab.id} className="mt-6">
-                  <div className="space-y-4">
-                    {filteredFaqTabs.some(t => t.id === tab.id) ? (
-                      tab.faqs.filter(faq => 
-                        !searchTerm.trim() || 
-                        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
-                      ).map((faq, faqIndex) => (
-                        <AnimatedSection 
-                          key={`desktop-${tab.id}-${faqIndex}`} 
-                          animation="fade-up" 
-                          delay={faqIndex * 100}
-                        >
-                          <div className="glass-card border-none rounded-lg overflow-hidden">
-                            <div className="p-5">
-                              <h3 className="text-lg font-medium flex items-start gap-3 mb-3">
-                                <span className="text-xl">{tab.icon}</span>
-                                <span>{faq.question}</span>
-                              </h3>
-                              <p className="text-gray-600 pl-9 whitespace-pre-line">
-                                {faq.answer}
-                              </p>
-                            </div>
-                          </div>
-                        </AnimatedSection>
-                      ))
-                    ) : (
-                      <div className="text-center py-12">
-                        <p>No results found. Try a different search term.</p>
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </div>
-          
-          {/* Mobile Accordion View */}
-          <div className="md:hidden">
-            {filteredFaqTabs.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-lg text-gray-600">No results found. Try a different search term.</p>
-              </div>
-            ) : (
-              <>
-                {filteredFaqTabs.map((tab, tabIndex) => (
-                  <div key={`mobile-tab-${tab.id}`} className="mb-6">
-                    <AnimatedSection 
-                      animation="fade-up" 
-                      delay={tabIndex * 100}
-                    >
-                      <div className="flex items-center gap-2 bg-primary-500 text-white px-4 py-3 rounded-lg mb-3">
-                        <span className="text-xl">{tab.icon}</span>
-                        <h3 className="font-medium">{tab.title}</h3>
-                      </div>
-                      
-                      <Accordion type="single" collapsible className="space-y-3">
-                        {tab.faqs.filter(faq => 
-                          !searchTerm.trim() || 
-                          faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
-                        ).map((faq, faqIndex) => (
-                          <AnimatedSection 
-                            key={`mobile-${tab.id}-${faqIndex}`} 
-                            animation="fade-up" 
-                            delay={(tabIndex + faqIndex + 1) * 100}
-                          >
-                            <AccordionItem value={`${tab.id}-${faqIndex}`} className="glass-card border-none rounded-lg overflow-hidden">
-                              <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-white/50 transition-colors">
-                                <div className="flex items-center text-left gap-2">
-                                  <span className="text-lg mr-1">{tab.icon}</span>
-                                  <span className="text-base font-medium">{faq.question}</span>
-                                </div>
-                              </AccordionTrigger>
-                              <AccordionContent className="px-4 pb-4 pt-1 text-gray-600 whitespace-pre-line">
-                                <div className="space-y-4">
-                                  <div>{faq.answer}</div>
-                                  <div className="pt-2">
-                                    <button 
-                                      onClick={scrollToTop}
-                                      className="flex items-center text-primary-500 text-sm font-medium"
-                                    >
-                                      <ArrowUp className="h-4 w-4 mr-1" />
-                                      Back to top
-                                    </button>
-                                  </div>
-                                </div>
-                              </AccordionContent>
-                            </AccordionItem>
-                          </AnimatedSection>
-                        ))}
-                      </Accordion>
-                    </AnimatedSection>
-                  </div>
-                ))}
-              </>
-            )}
+    <section className="bg-white py-14 md:py-24" id="faq" ref={scrollRef}>
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Header */}
+        <div className="max-w-2xl mx-auto text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight">Questions? Look here.</h2>
+          <div className="text-lg text-gray-500 mb-0">
+            Can’t find an answer? Call us at <a href="tel:8556925326" className="underline hover:text-blue-700">(855) 692-5326</a> or email <a href="mailto:contact@myclean.com" className="underline hover:text-blue-700">contact@myclean.com</a>!
           </div>
         </div>
-        
-        <AnimatedSection animation="fade-up" delay={500} className="max-w-xl mx-auto mt-10 md:mt-14 text-center">
-          <p className="text-gray-600 mb-5">
-            Still have questions? We're here to help!
-          </p>
-          <a 
-            href="/contact" 
-            className="inline-flex items-center bg-primary-500 text-white font-medium px-6 py-3 rounded-md hover:bg-primary-600 transition-colors shadow-lg hover:shadow-xl"
-          >
-            Contact our team
-            <ArrowUp className="ml-2 h-4 w-4 rotate-45" />
-          </a>
-        </AnimatedSection>
-        
-        {/* Sticky CTA for desktop */}
-        <div className="hidden md:block fixed bottom-8 right-8 z-30">
-          <a 
-            href="/apply" 
-            className="inline-flex items-center bg-primary-500 text-white font-medium px-6 py-3 rounded-full hover:bg-primary-600 transition-colors shadow-lg hover:shadow-xl animate-button-glow"
-          >
-            Request a Nurse Match
-            <ArrowUp className="ml-2 h-4 w-4 rotate-45" />
-          </a>
+
+        <div className="flex flex-col md:flex-row md:gap-10">
+          {/* Sidebar: Table of Contents (Desktop) */}
+          <div className="hidden md:block md:w-1/4">
+            <SidebarNav />
+          </div>
+
+          {/* FAQ Main Area */}
+          <div className="w-full md:w-3/4">
+            {/* Search input */}
+            <div className="relative max-w-lg mb-8">
+              <div className="absolute top-1/2 left-3 -translate-y-1/2 pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all text-base"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search questions..."
+                aria-label="Search questions"
+              />
+            </div>
+
+            {/* Desktop: Show only active tab (category) */}
+            <div className="hidden md:block">
+              {faqTabs.filter(tab => tab.id === activeTab).map(tab => (
+                <FaqList key={tab.id} tab={tab} />
+              ))}
+            </div>
+
+            {/* Mobile: One-long accordion, sticky TOC at top */}
+            <div className="md:hidden">
+              {/* Mobile TOC */}
+              <div className="flex gap-2 overflow-x-auto mb-5 pb-2 sticky -top-2 bg-white z-10">
+                {faqTabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    className={cn(
+                      "px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
+                      activeTab === tab.id
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-blue-50"
+                    )}
+                    onClick={() => setActiveTab(tab.id)}
+                  >
+                    {tab.title}
+                  </button>
+                ))}
+              </div>
+              {/* Mobile: Show only FAQs for active tab */}
+              {faqTabs.filter(tab => tab.id === activeTab).map(tab => (
+                <FaqList key={tab.id} tab={tab} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
