@@ -135,8 +135,22 @@ export default function SignUp() {
             </Button>
           </Link>
         </div>
-        {/* Updated max width and mx */}
-        <Card className="w-full max-w-xs mx-auto mt-4 py-6 px-3 rounded-2xl shadow-xl border border-gray-100 bg-white relative">
+        <Card
+          className="
+            w-full max-w-xs mx-auto mt-4 py-6 px-3 rounded-2xl 
+            border border-white/60
+            glass-card
+            shadow-lg
+            hover:scale-[1.025] transition-all duration-300
+            backdrop-blur-md
+            relative
+            "
+          style={{
+            boxShadow:
+              "0 12px 40px 0 rgba(40,131,201,0.14), 0 2px 8px 0 rgba(30,41,59,0.08), 0 0px 0.5px 0px #9bcbff55",
+            border: "1.25px solid rgba(155,203,255,0.38)",
+          }}
+        >
           <CardContent className="p-0">
             <div className="w-full space-y-5">
               {/* Header */}
