@@ -1,14 +1,13 @@
-
 // Animation constants
 export const ANIMATION_CONFIG = {
   rotationInterval: 2000,
   mobileRotatingTextHeight: 32,
   desktopRotatingTextHeight: 80,
   desktopRotatingTextWidth: 300,
-  // Switched from 'spring' to duration/ease for snappier feel
+  // Use 'spring' for hero rotating text, to match best working sample
   animationTransition: {
-    duration: 0.35,
-    ease: "easeInOut"
+    type: "spring" as const,
+    stiffness: 50
   }
 };
 
@@ -38,4 +37,3 @@ export const BUTTON_GLOW_CONFIGS = {
     intensity: 0.35
   }
 };
-

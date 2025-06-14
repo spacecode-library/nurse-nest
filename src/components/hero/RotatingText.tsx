@@ -4,18 +4,18 @@ import { ANIMATION_CONFIG } from "./constants";
 import { RotatingTextProps } from "./types";
 
 export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProps) {
-  // Use fast, consistent fade/slide transitions from constants
+  // Use spring animation for rotating text
   const transition = ANIMATION_CONFIG.animationTransition;
   const motionDistance = isMobile ? 28 : 64;
 
   const getAnimationProps = (index: number) => ({
-    initial: { opacity: 0, y: motionDistance },
+    initial: { opacity: 0, y: -100 },
     transition,
     animate:
       titleNumber === index
         ? { y: 0, opacity: 1, transition }
         : {
-            y: titleNumber > index ? -motionDistance : motionDistance,
+            y: titleNumber > index ? -motionDistance * 2 : motionDistance * 2,
             opacity: 0,
             transition
           }
@@ -70,4 +70,3 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
     </span>
   );
 }
-
