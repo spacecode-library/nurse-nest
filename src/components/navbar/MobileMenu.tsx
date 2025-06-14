@@ -87,6 +87,10 @@ export default function MobileMenu({
         .mobile-accordion-no-border > div > [data-state] {
           border-bottom: none !important;
         }
+        /* Hide the right chevron icon inside the accordion trigger */
+        .mobile-menu-trigger > svg:last-child {
+          display: none !important;
+        }
       `}</style>
       <div className="px-3 py-3 sm:px-6 sm:py-4 space-y-4">
 
