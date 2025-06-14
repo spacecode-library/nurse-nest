@@ -3,8 +3,8 @@ import React from "react";
 
 /**
  * DiagonalSplitBackground renders a sharp, corner-to-corner, bottom-left to top-right diagonal,
- * evenly splitting background as blue (bottom-left half) and white (top-right half).
- * Only render in mobile/tablet (use with lg:hidden).
+ * with a realistic 3D effect as if the white side is elevated above the blue, using a soft shadowed split.
+ * Only renders on mobile/tablet (use with lg:hidden).
  */
 const DiagonalSplitBackground: React.FC = () => {
   return (
@@ -21,14 +21,32 @@ const DiagonalSplitBackground: React.FC = () => {
         style={{ display: "block" }}
         shapeRendering="crispEdges"
       >
-        {/* Blue triangle: bottom-left to top-right (points: bottom-left, bottom-right, top-right) */}
+        <defs>
+          {/* Diagonal shadow gradient: from semi-transparent black, fading out */}
+          <linearGradient id="diagonalShadow" x1="0" y1="100" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="rgba(0,0,0,0.15)" />
+            <stop offset="60%" stopColor="rgba(0,0,0,0.12)" />
+            <stop offset="90%" stopColor="rgba(0,0,0,0.06)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+          </linearGradient>
+        </defs>
+        {/* Blue triangle */}
         <polygon points="0,100 100,100 100,0" fill="#9bcbff" />
-        {/* White triangle: top-left, top-right, bottom-left */}
+        {/* White triangle */}
         <polygon points="0,0 100,0 0,100" fill="#fff" />
+        {/* Diagonal shadow overlay for 3D illusion - slightly below diagonal */}
+        <polygon
+          points="
+            0,100
+            100,0
+            100,3
+            3,100
+          "
+          fill="url(#diagonalShadow)"
+        />
       </svg>
     </div>
   );
 };
 
 export default DiagonalSplitBackground;
-
