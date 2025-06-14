@@ -1,4 +1,3 @@
-
 import { Shield, Users, Star, Clock } from "lucide-react";
 import { Hero } from "@/components/AnimatedHero";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -27,7 +26,7 @@ export default function HeroSection() {
         >
           {/* Hero content over background, no glass effect */}
           <div className="relative z-10 w-full h-full flex items-center justify-center">
-            <div className="w-[92vw] max-w-md mx-auto mt-10 shadow-xl">
+            <div className="w-[92vw] max-w-md mx-auto mt-10">
               <Hero isMobile={true} />
             </div>
           </div>
@@ -69,4 +68,3 @@ export default function HeroSection() {
     </section>
   );
 }
-
