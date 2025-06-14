@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import NurseNestNavbar from "@/components/NurseNestNavbar";
 import Footer from "@/components/Footer";
@@ -7,6 +6,7 @@ import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 import FloatingFaqButton from "@/components/FloatingFaqButton";
+import ExpandableActionMenu from "@/components/ExpandableActionMenu";
 
 export default function Index() {
   const [isFaqVisible, setIsFaqVisible] = useState(false);
@@ -20,6 +20,10 @@ export default function Index() {
         faqSection.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+  };
+
+  const handleRequestNurse = () => {
+    window.location.href = "/apply";
   };
 
   return (
@@ -51,10 +55,11 @@ export default function Index() {
         />
       </main>
 
-      {/* Floating FAQ Button always available */}
-      <FloatingFaqButton
-        onClick={showFaqAndScroll}
-        isOpen={isFaqVisible}
+      {/* Professional expandable floating action menu (FAB) */}
+      <ExpandableActionMenu
+        onFaq={showFaqAndScroll}
+        onRequestNurse={handleRequestNurse}
+        isFaqOpen={isFaqVisible}
       />
 
       <Footer />
