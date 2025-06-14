@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -45,7 +46,6 @@ export default function SignIn() {
         }
       }
     };
-    
     checkSession();
   }, [navigate]);
   
@@ -53,10 +53,8 @@ export default function SignIn() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
     try {
       const { data, error } = await signIn(email, password);
-      
       if (error) {
         setError(error.message);
         toast({
@@ -70,12 +68,10 @@ export default function SignIn() {
           .select('user_type')
           .eq('user_id', data.user.id)
           .single();
-        
         toast({
           title: "Welcome back!",
           description: "Successfully signed in to your account.",
         });
-        
         if (userMetadata?.user_type === 'admin') {
           navigate('/admin');
         } else {
@@ -89,40 +85,36 @@ export default function SignIn() {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-white flex relative">
+
       {/* Diagonal split background, only mobile */}
       <div className="absolute inset-0 z-0 lg:hidden">
         <DiagonalSplitBackground />
       </div>
 
-      {/* Mobile - Card design overlay */}
-      <div className="flex-1 flex flex-col lg:hidden items-center justify-start relative z-10 min-h-screen">
+      {/* Mobile layout - Card design overlay */}
+      <div className="flex-1 flex flex-col lg:hidden items-center justify-center relative z-10">
         {/* Mobile Return to Home Button */}
-        <div className="absolute top-4 left-0 w-full flex justify-center z-20">
+        <div className="absolute top-6 left-4 z-20">
           <Link to="/">
             <Button
               variant="ghost"
-              className="bg-white/90 border border-gray-200 text-gray-700 hover:bg-white hover:text-gray-900 transition-all duration-300 rounded-xl px-5 py-2 shadow-md font-semibold text-base"
-              style={{
-                boxShadow: "0 4px 16px 0 rgba(155,203,255,0.11)",
-                fontWeight: 600
-              }}
+              className="bg-white/90 border border-gray-200 text-gray-700 hover:bg-white hover:text-gray-900 rounded-xl px-4 py-2 shadow group"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Home
             </Button>
           </Link>
         </div>
-        <Card className="w-full max-w-sm mt-24 mx-2 py-8 px-6 rounded-3xl shadow-2xl border border-gray-100 bg-white/95 relative animate-fade-in"
-          style={{ boxShadow: "0 8px 36px 0 rgba(155,203,255,0.12)" }}>
+        <Card className="w-full max-w-sm mt-4 mx-2 py-6 px-5 rounded-2xl shadow-xl border border-gray-100 bg-white relative">
           <CardContent className="p-0">
             <div className="w-full space-y-5">
               {/* Header */}
-              <div className="text-center mb-2 mt-1">
-                <h1 className="text-2xl font-extrabold text-gray-900 mb-0.5 tracking-tight font-heading" style={{ letterSpacing: '-0.03em' }}>Welcome back!</h1>
-                <p className="text-xs text-gray-700/80 font-roboto">Your trusted healthcare community awaits</p>
+              <div className="text-center mb-1">
+                <h1 className="text-xl font-bold text-gray-900 mb-0.5">Welcome back!</h1>
+                <p className="text-sm text-gray-600">Your trusted healthcare community awaits</p>
               </div>
               {/* Error Display */}
               {error && (
@@ -132,10 +124,10 @@ export default function SignIn() {
                 </div>
               )}
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-2.5">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {/* Email Field */}
                 <div className="space-y-0.5">
-                  <Label htmlFor="email" className="text-gray-700 font-semibold text-xs">
+                  <Label htmlFor="email" className="text-gray-700 font-medium text-xs">
                     Email Address
                   </Label>
                   <div className="relative">
@@ -145,7 +137,7 @@ export default function SignIn() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-9 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-xl bg-white text-xs font-roboto"
+                      className="h-9 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-xs"
                       required
                       placeholder="Enter your email"
                     />
@@ -154,7 +146,7 @@ export default function SignIn() {
                 {/* Password Field */}
                 <div className="space-y-0.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-gray-700 font-semibold text-xs">
+                    <Label htmlFor="password" className="text-gray-700 font-medium text-xs">
                       Password
                     </Label>
                     <button
@@ -172,7 +164,7 @@ export default function SignIn() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-9 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-xl bg-white text-xs font-roboto"
+                      className="h-9 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-xs"
                       required
                       placeholder="Enter your password"
                     />
@@ -180,7 +172,6 @@ export default function SignIn() {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
-                      tabIndex={-1}
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -197,16 +188,15 @@ export default function SignIn() {
                     id="remember"
                     className="h-3 w-3 text-[#9bcbff] rounded border-gray-300"
                   />
-                  <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer font-roboto">
+                  <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer">
                     Remember me for 30 days
                   </Label>
                 </div>
                 {/* Sign In Button */}
                 <Button
-                  className="w-full h-9 bg-[#3989d1] hover:bg-[#256ac0] text-white font-semibold rounded-xl shadow-md text-xs tracking-wide transition-all duration-150"
+                  className="w-full h-9 bg-[#9bcbff] hover:bg-[#7bb3ff] text-white font-semibold rounded-lg shadow-md text-xs"
                   disabled={loading}
                   type="submit"
-                  style={{ boxShadow: "0 2px 8px 0 rgba(30,137,209,0.08)" }}
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
@@ -224,7 +214,7 @@ export default function SignIn() {
                   Don't have an account?{' '}
                   <Link
                     to="/sign-up"
-                    className="text-[#3989d1] hover:text-blue-700 font-semibold"
+                    className="text-[#9bcbff] hover:text-blue-700 font-semibold"
                   >
                     Sign up
                   </Link>
@@ -242,168 +232,169 @@ export default function SignIn() {
         </Card>
       </div>
       
-      {/* Desktop Layout unchanged */}
-      {/* Left Side - Optimized Architectural Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
-        <OptimizedBackground
-          src="/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png"
-          alt="Modern architectural interior"
-          className="w-full h-screen"
-          priority={true}
-        >
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black/30"></div>
-          
-          {/* Return to Home Button - Desktop */}
-          <div className="absolute top-8 left-8 z-10">
-            <Link to="/">
-              <div className="relative group">
-                {/* Glow effect */}
-                <div className="absolute -inset-2 bg-white/50 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-                
-                {/* Button */}
-                <Button
-                  variant="ghost"
-                  className="relative bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 hover:text-white transition-all duration-300 rounded-xl px-6 py-3 shadow-lg"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Return to Home
-                </Button>
-              </div>
-            </Link>
-          </div>
-        </OptimizedBackground>
-      </div>
-
-      {/* Right Side - Sign In Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
-        {/* Background Beams - Light Mode */}
-        <BeamsBackground mode="light" intensity="subtle" className="absolute inset-0" />
-        
-        <div className="w-full max-w-md space-y-6 relative z-10 mt-16 lg:mt-0">
-          
-          {/* Header */}
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back!</h1>
-            <p className="text-base text-gray-600">Your trusted healthcare community awaits</p>
-          </div>
-
-          {/* Error Display */}
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
-              <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-              <span className="text-red-700 text-sm">{error}</span>
-            </div>
-          )}
-          
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Desktop Layout only visible at lg+ */}
+      <div className="hidden lg:flex w-full">
+        {/* Left Side - Optimized Architectural Image */}
+        <div className="hidden lg:flex lg:w-1/2 relative">
+          <OptimizedBackground
+            src="/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png"
+            alt="Modern architectural interior"
+            className="w-full h-screen"
+            priority={true}
+          >
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-black/30"></div>
             
-            {/* Email Field */}
-            <div className="space-y-1">
-              <Label htmlFor="email" className="text-gray-700 font-medium text-sm">
-                Email Address
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-10 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
-                  required
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-            
-            {/* Password Field */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-gray-700 font-medium text-sm">
-                  Password
-                </Label>
-                <button
-                  type="button"
-                  className="text-xs text-[#9bcbff] hover:text-blue-700 font-medium transition-colors"
-                  onClick={() => navigate('/auth/reset-password')}
-                >
-                  Forgot password?
-                </button>
-              </div>
-              <div className="relative">
-                <LockKeyhole className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-10 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
-                  required
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-            
-            {/* Remember Me Checkbox */}
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="remember"
-                className="h-3 w-3 text-[#9bcbff] rounded border-gray-300 focus:ring-[#9bcbff]"
-              />
-              <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer">
-                Remember me for 30 days
-              </Label>
-            </div>
-            
-            {/* Sign In Button */}
-            <Button
-              className="w-full h-10 bg-[#9bcbff] hover:bg-[#7bb3ff] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
-              disabled={loading}
-              type="submit"
-            >
-              {loading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Signing in...</span>
+            {/* Return to Home Button - Desktop */}
+            <div className="absolute top-8 left-8 z-10">
+              <Link to="/">
+                <div className="relative group">
+                  {/* Glow effect */}
+                  <div className="absolute -inset-2 bg-white/50 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                  
+                  {/* Button */}
+                  <Button
+                    variant="ghost"
+                    className="relative bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 hover:text-white transition-all duration-300 rounded-xl px-6 py-3 shadow-lg"
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Return to Home
+                  </Button>
                 </div>
-              ) : (
-                'Sign In'
-              )}
-            </Button>
-          </form>
-          
-          {/* Footer */}
-          <div className="text-center">
-            <p className="text-gray-600 text-sm">
-              Don't have an account?{' '}
-              <Link
-                to="/sign-up"
-                className="text-[#9bcbff] hover:text-blue-700 font-semibold transition-colors"
-              >
-                Sign up for free
               </Link>
-            </p>
-          </div>
+            </div>
+          </OptimizedBackground>
+        </div>
+        {/* Right Side - Sign In Form */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
+          {/* Background Beams - Light Mode */}
+          <BeamsBackground mode="light" intensity="subtle" className="absolute inset-0" />
+          
+          <div className="w-full max-w-md space-y-6 relative z-10 mt-16 lg:mt-0">
+            
+            {/* Header */}
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back!</h1>
+              <p className="text-base text-gray-600">Your trusted healthcare community awaits</p>
+            </div>
 
-          {/* Security Badge */}
-          <div className="text-center">
-            <div className="inline-flex items-center space-x-2 text-xs text-gray-500">
-              <CheckCircle className="h-3 w-3 text-green-500" />
-              <span>SSL Secured</span>
+            {/* Error Display */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
+                <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                <span className="text-red-700 text-sm">{error}</span>
+              </div>
+            )}
+            
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              
+              {/* Email Field */}
+              <div className="space-y-1">
+                <Label htmlFor="email" className="text-gray-700 font-medium text-sm">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-10 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
+                    required
+                    placeholder="Enter your email"
+                  />
+                </div>
+              </div>
+              
+              {/* Password Field */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-gray-700 font-medium text-sm">
+                    Password
+                  </Label>
+                  <button
+                    type="button"
+                    className="text-xs text-[#9bcbff] hover:text-blue-700 font-medium transition-colors"
+                    onClick={() => navigate('/auth/reset-password')}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+                <div className="relative">
+                  <LockKeyhole className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-10 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-sm"
+                    required
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              
+              {/* Remember Me Checkbox */}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  className="h-3 w-3 text-[#9bcbff] rounded border-gray-300 focus:ring-[#9bcbff]"
+                />
+                <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer">
+                  Remember me for 30 days
+                </Label>
+              </div>
+              
+              {/* Sign In Button */}
+              <Button
+                className="w-full h-10 bg-[#9bcbff] hover:bg-[#7bb3ff] text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
+                disabled={loading}
+                type="submit"
+              >
+                {loading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Signing in...</span>
+                  </div>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+            </form>
+            
+            {/* Footer */}
+            <div className="text-center">
+              <p className="text-gray-600 text-sm">
+                Don't have an account?{' '}
+                <Link
+                  to="/sign-up"
+                  className="text-[#9bcbff] hover:text-blue-700 font-semibold transition-colors"
+                >
+                  Sign up for free
+                </Link>
+              </p>
+            </div>
+
+            {/* Security Badge */}
+            <div className="text-center">
+              <div className="inline-flex items-center space-x-2 text-xs text-gray-500">
+                <CheckCircle className="h-3 w-3 text-green-500" />
+                <span>SSL Secured</span>
+              </div>
             </div>
           </div>
         </div>
