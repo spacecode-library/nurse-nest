@@ -84,7 +84,7 @@ export default function StatisticsSection() {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-16 md:py-20 overflow-hidden"
+      className="relative py-12 md:py-20 overflow-hidden"
       style={{
         backgroundImage: `url('/lovable-uploads/240466de-65e5-4ba7-81c3-a666ac4a35ef.png')`,
         backgroundSize: 'cover',
@@ -97,14 +97,14 @@ export default function StatisticsSection() {
       
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
-        <AnimatedSection animation="fade-up" className="text-center mb-12">
+        <AnimatedSection animation="fade-up" className="text-center mb-8 md:mb-12">
           {/* Statistics header image - different for mobile and desktop */}
           <div className="flex justify-center mb-4">
             {isMobile ? (
               <img
                 src="/lovable-uploads/a4fa0189-6013-49f5-a0b4-d869807d7f31.png"
                 alt="When staying home isn't just a preference"
-                className="h-24 md:h-48 w-auto max-w-full object-contain"
+                className="h-20 md:h-48 w-auto max-w-full object-contain"
               />
             ) : (
               <img

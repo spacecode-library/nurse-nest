@@ -32,7 +32,7 @@ export default function WhoWeHelpSection() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-gradient-to-br from-slate-50 to-blue-50/30 relative overflow-hidden" id="services">
+    <section className="py-12 md:py-32 bg-gradient-to-br from-slate-50 to-blue-50/30 relative overflow-hidden" id="services">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-teal-400/10 rounded-full blur-3xl"></div>
@@ -40,7 +40,7 @@ export default function WhoWeHelpSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <AnimatedSection animation="fade-up" className="text-center mb-16">
+        <AnimatedSection animation="fade-up" className="text-center mb-12 md:mb-16">
           <div className="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full text-blue-700 text-sm font-medium mb-6">
             <Users className="h-4 w-4 mr-2" />
             Trusted by Families & Healthcare Professionals
@@ -56,7 +56,7 @@ export default function WhoWeHelpSection() {
         </AnimatedSection>
         
         {/* Services Grid */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid lg:grid-cols-3 gap-8 mb-12 md:mb-16">
           {categories.map((category, index) => (
             <AnimatedSection 
               key={index}
