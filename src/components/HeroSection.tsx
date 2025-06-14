@@ -2,46 +2,44 @@
 import { Shield, Users, Star, Clock } from "lucide-react";
 import { Hero } from "@/components/AnimatedHero";
 import AnimatedSection from "@/components/AnimatedSection";
+import { OptimizedBackground } from "@/components/ui/optimized-background";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Desktop Background - Preserved */}
+      {/* Desktop Background - Optimized */}
       <div className="hidden md:block absolute inset-0">
-        <img 
-          src="/lovable-uploads/7d6005a3-1dca-4980-bf11-bb34da3a852e.png" 
-          alt="Professional nurse providing care" 
-          className="w-full h-full object-cover object-center" 
+        <OptimizedBackground
+          src="/lovable-uploads/7d6005a3-1dca-4980-bf11-bb34da3a852e.png"
+          alt="Professional nurse providing care"
+          className="w-full h-full"
+          priority={true}
         />
       </div>
       
-      {/* PHASE 2: Mobile Layout - Clean structure without positioning conflicts */}
+      {/* Mobile Layout - Optimized */}
       <div className="md:hidden w-full relative h-screen">
-        {/* Mobile background image */}
-        <div 
+        <OptimizedBackground
+          src="/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png"
+          alt="Professional nurse providing mobile care"
           className="absolute inset-0 w-full h-full"
-          style={{
-            backgroundImage: `url('/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        />
-        
-        {/* PHASE 5: Mobile hero component with locked positioning */}
-        <div className="relative z-10 w-full h-full">
-          <Hero isMobile={true} />
-        </div>
+          priority={true}
+        >
+          {/* Mobile hero component with locked positioning */}
+          <div className="relative z-10 w-full h-full">
+            <Hero isMobile={true} />
+          </div>
+        </OptimizedBackground>
       </div>
       
-      {/* Desktop HERO CONTENT - STEP 3: Clean container structure */}
+      {/* Desktop HERO CONTENT */}
       <div className="hidden md:flex absolute inset-0 z-10 items-center justify-start">
         <div className="w-full">
           <Hero isMobile={false} />
         </div>
       </div>
       
-      {/* Trust Indicators - STEP 3: Auto-display without scroll trigger */}
+      {/* Trust Indicators */}
       <div className="absolute z-10 hidden md:block bottom-8 left-0 right-0 opacity-100">
         <AnimatedSection animation="fade-up" delay={1000}>
           <div className="container mx-auto px-4">

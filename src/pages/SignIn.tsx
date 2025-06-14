@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ import { toast } from '@/hooks/use-toast';
 import { signIn, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
 import { BeamsBackground } from '@/components/ui/beams-background';
+import { OptimizedBackground } from '@/components/ui/optimized-background';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -108,16 +110,13 @@ export default function SignIn() {
         </Link>
       </div>
 
-      {/* Left Side - Architectural Image */}
+      {/* Left Side - Optimized Architectural Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
-        <div 
-          className="w-full h-screen relative"
-          style={{
-            backgroundImage: `url('/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png')`,
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center center',
-          }}
+        <OptimizedBackground
+          src="/lovable-uploads/f3390946-3574-4e5c-8994-49d192f98a10.png"
+          alt="Modern architectural interior"
+          className="w-full h-screen"
+          priority={true}
         >
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30"></div>
@@ -140,7 +139,7 @@ export default function SignIn() {
               </div>
             </Link>
           </div>
-        </div>
+        </OptimizedBackground>
       </div>
 
       {/* Right Side - Sign In Form */}
