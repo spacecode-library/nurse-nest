@@ -39,7 +39,7 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
         {titles.map((title, index) => (
           <motion.span
             key={index}
-            className="absolute font-semibold text-[#4c93c8] drop-shadow-md left-0 top-0 w-max leading-none py-1"
+            className="absolute font-semibold text-[#9bcbff] drop-shadow-md left-0 top-0 w-max leading-none py-1"
             {...getAnimationProps(index)}
           >
             {title}
@@ -64,7 +64,7 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
       {titles.map((title, index) => (
         <motion.span
           key={index}
-          className="absolute left-0 top-0 font-semibold text-[#417ab6] drop-shadow-md whitespace-nowrap leading-none py-1"
+          className="absolute left-0 top-0 font-semibold text-[#9bcbff] drop-shadow-md whitespace-nowrap leading-none py-1"
           {...getAnimationProps(index)}
         >
           {title}
