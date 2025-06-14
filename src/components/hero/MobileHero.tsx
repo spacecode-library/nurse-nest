@@ -34,16 +34,16 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
           Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
         </p>
         
-        <div className="flex flex-col gap-3 w-full">
-          <div className="relative">
+        <div className="flex gap-3 w-full">
+          <div className="relative flex-1">
             <GlowEffect {...BUTTON_GLOW_CONFIGS.primary} />
-            <Button size="lg" className="relative gap-4 text-white bg-sky-300 hover:bg-sky-200 w-full min-h-[48px] text-base px-6">
+            <Button size="lg" className="relative gap-2 text-white bg-sky-300 hover:bg-sky-200 w-full min-h-[48px] text-sm px-4">
               Request a Nurse <PhoneCall className="w-4 h-4" />
             </Button>
           </div>
-          <div className="relative">
+          <div className="relative flex-1">
             <GlowEffect {...BUTTON_GLOW_CONFIGS.secondary} />
-            <Button size="lg" className="relative gap-4 bg-white text-blue-600 hover:bg-blue-50 w-full min-h-[48px] text-base px-6" variant="outline">
+            <Button size="lg" className="relative gap-2 bg-white text-blue-600 hover:bg-blue-50 w-full min-h-[48px] text-sm px-4" variant="outline">
               Join as a Nurse <MoveRight className="w-4 h-4" />
             </Button>
           </div>
