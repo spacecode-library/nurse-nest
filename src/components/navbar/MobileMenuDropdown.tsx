@@ -30,10 +30,12 @@ export default function MobileMenuDropdown({
   return (
     <AccordionItem value={value} className="border-b-0">
       <AccordionTrigger className={styles.mobileMenuTrigger} tabIndex={0}>
-        <span className={styles.mobileTriggerIcon}>
-          {icon}
+        <span className="flex items-center gap-2">
+          <span className={styles.mobileTriggerIcon}>
+            {icon}
+          </span>
+          <span>{label}</span>
         </span>
-        <span className="flex items-center">{label}</span>
       </AccordionTrigger>
       <AccordionContent>
         <div className="ml-3 sm:ml-4 space-y-2">
