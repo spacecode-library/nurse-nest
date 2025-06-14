@@ -36,6 +36,7 @@ export default function Index() {
       <NurseNestNavbar isHomePage={true} />
 
       <main className="flex-1">
+        {/* Apply enhanced glass card effect on Hero Section (if card exists there) */}
         <HeroSection />
         <HowItWorksSection />
         <StatisticsSection />

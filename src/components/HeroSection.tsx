@@ -25,9 +25,11 @@ export default function HeroSection() {
           className="absolute inset-0 w-full h-full"
           priority={true}
         >
-          {/* Mobile hero component */}
-          <div className="relative z-10 w-full h-full">
-            <Hero isMobile={true} />
+          {/* Use glass effect overlay for hero content */}
+          <div className="relative z-10 w-full h-full flex items-center justify-center">
+            <div className="glass-card w-[92vw] max-w-md mx-auto mt-10 shadow-xl">
+              <Hero isMobile={true} />
+            </div>
           </div>
         </OptimizedBackground>
       </div>

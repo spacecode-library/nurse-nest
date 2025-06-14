@@ -3,24 +3,24 @@ import { ANIMATION_CONFIG } from "./constants";
 import { RotatingTextProps } from "./types";
 
 export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProps) {
-  // Use 'spring' animation for rotating text
-  const transition = ANIMATION_CONFIG.animationTransition;
+  // Use 'spring' animation for rotating text with extra smooth transition
+  const transition = { ...ANIMATION_CONFIG.animationTransition, damping: 14, mass: 0.6, velocity: 0.8 };
 
-  // Always use these values for y for consistent motion effect
-  // For mobile, smaller movement for a less jumpy effect in a shorter box
-  const OUT_Y = isMobile ? 48 : 150;
+  // Slightly more movement for premium feel
+  const OUT_Y = isMobile ? 48 : 128;
   const IN_Y = 0;
-  const OUT_NEG_Y = isMobile ? -48 : -150;
+  const OUT_NEG_Y = isMobile ? -48 : -128;
 
   const getAnimationProps = (index: number) => ({
-    initial: { opacity: 0, y: OUT_Y },
+    initial: { opacity: 0, y: OUT_Y, scale: 0.98 },
     transition,
     animate:
       titleNumber === index
-        ? { y: IN_Y, opacity: 1, transition }
+        ? { y: IN_Y, opacity: 1, scale: 1, transition }
         : {
             y: titleNumber > index ? OUT_NEG_Y : OUT_Y,
             opacity: 0,
+            scale: 0.96,
             transition
           }
   });
@@ -39,7 +39,7 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
         {titles.map((title, index) => (
           <motion.span
             key={index}
-            className="absolute font-semibold text-blue-300 left-0 top-0 w-max leading-none py-1"
+            className="absolute font-semibold text-[#4c93c8] drop-shadow-md left-0 top-0 w-max leading-none py-1"
             {...getAnimationProps(index)}
           >
             {title}
@@ -64,7 +64,7 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
       {titles.map((title, index) => (
         <motion.span
           key={index}
-          className="absolute left-0 top-0 font-semibold text-blue-300 whitespace-nowrap leading-none py-1"
+          className="absolute left-0 top-0 font-semibold text-[#417ab6] drop-shadow-md whitespace-nowrap leading-none py-1"
           {...getAnimationProps(index)}
         >
           {title}

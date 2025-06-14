@@ -2,9 +2,9 @@
 import React from "react";
 
 /**
- * DiagonalSplitBackground renders a sharp, corner-to-corner, bottom-left to top-right diagonal,
- * with a subtle 3D effect as if the white side is gently elevated above the blue.
- * The shadow at the split is neutral, thin, and mimics a real cast shadow—no blue/bright highlight.
+ * DiagonalSplitBackground renders a luxury, polished, gently elevated white side
+ * with a more pronounced, smooth blue brand gradient and a photorealistic shadow.
+ * The split is smooth, glowy, and integrates with surrounding themes.
  * Only renders on mobile/tablet (use with lg:hidden).
  */
 const DiagonalSplitBackground: React.FC = () => {
@@ -23,35 +23,29 @@ const DiagonalSplitBackground: React.FC = () => {
         shapeRendering="crispEdges"
       >
         <defs>
-          {/* A soft, thin, neutral (black/grey) shadow—no blue tint—hugging the white/blue diagonal. */}
-          <linearGradient
-            id="diagonalShadow"
-            x1="0"
-            y1="100"
-            x2="100"
-            y2="0"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0%" stopColor="rgba(40,40,55,0.14)" />
-            <stop offset="50%" stopColor="rgba(40,40,55,0.08)" />
-            <stop offset="85%" stopColor="rgba(40,40,55,0.03)" />
-            <stop offset="100%" stopColor="rgba(40,40,55,0)" />
+          {/* Soft, modern brand gradient for the blue side */}
+          <linearGradient id="blueGrad" x1="0" y1="100" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#7bb3ff" />
+            <stop offset="60%" stopColor="#9bcbff" />
+            <stop offset="100%" stopColor="#3b82f6" />
+          </linearGradient>
+          {/* Refined photo-real shadow: feathered, slightly warm, realistic blur */}
+          <linearGradient id="diagShadow" x1="3" y1="99" x2="98" y2="2" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="rgba(40,40,55,0.24)" />
+            <stop offset="40%" stopColor="rgba(40,40,55,0.10)" />
+            <stop offset="85%" stopColor="rgba(128,110,90,0.07)" />
+            <stop offset="100%" stopColor="rgba(80,70,50,0.015)" />
           </linearGradient>
         </defs>
-        {/* Blue triangle */}
-        <polygon points="0,100 100,100 100,0" fill="#9bcbff" />
-        {/* White triangle */}
+        {/* Blue gradient triangle */}
+        <polygon points="0,100 100,100 100,0" fill="url(#blueGrad)" />
+        {/* White triangle with subtle glass blur at the split */}
         <polygon points="0,0 100,0 0,100" fill="#fff" />
-        {/* Subtle, neutral, realistic shadow along the diagonal (no blue, no glow, just shadow) */}
+        {/* Subtle, warm, realistic shadow along diagonal */}
         <polygon
-          /* The shadow hugs the diagonal, visually sits right under the white "edge" */
-          points="
-            2,98
-            98,2
-            99,3.5
-            3.5,99
-          "
-          fill="url(#diagonalShadow)"
+          points="2,98 98,2 100,5 5,100"
+          fill="url(#diagShadow)"
+          style={{ filter: "blur(0.7px)" }}
         />
       </svg>
     </div>
@@ -59,4 +53,3 @@ const DiagonalSplitBackground: React.FC = () => {
 };
 
 export default DiagonalSplitBackground;
-
