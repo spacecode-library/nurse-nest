@@ -108,7 +108,8 @@ export default function SignIn() {
             </Button>
           </Link>
         </div>
-        <Card className="w-full max-w-sm mt-4 mx-2 py-6 px-5 rounded-2xl shadow-xl border border-gray-100 bg-white relative">
+        {/* Updated max width and mx */}
+        <Card className="w-full max-w-xs mx-auto mt-4 py-6 px-3 rounded-2xl shadow-xl border border-gray-100 bg-white relative">
           <CardContent className="p-0">
             <div className="w-full space-y-5">
               {/* Header */}
