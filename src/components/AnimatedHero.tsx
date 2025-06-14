@@ -8,7 +8,7 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 // Animation constants
 const ANIMATION_CONFIG = {
   rotationInterval: 2000,
-  mobileRotatingTextHeight: 64,
+  mobileRotatingTextHeight: 48, // Reduced from 64 to bring text closer
   desktopRotatingTextHeight: 80,
   desktopRotatingTextWidth: 300,
   animationTransition: {
@@ -61,11 +61,11 @@ function Hero({ isMobile = false }: HeroProps) {
   }, [titleNumber, titles]);
 
   const getAnimationProps = (index: number) => ({
-    initial: { opacity: 0, y: isMobile ? 56 : 64 },
+    initial: { opacity: 0, y: isMobile ? 40 : 64 }, // Reduced mobile y offset from 56 to 40
     transition: ANIMATION_CONFIG.animationTransition,
     animate: titleNumber === index 
       ? { y: 0, opacity: 1 }
-      : { y: titleNumber > index ? (isMobile ? -56 : -64) : (isMobile ? 56 : 64), opacity: 0 }
+      : { y: titleNumber > index ? (isMobile ? -40 : -64) : (isMobile ? 40 : 64), opacity: 0 } // Reduced mobile offsets
   });
 
   if (isMobile) {
