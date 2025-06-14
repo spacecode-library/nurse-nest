@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import NurseNestNavbar from "@/components/NurseNestNavbar";
 import Footer from "@/components/Footer";
@@ -7,7 +6,6 @@ import HowItWorksSection from "@/components/HowItWorksSection";
 import StatisticsSection from "@/components/StatisticsSection";
 import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 import FloatingFaqButton from "@/components/FloatingFaqButton";
-import BrowseFaqSection from "@/components/BrowseFaqSection";
 
 export default function Index() {
   const [isFaqVisible, setIsFaqVisible] = useState(false);
@@ -31,15 +29,12 @@ export default function Index() {
         {/* Statistics Section */}
         <StatisticsSection />
         
-        {/* Browse FAQ Section */}
-        <BrowseFaqSection onToggleFaq={toggleFaq} isOpen={isFaqVisible} />
-        
-        {/* Luxurious FAQ Section - conditionally rendered */}
-        <LuxuriousFaqSection isVisible={isFaqVisible} onClose={() => setIsFaqVisible(false)} />
+        {/* FAQ Section now always visible */}
+        <LuxuriousFaqSection isVisible={true} onClose={() => {}} />
       </main>
       
       {/* Floating FAQ Button */}
-      <FloatingFaqButton onClick={toggleFaq} isOpen={isFaqVisible} />
+      <FloatingFaqButton onClick={() => {}} isOpen={false} />
       
       <Footer />
     </div>

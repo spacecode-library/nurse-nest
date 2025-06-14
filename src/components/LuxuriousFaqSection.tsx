@@ -1,8 +1,6 @@
-
 import { useState } from 'react';
-import { Search, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Plus, Minus, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import AnimatedSection from './AnimatedSection';
 
 interface FAQ {
   question: string;
@@ -21,9 +19,9 @@ interface LuxuriousFaqSectionProps {
   onClose: () => void;
 }
 
-export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaqSectionProps) {
+export default function LuxuriousFaqSection({ isVisible }: LuxuriousFaqSectionProps) {
   const [activeCategory, setActiveCategory] = useState('getting-started');
-  const [openQuestion, setOpenQuestion] = useState<number | null>(null);
+  const [open, setOpen] = useState<{ [key: string]: boolean }>({});
   const [searchTerm, setSearchTerm] = useState('');
 
   const faqCategories: FAQCategory[] = [
@@ -295,165 +293,155 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
     }
   ];
 
-  const activeTab = faqCategories.find(cat => cat.id === activeCategory);
-  
-  const filteredFaqs = searchTerm.trim() === "" 
-    ? activeTab?.faqs || []
-    : faqCategories
-        .flatMap(cat => cat.faqs)
-        .filter(faq => 
-          faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
-          faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+  // Filter logic for categories and questions
+  const filteredCategories =
+    searchTerm.trim() === ''
+      ? faqCategories
+      : faqCategories
+          .map(cat => ({
+            ...cat,
+            faqs: cat.faqs.filter(
+              faq =>
+                faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+            ),
+          }))
+          .filter(cat => cat.faqs.length > 0);
 
-  const handleQuestionClick = (index: number) => {
-    setOpenQuestion(openQuestion === index ? null : index);
-  };
+  // Only get the selected/active category (or the first found with results if not found)
+  const selected =
+    filteredCategories.find(cat => cat.id === activeCategory) ||
+    filteredCategories[0] ||
+    null;
 
+  // If FAQ should not be shown (controlled by Index page show/hide logic), hide it.
   if (!isVisible) return null;
 
   return (
-    <section className="py-16 px-4" style={{ backgroundColor: '#e6f3ff' }} id="faq-section">
-      <div className="max-w-7xl mx-auto">
-        <AnimatedSection animation="fade-up" className="text-center mb-8">
-          {/* FAQ Header Image - Made much larger */}
-          <div className="flex justify-center mb-6">
-            <img
-              src="/lovable-uploads/8bdf9bf9-cc64-4ae1-8e4f-581597497307.png"
-              alt="Frequently Asked Questions"
-              className="h-24 md:h-32 w-auto max-w-full object-contain"
-            />
-          </div>
-          
-          {/* Close Button */}
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={onClose}
-              className="p-2 rounded-full hover:bg-white/50 transition-colors"
-              aria-label="Close FAQ"
+    <section className="bg-white py-16 md:py-24 border-t border-gray-100" id="faq">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-2xl mx-auto text-center mb-14">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight">
+            Got Questions?
+          </h2>
+          <div className="text-lg text-gray-500 mb-0">
+            Can’t find an answer? Email{' '}
+            <a
+              href="mailto:contact@nursenest.us"
+              className="underline hover:text-blue-700"
             >
-              <X size={24} className="text-gray-600" />
-            </button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative max-w-md mx-auto mb-8">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search questions..."
-              className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </AnimatedSection>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Category Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm p-4 sticky top-4">
-              <h3 className="font-semibold text-gray-900 mb-4" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
-                Categories
-              </h3>
-              <nav className="space-y-2">
-                {faqCategories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => {
-                      setActiveCategory(category.id);
-                      setOpenQuestion(null);
-                      setSearchTerm('');
-                    }}
-                    className={cn(
-                      "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-3",
-                      activeCategory === category.id
-                        ? "bg-blue-500 text-white shadow-sm"
-                        : "text-gray-700 hover:bg-gray-100"
-                    )}
-                    style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
-                  >
-                    <span className="text-lg">{category.icon}</span>
-                    <span>{category.title}</span>
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </div>
-
-          {/* FAQ Content */}
-          <div className="lg:col-span-3">
-            {filteredFaqs.length === 0 ? (
-              <div className="bg-white rounded-lg p-8 text-center">
-                <p className="text-lg text-gray-600" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
-                  No results found. Try a different search term.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredFaqs.map((faq, index) => (
-                  <AnimatedSection 
-                    key={`${activeCategory}-${index}`}
-                    animation="fade-up"
-                    delay={index * 50}
-                  >
-                    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                      <button
-                        onClick={() => handleQuestionClick(index)}
-                        className="w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors duration-200 focus:outline-none"
-                      >
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-medium text-gray-900 pr-4" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
-                            {faq.question}
-                          </h3>
-                          <div className="flex-shrink-0">
-                            {openQuestion === index ? (
-                              <ChevronUp className="h-5 w-5 text-blue-500 transition-transform duration-200" />
-                            ) : (
-                              <ChevronDown className="h-5 w-5 text-gray-400 transition-transform duration-200" />
-                            )}
-                          </div>
-                        </div>
-                      </button>
-                      
-                      <div 
-                        className={cn(
-                          "overflow-hidden transition-all duration-300 ease-in-out",
-                          openQuestion === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                        )}
-                      >
-                        <div className="px-6 pb-4">
-                          <div 
-                            className="text-gray-700 leading-relaxed whitespace-pre-line"
-                            style={{ fontFamily: 'Arial, Helvetica, sans-serif', lineHeight: '1.6' }}
-                          >
-                            {faq.answer}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </AnimatedSection>
-                ))}
-              </div>
-            )}
+              contact@nursenest.us
+            </a>
+            !
           </div>
         </div>
+        {/* Layout: Sidebar + Main */}
+        <div className="flex flex-col md:flex-row md:gap-8">
+          {/* Sidebar */}
+          <div className="hidden md:block md:w-1/4 md:pr-4">
+            <nav aria-label="Table of Contents" className="sticky top-28">
+              <div className="text-base font-bold mb-3 text-gray-900">
+                Table of Contents
+              </div>
+              <ul className="space-y-1">
+                {faqCategories.map(cat => (
+                  <li key={cat.id}>
+                    <button
+                      onClick={() => {
+                        setActiveCategory(cat.id);
+                        setOpen({});
+                        setSearchTerm('');
+                      }}
+                      className={cn(
+                        'w-full text-left py-2 px-3 rounded transition-colors',
+                        selected?.id === cat.id
+                          ? 'bg-blue-50 text-blue-700 font-semibold underline underline-offset-4'
+                          : 'hover:bg-gray-100 text-gray-700'
+                      )}
+                      aria-current={selected?.id === cat.id ? 'page' : undefined}
+                    >
+                      <span className="mr-2">{cat.icon}</span>
+                      {cat.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+          {/* Main Area */}
+          <div className="w-full md:w-3/4">
+            {/* Search input */}
+            <div className="relative max-w-lg mb-8">
+              <div className="absolute top-1/2 left-3 -translate-y-1/2 pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all text-base"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                placeholder="Search questions..."
+                aria-label="Search questions"
+                data-testid="faq-search"
+              />
+            </div>
 
-        <AnimatedSection animation="fade-up" delay={500} className="max-w-xl mx-auto mt-12 text-center">
-          <p className="text-gray-600 mb-5" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
-            Still have questions? We're here to help!
-          </p>
-          <a 
-            href="mailto:contact@nursenest.us" 
-            className="inline-flex items-center bg-blue-500 text-white font-medium px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl"
-            style={{ fontFamily: 'Arial, Helvetica, sans-serif', minHeight: '44px' }}
-          >
-            Contact our team
-          </a>
-        </AnimatedSection>
+            {/* FAQ: Only show active category */}
+            <div>
+              {selected && selected.faqs.length > 0 ? (
+                <ul className="divide-y divide-gray-200 bg-white">
+                  {selected.faqs.map((faq, qIdx) => {
+                    const key = `${selected.id}_${qIdx}`;
+                    return (
+                      <li key={key}>
+                        <div className="border-b last:border-b-0">
+                          <button
+                            className={cn(
+                              'w-full text-left flex items-start py-5 px-0 md:px-1 focus:outline-none transition-colors',
+                              open[key] ? 'text-blue-700' : 'text-gray-900 hover:text-blue-600'
+                            )}
+                            onClick={() =>
+                              setOpen(prev => ({
+                                ...prev,
+                                [key]: !prev[key],
+                              }))
+                            }
+                            aria-expanded={open[key] || false}
+                          >
+                            <span className="mr-4 mt-0.5">
+                              {open[key] ? (
+                                <Minus className="w-5 h-5" />
+                              ) : (
+                                <Plus className="w-5 h-5" />
+                              )}
+                            </span>
+                            <span
+                              className={cn(
+                                'text-base md:text-lg font-semibold',
+                                open[key] && 'underline underline-offset-4 text-blue-700'
+                              )}
+                            >
+                              {faq.question}
+                            </span>
+                          </button>
+                          {open[key] && (
+                            <div className="text-gray-700 px-9 pb-6 -mt-2 text-base whitespace-pre-line">
+                              {faq.answer}
+                            </div>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="py-12 text-center text-gray-500">
+                  No results found. Try a different search.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
