@@ -17,7 +17,7 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
         style={{ top: '25vh' }}
       >
         <h1 className="tracking-tighter font-regular text-white leading-tight text-4xl">
-          <span className="block text-white">Need a</span>
+          <span className="block text-white mt-1">Need a</span>
           
           <RotatingText titles={titles} titleNumber={titleNumber} isMobile={true} />
           
