@@ -351,21 +351,23 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
         <div className="flex flex-col md:flex-row md:gap-8">
           {/* Sidebar */}
           <div className="w-full md:w-[260px] md:pr-4 mb-10 md:mb-0 flex-shrink-0 flex flex-col items-center">
-            {/* Table of Contents Heading */}
-            <div className="flex flex-col items-center justify-center w-full mb-2">
+            {/* Table of Contents Heading - now smaller and one line, perfectly centered */}
+            <div className="w-full flex flex-col items-center justify-center mb-2">
               <span
-                className="font-black text-[2rem] md:text-[2.6rem] leading-tight text-gray-900 tracking-tight"
+                className="font-bold text-base md:text-lg text-gray-900 tracking-tight text-center"
                 style={{
-                  letterSpacing: "-0.01em",
-                  lineHeight: 1.15,
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.2,
                   width: "100%",
                   textAlign: "center",
-                  marginBottom: 4,
+                  marginBottom: 0,
+                  whiteSpace: 'nowrap',
                 }}
               >
                 Table of Contents
               </span>
-              <div className="bg-gray-200 h-[2px] w-16 md:w-24 mx-auto my-3 rounded-full" />
+              {/* Optionally: horizontal rule for subtle separation */}
+              <div className="bg-gray-200 h-[2px] w-16 md:w-24 mx-auto my-2 rounded-full" />
             </div>
             {/* Category list centered & small */}
             <nav aria-label="Table of Contents" className="w-full flex flex-col items-center">
