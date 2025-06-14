@@ -17,7 +17,7 @@ import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { signOut } from '@/supabase/auth/authService';
-import Navbar from '@/components/Navbar';
+import NurseNestNavbar from '@/components/NurseNestNavbar';
 
 export default function PendingApprovalPage() {
   const { user } = useAuth();
@@ -86,7 +86,7 @@ export default function PendingApprovalPage() {
 
   return (
     <div className="min-h-screen bg-medical-gradient-primary">
-      <Navbar />
+      <NurseNestNavbar />
       
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-4">
