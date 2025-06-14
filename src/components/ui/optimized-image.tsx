@@ -36,17 +36,19 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
-      {/* Loading placeholder */}
+      {/* Loading placeholder with improved animation */}
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+        <div 
+          className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" 
+          style={{ willChange: 'opacity' }}
+        />
       )}
       
-      {/* Main image */}
+      {/* Main image with performance optimizations */}
       <img
         src={src}
         alt={alt}
         loading={priority ? 'eager' : loading}
-        fetchPriority={priority ? 'high' : 'auto'}
         onLoad={handleLoad}
         onError={handleError}
         className={cn(
@@ -55,13 +57,22 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         )}
         style={{
           filter: isLoaded ? 'none' : 'blur(5px)',
+          willChange: isLoaded ? 'auto' : 'opacity, filter',
+          transform: 'translateZ(0)', // Hardware acceleration
+          backfaceVisibility: 'hidden'
         }}
+        // Fix TypeScript error for fetchPriority
+        {...(priority && { fetchPriority: 'high' } as any)}
       />
       
-      {/* Error fallback */}
+      {/* Error fallback with better accessibility */}
       {hasError && (
-        <div className="absolute inset-0 bg-gray-300 flex items-center justify-center">
-          <span className="text-gray-600">Image failed to load</span>
+        <div 
+          className="absolute inset-0 bg-gray-300 flex items-center justify-center"
+          role="img"
+          aria-label={`Failed to load: ${alt}`}
+        >
+          <span className="text-gray-600 text-sm">Image failed to load</span>
         </div>
       )}
     </div>

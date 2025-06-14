@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
+import NurseNestNavbar from "@/components/NurseNestNavbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
@@ -19,7 +19,7 @@ export default function Index() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Pass isHomePage prop to Navbar */}
-      <Navbar isHomePage={true} />
+      <NurseNestNavbar isHomePage={true} />
       
       <main className="flex-1">
         {/* Hero Section with premium platform design */}
