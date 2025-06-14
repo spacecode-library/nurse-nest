@@ -61,12 +61,14 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
         {titles.map((title, index) => (
           <motion.span
             key={index}
-            className="absolute font-semibold text-blue-300 left-0 top-0 w-max leading-tight py-1 px-2 bg-blue-950 bg-opacity-50 rounded"
+            className="absolute font-semibold text-blue-300 left-0 top-0 w-max leading-tight py-1 px-2 rounded"
             {...getAnimationProps(index)}
             style={{
               minWidth: width,
               whiteSpace: "nowrap",
               boxSizing: "border-box",
+              // Remove the background and transparency: no bg, no bg-opacity
+              background: "none",
             }}
           >
             {title}
@@ -92,12 +94,14 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
           {titles.map((title, index) => (
             <motion.span
               key={index}
-              className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap leading-tight py-1 px-3 bg-blue-950 bg-opacity-50 rounded"
+              className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap leading-tight py-1 px-3 rounded"
               {...getAnimationProps(index)}
               style={{
                 minWidth: width,
                 whiteSpace: "nowrap",
                 boxSizing: "border-box",
+                // Remove the background and transparency: no bg, no bg-opacity
+                background: "none",
               }}
             >
               {title}
