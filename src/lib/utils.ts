@@ -6,10 +6,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Add animation for cart summary pulse effect
+// Initialize performance optimizations and animations
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
   style.textContent = `
+    /* Cart Animation */
     @keyframes pulse-once {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
@@ -19,7 +20,7 @@ if (typeof document !== 'undefined') {
       animation: pulse-once 0.5s ease-in-out;
     }
     
-    /* Optimized image rendering */
+    /* Image Performance Optimizations */
     img {
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
@@ -27,14 +28,14 @@ if (typeof document !== 'undefined') {
       transform: translateZ(0);
     }
     
-    /* Smooth background image transitions */
+    /* Background Image Performance */
     [style*="background-image"] {
       will-change: opacity;
       backface-visibility: hidden;
       transform: translateZ(0);
     }
     
-    /* Hardware acceleration for smooth animations */
+    /* Animation Performance */
     .transition-opacity {
       will-change: opacity;
       backface-visibility: hidden;

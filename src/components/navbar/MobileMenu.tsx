@@ -1,13 +1,11 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { GlowEffect } from '@/components/ui/glow-effect';
 import NavLinks from './NavLinks';
-import NurseDropdown from './NurseDropdown';
-import CareServicesDropdown from './CareServicesDropdown';
+import { nurseDropdownSections, careServicesDropdownSections } from '@/config/navigation';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -52,41 +50,18 @@ export default function MobileMenu({
               >
                 Apply Now
               </button>
-              <Link
-                to="/nurse-llc-setup-guide"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                LLC Setup Guide
-              </Link>
-              <Link
-                to="/get-ein-nurse-business"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                EIN Applications
-              </Link>
-              <Link
-                to="/business-bank-account-for-nurses"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                Business Banking
-              </Link>
-              <Link
-                to="/malpractice-insurance-for-nurses"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                Malpractice Insurance
-              </Link>
-              <Link
-                to="/1099-tax-tips"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                1099 Tax Tips
-              </Link>
+              {nurseDropdownSections.slice(1).map((section) => 
+                section.links.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    onClick={() => setIsOpen(false)}
+                    className="block font-medium text-gray-600 hover:text-brand-primary"
+                  >
+                    {link.name}
+                  </Link>
+                ))
+              )}
             </div>
           </div>
 
@@ -94,41 +69,24 @@ export default function MobileMenu({
           <div className="border-t pt-3">
             <p className="font-medium text-gray-700 mb-2">Care Services</p>
             <div className="ml-4 space-y-2">
-              <Link
-                to="/newborn-nurse-support-guide"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                Newborn Care
-              </Link>
-              <Link
-                to="/elderly-care-nurse-services"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                Elderly Care
-              </Link>
-              <Link
-                to="/wound-care-nursing-guide"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                Wound Care
-              </Link>
-              <Link
-                to="/best-products-for-home-healthcare"
-                onClick={() => setIsOpen(false)}
-                className="block font-medium text-gray-600 hover:text-brand-primary"
-              >
-                Product Reviews
-              </Link>
+              {careServicesDropdownSections.map((section) => 
+                section.links.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    onClick={() => setIsOpen(false)}
+                    className="block font-medium text-gray-600 hover:text-brand-primary"
+                  >
+                    {link.name}
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </div>
 
-        {/* Authentication & CTA Section - Reordered */}
+        {/* Authentication & CTA Section */}
         <div className="border-t pt-4 space-y-3">
-          {/* Sign In/User Menu first */}
           {user ? (
             <div className="space-y-2">
               <Link
@@ -158,7 +116,7 @@ export default function MobileMenu({
             </Link>
           )}
           
-          {/* Request a Nurse Button second */}
+          {/* Request a Nurse Button */}
           <div className="relative">
             <GlowEffect
               colors={['#9bcbff', '#3b82f6', '#7dd3fc', '#2563eb']}

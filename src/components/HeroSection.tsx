@@ -25,14 +25,14 @@ export default function HeroSection() {
           className="absolute inset-0 w-full h-full"
           priority={true}
         >
-          {/* Mobile hero component with locked positioning */}
+          {/* Mobile hero component */}
           <div className="relative z-10 w-full h-full">
             <Hero isMobile={true} />
           </div>
         </OptimizedBackground>
       </div>
       
-      {/* Desktop HERO CONTENT */}
+      {/* Desktop Hero Content */}
       <div className="hidden md:flex absolute inset-0 z-10 items-center justify-start">
         <div className="w-full">
           <Hero isMobile={false} />
