@@ -107,21 +107,22 @@ export default function SignIn() {
             </Button>
           </Link>
         </div>
-        {/* Updated max width and mx */}
         <Card
           className="
             w-full max-w-xs mx-auto mt-4 py-6 px-3 rounded-2xl 
             border border-white/60
             glass-card
             shadow-lg
-            hover:scale-[1.025] transition-all duration-300
+            transition-all duration-300
             backdrop-blur-md
             relative
-            "
+          "
           style={{
             boxShadow:
-              "0 12px 40px 0 rgba(40,131,201,0.14), 0 2px 8px 0 rgba(30,41,59,0.08), 0 0px 0.5px 0px #9bcbff55",
-            border: "1.25px solid rgba(155,203,255,0.38)",
+              "0 12px 32px 0 rgba(30,41,59,0.10), 0 2px 8px 0 rgba(30,41,59,0.07), 0 1.5px 4px 0 rgba(20,20,40,0.07)",
+            border: "1.25px solid rgba(155,203,255,0.16)",
+            background: "rgba(255,255,255,0.95)",
+            borderRadius: "1.25rem"
           }}
         >
           <CardContent className="p-0">
@@ -282,25 +283,24 @@ export default function SignIn() {
         </div>
         {/* Right Side - Sign In Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
-          {/* Background Beams - Light Mode */}
           <BeamsBackground mode="light" intensity="subtle" className="absolute inset-0" />
 
-          {/* Enhanced, modern, glassy, floating Card */}
           <Card
             className={`
-              w-full max-w-md mx-auto p-0 rounded-xl
-              border border-white/60 bg-white/90
+              w-full max-w-md mx-auto p-0
+              border border-white/60 bg-white/95
               glass-card
               shadow-lg
-              hover:scale-[1.016] transition-all duration-300
+              transition-all duration-300
               backdrop-blur-md
               relative
             `}
             style={{
+              borderRadius: "1rem",
               boxShadow:
-                "0 12px 40px 0 rgba(40,131,201,0.14),0 2px 8px 0 rgba(30,41,59,0.08),0 0px 1px 0px #9bcbff70",
-              border: "1.5px solid rgba(155,203,255,0.37)",
-              borderRadius: "1.25rem", // equivalent to rounded-xl (20px)
+                "0 18px 48px 0 rgba(30,41,59,0.14), 0 4px 12px 0 rgba(30,41,59,0.10), 0 2px 8px 0 rgba(40,40,60,0.07)",
+              border: "1.5px solid rgba(155,203,255,0.13)",
+              background: "rgba(255,255,255,0.98)"
             }}
           >
             <div className="w-full py-10 px-8 space-y-6 relative z-10">
