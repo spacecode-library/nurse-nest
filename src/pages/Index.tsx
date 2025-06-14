@@ -7,6 +7,7 @@ import StatisticsSection from "@/components/StatisticsSection";
 import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 import FloatingFaqButton from "@/components/FloatingFaqButton";
 import ExpandableActionMenu from "@/components/ExpandableActionMenu";
+import ActionCardsRow from "@/components/ActionCardsRow";
 import { useFadeInOnScroll } from "@/hooks/use-fade-in-on-scroll";
 
 export default function Index() {
@@ -39,17 +40,12 @@ export default function Index() {
         <HowItWorksSection />
         <StatisticsSection />
 
-        {/* Browse FAQ's Button, only show if FAQ is not visible */}
+        {/* Action Cards Row (replaces single Browse FAQ button), only show if FAQ is not visible */}
         {!isFaqVisible && (
-          <div className="flex justify-center my-8">
-            <button
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold text-lg shadow-md hover:bg-blue-700 transition focus:outline-none focus-visible:outline-none"
-              onClick={showFaqAndScroll}
-              data-testid="browse-faq-button"
-            >
-              Browse FAQ's
-            </button>
-          </div>
+          <ActionCardsRow
+            onFaq={showFaqAndScroll}
+            onGetNurse={handleRequestNurse}
+          />
         )}
 
         {/* FAQ Section with controlled visibility */}
