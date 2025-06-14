@@ -21,7 +21,8 @@ interface LuxuriousFaqSectionProps {
 
 export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaqSectionProps) {
   const [activeCategory, setActiveCategory] = useState('getting-started');
-  const [open, setOpen] = useState<{ [key: string]: boolean }>({});
+  // change open state to a single string (key) instead of an object
+  const [openKey, setOpenKey] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Remove emojis from all category titles and objects for display
@@ -371,18 +372,17 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                     <button
                       onClick={() => {
                         setActiveCategory(cat.id);
-                        setOpen({});
+                        setOpenKey(null);
                         setSearchTerm('');
                       }}
                       className={cn(
                         "w-full text-left py-1 px-2 rounded transition-colors font-medium text-xs md:text-sm tracking-tight",
-                        selected?.id === cat.id
+                        activeCategory === cat.id
                           ? "text-[#9bcbff] font-black"
                           : "text-gray-700",
                         "hover:text-[#9bcbff] focus:text-[#9bcbff]"
                       )}
-                      style={undefined}
-                      aria-current={selected?.id === cat.id ? 'page' : undefined}
+                      aria-current={activeCategory === cat.id ? 'page' : undefined}
                     >
                       {cat.title}
                     </button>
@@ -415,25 +415,21 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                 <ul className="divide-y divide-gray-200 bg-white">
                   {selected.faqs.map((faq, qIdx) => {
                     const key = `${selected.id}_${qIdx}`;
+                    const isOpen = openKey === key;
                     return (
                       <li key={key}>
                         <div className="border-b last:border-b-0">
                           <button
                             className={cn(
                               "w-full text-left flex items-start py-5 px-0 md:px-1 focus:outline-none transition-colors group",
-                              open[key] ? "text-[#9bcbff]" : "text-gray-900",
+                              isOpen ? "text-[#9bcbff]" : "text-gray-900",
                               "hover:text-[#9bcbff] focus:text-[#9bcbff]"
                             )}
-                            onClick={() =>
-                              setOpen(prev => ({
-                                ...prev,
-                                [key]: !prev[key],
-                              }))
-                            }
-                            aria-expanded={open[key] || false}
+                            onClick={() => setOpenKey(isOpen ? null : key)}
+                            aria-expanded={isOpen}
                           >
                             <span className="mr-4 mt-0.5">
-                              {open[key] ? (
+                              {isOpen ? (
                                 <Minus className="w-5 h-5" />
                               ) : (
                                 <Plus className="w-5 h-5" />
@@ -442,18 +438,14 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                             <span
                               className={cn(
                                 "text-base md:text-lg font-bold md:font-extrabold group-hover:text-[#9bcbff] transition-colors",
-                                open[key] && "text-[#9bcbff]"
+                                isOpen && "text-[#9bcbff]"
                               )}
-                              style={
-                                open[key]
-                                  ? { textDecoration: "underline", textUnderlineOffset: 3 }
-                                  : undefined
-                              }
+                              style={undefined} // Remove underlining completely—no special style on click
                             >
                               {faq.question}
                             </span>
                           </button>
-                          {open[key] && (
+                          {isOpen && (
                             <div className="text-gray-700 px-9 pb-6 -mt-2 text-base whitespace-pre-line">
                               {faq.answer}
                             </div>
