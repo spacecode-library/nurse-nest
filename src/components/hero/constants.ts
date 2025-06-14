@@ -5,9 +5,10 @@ export const ANIMATION_CONFIG = {
   mobileRotatingTextHeight: 32,
   desktopRotatingTextHeight: 80,
   desktopRotatingTextWidth: 300,
+  // Switched from 'spring' to duration/ease for snappier feel
   animationTransition: {
-    type: "spring" as const,
-    stiffness: 50
+    duration: 0.35,
+    ease: "easeInOut"
   }
 };
 
@@ -37,3 +38,4 @@ export const BUTTON_GLOW_CONFIGS = {
     intensity: 0.35
   }
 };
+
