@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { ANIMATION_CONFIG } from "./constants";
 import { RotatingTextProps } from "./types";
@@ -25,6 +24,7 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
           }
   });
 
+  // MOBILE: Keep as previously implemented
   if (isMobile) {
     return (
       <div
@@ -48,42 +48,31 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
     );
   }
 
-  // DESKTOP: Vertically center using flex and set same explicit height as the container
+  // DESKTOP: Simplified - inline container, fixed width, no vertical shifting, baseline aligned
   return (
     <span
-      className="text-white block"
+      className="relative inline-block align-middle"
       style={{
+        width: `${ANIMATION_CONFIG.desktopRotatingTextWidth}px`,
         height: `${ANIMATION_CONFIG.desktopRotatingTextHeight}px`,
-        minHeight: `${ANIMATION_CONFIG.desktopRotatingTextHeight}px`,
-        display: "flex",
-        alignItems: "center",
+        overflow: 'hidden',
+        verticalAlign: 'middle',
       }}
     >
-      <span className="inline-block w-full">
-        <span className="text-white"> </span>
-        <span
-          className="relative inline-block"
+      {/* avoid shifting the nurse? text */}
+      {titles.map((title, index) => (
+        <motion.span
+          key={index}
+          className="absolute left-0 top-0 font-semibold text-blue-300 whitespace-nowrap leading-tight py-1"
           style={{
-            width: `${ANIMATION_CONFIG.desktopRotatingTextWidth}px`,
-            height: `${ANIMATION_CONFIG.desktopRotatingTextHeight}px`,
-            overflow: 'hidden',
-            verticalAlign: 'middle'
+            // Only move vertically if needed for animation, but keep baseline as normal
+            // (title is positioned at top:0, so text sits at baseline)
           }}
+          {...getAnimationProps(index)}
         >
-          {titles.map((title, index) => (
-            <motion.span
-              key={index}
-              className="absolute top-1/2 left-0 font-semibold text-blue-300 whitespace-nowrap leading-tight py-1"
-              style={{
-                transform: 'translateY(-50%)',
-              }}
-              {...getAnimationProps(index)}
-            >
-              {title}
-            </motion.span>
-          ))}
-        </span>
-      </span>
+          {title}
+        </motion.span>
+      ))}
     </span>
   );
 }
