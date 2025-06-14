@@ -17,7 +17,7 @@ export default function HeroSection() {
         />
       </div>
       
-      {/* Mobile Layout - Optimized */}
+      {/* Mobile & Tablet Layout - Optimized */}
       <div className="md:hidden w-full relative h-screen">
         <OptimizedBackground
           src="/lovable-uploads/ce1b982a-1811-48d4-bb03-8510645f5d2e.png"
@@ -25,18 +25,18 @@ export default function HeroSection() {
           className="absolute inset-0 w-full h-full"
           priority={true}
         >
-          {/* Use glass effect overlay for hero content */}
+          {/* No glass effect for mobile & tablet */}
           <div className="relative z-10 w-full h-full flex items-center justify-center">
-            <div className="glass-card w-[92vw] max-w-md mx-auto mt-10 shadow-xl">
+            <div className="w-[92vw] max-w-md mx-auto mt-10 shadow-xl">
               <Hero isMobile={true} />
             </div>
           </div>
         </OptimizedBackground>
       </div>
       
-      {/* Desktop Hero Content */}
+      {/* Desktop Hero Content (including glass effect) */}
       <div className="hidden md:flex absolute inset-0 z-10 items-center justify-start">
-        <div className="w-full">
+        <div className="w-full lg:glass-card">
           <Hero isMobile={false} />
         </div>
       </div>
@@ -69,3 +69,4 @@ export default function HeroSection() {
     </section>
   );
 }
+
