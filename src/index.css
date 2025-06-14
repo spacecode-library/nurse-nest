@@ -1,3 +1,4 @@
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -225,22 +226,47 @@
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+/* Hide scrollbar on mobile devices while maintaining scroll functionality */
+@media (max-width: 768px) {
+  /* Hide scrollbar for webkit browsers (Safari, Chrome on mobile) */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for Firefox */
+  html {
+    scrollbar-width: none;
+  }
+  
+  /* Ensure body can still scroll */
+  body {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  body::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
+/* Custom scrollbar for desktop */
+@media (min-width: 769px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: #9bcbff;
-  border-radius: 4px;
-}
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  ::-webkit-scrollbar-thumb {
+    background: #9bcbff;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3b82f6;
+  }
 }
 
 /* Focus styles */
