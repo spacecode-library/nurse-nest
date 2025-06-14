@@ -50,7 +50,7 @@ export default function MobileMenu({
   return (
     <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg border-t border-gray-200/50 mx-4 rounded-b-2xl z-40">
       <div className="px-6 py-4 space-y-4">
-        {/* Navigation Links (now with Sign In between Home and Pricing) */}
+        {/* Navigation Links (Sign In between Home and Pricing) */}
         <div className="space-y-2">
           {/* Home */}
           <Link
@@ -91,7 +91,9 @@ export default function MobileMenu({
           >
             {/* For Nurses Dropdown */}
             <AccordionItem value="nurse">
-              <AccordionTrigger className="py-2 px-0 font-medium text-gray-700 hover:text-brand-primary focus:outline-none">
+              <AccordionTrigger
+                className="block font-medium text-gray-700 hover:text-brand-primary py-2 px-0 focus:outline-none shadow-none ring-0 border-0 bg-transparent"
+              >
                 For Nurses
               </AccordionTrigger>
               <AccordionContent>
@@ -123,7 +125,9 @@ export default function MobileMenu({
 
             {/* Care Services Dropdown */}
             <AccordionItem value="care">
-              <AccordionTrigger className="py-2 px-0 font-medium text-gray-700 hover:text-brand-primary focus:outline-none">
+              <AccordionTrigger
+                className="block font-medium text-gray-700 hover:text-brand-primary py-2 px-0 focus:outline-none shadow-none ring-0 border-0 bg-transparent"
+              >
                 Care Services
               </AccordionTrigger>
               <AccordionContent>
