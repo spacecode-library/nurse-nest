@@ -7,12 +7,14 @@ interface ExpandableActionMenuProps {
   onFaq: () => void;
   onRequestNurse: () => void;
   isFaqOpen: boolean;
+  visible?: boolean; // if false, menu is hidden/faded (default true for legacy)
 }
 
 export default function ExpandableActionMenu({
   onFaq,
   onRequestNurse,
   isFaqOpen,
+  visible = true,
 }: ExpandableActionMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -44,12 +46,19 @@ export default function ExpandableActionMenu({
     }
   }, [open]);
 
-  // Animate action buttons up in a stack: top=FAQ, middle=Request Nurse, bottom=main FAB
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2"
+      // The fade/slide-in is managed here via .opacity and pointer events
+      className={cn(
+        "fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 transition-all duration-500 ease-in-out",
+        visible
+          ? "opacity-100 pointer-events-auto translate-y-0"
+          : "opacity-0 pointer-events-none translate-y-1"
+      )}
       aria-label="Expandable action menu"
+      // suppressHydrationWarning so there's no flashing if scrolling on mount (for SSR)
+      suppressHydrationWarning
     >
       {/* Background overlay */}
       <div

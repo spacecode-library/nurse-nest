@@ -7,6 +7,7 @@ import StatisticsSection from "@/components/StatisticsSection";
 import LuxuriousFaqSection from "@/components/LuxuriousFaqSection";
 import FloatingFaqButton from "@/components/FloatingFaqButton";
 import ExpandableActionMenu from "@/components/ExpandableActionMenu";
+import { useFadeInOnScroll } from "@/hooks/use-fade-in-on-scroll";
 
 export default function Index() {
   const [isFaqVisible, setIsFaqVisible] = useState(false);
@@ -25,6 +26,9 @@ export default function Index() {
   const handleRequestNurse = () => {
     window.location.href = "/apply";
   };
+
+  // Only fade in FAB *after* scrolling past hero (approx 65% vh)
+  const fabMenuVisible = useFadeInOnScroll();
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -55,11 +59,12 @@ export default function Index() {
         />
       </main>
 
-      {/* Professional expandable floating action menu (FAB) */}
+      {/* FAB Action Menu - now visible only after scrolling past hero */}
       <ExpandableActionMenu
         onFaq={showFaqAndScroll}
         onRequestNurse={handleRequestNurse}
         isFaqOpen={isFaqVisible}
+        visible={fabMenuVisible}
       />
 
       <Footer />
