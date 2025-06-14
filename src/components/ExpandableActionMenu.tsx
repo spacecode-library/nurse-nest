@@ -50,22 +50,18 @@ export default function ExpandableActionMenu({
     <div
       ref={containerRef}
       className={cn(
-        // More gradual fade & motion when showing/hiding
         "fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 transition-all duration-1000 ease-[cubic-bezier(0.33,1,0.68,1)] will-change-[opacity,transform]",
         visible
           ? "opacity-100 pointer-events-auto translate-y-0"
-          : "opacity-0 pointer-events-none translate-y-8" // Larger vertical movement for subtle slide
+          : "opacity-0 pointer-events-none translate-y-8"
       )}
       aria-label="Expandable action menu"
       suppressHydrationWarning
-      style={{
-        // This will smoothen the fade-move effect
-        transitionProperty: "opacity, transform",
-      }}
+      style={{ transitionProperty: "opacity, transform" }}
     >
       <div
         className={cn(
-          "fixed inset-0 bg-black/10 transition-all duration-300",
+          "fixed inset-0 bg-transparent transition-all duration-300", // changed from bg-black/10 to bg-transparent
           open ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
         )}
         aria-hidden="true"
@@ -78,7 +74,6 @@ export default function ExpandableActionMenu({
             pointerEvents: open ? "auto" : "none",
           }}
         >
-          {/* FAQ Action */}
           <button
             ref={faqBtn}
             className={cn(
@@ -99,13 +94,10 @@ export default function ExpandableActionMenu({
             }}
             aria-label="Open FAQ"
             tabIndex={open ? 0 : -1}
-            // Remove blue outline flash during animation
-            // Only allow outline on real focus (keyboard nav)
             autoFocus={false}
           >
             FAQ
           </button>
-          {/* Get Nurse Action */}
           <button
             className={cn(
               "min-w-[140px] h-14 px-5 rounded-xl flex items-center justify-center font-semibold text-base shadow-xl transition-[background,box-shadow,transform] duration-300 focus-visible:outline-none focus:outline-none ring-0 active:scale-95",
@@ -130,7 +122,6 @@ export default function ExpandableActionMenu({
             Get Nurse
           </button>
         </div>
-        {/* Main FAB */}
         <button
           aria-label={open ? "Close menu" : "Open quick actions"}
           className={cn(
@@ -151,3 +142,4 @@ export default function ExpandableActionMenu({
     </div>
   );
 }
+
