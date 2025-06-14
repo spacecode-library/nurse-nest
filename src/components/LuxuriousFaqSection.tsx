@@ -351,24 +351,27 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
         <div className="flex flex-col md:flex-row md:gap-8">
           {/* Sidebar */}
           <div className="w-full md:w-[260px] md:pr-4 mb-10 md:mb-0 flex-shrink-0 flex flex-col items-center">
-            {/* Table of Contents Heading (centered, bigger) */}
-            <div className="mb-5 w-full flex flex-col items-center">
-              <div
-                className="text-2xl md:text-3xl font-black text-gray-900 mb-1 text-center w-full"
+            {/* Table of Contents Heading */}
+            <div className="flex flex-col items-center justify-center w-full mb-2">
+              <span
+                className="font-black text-[2rem] md:text-[2.6rem] leading-tight text-gray-900 tracking-tight"
                 style={{
                   letterSpacing: "-0.01em",
-                  lineHeight: 1.2
+                  lineHeight: 1.15,
+                  width: "100%",
+                  textAlign: "center",
+                  marginBottom: 4,
                 }}
               >
                 Table of Contents
-              </div>
-              <div className="bg-gray-100 h-[2px] w-14 mx-auto my-2 rounded-full"/>
+              </span>
+              <div className="bg-gray-200 h-[2px] w-16 md:w-24 mx-auto my-3 rounded-full" />
             </div>
-            {/* Categories */}
-            <nav aria-label="Table of Contents" className="w-full">
+            {/* Category list centered & small */}
+            <nav aria-label="Table of Contents" className="w-full flex flex-col items-center">
               <ul className="space-y-1 w-full flex flex-col items-center">
                 {faqCategories.map(cat => (
-                  <li key={cat.id} className="w-full">
+                  <li key={cat.id} className="w-full flex justify-center">
                     <button
                       onClick={() => {
                         setActiveCategory(cat.id);
@@ -376,13 +379,16 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         setSearchTerm('');
                       }}
                       className={cn(
-                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-sm md:text-sm tracking-tight",
+                        "text-left py-1 px-2 rounded font-medium text-[0.97rem] md:text-[1rem] transition",
                         selected?.id === cat.id
-                          ? "text-blue-700 font-black"
-                          : "text-gray-700 hover:text-blue-700"
+                          ? "font-black"
+                          : "text-gray-700 hover:text-[#9bcbff]"
                       )}
-                      // REMOVE underline styling and highlight/box:
-                      style={undefined}
+                      style={
+                        selected?.id === cat.id
+                          ? { color: "#9bcbff", background: "transparent", boxShadow: "none", textDecoration: "none" }
+                          : { background: "transparent", boxShadow: "none", textDecoration: "none" }
+                      }
                       aria-current={selected?.id === cat.id ? 'page' : undefined}
                     >
                       {cat.title}
