@@ -14,13 +14,13 @@ export function DesktopHero({ titles, titleNumber }: DesktopHeroProps) {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
           <div className="flex flex-col justify-start max-w-3xl mt-12">
-            {/* Desktop Header with improved typography */}
+            {/* Desktop Header */}
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-tight mb-8">
-              <span className="text-white block mb-2">Need a</span>
+              <span className="text-white block">Need a</span>
               
               <RotatingText titles={titles} titleNumber={titleNumber} isMobile={false} />
               
-              <span className="text-white block mt-2">nurse?</span>
+              <span className="text-white block">nurse?</span>
             </h1>
 
             {/* Desktop CTA Section */}

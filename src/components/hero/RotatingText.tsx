@@ -5,28 +5,27 @@ import { RotatingTextProps } from "./types";
 
 export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProps) {
   const getAnimationProps = (index: number) => ({
-    initial: { opacity: 0, y: isMobile ? 16 : 32 },
+    initial: { opacity: 0, y: isMobile ? 28 : 64 },
     transition: ANIMATION_CONFIG.animationTransition,
     animate: titleNumber === index 
       ? { y: 0, opacity: 1 }
-      : { y: titleNumber > index ? (isMobile ? -16 : -32) : (isMobile ? 16 : 32), opacity: 0 }
+      : { y: titleNumber > index ? (isMobile ? -28 : -64) : (isMobile ? 28 : 64), opacity: 0 }
   });
 
   if (isMobile) {
     return (
       <div 
-        className="relative w-full mb-2 flex items-center justify-start"
+        className="relative w-full mb-2"
         style={{ 
           height: `${ANIMATION_CONFIG.mobileRotatingTextHeight}px`,
-          overflow: 'hidden'
+          overflow: 'visible' 
         }}
       >
         <span className="text-white">&nbsp;</span>
         {titles.map((title, index) => (
           <motion.span
             key={index}
-            className="absolute font-semibold text-blue-300 left-0 top-1/2 w-max leading-none"
-            style={{ transform: 'translateY(-50%)' }}
+            className="absolute font-semibold text-blue-300 left-0 top-0 w-max leading-tight py-1"
             {...getAnimationProps(index)}
           >
             {title}
@@ -43,17 +42,15 @@ export function RotatingText({ titles, titleNumber, isMobile }: RotatingTextProp
         <span 
           className="relative inline-block"
           style={{
-            width: 'auto',
-            minWidth: '200px',
+            width: `${ANIMATION_CONFIG.desktopRotatingTextWidth}px`,
             height: `${ANIMATION_CONFIG.desktopRotatingTextHeight}px`,
-            overflow: 'hidden'
+            overflow: 'visible'
           }}
         >
           {titles.map((title, index) => (
             <motion.span
               key={index}
-              className="absolute top-1/2 left-0 font-semibold text-blue-300 whitespace-nowrap leading-none"
-              style={{ transform: 'translateY(-50%)' }}
+              className="absolute top-0 left-0 font-semibold text-blue-300 whitespace-nowrap leading-tight py-1"
               {...getAnimationProps(index)}
             >
               {title}
