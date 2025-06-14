@@ -352,9 +352,9 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
           {/* Sidebar */}
           <div className="w-full md:w-[260px] md:pr-4 mb-10 md:mb-0 flex-shrink-0 flex flex-col items-center">
             {/* Table of Contents Heading */}
-            <div className="mb-4 w-full flex flex-col items-center">
+            <div className="mb-3 w-full flex flex-col items-center">
               <div
-                className="text-base md:text-lg font-semibold text-gray-900 text-center w-full"
+                className="text-xs md:text-sm font-semibold text-gray-900 w-full text-center tracking-tight"
                 style={{
                   letterSpacing: "-0.01em",
                   lineHeight: 1.2
@@ -365,7 +365,7 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
             </div>
             {/* Categories */}
             <nav aria-label="Table of Contents" className="w-full">
-              <ul className="space-y-1 w-full flex flex-col items-center">
+              <ul className="w-full flex flex-col items-center">
                 {faqCategories.map(cat => (
                   <li key={cat.id} className="w-full">
                     <button
@@ -375,10 +375,11 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         setSearchTerm('');
                       }}
                       className={cn(
-                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-sm md:text-sm tracking-tight",
+                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-xs md:text-sm tracking-tight",
                         selected?.id === cat.id
                           ? "text-[#9bcbff] font-black"
-                          : "text-gray-700 hover:text-[#9bcbff]"
+                          : "text-gray-700",
+                        "hover:text-[#9bcbff] focus:text-[#9bcbff]"
                       )}
                       style={undefined}
                       aria-current={selected?.id === cat.id ? 'page' : undefined}
@@ -420,7 +421,8 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                           <button
                             className={cn(
                               "w-full text-left flex items-start py-5 px-0 md:px-1 focus:outline-none transition-colors group",
-                              open[key] ? "text-blue-700" : "text-gray-900 hover:text-blue-600"
+                              open[key] ? "text-[#9bcbff]" : "text-gray-900",
+                              "hover:text-[#9bcbff] focus:text-[#9bcbff]"
                             )}
                             onClick={() =>
                               setOpen(prev => ({
@@ -439,8 +441,8 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                             </span>
                             <span
                               className={cn(
-                                "text-base md:text-lg font-bold md:font-extrabold group-hover:text-blue-600 transition-colors",
-                                open[key] && "text-blue-700"
+                                "text-base md:text-lg font-bold md:font-extrabold group-hover:text-[#9bcbff] transition-colors",
+                                open[key] && "text-[#9bcbff]"
                               )}
                               style={
                                 open[key]
