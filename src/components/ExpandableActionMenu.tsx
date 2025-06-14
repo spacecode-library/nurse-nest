@@ -7,7 +7,7 @@ interface ExpandableActionMenuProps {
   onFaq: () => void;
   onRequestNurse: () => void;
   isFaqOpen: boolean;
-  visible?: boolean; // if false, menu is hidden/faded (default true for legacy)
+  visible?: boolean;
 }
 
 export default function ExpandableActionMenu({
@@ -49,18 +49,20 @@ export default function ExpandableActionMenu({
   return (
     <div
       ref={containerRef}
-      // The fade/slide-in is managed here via .opacity and pointer events
       className={cn(
-        "fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 transition-all duration-500 ease-in-out",
+        // More gradual fade & motion when showing/hiding
+        "fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 transition-all duration-1000 ease-[cubic-bezier(0.33,1,0.68,1)] will-change-[opacity,transform]",
         visible
           ? "opacity-100 pointer-events-auto translate-y-0"
-          : "opacity-0 pointer-events-none translate-y-1"
+          : "opacity-0 pointer-events-none translate-y-8" // Larger vertical movement for subtle slide
       )}
       aria-label="Expandable action menu"
-      // suppressHydrationWarning so there's no flashing if scrolling on mount (for SSR)
       suppressHydrationWarning
+      style={{
+        // This will smoothen the fade-move effect
+        transitionProperty: "opacity, transform",
+      }}
     >
-      {/* Background overlay */}
       <div
         className={cn(
           "fixed inset-0 bg-black/10 transition-all duration-300",
@@ -69,7 +71,6 @@ export default function ExpandableActionMenu({
         aria-hidden="true"
         onClick={() => setOpen(false)}
       />
-      {/* Action buttons (rounded squares with text) */}
       <div className="relative flex flex-col items-end" style={{ minWidth: 60 }}>
         <div
           className="flex flex-col space-y-3 mb-3"
@@ -81,15 +82,15 @@ export default function ExpandableActionMenu({
           <button
             ref={faqBtn}
             className={cn(
-              "min-w-[140px] h-14 px-5 rounded-xl flex items-center justify-center font-semibold text-base shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-95",
-              "dropdown-fab-btn",
+              "min-w-[140px] h-14 px-5 rounded-xl flex items-center justify-center font-semibold text-base shadow-xl transition-[background,box-shadow,transform] duration-300 focus-visible:outline-none focus:outline-none ring-0 active:scale-95",
+              "dropdown-fab-btn select-none",
               open
-                ? "opacity-100 translate-y-0 scale-100 pointer-events-auto animate-fade-in-up"
-                : "opacity-0 translate-y-4 scale-95 pointer-events-none",
+                ? "opacity-100 translate-y-0 scale-100 pointer-events-auto animate-fade-in-up-custom"
+                : "opacity-0 translate-y-8 scale-95 pointer-events-none",
               "bg-blue-600 text-white hover:bg-blue-700"
             )}
             style={{
-              transitionDelay: open ? "70ms" : "0ms",
+              transitionDelay: open ? "80ms" : "0ms",
               letterSpacing: ".01em"
             }}
             onClick={() => {
@@ -98,21 +99,24 @@ export default function ExpandableActionMenu({
             }}
             aria-label="Open FAQ"
             tabIndex={open ? 0 : -1}
+            // Remove blue outline flash during animation
+            // Only allow outline on real focus (keyboard nav)
+            autoFocus={false}
           >
             FAQ
           </button>
           {/* Get Nurse Action */}
           <button
             className={cn(
-              "min-w-[140px] h-14 px-5 rounded-xl flex items-center justify-center font-semibold text-base shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-95",
-              "dropdown-fab-btn",
+              "min-w-[140px] h-14 px-5 rounded-xl flex items-center justify-center font-semibold text-base shadow-xl transition-[background,box-shadow,transform] duration-300 focus-visible:outline-none focus:outline-none ring-0 active:scale-95",
+              "dropdown-fab-btn select-none",
               open
-                ? "opacity-100 translate-y-0 scale-100 pointer-events-auto animate-fade-in-up"
-                : "opacity-0 translate-y-4 scale-95 pointer-events-none",
+                ? "opacity-100 translate-y-0 scale-100 pointer-events-auto animate-fade-in-up-custom"
+                : "opacity-0 translate-y-8 scale-95 pointer-events-none",
               "bg-teal-600 text-white hover:bg-teal-700"
             )}
             style={{
-              transitionDelay: open ? "130ms" : "0ms",
+              transitionDelay: open ? "180ms" : "0ms",
               letterSpacing: ".01em"
             }}
             onClick={() => {
@@ -121,6 +125,7 @@ export default function ExpandableActionMenu({
             }}
             aria-label="Get Nurse"
             tabIndex={open ? 0 : -1}
+            autoFocus={false}
           >
             Get Nurse
           </button>
@@ -136,6 +141,7 @@ export default function ExpandableActionMenu({
           )}
           style={{
             transition: "box-shadow 0.25s, background 0.3s, transform 0.3s",
+            willChange: "transform, background, box-shadow",
           }}
           onClick={() => setOpen(val => !val)}
         >

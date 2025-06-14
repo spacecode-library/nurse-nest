@@ -256,7 +256,7 @@
   }
 }
 
-/* Fade-in + slide-up animation for FAB actions */
+/* Fade-in + slide-up animation for FAB actions (default + custom, for smoothing) */
 @keyframes fade-in-up {
   0% {
     opacity: 0;
@@ -271,47 +271,49 @@
   animation: fade-in-up 0.35s cubic-bezier(0.32,0.72,0.45,1.52);
 }
 
-/* Hide scrollbar on mobile devices while maintaining scroll functionality */
-@media (max-width: 768px) {
-  /* Hide scrollbar for webkit browsers (Safari, Chrome on mobile) */
-  ::-webkit-scrollbar {
-    display: none;
+/* Smoother version: longer duration with gentle cubic-bezier */
+@keyframes fade-in-up-custom {
+  0% {
+    opacity: 0;
+    transform: translateY(32px) scale(0.95);
   }
-  
-  /* Hide scrollbar for Firefox */
-  html {
-    scrollbar-width: none;
+  80% {
+    opacity: 1;
+    transform: translateY(0) scale(1.02);
   }
-  
-  /* Ensure body can still scroll */
-  body {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  
-  body::-webkit-scrollbar {
-    display: none;  /* Safari and Chrome */
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
+.animate-fade-in-up-custom {
+  animation: fade-in-up-custom 0.5s cubic-bezier(0.33,1,0.68,1);
+  will-change: opacity, transform;
+}
 
-/* Custom scrollbar for desktop */
-@media (min-width: 769px) {
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
+/* Focus styles (override for action menu buttons, prevent visible outline on fade) */
+.dropdown-fab-btn:focus,
+.dropdown-fab-btn:focus-visible,
+.dropdown-fab-btn:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
+}
 
-  ::-webkit-scrollbar-track {
-    background: #f1f5f9;
-  }
+.dropdown-fab-btn:focus-visible {
+  outline: 2px solid #9bcbff !important;
+  outline-offset: 2px !important;
+}
 
-  ::-webkit-scrollbar-thumb {
-    background: #9bcbff;
-    border-radius: 4px;
-  }
+.fab-trigger-btn:focus,
+.fab-trigger-btn:focus-visible,
+.fab-trigger-btn:focus-within {
+  outline: none !important;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #3b82f6;
-  }
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Focus styles */
@@ -324,9 +326,4 @@
 ::selection {
   background-color: #9bcbff;
   color: #1e293b;
-}
-
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
 }
