@@ -23,9 +23,9 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
     ? "hover:text-[#3b82f6] focus:text-[#3b82f6]"
     : "hover:text-[#9bcbff] focus:text-[#9bcbff]";
 
-  // Remove box highlight/focus background and border from menu items, only change text color
+  // Remove ALL box, ring, border, and outline highlights on menu items
   const itemClass =
-    "cursor-pointer py-3 bg-transparent hover:bg-transparent focus:bg-transparent outline-none border-none";
+    "cursor-pointer py-3 bg-transparent hover:bg-transparent focus:bg-transparent border-none outline-none ring-0 focus:ring-0 focus-visible:outline-none focus:outline-none focus:border-none shadow-none";
 
   const textClass =
     "font-medium text-gray-900 transition-colors duration-200 " + highlightClass;
@@ -48,6 +48,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         <DropdownMenuItem
           className={itemClass}
           onClick={handleApplyNowClick}
+          tabIndex={0}
         >
           <span className={textClass}>
             Apply Now
@@ -56,6 +57,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/nurse-llc-setup-guide')}
+          tabIndex={0}
         >
           <span className={textClass}>
             LLC Setup Guide
@@ -64,6 +66,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/get-ein-nurse-business')}
+          tabIndex={0}
         >
           <span className={textClass}>
             EIN Applications
@@ -72,6 +75,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/business-bank-account-for-nurses')}
+          tabIndex={0}
         >
           <span className={textClass}>
             Business Banking
@@ -80,6 +84,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/malpractice-insurance-for-nurses')}
+          tabIndex={0}
         >
           <span className={textClass}>
             Malpractice Insurance
@@ -88,6 +93,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/1099-tax-tips')}
+          tabIndex={0}
         >
           <span className={textClass}>
             1099 Tax Tips

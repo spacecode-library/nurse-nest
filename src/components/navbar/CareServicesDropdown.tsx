@@ -21,8 +21,9 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
     ? "hover:text-[#3b82f6] focus:text-[#3b82f6]"
     : "hover:text-[#9bcbff] focus:text-[#9bcbff]";
 
+  // Remove ALL box, ring, border, and outline highlights on menu items
   const itemClass =
-    "cursor-pointer py-3 bg-transparent hover:bg-transparent focus:bg-transparent outline-none border-none";
+    "cursor-pointer py-3 bg-transparent hover:bg-transparent focus:bg-transparent border-none outline-none ring-0 focus:ring-0 focus-visible:outline-none focus:outline-none focus:border-none shadow-none";
 
   const textClass =
     "font-medium text-gray-900 transition-colors duration-200 " + highlightClass;
@@ -45,6 +46,7 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/newborn-nurse-support-guide')}
+          tabIndex={0}
         >
           <span className={textClass}>
             Newborn Care
@@ -53,6 +55,7 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/elderly-care-nurse-services')}
+          tabIndex={0}
         >
           <span className={textClass}>
             Elderly Care
@@ -61,6 +64,7 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/wound-care-nursing-guide')}
+          tabIndex={0}
         >
           <span className={textClass}>
             Wound Care
@@ -69,6 +73,7 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/best-products-for-home-healthcare')}
+          tabIndex={0}
         >
           <span className={textClass}>
             Product Reviews
