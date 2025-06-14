@@ -67,7 +67,8 @@ export default function SignUp() {
         last_name: lastName
       };
       
-      const { data, error } = await signUp(
+      // The backend will already set 'pending' for nurses. Also we expect backend to add necessary fields.
+      const { data, error, emailConfirmationRequired } = await signUp(
         email,
         password,
         userType,
@@ -82,22 +83,16 @@ export default function SignUp() {
           variant: "destructive"
         });
       } else if (data?.user) {
-        if (userType === 'nurse') {
-          await supabase
-            .from('user_metadata')
-            .update({ account_status: 'pending' })
-            .eq('user_id', data.user.id);
-        }
-        
         toast({
           title: "Account created successfully!",
           description: userType === 'admin' 
             ? "Admin account created successfully!" 
             : userType === 'nurse'
             ? "Account created! Complete your profile to get started."
-            : "Please check your email to verify your account."
+            : "Account created! Let's begin your onboarding."
         });
-        
+
+        // Redirect directly to appropriate onboarding form. Ignore 'check your email' if not necessary.
         if (userType === 'nurse') {
           navigate('/onboarding/nurse');
         } else if (userType === 'client') {
@@ -105,6 +100,15 @@ export default function SignUp() {
         } else if (userType === 'admin') {
           navigate('/admin');
         }
+      } else if (emailConfirmationRequired) {
+        // If user needs to check email, notify clearly
+        toast({
+          title: "Check your email",
+          description: "We've sent a confirmation link. Please confirm to activate your account.",
+        });
+      } else {
+        // fallback navigation if no clear user returned
+        navigate('/sign-in');
       }
     } catch (error: any) {
       console.error('Auth error:', error);
@@ -113,6 +117,42 @@ export default function SignUp() {
       setLoading(false);
     }
   };
+
+  // Overlay click logic for radio group selections.
+  const userTypes = [
+    {
+      value: 'client',
+      icon: <Building2 className="h-4 w-4 text-green-600" />,
+      label: 'Client',
+      subtitle: 'Needs care services',
+      desktopLabel: 'Client',
+      desktopSubtitle: 'I need nursing care services',
+    },
+    {
+      value: 'nurse',
+      icon: <Stethoscope className="h-4 w-4 text-blue-600" />,
+      label: 'Professional',
+      subtitle: 'Care provider',
+      desktopLabel: 'Healthcare Professional',
+      desktopSubtitle: 'I provide nursing care services',
+    },
+    {
+      value: 'admin',
+      icon: <Shield className="h-4 w-4 text-purple-600" />,
+      label: (
+        <span className="flex items-center">
+          Admin <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
+        </span>
+      ),
+      subtitle: 'Admin access',
+      desktopLabel: (
+        <span className="flex items-center">
+          Administrator <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
+        </span>
+      ),
+      desktopSubtitle: 'Platform administration',
+    }
+  ];
   
   return (
     <div className="min-h-screen bg-white flex relative">
@@ -198,61 +238,53 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                {/* User Type Selection */}
+                {/* User Type Selection - FIXED INTERACTION */}
                 <div className="space-y-1">
                   <Label className="text-gray-700 font-medium text-xs">
                     I am a:
                   </Label>
+                  {/* No focus trap needed for simple use: RadioGroup */}
                   <RadioGroup
                     value={userType}
-                    onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
+                    onValueChange={(value: string) =>
+                      setUserType(value as 'nurse' | 'client' | 'admin')
+                    }
                     className="space-y-1"
                   >
-                    <div>
-                      <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                        userType === 'client' 
-                          ? 'border-[#9bcbff] bg-blue-50' 
-                          : 'border-gray-200'
-                      }`}>
-                        <RadioGroupItem value="client" id="client" className="text-[#9bcbff]" />
-                        <Building2 className="h-4 w-4 text-green-600" />
+                    {userTypes.map((type) => (
+                      <div
+                        key={type.value}
+                        className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 select-none ${
+                          userType === type.value
+                            ? 'border-[#9bcbff] bg-blue-50 ring-2 ring-[#9bcbff]'
+                            : 'border-gray-200'
+                        }`}
+                        tabIndex={0}
+                        role="button"
+                        aria-pressed={userType === type.value}
+                        onClick={() => setUserType(type.value as 'nurse' | 'client' | 'admin')}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            setUserType(type.value as 'nurse' | 'client' | 'admin');
+                          }
+                        }}
+                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                      >
+                        <RadioGroupItem
+                          value={type.value}
+                          id={type.value}
+                          className="text-[#9bcbff]"
+                          checked={userType === type.value}
+                          tabIndex={-1}
+                          aria-label={typeof type.label === "string" ? type.label : undefined}
+                        />
+                        {type.icon}
                         <div>
-                          <div className="font-medium text-gray-900 text-xs">Client</div>
-                          <div className="text-[10px] text-gray-600">Needs care services</div>
+                          <div className="font-medium text-gray-900 text-xs">{type.label}</div>
+                          <div className="text-[10px] text-gray-600">{type.subtitle}</div>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                        userType === 'nurse' 
-                          ? 'border-[#9bcbff] bg-blue-50' 
-                          : 'border-gray-200'
-                      }`}>
-                        <RadioGroupItem value="nurse" id="nurse" className="text-[#9bcbff]" />
-                        <Stethoscope className="h-4 w-4 text-blue-600" />
-                        <div>
-                          <div className="font-medium text-gray-900 text-xs">Professional</div>
-                          <div className="text-[10px] text-gray-600">Care provider</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                        userType === 'admin' 
-                          ? 'border-[#9bcbff] bg-blue-50' 
-                          : 'border-gray-200'
-                      }`}>
-                        <RadioGroupItem value="admin" id="admin" className="text-[#9bcbff]" />
-                        <Shield className="h-4 w-4 text-purple-600" />
-                        <div>
-                          <div className="font-medium text-gray-900 text-xs flex items-center">
-                            Admin
-                            <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
-                          </div>
-                          <div className="text-[10px] text-gray-600">Admin access</div>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </RadioGroup>
                 </div>
                 {/* Email Field */}
@@ -438,7 +470,7 @@ export default function SignUp() {
                 </div>
               </div>
               
-              {/* User Type Selection - Compact Design */}
+              {/* User Type Selection - Desktop, Fixed */}
               <div className="space-y-2">
                 <Label className="text-gray-700 font-medium text-sm">
                   I am a:
@@ -448,53 +480,42 @@ export default function SignUp() {
                   onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
                   className="space-y-2"
                 >
-                  <div className="relative">
-                    <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                      userType === 'client' 
-                        ? 'border-[#9bcbff] bg-blue-50' 
-                        : 'border-gray-200'
-                    }`}>
-                      <RadioGroupItem value="client" id="client" className="text-[#9bcbff]" />
-                      <Building2 className="h-4 w-4 text-green-600" />
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900 text-sm">Client</div>
-                        <div className="text-xs text-gray-600">I need nursing care services</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                      userType === 'nurse' 
-                        ? 'border-[#9bcbff] bg-blue-50' 
-                        : 'border-gray-200'
-                    }`}>
-                      <RadioGroupItem value="nurse" id="nurse" className="text-[#9bcbff]" />
-                      <Stethoscope className="h-4 w-4 text-blue-600" />
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900 text-sm">Healthcare Professional</div>
-                        <div className="text-xs text-gray-600">I provide nursing care services</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                      userType === 'admin' 
-                        ? 'border-[#9bcbff] bg-blue-50' 
-                        : 'border-gray-200'
-                    }`}>
-                      <RadioGroupItem value="admin" id="admin" className="text-[#9bcbff]" />
-                      <Shield className="h-4 w-4 text-purple-600" />
+                  {userTypes.map(type => (
+                    <div
+                      key={type.value}
+                      className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 select-none ${
+                        userType === type.value
+                          ? 'border-[#9bcbff] bg-blue-50 ring-2 ring-[#9bcbff]'
+                          : 'border-gray-200'
+                      }`}
+                      tabIndex={0}
+                      role="button"
+                      aria-pressed={userType === type.value}
+                      onClick={() => setUserType(type.value as 'nurse' | 'client' | 'admin')}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          setUserType(type.value as 'nurse' | 'client' | 'admin');
+                        }
+                      }}
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                    >
+                      <RadioGroupItem
+                        value={type.value}
+                        id={type.value}
+                        className="text-[#9bcbff]"
+                        checked={userType === type.value}
+                        tabIndex={-1}
+                        aria-label={typeof type.label === "string" ? type.label : undefined}
+                      />
+                      {type.icon}
                       <div className="flex-1">
                         <div className="font-medium text-gray-900 text-sm flex items-center">
-                          Administrator
-                          <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
+                          {type.desktopLabel}
                         </div>
-                        <div className="text-xs text-gray-600">Platform administration</div>
+                        <div className="text-xs text-gray-600">{type.desktopSubtitle}</div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </RadioGroup>
               </div>
               
