@@ -353,12 +353,12 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
           {/* Sidebar */}
           <div className="w-full md:w-[260px] md:pr-4 mb-10 md:mb-0 flex-shrink-0 flex flex-col items-center">
             {/* Table of Contents Heading */}
-            <div className="mb-3 w-full flex flex-col items-center">
+            <div className="mb-6 w-full flex flex-col items-center">
               <div
-                className="text-xs md:text-sm font-semibold text-gray-900 w-full text-center tracking-tight"
+                className="text-2xl md:text-3xl font-black text-gray-900 whitespace-nowrap text-center tracking-tight"
                 style={{
                   letterSpacing: "-0.01em",
-                  lineHeight: 1.2
+                  lineHeight: 1.2,
                 }}
               >
                 Table of Contents
