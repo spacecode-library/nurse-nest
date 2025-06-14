@@ -77,11 +77,13 @@ export default function MobileMenu({
           background: none;
         }
         .mobile-trigger-icon {
-          margin-left: 0.35em;
-          margin-right: 0;
+          margin-right: 0.43em;
+          margin-left: 0;
           flex-shrink: 0;
+          display: flex;
+          align-items: center;
         }
-        /* Remove accordion item divider lines */
+        /* Remove all accordion item divider lines and border */
         .mobile-accordion-no-border > div > [data-state] {
           border-bottom: none !important;
         }
@@ -126,8 +128,8 @@ export default function MobileMenu({
             className="w-full mobile-accordion-no-border"
           >
             {/* For Nurses Dropdown */}
-            <AccordionItem value="nurse">
-              {/* Override AccordionTrigger */}
+            <AccordionItem value="nurse" className="border-b-0">
+              {/* AccordionTrigger with icon left of label */}
               <AccordionTrigger
                 className="mobile-menu-trigger"
                 style={{
@@ -148,19 +150,27 @@ export default function MobileMenu({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'flex-start',
-                  gap: '0.30em',
+                  gap: '0.15em',
                   width: '100%',
                 }}
-                // Remove all focus/active etc visual outlines
                 tabIndex={0}
-                // Use data-state styling in injected CSS above
               >
+                <span className="mobile-trigger-icon">
+                  {/* Down Arrow/chevron icon rendered by AccordionTrigger by default */}
+                  {/* We move icon manually, so prevent AccordionTrigger from rendering its default ChevronDown */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 shrink-0 transition-transform duration-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+                  </svg>
+                </span>
                 <span className="flex items-center">
                   For Nurses
-                  <span className="mobile-trigger-icon">
-                    {/* Let Lucide/AccordionTrigger render icon beside label */}
-                    {/* Remove extra margin from svg via AccordionTrigger */}
-                  </span>
                 </span>
               </AccordionTrigger>
               <AccordionContent>
@@ -190,8 +200,7 @@ export default function MobileMenu({
               </AccordionContent>
             </AccordionItem>
             {/* Care Services Dropdown */}
-            <AccordionItem value="care">
-              {/* Override AccordionTrigger */}
+            <AccordionItem value="care" className="border-b-0">
               <AccordionTrigger
                 className="mobile-menu-trigger"
                 style={{
@@ -212,14 +221,25 @@ export default function MobileMenu({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'flex-start',
-                  gap: '0.30em',
+                  gap: '0.15em',
                   width: '100%',
                 }}
                 tabIndex={0}
               >
+                <span className="mobile-trigger-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 shrink-0 transition-transform duration-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+                  </svg>
+                </span>
                 <span className="flex items-center">
                   Care Services
-                  <span className="mobile-trigger-icon" />
                 </span>
               </AccordionTrigger>
               <AccordionContent>
