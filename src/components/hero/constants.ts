@@ -2,12 +2,13 @@
 // Animation constants
 export const ANIMATION_CONFIG = {
   rotationInterval: 2000,
-  mobileRotatingTextHeight: 32,
+  mobileRotatingTextHeight: 40, // increased for taller text
+  // Removed desktopRotatingTextWidth for dynamic calc
   desktopRotatingTextHeight: 80,
-  desktopRotatingTextWidth: 300,
   animationTransition: {
     type: "spring" as const,
-    stiffness: 50
+    stiffness: 120, // faster transition for better sync
+    damping: 16
   }
 };
 
