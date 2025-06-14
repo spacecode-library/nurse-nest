@@ -1,10 +1,9 @@
-
 // Animation constants
 export const ANIMATION_CONFIG = {
   rotationInterval: 2000,
   mobileRotatingTextHeight: 32,
-  desktopRotatingTextHeight: 80,
-  desktopRotatingTextWidth: 450, // Increased from 300 to 450 for longer texts
+  desktopRotatingTextHeight: 100, // Increased from 80 to 100 for improved vertical fit
+  desktopRotatingTextWidth: 520, // Increased from 450 to 520 for longest words
   // Use 'spring' for hero rotating text, to match best working sample
   animationTransition: {
     type: "spring" as const,
@@ -38,4 +37,3 @@ export const BUTTON_GLOW_CONFIGS = {
     intensity: 0.35
   }
 };
-
