@@ -98,26 +98,31 @@ export default function SignIn() {
       </div>
 
       {/* Mobile - Card design overlay */}
-      <div className="flex-1 flex flex-col lg:hidden items-center justify-center relative z-10">
+      <div className="flex-1 flex flex-col lg:hidden items-center justify-start relative z-10 min-h-screen">
         {/* Mobile Return to Home Button */}
-        <div className="absolute top-6 left-4 z-20">
+        <div className="absolute top-4 left-0 w-full flex justify-center z-20">
           <Link to="/">
             <Button
               variant="ghost"
-              className="bg-white/90 border border-gray-200 text-gray-700 hover:bg-white hover:text-gray-900 transition-all duration-300 rounded-xl px-4 py-2 shadow group"
+              className="bg-white/90 border border-gray-200 text-gray-700 hover:bg-white hover:text-gray-900 transition-all duration-300 rounded-xl px-5 py-2 shadow-md font-semibold text-base"
+              style={{
+                boxShadow: "0 4px 16px 0 rgba(155,203,255,0.11)",
+                fontWeight: 600
+              }}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Home
             </Button>
           </Link>
         </div>
-        <Card className="w-full max-w-sm mt-4 mx-2 py-6 px-5 rounded-2xl shadow-xl border border-gray-100 bg-white relative">
+        <Card className="w-full max-w-sm mt-24 mx-2 py-8 px-6 rounded-3xl shadow-2xl border border-gray-100 bg-white/95 relative animate-fade-in"
+          style={{ boxShadow: "0 8px 36px 0 rgba(155,203,255,0.12)" }}>
           <CardContent className="p-0">
             <div className="w-full space-y-5">
               {/* Header */}
-              <div className="text-center mb-1">
-                <h1 className="text-xl font-bold text-gray-900 mb-0.5">Welcome back!</h1>
-                <p className="text-sm text-gray-600">Your trusted healthcare community awaits</p>
+              <div className="text-center mb-2 mt-1">
+                <h1 className="text-2xl font-extrabold text-gray-900 mb-0.5 tracking-tight font-heading" style={{ letterSpacing: '-0.03em' }}>Welcome back!</h1>
+                <p className="text-xs text-gray-700/80 font-roboto">Your trusted healthcare community awaits</p>
               </div>
               {/* Error Display */}
               {error && (
@@ -127,10 +132,10 @@ export default function SignIn() {
                 </div>
               )}
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-2.5">
                 {/* Email Field */}
                 <div className="space-y-0.5">
-                  <Label htmlFor="email" className="text-gray-700 font-medium text-xs">
+                  <Label htmlFor="email" className="text-gray-700 font-semibold text-xs">
                     Email Address
                   </Label>
                   <div className="relative">
@@ -140,7 +145,7 @@ export default function SignIn() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-9 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-xs"
+                      className="h-9 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-xl bg-white text-xs font-roboto"
                       required
                       placeholder="Enter your email"
                     />
@@ -149,12 +154,12 @@ export default function SignIn() {
                 {/* Password Field */}
                 <div className="space-y-0.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-gray-700 font-medium text-xs">
+                    <Label htmlFor="password" className="text-gray-700 font-semibold text-xs">
                       Password
                     </Label>
                     <button
                       type="button"
-                      className="text-xs text-[#9bcbff] hover:text-blue-700 font-medium"
+                      className="text-xs text-[#3989d1] hover:text-blue-700 font-medium"
                       onClick={() => navigate('/auth/reset-password')}
                     >
                       Forgot?
@@ -167,7 +172,7 @@ export default function SignIn() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-9 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-xs"
+                      className="h-9 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-xl bg-white text-xs font-roboto"
                       required
                       placeholder="Enter your password"
                     />
@@ -175,6 +180,7 @@ export default function SignIn() {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                      tabIndex={-1}
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -191,15 +197,16 @@ export default function SignIn() {
                     id="remember"
                     className="h-3 w-3 text-[#9bcbff] rounded border-gray-300"
                   />
-                  <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer">
+                  <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer font-roboto">
                     Remember me for 30 days
                   </Label>
                 </div>
                 {/* Sign In Button */}
                 <Button
-                  className="w-full h-9 bg-[#9bcbff] hover:bg-[#7bb3ff] text-white font-semibold rounded-lg shadow-md text-xs"
+                  className="w-full h-9 bg-[#3989d1] hover:bg-[#256ac0] text-white font-semibold rounded-xl shadow-md text-xs tracking-wide transition-all duration-150"
                   disabled={loading}
                   type="submit"
+                  style={{ boxShadow: "0 2px 8px 0 rgba(30,137,209,0.08)" }}
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
@@ -217,7 +224,7 @@ export default function SignIn() {
                   Don't have an account?{' '}
                   <Link
                     to="/sign-up"
-                    className="text-[#9bcbff] hover:text-blue-700 font-semibold"
+                    className="text-[#3989d1] hover:text-blue-700 font-semibold"
                   >
                     Sign up
                   </Link>
