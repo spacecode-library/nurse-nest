@@ -14,7 +14,7 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
       {/* Mobile Header */}
       <div 
         className="absolute w-full px-4 z-20"
-        style={{ top: '25vh' }}
+        style={{ top: '30vh' }}
       >
         <h1 className="tracking-tighter font-regular text-white leading-tight text-4xl">
           <span className="block text-white mb-2">Need a</span>
