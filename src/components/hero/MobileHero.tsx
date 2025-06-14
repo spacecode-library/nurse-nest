@@ -14,10 +14,10 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
       {/* Mobile Header */}
       <div 
         className="absolute w-full px-4 z-20"
-        style={{ top: '30vh' }}
+        style={{ top: '25vh' }}
       >
         <h1 className="tracking-tighter font-regular text-white leading-tight text-4xl">
-          <span className="block text-white mb-2">Need a</span>
+          <span className="block text-white">Need a</span>
           
           <RotatingText titles={titles} titleNumber={titleNumber} isMobile={true} />
           
