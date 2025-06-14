@@ -351,10 +351,10 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
         <div className="flex flex-col md:flex-row md:gap-8">
           {/* Sidebar */}
           <div className="w-full md:w-[260px] md:pr-4 mb-10 md:mb-0 flex-shrink-0 flex flex-col items-center">
-            {/* Table of Contents Heading (centered, bigger) */}
-            <div className="mb-5 w-full flex flex-col items-center">
+            {/* Table of Contents Heading */}
+            <div className="mb-4 w-full flex flex-col items-center">
               <div
-                className="text-2xl md:text-3xl font-black text-gray-900 mb-1 text-center w-full"
+                className="text-base md:text-lg font-semibold text-gray-900 text-center w-full"
                 style={{
                   letterSpacing: "-0.01em",
                   lineHeight: 1.2
@@ -362,7 +362,6 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
               >
                 Table of Contents
               </div>
-              <div className="bg-gray-100 h-[2px] w-14 mx-auto my-2 rounded-full"/>
             </div>
             {/* Categories */}
             <nav aria-label="Table of Contents" className="w-full">
@@ -378,10 +377,9 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                       className={cn(
                         "w-full text-left py-1 px-2 rounded transition-colors font-medium text-sm md:text-sm tracking-tight",
                         selected?.id === cat.id
-                          ? "text-blue-700 font-black"
-                          : "text-gray-700 hover:text-blue-700"
+                          ? "text-[#9bcbff] font-black"
+                          : "text-gray-700 hover:text-[#9bcbff]"
                       )}
-                      // REMOVE underline styling and highlight/box:
                       style={undefined}
                       aria-current={selected?.id === cat.id ? 'page' : undefined}
                     >
