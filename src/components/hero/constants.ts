@@ -2,12 +2,13 @@
 // Animation constants
 export const ANIMATION_CONFIG = {
   rotationInterval: 2000,
-  mobileRotatingTextHeight: 32,
-  desktopRotatingTextHeight: 80,
+  mobileRotatingTextHeight: 40,
+  desktopRotatingTextHeight: 60,
   desktopRotatingTextWidth: 300,
   animationTransition: {
     type: "spring" as const,
-    stiffness: 50
+    stiffness: 60,
+    damping: 15
   }
 };
 

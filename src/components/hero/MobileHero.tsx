@@ -11,18 +11,18 @@ interface MobileHeroProps extends RotatingTextProps {}
 export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
   return (
     <div className="w-full h-screen relative">
-      {/* Mobile Header with improved semantics */}
+      {/* Mobile Header with improved semantics and typography */}
       <header 
         className="absolute w-full px-4 z-20"
         style={{ top: '25vh' }}
         role="banner"
       >
         <h1 className="tracking-tighter font-regular text-white leading-tight text-4xl">
-          <span className="block text-white mt-1">Need a</span>
+          <span className="block text-white mb-1">Need a</span>
           
           <RotatingText titles={titles} titleNumber={titleNumber} isMobile={true} />
           
-          <span className="block text-white">nurse?</span>
+          <span className="block text-white mt-1">nurse?</span>
         </h1>
       </header>
 
