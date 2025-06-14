@@ -376,7 +376,8 @@ export default function LuxuriousFaqSection({ isVisible, onClose }: LuxuriousFaq
                         setSearchTerm('');
                       }}
                       className={cn(
-                        "w-full text-left py-1 px-2 rounded transition-colors font-medium text-xs md:text-sm tracking-tight focus:outline-none focus-visible:outline-none",
+                        // Update font size: text-sm on mobile, md:text-base on tablet+
+                        "w-full text-left py-1 px-2 rounded transition-colors font-semibold text-sm md:text-base tracking-tight focus:outline-none focus-visible:outline-none",
                         activeCategory === cat.id
                           ? "text-[#9bcbff] font-black"
                           : "text-gray-700",
