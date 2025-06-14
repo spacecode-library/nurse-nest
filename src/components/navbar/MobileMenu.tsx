@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -48,35 +47,33 @@ export default function MobileMenu({
   if (!isOpen) return null;
 
   return (
-    <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg border-t border-gray-200/50 mx-4 rounded-b-2xl z-40">
-      <div className="px-6 py-4 space-y-4">
-        {/* Navigation Links (Sign In between Home and Pricing) */}
-        <div className="space-y-2">
+    <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg border-t border-gray-200/50 mx-2 sm:mx-4 rounded-b-2xl z-40">
+      <div className="px-3 py-3 sm:px-6 sm:py-4 space-y-4">
+        {/* Navigation Links */}
+        <div className="space-y-1.5 sm:space-y-2">
           {/* Home */}
           <Link
             to="/"
             onClick={() => handleNavClick('/')}
-            className="block font-medium text-gray-700 hover:text-brand-primary py-2"
+            className="block font-medium text-gray-700 hover:text-brand-primary py-2 px-1 rounded transition-colors"
           >
             Home
           </Link>
-
           {/* Sign In */}
           {!user && (
             <Link
               to="/sign-in"
               onClick={() => handleNavClick('/sign-in')}
-              className="block font-medium text-gray-700 hover:text-brand-primary py-2"
+              className="block font-medium text-gray-700 hover:text-brand-primary py-2 px-1 rounded transition-colors"
             >
               Sign In
             </Link>
           )}
-
           {/* Pricing */}
           <Link
             to="/pricing"
             onClick={() => handleNavClick('/pricing')}
-            className="block font-medium text-gray-700 hover:text-brand-primary py-2"
+            className="block font-medium text-gray-700 hover:text-brand-primary py-2 px-1 rounded transition-colors"
           >
             Pricing
           </Link>
@@ -92,18 +89,33 @@ export default function MobileMenu({
             {/* For Nurses Dropdown */}
             <AccordionItem value="nurse">
               <AccordionTrigger
-                className="block font-medium text-gray-700 hover:text-brand-primary py-2 px-0 focus:outline-none shadow-none ring-0 border-0 bg-transparent"
+                // match link styling on mobile/tablet: font, size, padding, no font-bold
+                className="
+                  block font-medium text-gray-700
+                  hover:text-brand-primary
+                  py-2 px-1 rounded transition-all
+                  bg-transparent shadow-none ring-0 border-0
+                  text-base sm:text-base
+                  h-auto min-h-0 leading-normal
+                  [&>svg]:ml-2  // icon spacing
+                  "
+                style={{
+                  fontWeight: 500,
+                  fontSize: "1rem",
+                  paddingLeft: "0.25rem",
+                  paddingRight: "0.25rem",
+                }}
               >
                 For Nurses
               </AccordionTrigger>
               <AccordionContent>
-                <div className="ml-3 space-y-2">
+                <div className="ml-3 sm:ml-4 space-y-2">
                   <button
                     onClick={() => {
                       handleApplyNowClick();
                       setIsOpen(false);
                     }}
-                    className="block font-medium text-gray-600 hover:text-brand-primary"
+                    className="block font-medium text-gray-600 hover:text-brand-primary py-1 px-0"
                   >
                     Apply Now
                   </button>
@@ -113,7 +125,7 @@ export default function MobileMenu({
                         key={link.name}
                         to={link.path}
                         onClick={() => handleNavClick(link.path)}
-                        className="block font-medium text-gray-600 hover:text-brand-primary"
+                        className="block font-medium text-gray-600 hover:text-brand-primary py-1 px-0"
                       >
                         {link.name}
                       </Link>
@@ -122,23 +134,36 @@ export default function MobileMenu({
                 </div>
               </AccordionContent>
             </AccordionItem>
-
             {/* Care Services Dropdown */}
             <AccordionItem value="care">
               <AccordionTrigger
-                className="block font-medium text-gray-700 hover:text-brand-primary py-2 px-0 focus:outline-none shadow-none ring-0 border-0 bg-transparent"
+                className="
+                  block font-medium text-gray-700
+                  hover:text-brand-primary
+                  py-2 px-1 rounded transition-all
+                  bg-transparent shadow-none ring-0 border-0
+                  text-base sm:text-base
+                  h-auto min-h-0 leading-normal
+                  [&>svg]:ml-2
+                  "
+                style={{
+                  fontWeight: 500,
+                  fontSize: "1rem",
+                  paddingLeft: "0.25rem",
+                  paddingRight: "0.25rem",
+                }}
               >
                 Care Services
               </AccordionTrigger>
               <AccordionContent>
-                <div className="ml-3 space-y-2">
+                <div className="ml-3 sm:ml-4 space-y-2">
                   {careServicesDropdownSections.map((section) =>
                     section.links.map((link) => (
                       <Link
                         key={link.name}
                         to={link.path}
                         onClick={() => handleNavClick(link.path)}
-                        className="block font-medium text-gray-600 hover:text-brand-primary"
+                        className="block font-medium text-gray-600 hover:text-brand-primary py-1 px-0"
                       >
                         {link.name}
                       </Link>
@@ -157,7 +182,7 @@ export default function MobileMenu({
               <Link
                 to="/dashboard"
                 onClick={() => handleNavClick('/dashboard')}
-                className="block text-gray-700 hover:text-brand-primary font-medium"
+                className="block text-gray-700 hover:text-brand-primary font-medium py-2 px-1 rounded"
               >
                 Dashboard
               </Link>
@@ -166,13 +191,12 @@ export default function MobileMenu({
                   signOut();
                   setIsOpen(false);
                 }}
-                className="block w-full text-left text-gray-700 hover:text-brand-primary font-medium"
+                className="block w-full text-left text-gray-700 hover:text-brand-primary font-medium py-2 px-1 rounded"
               >
                 Sign Out
               </button>
             </div>
           ) : null}
-
           {/* Request a Nurse Button */}
           <div className="relative">
             <GlowEffect
@@ -188,7 +212,7 @@ export default function MobileMenu({
                 handleRequestNurse();
                 setIsOpen(false);
               }}
-              className="relative w-full bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold"
+              className="relative w-full bg-gradient-to-r from-[#9bcbff] to-[#3b82f6] hover:from-[#7dd3fc] hover:to-[#2563eb] text-white font-semibold mt-1"
             >
               Request a Nurse
             </Button>
