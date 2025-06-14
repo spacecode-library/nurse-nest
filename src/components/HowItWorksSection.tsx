@@ -23,7 +23,7 @@ export default function HowItWorksSection() {
         <div className="text-center mb-6 md:mb-8">
           <div className="flex justify-center mb-4 md:mb-6">
             <img 
-              src="/lovable-uploads/adaa6990-ba69-4586-88e7-03c12d0fd8b8.png" 
+              src={isMobile ? "/lovable-uploads/f00fda9e-52dd-457d-983d-8710d48ec56a.png" : "/lovable-uploads/adaa6990-ba69-4586-88e7-03c12d0fd8b8.png"}
               alt="Why Choose NurseNest" 
               className={`w-auto object-contain ${
                 isMobile 
