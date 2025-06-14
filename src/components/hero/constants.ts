@@ -1,9 +1,10 @@
+
 // Animation constants
 export const ANIMATION_CONFIG = {
   rotationInterval: 2000,
-  mobileRotatingTextHeight: 64,     // was 32, now taller for 4xl text & motion
-  desktopRotatingTextHeight: 85,    // was 100, slightly reduced for less vertical gap
-  desktopRotatingTextWidth: 520,     // unchanged
+  mobileRotatingTextHeight: 44,     // Reduced from 64 to 44 to group 'nurse?' closer on mobile/tablet
+  desktopRotatingTextHeight: 85,    // unchanged for desktop
+  desktopRotatingTextWidth: 520,    // unchanged
   // Use 'spring' for hero rotating text, to match best working sample
   animationTransition: {
     type: "spring" as const,
