@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,8 @@ import { signIn, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
 import { BeamsBackground } from '@/components/ui/beams-background';
 import { OptimizedBackground } from '@/components/ui/optimized-background';
+import DiagonalSplitBackground from '@/components/DiagonalSplitBackground';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -90,26 +91,151 @@ export default function SignIn() {
   };
   
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Mobile Return to Home Button - Visible only on mobile */}
-      <div className="lg:hidden absolute top-4 left-4 z-50">
-        <Link to="/">
-          <div className="relative group">
-            {/* Glow effect */}
-            <div className="absolute -inset-2 bg-blue-500/20 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-            
-            {/* Button */}
+    <div className="min-h-screen bg-white flex relative">
+      {/* Diagonal split background, only mobile */}
+      <div className="absolute inset-0 z-0 lg:hidden">
+        <DiagonalSplitBackground />
+      </div>
+
+      {/* Mobile - Card design overlay */}
+      <div className="flex-1 flex flex-col lg:hidden items-center justify-center relative z-10">
+        {/* Mobile Return to Home Button */}
+        <div className="absolute top-6 left-4 z-20">
+          <Link to="/">
             <Button
               variant="ghost"
-              className="relative bg-white/90 backdrop-blur-md border border-gray-200 text-gray-700 hover:bg-white hover:text-gray-900 transition-all duration-300 rounded-xl px-4 py-2 shadow-lg"
+              className="bg-white/90 border border-gray-200 text-gray-700 hover:bg-white hover:text-gray-900 transition-all duration-300 rounded-xl px-4 py-2 shadow group"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Home
             </Button>
-          </div>
-        </Link>
+          </Link>
+        </div>
+        <Card className="w-full max-w-sm mt-4 mx-2 py-6 px-5 rounded-2xl shadow-xl border border-gray-100 bg-white relative">
+          <CardContent className="p-0">
+            <div className="w-full space-y-5">
+              {/* Header */}
+              <div className="text-center mb-1">
+                <h1 className="text-xl font-bold text-gray-900 mb-0.5">Welcome back!</h1>
+                <p className="text-sm text-gray-600">Your trusted healthcare community awaits</p>
+              </div>
+              {/* Error Display */}
+              {error && (
+                <div className="p-2 bg-red-50 border border-red-200 rounded flex items-start space-x-2">
+                  <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-red-700 text-xs">{error}</span>
+                </div>
+              )}
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-3">
+                {/* Email Field */}
+                <div className="space-y-0.5">
+                  <Label htmlFor="email" className="text-gray-700 font-medium text-xs">
+                    Email Address
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="h-9 pl-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-xs"
+                      required
+                      placeholder="Enter your email"
+                    />
+                  </div>
+                </div>
+                {/* Password Field */}
+                <div className="space-y-0.5">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="text-gray-700 font-medium text-xs">
+                      Password
+                    </Label>
+                    <button
+                      type="button"
+                      className="text-xs text-[#9bcbff] hover:text-blue-700 font-medium"
+                      onClick={() => navigate('/auth/reset-password')}
+                    >
+                      Forgot?
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <LockKeyhole className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-9 pl-9 pr-9 border-gray-200 focus:border-[#9bcbff] rounded-lg bg-white text-xs"
+                      required
+                      placeholder="Enter your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                {/* Remember Me */}
+                <div className="flex items-center space-x-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    className="h-3 w-3 text-[#9bcbff] rounded border-gray-300"
+                  />
+                  <Label htmlFor="remember" className="text-xs text-gray-600 cursor-pointer">
+                    Remember me for 30 days
+                  </Label>
+                </div>
+                {/* Sign In Button */}
+                <Button
+                  className="w-full h-9 bg-[#9bcbff] hover:bg-[#7bb3ff] text-white font-semibold rounded-lg shadow-md text-xs"
+                  disabled={loading}
+                  type="submit"
+                >
+                  {loading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Signing in...</span>
+                    </div>
+                  ) : (
+                    'Sign In'
+                  )}
+                </Button>
+              </form>
+              {/* Footer */}
+              <div className="text-center">
+                <p className="text-gray-600 text-xs">
+                  Don't have an account?{' '}
+                  <Link
+                    to="/sign-up"
+                    className="text-[#9bcbff] hover:text-blue-700 font-semibold"
+                  >
+                    Sign up
+                  </Link>
+                </p>
+              </div>
+              {/* Security Badge */}
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-1 text-[10px] text-gray-500">
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                  <span>SSL Secured</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
+      
+      {/* Desktop Layout unchanged */}
       {/* Left Side - Optimized Architectural Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <OptimizedBackground
