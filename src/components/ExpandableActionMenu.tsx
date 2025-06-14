@@ -1,6 +1,6 @@
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Plus, MessageCircleQuestion, Stethoscope } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ExpandableActionMenuProps {
@@ -60,26 +60,28 @@ export default function ExpandableActionMenu({
         aria-hidden="true"
         onClick={() => setOpen(false)}
       />
-      {/* Action buttons */}
+      {/* Action buttons (rounded squares with text) */}
       <div className="relative flex flex-col items-end" style={{ minWidth: 60 }}>
-        <div className="flex flex-col space-y-3 mb-3"
-             style={{
-               // Animate stack-out, vertically spreading
-               pointerEvents: open ? "auto" : "none",
-             }}
+        <div
+          className="flex flex-col space-y-3 mb-3"
+          style={{
+            pointerEvents: open ? "auto" : "none",
+          }}
         >
           {/* FAQ Action */}
           <button
             ref={faqBtn}
             className={cn(
-              "w-14 h-14 rounded-full flex items-center justify-center text-white bg-blue-600 shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-90",
+              "min-w-[140px] h-14 px-5 rounded-xl flex items-center justify-center font-semibold text-base shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-95",
               "dropdown-fab-btn",
               open
                 ? "opacity-100 translate-y-0 scale-100 pointer-events-auto animate-fade-in-up"
-                : "opacity-0 translate-y-4 scale-95 pointer-events-none"
+                : "opacity-0 translate-y-4 scale-95 pointer-events-none",
+              "bg-blue-600 text-white hover:bg-blue-700"
             )}
             style={{
               transitionDelay: open ? "70ms" : "0ms",
+              letterSpacing: ".01em"
             }}
             onClick={() => {
               setOpen(false);
@@ -88,28 +90,30 @@ export default function ExpandableActionMenu({
             aria-label="Open FAQ"
             tabIndex={open ? 0 : -1}
           >
-            <MessageCircleQuestion size={28} />
+            FAQ
           </button>
-          {/* Request Nurse */}
+          {/* Get Nurse Action */}
           <button
             className={cn(
-              "w-14 h-14 rounded-full flex items-center justify-center text-white bg-teal-600 shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-90",
+              "min-w-[140px] h-14 px-5 rounded-xl flex items-center justify-center font-semibold text-base shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 active:scale-95",
               "dropdown-fab-btn",
               open
                 ? "opacity-100 translate-y-0 scale-100 pointer-events-auto animate-fade-in-up"
-                : "opacity-0 translate-y-4 scale-95 pointer-events-none"
+                : "opacity-0 translate-y-4 scale-95 pointer-events-none",
+              "bg-teal-600 text-white hover:bg-teal-700"
             )}
             style={{
               transitionDelay: open ? "130ms" : "0ms",
+              letterSpacing: ".01em"
             }}
             onClick={() => {
               setOpen(false);
               onRequestNurse();
             }}
-            aria-label="Request a Nurse"
+            aria-label="Get Nurse"
             tabIndex={open ? 0 : -1}
           >
-            <Stethoscope size={26} />
+            Get Nurse
           </button>
         </div>
         {/* Main FAB */}
