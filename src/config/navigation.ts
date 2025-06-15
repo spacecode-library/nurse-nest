@@ -1,4 +1,3 @@
-
 export interface NavLink {
   name: string;
   path: string;
@@ -29,13 +28,13 @@ export const nurseDropdownSections: DropdownSection[] = [
     links: [
       { name: 'LLC Setup Guide', path: '/nurse-llc-setup-guide' },
       { name: 'EIN Applications', path: '/blog/ein-applications-independent-contract-nurses' },
-      { name: 'Business Banking', path: '/blog/business-banking-setup-guide-nurses' }, // Updated path
+      { name: 'Business Banking', path: '/blog/business-banking-setup-guide-nurses' },
     ]
   },
   {
     title: 'Professional Resources',
     links: [
-      { name: 'Malpractice Insurance', path: '/malpractice-insurance' }, // FIXED path here
+      { name: 'Malpractice Insurance', path: '/malpractice-insurance' },
       { name: '1099 Tax Tips', path: '/1099-tax-tips' },
     ]
   }
@@ -48,7 +47,6 @@ export const careServicesDropdownSections: DropdownSection[] = [
     links: [
       { name: 'Newborn Care', path: '/newborn-nurse-support-guide' },
       { name: 'Elderly Care', path: '/elderly-care-nurse-services' },
-      { name: 'Wound Care', path: '/wound-care-nursing-guide' },
       { name: 'Post-Surgical Care', path: '/post-surgical-care' },
     ]
   }

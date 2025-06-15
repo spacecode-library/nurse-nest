@@ -33,7 +33,6 @@ import NewbornNurseSupport from "./pages/NewbornNurseSupport";
 
 // Care Service Pages
 import PostSurgicalCare from "./pages/PostSurgicalCare";
-import WoundCareNursingGuide from "./pages/WoundCareNursingGuide";
 
 // Payment Pages
 import Payment from "./pages/Payment";
@@ -93,7 +92,6 @@ export default function App() {
               
               {/* Care Service Routes */}
               <Route path="/post-surgical-care" element={<PostSurgicalCare />} />
-              <Route path="/wound-care-nursing-guide" element={<WoundCareNursingGuide />} />
               
               {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
