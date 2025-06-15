@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -57,6 +56,7 @@ import LlcSetupHelp from "./pages/LlcSetupHelp";
 import TaxTips from "./pages/TaxTips";
 import NurseLlcSetup from "./pages/NurseLlcSetup";
 import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
+import EinApplications from "./pages/EinApplications";
 
 export default function App() {
   return (
@@ -116,6 +116,7 @@ export default function App() {
               <Route path="/1099-tax-tips" element={<TaxTips />} />
               <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
               <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
+              <Route path="/blog/ein-applications-independent-contract-nurses" element={<EinApplications />} />
               
               {/* 404 Route */}
               <Route path="*" element={<NotFound />} />
