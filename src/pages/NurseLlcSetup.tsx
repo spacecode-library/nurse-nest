@@ -1,8 +1,6 @@
-
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 
 export default function NurseLlcSetup() {
   return (
@@ -18,15 +16,8 @@ export default function NurseLlcSetup() {
               <span>•</span>
               <span>12 min read</span>
             </div>
-            <OptimizedImage 
-              src="/lovable-uploads/photo-1488590528505-98d2b5aba04b.png"
-              alt="Laptop and paperwork for LLC setup"
-              className="w-full max-w-xl mx-auto rounded-xl shadow-md border border-blue-100"
-              priority
-            />
           </div>
         </section>
-
         {/* Content Section */}
         <section className="py-14">
           <div className="container max-w-6xl mx-auto px-4">
@@ -41,12 +32,7 @@ export default function NurseLlcSetup() {
                   <p className="mb-8 text-lg md:text-xl leading-relaxed">
                     This comprehensive guide walks you through every step — from choosing a business name to obtaining necessary licenses — so you can launch and run your practice with peace of mind.
                   </p>
-                  <OptimizedImage
-                    src="/lovable-uploads/photo-1649972904349-6e44c42644a7.png"
-                    alt="Nurse working on business planning"
-                    className="rounded-lg w-full max-w-lg mx-auto mb-6 shadow"
-                  />
-                  <blockquote className="bg-blue-50 border-l-4 border-blue-400 p-5 mb-10 rounded-md text-blue-900 text-base italic">
+                  <blockquote className="bg-blue-50 border-l-4 border-blue-400 p-5 mb-10 rounded-md text-blue-900 text-base italic mt-0">
                     “Whether you’re launching a private practice, home health services, or consulting, understanding LLC formation is <span className="font-bold">crucial for protecting your personal assets</span> and establishing long-term credibility.”
                   </blockquote>
                 </div>
@@ -83,11 +69,6 @@ export default function NurseLlcSetup() {
                   </section>
                   <section className="mb-12">
                     <h2 id="benefits-nurses" className="font-bold text-2xl md:text-3xl mt-10 mb-3">Benefits of LLC Formation for Nurses</h2>
-                    <OptimizedImage
-                      src="/lovable-uploads/photo-1581091226825-a6a2a5aee158.png"
-                      alt="Nurse reviewing LLC benefits"
-                      className="rounded-lg w-full max-w-md mx-auto mb-6 shadow"
-                    />
                     <h3 className="font-semibold text-lg mt-5 mb-2">Liability Protection</h3>
                     <p className="mb-4">The primary benefit of LLC formation is liability protection. If your nursing practice faces a lawsuit or incurs debt, your personal assets remain protected. Only business assets are at risk.</p>
                     <h3 className="font-semibold text-lg mt-5 mb-2">Tax Flexibility</h3>
@@ -245,11 +226,6 @@ export default function NurseLlcSetup() {
                     <h2 id="state-requirements" className="font-bold text-2xl md:text-3xl mt-10 mb-3">State-Specific Requirements</h2>
                     <p className="mb-4">LLC formation requirements vary by state. Research your state for filing fees, annual reports, and ongoing compliance.</p>
                     <h3 className="font-semibold text-lg mt-4 mb-2">High-Volume Nursing States</h3>
-                    <OptimizedImage
-                      src="/lovable-uploads/photo-1461749280684-dccba630e2f6.png"
-                      alt="Map and documents for state requirements"
-                      className="rounded-md w-full max-w-md mx-auto mb-6 shadow"
-                    />
                     <p>
                       States like California, Texas, Florida, and New York have specific requirements for healthcare-related LLCs that may include additional documentation or licensing.
                     </p>
@@ -297,11 +273,6 @@ export default function NurseLlcSetup() {
                     <h2 className="font-bold text-2xl md:text-3xl mt-10 mb-3">Conclusion</h2>
                     <p className="mb-4">Forming an LLC is a significant step toward establishing a professional nursing practice with proper liability protection and tax benefits. While the process involves multiple steps and ongoing requirements, the protection and credibility an LLC provides make it worthwhile for most independent nurses.</p>
                     <p className="mb-4">Remember that LLC formation is just the beginning. Maintaining proper records, staying compliant with state requirements, and keeping personal and business finances separate are ongoing responsibilities that ensure your LLC provides maximum protection.</p>
-                    <OptimizedImage
-                      src="/lovable-uploads/photo-1500673922987-e212871fec22.png"
-                      alt="Peaceful practice, successful business"
-                      className="rounded-lg w-full max-w-lg mx-auto mb-4 shadow"
-                    />
                     <p>Whether you&apos;re starting a home health practice, launching a nursing consultancy, or providing specialized care services, proper business structure is the foundation for long-term success.</p>
                   </section>
                   {/* Disclaimer */}
@@ -331,11 +302,6 @@ export default function NurseLlcSetup() {
                     <li><a href="/malpractice-insurance-for-nurses" className="hover:underline">Insurance Requirements</a></li>
                     <li><a href="/blog/ein-vs-ssn-what-nurses-need-to-know" className="hover:underline">EIN vs SSN Guide</a></li>
                   </ul>
-                  <OptimizedImage
-                    src="/lovable-uploads/photo-119a6708-a3cb-400b-ac7b-c2437a103499.png"
-                    alt="Resourceful nurse reviewing articles"
-                    className="rounded-lg w-full mt-7 mb-2 border shadow"
-                  />
                 </div>
                 {/* Professional Services */}
                 <div className="p-6 bg-gray-100 rounded-lg shadow">
@@ -344,17 +310,11 @@ export default function NurseLlcSetup() {
                     <a href="https://legalzoomcominc.pxf.io/aOYdEN" target="_blank" rel="noopener" className="w-full text-center px-4 py-2 bg-[#9bcbff] text-white rounded-md font-medium transition hover:bg-[#3b82f6]">LegalZoom LLC Services</a>
                     <a href="http://shrsl.com/2qj12-1hzb-kp67" target="_blank" rel="noopener" className="w-full text-center px-4 py-2 bg-[#1e293b] text-white rounded-md font-medium transition hover:bg-[#3b82f6]">Northwest Registered Agent</a>
                   </div>
-                  <OptimizedImage
-                    src="/lovable-uploads/photo-77ddc10d-2117-4745-8bba-2347c09f1bb7.png"
-                    alt="Professional advisors directory"
-                    className="rounded-lg w-full mt-7 mb-2 border shadow"
-                  />
                 </div>
               </aside>
             </div>
           </div>
         </section>
-
         {/* CTA Section */}
         <section className="py-16 bg-gradient-to-br from-[#9bcbff] to-[#3b82f6] text-white text-center">
           <div className="container max-w-3xl mx-auto px-4">
@@ -368,5 +328,4 @@ export default function NurseLlcSetup() {
     </div>
   );
 }
-
 // Note: This file is now very long. For easier maintenance, please consider splitting sections or components into separate files.
