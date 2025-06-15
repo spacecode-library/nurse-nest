@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -35,7 +34,8 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
 
   // Style for section headers to look like non-clickable headings, more subtle/muted
   const sectionLabelClass =
-    "text-xs text-muted-foreground font-semibold uppercase tracking-wider px-3 pt-3 pb-1 select-none pointer-events-none";
+    "text-xs text-muted-foreground font-semibold uppercase tracking-wider px-3 pt-3 pb-1 select-none pointer-events-none"
+    + " text-[#9bcbff]"; // Use the requested section title color
 
   // Helper to handle click for items
   const handleItemClick = (item: NavLink) => {
