@@ -33,6 +33,10 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
   const textClass =
     "font-medium text-gray-900 transition-colors duration-200 " + highlightClass;
 
+  // Style for section headers to look like non-clickable headings, more subtle/muted
+  const sectionLabelClass =
+    "text-xs text-muted-foreground font-semibold uppercase tracking-wider px-3 pt-3 pb-1 select-none pointer-events-none";
+
   // Helper to handle click for items
   const handleItemClick = (item: NavLink) => {
     if (item.name === "Apply Now") {
@@ -62,7 +66,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         {nurseDropdownSections.map((section, secIdx) => (
           <React.Fragment key={section.title}>
             {secIdx > 0 && <DropdownMenuSeparator />}
-            <DropdownMenuLabel className="text-base font-semibold pt-2 pb-1 px-3">{section.title}</DropdownMenuLabel>
+            <div className={sectionLabelClass}>{section.title}</div>
             {section.links.map((item) => (
               <DropdownMenuItem
                 key={item.name}
