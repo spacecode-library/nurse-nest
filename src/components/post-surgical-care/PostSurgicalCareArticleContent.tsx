@@ -118,66 +118,90 @@ export default function PostSurgicalCareArticleContent() {
 
   return (
     <div className="prose prose-lg max-w-none">
+      {/* Enhanced Introduction Section */}
       <AnimatedSection delay={0} animation="fade-up">
-        <p className={
-          `lead text-xl text-gray-600 transition-opacity duration-700
-            ${heroReveal[0] ? "opacity-100" : "opacity-0 translate-y-7"}`
-        }>
-          Successful surgery is just the beginning of your healing journey. The quality of post-operative care you receive at home can dramatically impact your recovery speed, comfort level, and overall outcomes. Professional in-home post-surgical nursing care provides the expertise, monitoring, and support needed for optimal healing while allowing you to recover in the comfort of your own home.
-        </p>
+        <div className="mb-12">
+          <div className={`bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 rounded-2xl p-8 border border-blue-100 shadow-sm transition-opacity duration-700 ${heroReveal[0] ? "opacity-100" : "opacity-0 translate-y-7"}`}>
+            <div className="flex items-start gap-4 mb-6">
+              <LuxIcon>
+                <Heart className="w-8 h-8 text-blue-600" />
+              </LuxIcon>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3 leading-tight">
+                  Your Journey to Complete Recovery Starts Here
+                </h2>
+                <p className="text-xl leading-relaxed text-gray-700 mb-4">
+                  Successful surgery is just the beginning of your healing journey. The quality of post-operative care you receive at home can dramatically impact your recovery speed, comfort level, and overall outcomes.
+                </p>
+                <p className="text-lg text-gray-600">
+                  Professional in-home post-surgical nursing care provides the expertise, monitoring, and support needed for optimal healing while allowing you to recover in the comfort of your own home.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </AnimatedSection>
 
       <AnimatedSection delay={80} animation="fade-up" id="what-is-post-surgical-care" className="mb-12">
-        <h2 className={
-          `text-2xl font-bold text-gray-800 transition-opacity duration-700 mb-6
-            ${heroReveal[1] ? "opacity-100" : "opacity-0 translate-y-9"}`
-        }>
-          What is Post-Surgical Care?
-        </h2>
-        <p className="text-lg mb-4">
-          Post-surgical care, also known as post-operative care, encompasses the comprehensive medical and supportive services provided after a surgical procedure. This specialized care focuses on promoting healing, preventing complications, managing pain, and helping patients safely transition back to their normal activities.
-        </p>
-        <p className="mb-6">
-          Post-surgical nursing care is particularly valuable because it bridges the gap between hospital discharge and full recovery, providing professional oversight during the most vulnerable period of your healing process.
-        </p>
+        <div className="mb-8">
+          <h2 className={`text-3xl font-bold text-gray-800 transition-opacity duration-700 mb-6 ${heroReveal[1] ? "opacity-100" : "opacity-0 translate-y-9"}`}>
+            What is Post-Surgical Care?
+          </h2>
+          
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-6">
+            <p className="text-lg mb-4 leading-relaxed text-gray-700">
+              Post-surgical care, also known as <strong>post-operative care</strong>, encompasses the comprehensive medical and supportive services provided after a surgical procedure. This specialized care focuses on promoting healing, preventing complications, managing pain, and helping patients safely transition back to their normal activities.
+            </p>
+            <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
+              <p className="text-gray-700 leading-relaxed">
+                <strong className="text-blue-800">Why it matters:</strong> Post-surgical nursing care is particularly valuable because it bridges the gap between hospital discharge and full recovery, providing professional oversight during the most vulnerable period of your healing process.
+              </p>
+            </div>
+          </div>
+        </div>
         
-        <div className="bg-blue-50 border-l-4 border-blue-400 p-6 my-6 rounded-r-lg">
-          <h3 className="text-lg font-semibold text-blue-800 mb-3">Essential Components of Post-Surgical Care</h3>
-          <div className="grid md:grid-cols-2 gap-4">
-            <ul className="space-y-2">
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>24/7 professional monitoring and assessment</span>
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+          <h3 className="text-xl font-semibold text-blue-800 mb-4 flex items-center gap-3">
+            <LuxIcon>
+              <CheckCircle className="w-6 h-6 text-blue-600" />
+            </LuxIcon>
+            Essential Components of Post-Surgical Care
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">24/7 professional monitoring and assessment</span>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Advanced wound care and infection prevention</span>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Advanced wound care and infection prevention</span>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Comprehensive pain management</span>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Comprehensive pain management</span>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Medication administration and monitoring</span>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Medication administration and monitoring</span>
               </li>
             </ul>
-            <ul className="space-y-2">
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Mobility assistance and physical therapy support</span>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Mobility assistance and physical therapy support</span>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Nutritional guidance and meal planning</span>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Nutritional guidance and meal planning</span>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Family education and caregiver training</span>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Family education and caregiver training</span>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Coordination with your healthcare team</span>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Coordination with your healthcare team</span>
               </li>
             </ul>
           </div>
