@@ -42,7 +42,7 @@ export default function BusinessBankingSetupGuideNurses() {
       <NurseNestNavbar isHomePage={false} />
       {/* Hero Section */}
       <section
-        className="w-full"
+        className="w-full pt-24"
         style={{ background: "linear-gradient(135deg, #f1f5f9 0%, #e0f2fe 100%)" }}
       >
         <Container>
