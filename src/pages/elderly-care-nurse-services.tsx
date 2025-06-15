@@ -10,7 +10,7 @@ export default function ElderlyCareBlog() {
       <div className="bg-white min-h-screen pt-24">
         {/* Hero Section */}
         <section className="w-full bg-gradient-to-br from-gray-50 via-sky-50 to-blue-100 py-12 border-b">
-          <div className="container mx-auto px-4 max-w-3xl text-center">
+          <div className="container mx-auto px-4 max-w-3xl md:max-w-4xl lg:max-w-5xl text-center">
             <h1 className="text-3xl md:text-5xl font-bold mb-5 text-nurse-dark">
               Navigating Elderly Care: A Family’s Guide to Quality Support
             </h1>
@@ -27,8 +27,8 @@ export default function ElderlyCareBlog() {
 
         {/* Main Content */}
         <section className="py-10 px-4">
-          <div className="container mx-auto flex flex-col lg:flex-row gap-10 justify-between max-w-6xl">
-            <article className="prose prose-blue min-w-0 max-w-3xl">
+          <div className="container mx-auto flex flex-col lg:flex-row gap-12 items-start max-w-7xl">
+            <article className="prose prose-blue min-w-0 flex-1">
               {/* Introduction */}
               <p>
                 With the rapid growth of the senior population, understanding the array of care solutions—and how to evaluate them—has never been more important for families. This guide covers in-home care, residential communities, care plan creation, technology solutions, insurance, cost, and crucial checklists for making confident decisions.
@@ -595,7 +595,7 @@ export default function ElderlyCareBlog() {
               </div>
             </article>
             {/* Sidebar Section */}
-            <aside className="w-full lg:w-64 flex-shrink-0 space-y-6 mt-8 lg:mt-0">
+            <aside className="w-full lg:w-80 flex-shrink-0 space-y-6 mt-8 lg:mt-0 sticky top-24">
               {/* Quick Navigation */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-2">
                 <h3 className="font-semibold text-blue-800 mb-1">Quick Navigation</h3>
