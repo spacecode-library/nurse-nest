@@ -21,7 +21,6 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
     ? "hover:text-[#3b82f6] focus:text-[#3b82f6]"
     : "hover:text-[#9bcbff] focus:text-[#9bcbff]";
 
-  // Remove ALL box, ring, border, and outline highlights on menu items
   const itemClass =
     "cursor-pointer py-3 bg-transparent hover:bg-transparent focus:bg-transparent border-none outline-none ring-0 focus:ring-0 focus-visible:outline-none focus:outline-none focus:border-none shadow-none";
 
@@ -42,7 +41,7 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
           Care Services <ChevronDown className="ml-1 h-4 w-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64">
+      <DropdownMenuContent className="w-64 z-[99] bg-white shadow-2xl">
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/newborn-nurse-support-guide')}
@@ -50,6 +49,15 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
         >
           <span className={textClass}>
             Newborn Care
+          </span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={itemClass}
+          onClick={() => navigate('/blog/complete-newborn-care-guide-for-nurses')}
+          tabIndex={0}
+        >
+          <span className={textClass}>
+            📖 Newborn Care Guide
           </span>
         </DropdownMenuItem>
         <DropdownMenuItem
