@@ -75,7 +75,7 @@ export default function GetEinNurseBusiness() {
           <div className="article-grid">
             <div className="article-card">
               <h3>
-                <a href="/blog/business-banking-setup-guide-nurses">
+                <a href="/business-bank-account-for-nurses">
                   Business Banking Setup Guide for Nurses: Complete Step-by-Step Process
                 </a>
               </h3>

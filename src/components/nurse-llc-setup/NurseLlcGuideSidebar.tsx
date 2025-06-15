@@ -3,7 +3,7 @@ import React from "react";
 
 const relatedArticles = [
   {
-    href: "/blog/business-banking-setup-guide-nurses",
+    href: "/business-bank-account-for-nurses",
     title: "Business Banking Setup Guide",
     description: "Essential guide for setting up business banking after LLC formation.",
     readTime: "11 min read",
