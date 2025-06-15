@@ -1,9 +1,7 @@
-
 import { Shield, Users, Star, Clock } from "lucide-react";
 import { Hero } from "@/components/AnimatedHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import { OptimizedBackground } from "@/components/ui/optimized-background";
-import { LuxIcon } from "@/components/post-surgical-care/LuxIcon";
 
 export default function HeroSection() {
   return (
@@ -48,27 +46,19 @@ export default function HeroSection() {
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center justify-center gap-8 text-white/80">
               <div className="flex items-center space-x-2">
-                <LuxIcon>
-                  <Shield className="h-5 w-5 text-blue-300" />
-                </LuxIcon>
+                <Shield className="h-5 w-5 text-blue-300" />
                 <span className="text-sm">HIPAA Compliant</span>
               </div>
               <div className="flex items-center space-x-2">
-                <LuxIcon>
-                  <Users className="h-5 w-5 text-green-300" />
-                </LuxIcon>
+                <Users className="h-5 w-5 text-green-300" />
                 <span className="text-sm">Licensed Professionals</span>
               </div>
               <div className="flex items-center space-x-2">
-                <LuxIcon>
-                  <Star className="h-5 w-5 text-yellow-300" />
-                </LuxIcon>
+                <Star className="h-5 w-5 text-yellow-300" />
                 <span className="text-sm">Verified Reviews</span>
               </div>
               <div className="flex items-center space-x-2">
-                <LuxIcon>
-                  <Clock className="h-5 w-5 text-teal-300" />
-                </LuxIcon>
+                <Clock className="h-5 w-5 text-teal-300" />
                 <span className="text-sm">24/7 Support</span>
               </div>
             </div>

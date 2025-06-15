@@ -24,17 +24,9 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
         role="banner"
       >
         <h1 className="tracking-tighter font-regular text-white leading-none text-4xl">
-          <span className="block text-white">
-            Need a
-          </span>
-          
-          <div>
-            <RotatingText titles={titles} titleNumber={titleNumber} isMobile={true} />
-          </div>
-          
-          <span className="block text-white">
-            nurse?
-          </span>
+          <span className="block text-white">Need a</span>
+          <RotatingText titles={titles} titleNumber={titleNumber} isMobile={true} />
+          <span className="block text-white">nurse?</span>
         </h1>
       </header>
 
@@ -43,7 +35,7 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
         className="absolute w-full px-4 z-20"
         style={{
           bottom: '80px',
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)'
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)' // 1rem for extra comfort
         }}
         role="main"
         aria-label="Call to action section"
@@ -53,25 +45,25 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
         </p>
 
         <div className="flex gap-3 w-full" role="group" aria-label="Primary actions">
-          <div className="relative flex-1 hover-lux-scale">
+          <div className="relative flex-1">
             <GlowEffect {...BUTTON_GLOW_CONFIGS.primary} />
             <Button
               size="lg"
-              className="relative gap-2 text-white bg-sky-300 hover:bg-sky-200 w-full min-h-[48px] text-sm px-4 shine-on-hover group"
+              className="relative gap-2 text-white bg-sky-300 hover:bg-sky-200 w-full min-h-[48px] text-sm px-4"
               aria-label="Request a nurse for medical care"
             >
-              Request a Nurse <PhoneCall className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
+              Request a Nurse <PhoneCall className="w-4 h-4" aria-hidden="true" />
             </Button>
           </div>
-          <div className="relative flex-1 hover-lux-scale">
+          <div className="relative flex-1">
             <GlowEffect {...BUTTON_GLOW_CONFIGS.secondary} />
             <Button
               size="lg"
-              className="relative gap-2 bg-white text-blue-600 hover:bg-blue-50 w-full min-h-[48px] text-sm px-4 shine-on-hover group"
+              className="relative gap-2 bg-white text-blue-600 hover:bg-blue-50 w-full min-h-[48px] text-sm px-4"
               variant="outline"
               aria-label="Join our platform as a healthcare professional"
             >
-              Join as a Nurse <MoveRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+              Join as a Nurse <MoveRight className="w-4 h-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -79,3 +71,4 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
     </div>
   );
 }
+
