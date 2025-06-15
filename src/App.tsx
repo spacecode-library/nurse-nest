@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -32,7 +33,6 @@ import NewbornNurseSupport from "./pages/NewbornNurseSupport";
 
 // Care Service Pages
 import PostSurgicalCare from "./pages/PostSurgicalCare";
-import BestProductsForHomeHealthcare from "./pages/BestProductsForHomeHealthcare";
 import WoundCareNursingGuide from "./pages/WoundCareNursingGuide";
 
 // Payment Pages
@@ -93,7 +93,6 @@ export default function App() {
               
               {/* Care Service Routes */}
               <Route path="/post-surgical-care" element={<PostSurgicalCare />} />
-              <Route path="/best-products-for-home-healthcare" element={<BestProductsForHomeHealthcare />} />
               <Route path="/wound-care-nursing-guide" element={<WoundCareNursingGuide />} />
               
               {/* Blog Routes */}

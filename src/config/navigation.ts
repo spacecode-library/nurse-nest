@@ -1,3 +1,4 @@
+
 export interface NavLink {
   name: string;
   path: string;
@@ -49,12 +50,6 @@ export const careServicesDropdownSections: DropdownSection[] = [
       { name: 'Elderly Care', path: '/elderly-care-nurse-services' },
       { name: 'Wound Care', path: '/wound-care-nursing-guide' },
       { name: 'Post-Surgical Care', path: '/post-surgical-care' },
-    ]
-  },
-  {
-    title: 'Resources',
-    links: [
-      { name: 'Product Reviews', path: '/best-products-for-home-healthcare' },
     ]
   }
 ];
