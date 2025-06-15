@@ -2,8 +2,17 @@ import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Helmet } from 'react-helmet-async';
+import AnimatedSection from '@/components/AnimatedSection';
+import { useStaggeredReveal } from '@/hooks/use-staggered-reveal';
+import { LuxIcon } from '@/components/post-surgical-care/LuxIcon';
+import { Calculator, DollarSign, FileText, TrendingUp } from 'lucide-react';
 
 export default function TaxTips() {
+  const [titleRevealed, subtitleRevealed, metaRevealed] = useStaggeredReveal(3, {
+    initialDelay: 300,
+    step: 120
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -21,89 +30,99 @@ export default function TaxTips() {
       <main className="flex-1 pt-24">
         <div className="container mx-auto px-4 py-12">
 
-          {/* Hero Section (NEW) */}
+          {/* Hero Section */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-nurse-dark">
-              The 1099 Nurse’s Ultimate Tax Optimization Guide
+            <h1 className={`text-3xl md:text-4xl font-bold mb-4 text-nurse-dark transition-all duration-700 ease-out ${
+              titleRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
+              The 1099 Nurse's Ultimate Tax Optimization Guide
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className={`text-xl text-gray-600 max-w-3xl mx-auto transition-all duration-700 ease-out delay-100 ${
+              subtitleRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
               Keep More of Your Hard-Earned Income — Master tax savings, avoid audit risks, and transform your take-home pay as an independent nurse contractor.
             </p>
           </div>
 
-          {/* Why 1099 Nurses Have Unique Tax Advantages (and Pitfalls) */}
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-6 mb-10 max-w-3xl mx-auto">
-            <h2 className="text-xl font-bold mb-2 text-blue-800">
-              Why 1099 Nurses Have Unique Tax Advantages (and Pitfalls)
-            </h2>
-            <p className="mb-3">
-              Unlike W-2 nurses who lost unreimbursed expense deductions under the Tax Cuts and Jobs Act, independent contract nurses can deduct business expenses that reduce their taxable income—potentially saving thousands annually. However, this comes with complexity: you're responsible for <b>15.3% self-employment tax</b> (Social Security + Medicare) plus income tax, with no employer withholding. The key is <b>strategic deduction planning</b>: Top-performing contract nurses reduce taxable income by 30-40% through legitimate write-offs.
-            </p>
-          </div>
+          {/* Why 1099 Nurses Have Unique Tax Advantages */}
+          <AnimatedSection animation="fade-up" delay={400}>
+            <div className="lux-floating-insight bg-blue-50 border border-blue-100 rounded-lg p-6 mb-10 max-w-3xl mx-auto">
+              <h2 className="text-xl font-bold mb-2 text-blue-800">
+                Why 1099 Nurses Have Unique Tax Advantages (and Pitfalls)
+              </h2>
+              <p className="mb-3">
+                Unlike W-2 nurses who lost unreimbursed expense deductions under the Tax Cuts and Jobs Act, independent contract nurses can deduct business expenses that reduce their taxable income—potentially saving thousands annually. However, this comes with complexity: you're responsible for <b>15.3% self-employment tax</b> (Social Security + Medicare) plus income tax, with no employer withholding. The key is <b>strategic deduction planning</b>: Top-performing contract nurses reduce taxable income by 30-40% through legitimate write-offs.
+              </p>
+            </div>
+          </AnimatedSection>
 
           {/* Audit Risk Red Flags Callout */}
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8 max-w-3xl mx-auto">
-            <div className="flex items-start">
-              <div className="text-2xl mr-4">⚠️</div>
-              <div>
-                <h3 className="font-semibold text-red-900 mb-2">Critical Audit-Risk Red Flags</h3>
-                <ul className="list-disc ml-4 text-red-800 space-y-1 text-sm">
-                  <li>Commingling Funds: Mixing personal and business expenses in one account</li>
-                  <li>Exaggerated Home Office Claims: Deducting spaces used for personal activities</li>
-                  <li>Unsubstantiated Mileage: No contemporaneous logs (date, purpose, odometer)</li>
-                  <li>Deducting Non-Qualifying Expenses: Scrubs usable outside work or personal phone costs</li>
-                </ul>
-                <p className="mt-2">
-                  <b>Pro Tip:</b> Use separate business accounts and apps like <span className="font-semibold">MileIQ</span> or <span className="font-semibold">Stride</span> for automatic tracking. IRS audits of self-employed healthcare workers increased <span className="underline">28% in 2024</span>.
-                </p>
+          <AnimatedSection animation="fade-up" delay={500}>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8 max-w-3xl mx-auto">
+              <div className="flex items-start">
+                <div className="text-2xl mr-4">⚠️</div>
+                <div>
+                  <h3 className="font-semibold text-red-900 mb-2">Critical Audit-Risk Red Flags</h3>
+                  <ul className="list-disc ml-4 text-red-800 space-y-1 text-sm">
+                    <li>Commingling Funds: Mixing personal and business expenses in one account</li>
+                    <li>Exaggerated Home Office Claims: Deducting spaces used for personal activities</li>
+                    <li>Unsubstantiated Mileage: No contemporaneous logs (date, purpose, odometer)</li>
+                    <li>Deducting Non-Qualifying Expenses: Scrubs usable outside work or personal phone costs</li>
+                  </ul>
+                  <p className="mt-2">
+                    <b>Pro Tip:</b> Use separate business accounts and apps like <span className="font-semibold">MileIQ</span> or <span className="font-semibold">Stride</span> for automatic tracking. IRS audits of self-employed healthcare workers increased <span className="underline">28% in 2024</span>.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
 
           {/* Vehicle Deduction Table */}
-          <div className="bg-white border border-gray-200 rounded-lg mb-8 max-w-3xl mx-auto p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-              <span className="mr-2">🚗</span> Vehicle Deductions: Your Largest Potential Savings
-            </h2>
-            <div className="overflow-x-auto mb-4">
-              <table className="min-w-full text-sm border-collapse bg-white">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="font-semibold px-4 py-2 border text-left">Method</th>
-                    <th className="font-semibold px-4 py-2 border text-left">2025 Rate</th>
-                    <th className="font-semibold px-4 py-2 border text-left">Best For</th>
-                    <th className="font-semibold px-4 py-2 border text-left">Documentation Required</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border px-4 py-2">Standard Mileage</td>
-                    <td className="border px-4 py-2">$0.67/mile</td>
-                    <td className="border px-4 py-2">Nurses with efficient vehicles</td>
-                    <td className="border px-4 py-2">Odometer logs, trip purpose</td>
-                  </tr>
-                  <tr>
-                    <td className="border px-4 py-2">Actual Expenses</td>
-                    <td className="border px-4 py-2">Variable</td>
-                    <td className="border px-4 py-2">High-maintenance vehicles</td>
-                    <td className="border px-4 py-2">Gas receipts, repair invoices, insurance</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="text-gray-700">
-              <p className="mb-1"><b>What Qualifies:</b></p>
-              <ul className="list-disc ml-5 mb-2">
-                <li>Travel between patient homes (home health)</li>
-                <li>Trips to medical supply stores</li>
-                <li>Conference/CEU travel</li>
-              </ul>
-              <p className="text-sm text-gray-500 mb-2">Non-Qualifying: Commuting from home to primary work location.</p>
-              <div className="bg-gray-50 border border-gray-100 rounded px-4 py-2 mb-2">
-                <b>Case Study:</b> A Florida home health nurse drove 12,000 business miles in 2025 → <span className="text-green-600 font-medium">$8,040 deduction</span> ($0.67/mile). With actual expenses? Her $9,500 vehicle costs (50% business use) yielded a $4,750 deduction—so standard mileage saved $3,290 more.
+          <AnimatedSection animation="fade-up" delay={600}>
+            <div className="bg-white border border-gray-200 rounded-lg mb-8 max-w-3xl mx-auto p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <LuxIcon><DollarSign className="w-6 h-6 mr-2" /></LuxIcon> Vehicle Deductions: Your Largest Potential Savings
+              </h2>
+              <div className="overflow-x-auto mb-4">
+                <table className="min-w-full text-sm border-collapse bg-white">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="font-semibold px-4 py-2 border text-left">Method</th>
+                      <th className="font-semibold px-4 py-2 border text-left">2025 Rate</th>
+                      <th className="font-semibold px-4 py-2 border text-left">Best For</th>
+                      <th className="font-semibold px-4 py-2 border text-left">Documentation Required</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border px-4 py-2">Standard Mileage</td>
+                      <td className="border px-4 py-2">$0.67/mile</td>
+                      <td className="border px-4 py-2">Nurses with efficient vehicles</td>
+                      <td className="border px-4 py-2">Odometer logs, trip purpose</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2">Actual Expenses</td>
+                      <td className="border px-4 py-2">Variable</td>
+                      <td className="border px-4 py-2">High-maintenance vehicles</td>
+                      <td className="border px-4 py-2">Gas receipts, repair invoices, insurance</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="text-gray-700">
+                <p className="mb-1"><b>What Qualifies:</b></p>
+                <ul className="list-disc ml-5 mb-2">
+                  <li>Travel between patient homes (home health)</li>
+                  <li>Trips to medical supply stores</li>
+                  <li>Conference/CEU travel</li>
+                </ul>
+                <p className="text-sm text-gray-500 mb-2">Non-Qualifying: Commuting from home to primary work location.</p>
+                <div className="bg-gray-50 border border-gray-100 rounded px-4 py-2 mb-2">
+                  <b>Case Study:</b> A Florida home health nurse drove 12,000 business miles in 2025 → <span className="text-green-600 font-medium">$8,040 deduction</span> ($0.67/mile). With actual expenses? Her $9,500 vehicle costs (50% business use) yielded a $4,750 deduction—so standard mileage saved $3,290 more.
+                </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
 
           {/* Home Office Deduction */}
           <div className="bg-primary-50 border border-primary-100 rounded-lg p-6 mb-8 max-w-3xl mx-auto">
@@ -331,110 +350,172 @@ export default function TaxTips() {
           {/* Main Content */}
           <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
             <div className="prose max-w-none">
-              <h2 className="text-2xl font-semibold mb-4" id="tax-deductions">Tax Deductions for Independent Nurses</h2>
-              <p className="mb-6">
-                Independent nurse contractors, typically classified as 1099 workers, can deduct ordinary and necessary business expenses related to their nursing services. Here are some common deductions:
-              </p>
+              <AnimatedSection animation="fade-up" delay={700}>
+                <h2 className="text-2xl font-semibold mb-4" id="tax-deductions">Tax Deductions for Independent Nurses</h2>
+                <p className="mb-6">
+                  Independent nurse contractors, typically classified as 1099 workers, can deduct ordinary and necessary business expenses related to their nursing services. Here are some common deductions:
+                </p>
+              </AnimatedSection>
               
               <div className="space-y-8">
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="malpractice-insurance">Nurse Malpractice Insurance</h3>
-                  <p className="mb-2">Deduct premiums for liability insurance ($80–$500/year for RNs, $500–$2,000 for NPs).</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> A $300 annual premium is fully deductible.</p>
+                <AnimatedSection animation="fade-up" delay={800}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3 flex items-center" id="malpractice-insurance">
+                      <LuxIcon><FileText className="w-5 h-5 mr-2" /></LuxIcon>
+                      Nurse Malpractice Insurance
+                    </h3>
+                    <p className="mb-2">Deduct premiums for liability insurance ($80–$500/year for RNs, $500–$2,000 for NPs).</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> A $300 annual premium is fully deductible.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="licensing">Licensing and Certifications</h3>
-                  <p className="mb-2">Deduct costs for maintaining an active RN or NP license, renewals, and certifications (e.g., BLS, ACLS).</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $200 for license renewal or $350 for a certification course.</p>
+                <AnimatedSection animation="fade-up" delay={900}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="licensing">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Licensing and Certifications
+                    </h3>
+                    <p className="mb-2">Deduct costs for maintaining an active RN or NP license, renewals, and certifications (e.g., BLS, ACLS).</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $200 for license renewal or $350 for a certification course.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="ceus">Continuing Education (CEUs)</h3>
-                  <p className="mb-2">Deduct expenses for CEUs, workshops, or seminars required for licensure or skill enhancement.</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $500 for an online CEU course or conference fees.</p>
+                <AnimatedSection animation="fade-up" delay={1000}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="ceus">
+                      <LuxIcon><TrendingUp className="w-5 h-5 mr-2" /></LuxIcon>
+                      Continuing Education (CEUs)
+                    </h3>
+                    <p className="mb-2">Deduct expenses for CEUs, workshops, or seminars required for licensure or skill enhancement.</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $500 for an online CEU course or conference fees.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="memberships">Professional Memberships</h3>
-                  <p className="mb-2">Deduct dues for organizations like the American Nurses Association (ANA) or specialty groups.</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $150/year for ANA membership.</p>
+                <AnimatedSection animation="fade-up" delay={1100}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="memberships">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Professional Memberships
+                    </h3>
+                    <p className="mb-2">Deduct dues for organizations like the American Nurses Association (ANA) or specialty groups.</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $150/year for ANA membership.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="home-office">Home Office Expenses</h3>
-                  <p className="mb-2">Deduct a portion of home expenses (e.g., rent, utilities, internet) if you use a dedicated space for administrative tasks.</p>
-                  <p className="mb-2">Use the simplified method ($5/square foot, up to 300 sq. ft., max $1,500) or actual expenses (percentage of home used).</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $1,200 deduction for a 240 sq. ft. home office (simplified method).</p>
+                <AnimatedSection animation="fade-up" delay={1200}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="home-office">
+                      <LuxIcon><DollarSign className="w-6 h-6 mr-2" /></LuxIcon>
+                      Home Office Expenses
+                    </h3>
+                    <p className="mb-2">Deduct a portion of home expenses (e.g., rent, utilities, internet) if you use a dedicated space for administrative tasks.</p>
+                    <p className="mb-2">Use the simplified method ($5/square foot, up to 300 sq. ft., max $1,500) or actual expenses (percentage of home used).</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $1,200 deduction for a 240 sq. ft. home office (simplified method).</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="equipment">Business Equipment and Supplies</h3>
-                  <p className="mb-2">Deduct costs for stethoscopes, scrubs, medical bags, computers, or software used for work.</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $200 for scrubs or $1,000 for a laptop (may require depreciation if over $2,500).</p>
+                <AnimatedSection animation="fade-up" delay={1300}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="equipment">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Business Equipment and Supplies
+                    </h3>
+                    <p className="mb-2">Deduct costs for stethoscopes, scrubs, medical bags, computers, or software used for work.</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $200 for scrubs or $1,000 for a laptop (may require depreciation if over $2,500).</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="mileage">Mileage and Travel Expenses</h3>
-                  <p className="mb-2">Deduct mileage for business-related travel (e.g., to client sites, hospitals) at the 2025 IRS rate (estimated ~$0.67/mile, pending confirmation).</p>
-                  <p className="mb-2">Alternatively, deduct actual vehicle expenses (gas, maintenance, insurance) based on business use percentage.</p>
-                  <p className="mb-2">Deduct travel costs (flights, hotels, meals at 50%) for work-related trips, such as conferences.</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> 5,000 business miles = $3,350 deduction (at $0.67/mile).</p>
+                <AnimatedSection animation="fade-up" delay={1400}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="mileage">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Mileage and Travel Expenses
+                    </h3>
+                    <p className="mb-2">Deduct mileage for business-related travel (e.g., to client sites, hospitals) at the 2025 IRS rate (estimated ~$0.67/mile, pending confirmation).</p>
+                    <p className="mb-2">Alternatively, deduct actual vehicle expenses (gas, maintenance, insurance) based on business use percentage.</p>
+                    <p className="mb-2">Deduct travel costs (flights, hotels, meals at 50%) for work-related trips, such as conferences.</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> 5,000 business miles = $3,350 deduction (at $0.67/mile).</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="phone-internet">Cell Phone and Internet</h3>
-                  <p className="mb-2">Deduct the business-use portion of phone and internet bills.</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> 50% of a $1,200 annual phone bill = $600 deduction.</p>
+                <AnimatedSection animation="fade-up" delay={1500}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="phone-internet">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Cell Phone and Internet
+                    </h3>
+                    <p className="mb-2">Deduct the business-use portion of phone and internet bills.</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> 50% of a $1,200 annual phone bill = $600 deduction.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="office-expenses">Office Expenses</h3>
-                  <p className="mb-2">Deduct costs for stationery, postage, or software subscriptions (e.g., scheduling tools).</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $200 for office supplies or $240 for a scheduling app.</p>
+                <AnimatedSection animation="fade-up" delay={1600}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="office-expenses">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Office Expenses
+                    </h3>
+                    <p className="mb-2">Deduct costs for stationery, postage, or software subscriptions (e.g., scheduling tools).</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $200 for office supplies or $240 for a scheduling app.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="legal-services">Legal and Professional Services</h3>
-                  <p className="mb-2">Deduct fees for CPAs, attorneys, or LLC formation services.</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $500 for tax preparation or $200 for LLC filing assistance.</p>
+                <AnimatedSection animation="fade-up" delay={1700}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="legal-services">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Legal and Professional Services
+                    </h3>
+                    <p className="mb-2">Deduct fees for CPAs, attorneys, or LLC formation services.</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $500 for tax preparation or $200 for LLC filing assistance.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="health-insurance">Health Insurance Premiums</h3>
-                  <p className="mb-2">Deduct self-employed health insurance premiums for yourself, spouse, and dependents, subject to income limits.</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $6,000 in premiums, fully deductible if net business income exceeds the amount.</p>
+                <AnimatedSection animation="fade-up" delay={1800}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="health-insurance">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Health Insurance Premiums
+                    </h3>
+                    <p className="mb-2">Deduct self-employed health insurance premiums for yourself, spouse, and dependents, subject to income limits.</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $6,000 in premiums, fully deductible if net business income exceeds the amount.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h3 className="text-xl font-semibold mb-3" id="retirement">Retirement Contributions</h3>
-                  <p className="mb-2">Deduct contributions to a SEP-IRA, SIMPLE IRA, or solo 401(k), up to IRS limits (e.g., $69,000 for SEP-IRA in 2025, subject to 25% of net earnings).</p>
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <p className="text-sm text-gray-700"><strong>Example:</strong> $10,000 SEP-IRA contribution reduces taxable income.</p>
+                <AnimatedSection animation="fade-up" delay={1900}>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover-lux-scale">
+                    <h3 className="text-xl font-semibold mb-3" id="retirement">
+                      <LuxIcon><Calculator className="w-5 h-5 mr-2" /></LuxIcon>
+                      Retirement Contributions
+                    </h3>
+                    <p className="mb-2">Deduct contributions to a SEP-IRA, SIMPLE IRA, or solo 401(k), up to IRS limits (e.g., $69,000 for SEP-IRA in 2025, subject to 25% of net earnings).</p>
+                    <div className="bg-gray-100 p-3 rounded-md">
+                      <p className="text-sm text-gray-700"><strong>Example:</strong> $10,000 SEP-IRA contribution reduces taxable income.</p>
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
               </div>
               
               <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 my-8">
