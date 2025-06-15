@@ -383,7 +383,7 @@ export default function BlogContent({ postId = 'understanding-private-duty-nursi
   const post = blogPosts[postId as keyof typeof blogPosts] || blogPosts['understanding-private-duty-nursing'];
   
   return (
-    <article className="max-w-3xl md:max-w-4xl lg:max-w-5xl mx-auto">
+    <article className="max-w-3xl mx-auto">
       <header className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-nurse-dark">{post.title}</h1>
         <div className="flex items-center text-gray-500 mb-6">

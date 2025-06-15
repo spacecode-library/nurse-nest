@@ -10,7 +10,7 @@ export default function NewbornNurseSupport() {
       <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-100 to-blue-200 pt-24 pb-16">
         {/* Hero section */}
         <section className="text-center py-12 bg-gradient-to-b from-white/60 to-blue-100/60 border-b">
-          <div className="container mx-auto px-4 max-w-xl md:max-w-2xl lg:max-w-4xl">
+          <div className="container mx-auto px-4 max-w-xl">
             <div className="flex justify-center mb-4">
               <span className="inline-flex items-center rounded-full bg-[#e0f2fe] p-4">
                 <Baby className="text-blue-400" size={48} />
@@ -33,7 +33,7 @@ export default function NewbornNurseSupport() {
 
         {/* Services overview */}
         <section className="py-10">
-          <div className="container mx-auto max-w-3xl md:max-w-4xl lg:max-w-5xl px-4">
+          <div className="container mx-auto max-w-3xl px-4">
             <h2 className="text-2xl font-bold text-nurse-dark mb-4 text-center">
               What We Offer
             </h2>
@@ -76,7 +76,7 @@ export default function NewbornNurseSupport() {
 
         {/* Resource links */}
         <section className="py-8">
-          <div className="container mx-auto px-4 max-w-xl md:max-w-2xl lg:max-w-4xl">
+          <div className="container mx-auto px-4 max-w-xl">
             <div className="bg-white/90 border border-blue-100 rounded-xl p-6 shadow">
               <h3 className="text-lg font-semibold mb-2 text-blue-700">More Newborn Resources</h3>
               <ul className="list-inside list-disc text-blue-700 space-y-2">
