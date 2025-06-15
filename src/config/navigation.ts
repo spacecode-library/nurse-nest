@@ -35,7 +35,7 @@ export const nurseDropdownSections: DropdownSection[] = [
   {
     title: 'Professional Resources',
     links: [
-      { name: 'Malpractice Insurance', path: '/malpractice-insurance-for-nurses' },
+      { name: 'Malpractice Insurance', path: '/malpractice-insurance' }, // FIXED path here
       { name: '1099 Tax Tips', path: '/1099-tax-tips' },
     ]
   }

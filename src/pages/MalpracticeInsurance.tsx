@@ -19,7 +19,7 @@ export default function MalpracticeInsurance() {
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
         <title>The Independent Nurse Contractor's Malpractice Insurance Survival Guide | Nurse Nest</title>
-        <meta name="description" content="Defend your career and assets with this in-depth guide to malpractice insurance for independent nurses and contractors. Learn policy types, risk zones, coverage essentials, and pro tips to stay protected." />
+        <meta name="description" content="Defend your career and assets with this in-depth guide to malpractice insurance for independent nurses and contractors. Learn about policy types, risk zones, coverage essentials, and get expert advice to stay protected." />
         <meta name="keywords" content="malpractice insurance guide, nurse liability, independent contractor nurse, NSO, CM&F, policy types, insurance for RNs, insurance for APRNs, legal shield for nurses, risk management" />
       </Helmet>
 
@@ -414,7 +414,7 @@ export default function MalpracticeInsurance() {
                   <strong>CM&amp;F Group:</strong> <a href="https://www.cmfgroup.com/professional-liability-insurance/nursing-liability-insurance/registered-nurse-rn-insurance/" className="underline text-blue-700" target="_blank" rel="noopener">Broad policy options with license protection</a>
                 </li>
                 <li>
-                  <strong>Proliability:</strong> <a href="https://www.proliability.com/professional-liability-insurance/nursing-liability-insurance" className="underline text-blue-700" target="_blank" rel="noopener">Custom coverage for APRNs and specialists</a>
+                  <strong>Proliability:</strong> <a href="https://www.proliability.com/professional-liability-insurance/nursing-liability-insurance" className="underline text-blue-700" target="_blank" rel="noopener">Custom coverage for APRNs and specialties</a>
                 </li>
               </ul>
             </section>
