@@ -1,3 +1,4 @@
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -352,6 +353,31 @@ html {
   .shine-on-hover:hover {
     background-position: -120% 0;
   }
+  
+  /* Enhanced navbar hover effects */
+  .navbar-item-hover {
+    transition: all 0.25s cubic-bezier(.22,1,.36,1);
+    will-change: transform, color;
+  }
+  .navbar-item-hover:hover {
+    transform: translateY(-1px);
+  }
+  
+  /* Dropdown animation enhancements */
+  .dropdown-item-enter {
+    animation: dropdownItemEnter 0.4s cubic-bezier(.32,2,.55,.98) forwards;
+  }
+  
+  @keyframes dropdownItemEnter {
+    0% {
+      opacity: 0;
+      transform: translateX(8px) scale(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
 }
 
 /* --- Card & Spacing Rhythm Polish --- */
@@ -397,13 +423,28 @@ html {
     opacity 0.7s cubic-bezier(.29,0.91,.57,.97);
 }
 
+/* Enhanced button group animations */
+.button-group-hover {
+  transition: all 0.3s cubic-bezier(.22,1,.36,1);
+}
+.button-group-hover:hover {
+  transform: translateY(-2px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lux-icon-wrapper,
-  .lux-floating-insight {
+  .lux-floating-insight,
+  .hover-lux-scale,
+  .navbar-item-hover,
+  .button-group-hover {
     animation: none !important;
     transition: none !important;
   }
-  .hover-lux-scale {
-    transition: none !important;
+  
+  /* Still allow basic opacity/visibility changes for accessibility */
+  .dropdown-item-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

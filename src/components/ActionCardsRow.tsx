@@ -1,6 +1,8 @@
 
 import React from "react";
 import { HelpCircle, Stethoscope } from "lucide-react";
+import { useStaggeredReveal } from "@/hooks/use-staggered-reveal";
+import { LuxIcon } from "@/components/post-surgical-care/LuxIcon";
 
 interface ActionCardsRowProps {
   onFaq: () => void;
@@ -8,10 +10,17 @@ interface ActionCardsRowProps {
 }
 
 export default function ActionCardsRow({ onFaq, onGetNurse }: ActionCardsRowProps) {
+  const prefersReducedMotion = typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const cardReveal = useStaggeredReveal(2, { step: 200, initialDelay: 100, disabled: prefersReducedMotion });
+
   return (
     <div className="container-custom flex flex-col sm:flex-row gap-6 justify-center items-stretch my-8">
       {/* Browse FAQ's Card */}
-      <div className="flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition hover:shadow-lg hover:scale-105 cursor-pointer"
+      <div 
+        className={`flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)] hover-lux-scale cursor-pointer
+          ${cardReveal[0] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         onClick={onFaq}
         tabIndex={0}
         role="button"
@@ -19,21 +28,26 @@ export default function ActionCardsRow({ onFaq, onGetNurse }: ActionCardsRowProp
         onKeyDown={e => { if (e.key === "Enter" || e.key === " ") onFaq(); }}
       >
         <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-50 mb-3">
-          <HelpCircle className="text-blue-600" size={32} />
+          <LuxIcon>
+            <HelpCircle className="text-blue-600" size={32} />
+          </LuxIcon>
         </div>
         <div className="text-lg font-bold text-brand-navy mb-1">Browse FAQ&#39;s</div>
         <div className="text-neutral-dark text-sm text-center mb-4">
           Find answers to common questions.
         </div>
         <button
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold text-base shadow-md hover:bg-blue-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold text-base shadow-md hover:bg-blue-700 transition shine-on-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
           tabIndex={-1}
         >
           Browse FAQ&#39;s
         </button>
       </div>
+      
       {/* Get Nurse Card */}
-      <div className="flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition hover:shadow-lg hover:scale-105 cursor-pointer"
+      <div 
+        className={`flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)] hover-lux-scale cursor-pointer
+          ${cardReveal[1] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         onClick={onGetNurse}
         tabIndex={0}
         role="button"
@@ -41,14 +55,16 @@ export default function ActionCardsRow({ onFaq, onGetNurse }: ActionCardsRowProp
         onKeyDown={e => { if (e.key === "Enter" || e.key === " ") onGetNurse(); }}
       >
         <div className="flex items-center justify-center w-14 h-14 rounded-full bg-teal-50 mb-3">
-          <Stethoscope className="text-teal-600" size={32} />
+          <LuxIcon>
+            <Stethoscope className="text-teal-600" size={32} />
+          </LuxIcon>
         </div>
         <div className="text-lg font-bold text-brand-navy mb-1">Get Nurse</div>
         <div className="text-neutral-dark text-sm text-center mb-4">
           Connect and apply for care with a licensed nurse.
         </div>
         <button
-          className="bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold text-base shadow-md hover:bg-teal-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300"
+          className="bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold text-base shadow-md hover:bg-teal-700 transition shine-on-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300"
           tabIndex={-1}
         >
           Get Nurse
