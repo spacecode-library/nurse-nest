@@ -374,9 +374,10 @@ export default function SignUp() {
               background: "rgba(255,255,255,0.98)"
             }}
           >
-            <div className="w-full py-10 px-8 space-y-6 relative z-10">
-              {/* Header */}
-              <div className="text-center">
+            {/* step 1: reduce vertical padding here py-10 -> py-6 */}
+            <div className="w-full py-6 px-8 space-y-4 relative z-10">
+              {/* step 2: reduce bottom margin for header mb-1 -> mb-0.5 */}
+              <div className="text-center mb-0.5">
                 <h1 className="text-2xl font-bold text-gray-900 mb-1">Join Nurse Nest</h1>
                 <p className="text-base text-gray-600">Your healthcare journey starts here</p>
               </div>
@@ -389,8 +390,8 @@ export default function SignUp() {
                 </div>
               )}
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
+              {/* step 2: reduce form spacing, space-y-4 -> space-y-3 */}
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {/* First Name & Last Name */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
@@ -422,15 +423,16 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                {/* User Type Selection - Compact Design */}
-                <div className="space-y-2">
+                {/* User Type Selection - More compact */}
+                {/* step 3: change space-y-2 -> space-y-1.5 */}
+                <div className="space-y-1.5">
                   <Label className="text-gray-700 font-medium text-sm">
                     I am a:
                   </Label>
                   <RadioGroup 
                     value={userType} 
                     onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
-                    className="space-y-2"
+                    className="space-y-1.5"
                   >
                     <div className="relative">
                       <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
@@ -547,8 +549,9 @@ export default function SignUp() {
               </form>
               
               {/* Footer */}
-              <div className="text-center">
-                <p className="text-gray-600 text-sm">
+              {/* step 5: reduce space for footer and badge */}
+              <div className="text-center mt-2">
+                <p className="text-gray-600 text-sm mb-1">
                   Already have an account?{' '}
                   <Link
                     to="/sign-in"
@@ -557,11 +560,7 @@ export default function SignUp() {
                     Sign in
                   </Link>
                 </p>
-              </div>
-
-              {/* Security Badge */}
-              <div className="text-center">
-                <div className="inline-flex items-center space-x-2 text-xs text-gray-500">
+                <div className="inline-flex items-center space-x-1 text-xs text-gray-500">
                   <CheckCircle className="h-3 w-3 text-green-500" />
                   <span>SSL Secured</span>
                 </div>
