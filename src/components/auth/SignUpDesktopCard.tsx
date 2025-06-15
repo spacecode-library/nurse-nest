@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -8,6 +7,7 @@ import {
   AlertCircle, LockKeyhole, Mail, Eye, EyeOff, Stethoscope, Building2, Shield, Sparkles, CheckCircle 
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { UserTypeSelector } from "./UserTypeSelector";
 
 interface Props {
   email: string;
@@ -111,57 +111,11 @@ const SignUpDesktopCard: React.FC<Props> = ({
             <Label className="text-gray-700 font-medium text-sm">
               I am a:
             </Label>
-            <RadioGroup 
-              value={userType} 
-              onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
-              className="space-y-1.5"
-            >
-              <div className="relative">
-                <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                  userType === 'client' 
-                    ? 'border-[#9bcbff] bg-blue-50' 
-                    : 'border-gray-200'
-                }`}>
-                  <RadioGroupItem value="client" id="client" className="text-[#9bcbff]" />
-                  <Building2 className="h-4 w-4 text-green-600" />
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 text-sm">Client</div>
-                    <div className="text-xs text-gray-600">I need nursing care services</div>
-                  </div>
-                </div>
-              </div>
-              <div className="relative">
-                <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                  userType === 'nurse' 
-                    ? 'border-[#9bcbff] bg-blue-50' 
-                    : 'border-gray-200'
-                }`}>
-                  <RadioGroupItem value="nurse" id="nurse" className="text-[#9bcbff]" />
-                  <Stethoscope className="h-4 w-4 text-blue-600" />
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 text-sm">Healthcare Professional</div>
-                    <div className="text-xs text-gray-600">I provide nursing care services</div>
-                  </div>
-                </div>
-              </div>
-              <div className="relative">
-                <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                  userType === 'admin' 
-                    ? 'border-[#9bcbff] bg-blue-50' 
-                    : 'border-gray-200'
-                }`}>
-                  <RadioGroupItem value="admin" id="admin" className="text-[#9bcbff]" />
-                  <Shield className="h-4 w-4 text-purple-600" />
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 text-sm flex items-center">
-                      Administrator
-                      <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
-                    </div>
-                    <div className="text-xs text-gray-600">Platform administration</div>
-                  </div>
-                </div>
-              </div>
-            </RadioGroup>
+            <UserTypeSelector
+              value={userType}
+              onChange={setUserType}
+              size="desktop"
+            />
           </div>
           <div className="space-y-1">
             <Label htmlFor="email" className="text-gray-700 font-medium text-sm">
@@ -247,4 +201,3 @@ const SignUpDesktopCard: React.FC<Props> = ({
 );
 
 export default SignUpDesktopCard;
-

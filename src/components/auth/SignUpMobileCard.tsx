@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -9,6 +8,7 @@ import {
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Link } from "react-router-dom";
+import { UserTypeSelector } from "./UserTypeSelector";
 
 interface Props {
   email: string;
@@ -120,57 +120,11 @@ const SignUpMobileCard: React.FC<Props> = ({
               <Label className="text-gray-700 font-medium text-xs">
                 I am a:
               </Label>
-              <RadioGroup
+              <UserTypeSelector
                 value={userType}
-                onValueChange={(value: string) => setUserType(value as 'nurse' | 'client' | 'admin')}
-                className="space-y-1"
-              >
-                <div>
-                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                    userType === 'client' 
-                      ? 'border-[#9bcbff] bg-blue-50' 
-                      : 'border-gray-200'
-                  }`}>
-                    <RadioGroupItem value="client" id="client" className="text-[#9bcbff]" />
-                    <Building2 className="h-4 w-4 text-green-600" />
-                    <div>
-                      <div className="font-medium text-gray-900 text-xs">Client</div>
-                      <div className="text-[10px] text-gray-600">Needs care services</div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                    userType === 'nurse' 
-                      ? 'border-[#9bcbff] bg-blue-50' 
-                      : 'border-gray-200'
-                  }`}>
-                    <RadioGroupItem value="nurse" id="nurse" className="text-[#9bcbff]" />
-                    <Stethoscope className="h-4 w-4 text-blue-600" />
-                    <div>
-                      <div className="font-medium text-gray-900 text-xs">Professional</div>
-                      <div className="text-[10px] text-gray-600">Care provider</div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className={`flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:border-[#9bcbff] hover:bg-blue-50/50 ${
-                    userType === 'admin' 
-                      ? 'border-[#9bcbff] bg-blue-50' 
-                      : 'border-gray-200'
-                  }`}>
-                    <RadioGroupItem value="admin" id="admin" className="text-[#9bcbff]" />
-                    <Shield className="h-4 w-4 text-purple-600" />
-                    <div>
-                      <div className="font-medium text-gray-900 text-xs flex items-center">
-                        Admin
-                        <Sparkles className="h-3 w-3 ml-1 text-purple-600" />
-                      </div>
-                      <div className="text-[10px] text-gray-600">Admin access</div>
-                    </div>
-                  </div>
-                </div>
-              </RadioGroup>
+                onChange={setUserType}
+                size="mobile"
+              />
             </div>
             <div className="space-y-0.5">
               <Label htmlFor="email" className="text-gray-700 font-medium text-xs">
@@ -259,3 +213,4 @@ const SignUpMobileCard: React.FC<Props> = ({
 );
 
 export default SignUpMobileCard;
+// NOTE: This file is over 250 lines. You should consider asking me to break this file into smaller, more maintainable components.
