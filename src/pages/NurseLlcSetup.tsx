@@ -1,3 +1,4 @@
+
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -40,46 +41,6 @@ export default function NurseLlcSetup() {
             <h2 className="text-3xl font-bold mb-4">Ready to Start Your Nursing Practice?</h2>
             <p className="mb-7 text-lg">Get the support and resources you need to launch your independent nursing career with confidence.</p>
             <a href="/sign-in" className="inline-block px-8 py-4 bg-white text-[#3b82f6] rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow">Learn More About Opportunities</a>
-          </div>
-        </section>
-        {/* Related Articles */}
-        <section className="related-articles">
-          <h2>Related Articles</h2>
-          <div className="article-grid">
-            <div className="article-card">
-              <h3>
-                <a href="/blog/business-banking-setup-guide-nurses">
-                  Business Banking Setup Guide for Nurses: Complete Step-by-Step Process
-                </a>
-              </h3>
-              <p>
-                Essential guide for setting up business banking after LLC formation, including account types and requirements.
-              </p>
-              <span className="read-time">11 min read</span>
-            </div>
-            <div className="article-card">
-              <h3>
-                <a href="/blog/ein-applications-independent-contract-nurses">
-                  EIN Applications for Independent Contract Nurses: Complete Guide
-                </a>
-              </h3>
-              <p>
-                Essential guide for contract nurses on when and how to apply for an EIN, including all application methods and requirements.
-              </p>
-              <span className="read-time">10 min read</span>
-            </div>
-            <div className="article-card">
-              <h3>
-                <a href="/blog/nurse-llc-formation-guide">
-                  Complete Guide to LLC Formation for Nurses: Step-by-Step Process
-                </a>
-              </h3>
-              <p>
-                Comprehensive walkthrough of forming an LLC as a nurse, including state requirements, costs, and common mistakes to avoid.
-              </p>
-              <span className="read-time">12 min read</span>
-            </div>
-            {/* Other existing articles */}
           </div>
         </section>
       </main>
