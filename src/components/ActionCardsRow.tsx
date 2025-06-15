@@ -1,7 +1,6 @@
 
 import React from "react";
 import { HelpCircle, Stethoscope } from "lucide-react";
-import { useStaggeredReveal } from "@/hooks/use-staggered-reveal";
 import { LuxIcon } from "@/components/post-surgical-care/LuxIcon";
 
 interface ActionCardsRowProps {
@@ -10,17 +9,11 @@ interface ActionCardsRowProps {
 }
 
 export default function ActionCardsRow({ onFaq, onGetNurse }: ActionCardsRowProps) {
-  const prefersReducedMotion = typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const cardReveal = useStaggeredReveal(2, { step: 200, initialDelay: 100, disabled: prefersReducedMotion });
-
   return (
     <div className="container-custom flex flex-col sm:flex-row gap-6 justify-center items-stretch my-8">
       {/* Browse FAQ's Card */}
       <div 
-        className={`flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)] hover-lux-scale cursor-pointer
-          ${cardReveal[0] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        className="flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)] hover-lux-scale cursor-pointer"
         onClick={onFaq}
         tabIndex={0}
         role="button"
@@ -46,8 +39,7 @@ export default function ActionCardsRow({ onFaq, onGetNurse }: ActionCardsRowProp
       
       {/* Get Nurse Card */}
       <div 
-        className={`flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)] hover-lux-scale cursor-pointer
-          ${cardReveal[1] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        className="flex-1 bg-white rounded-xl shadow-brand border border-neutral-light/50 flex flex-col items-center py-6 px-4 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)] hover-lux-scale cursor-pointer"
         onClick={onGetNurse}
         tabIndex={0}
         role="button"

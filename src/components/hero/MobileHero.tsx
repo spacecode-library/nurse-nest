@@ -5,16 +5,10 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 import { RotatingText } from "./RotatingText";
 import { BUTTON_GLOW_CONFIGS } from "./constants";
 import { RotatingTextProps } from "./types";
-import { useStaggeredReveal } from "@/hooks/use-staggered-reveal";
 
 interface MobileHeroProps extends RotatingTextProps {}
 
 export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
-  const prefersReducedMotion = typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const heroReveal = useStaggeredReveal(4, { step: 180, initialDelay: 250, disabled: prefersReducedMotion });
-
   return (
     <div
       className="w-full h-screen relative pb-[env(safe-area-inset-bottom,0px)]"
@@ -23,25 +17,22 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
         paddingBottom: 'env(safe-area-inset-bottom, 0px)'
       }}
     >
-      {/* Mobile Header with improved semantics and staggered reveal */}
+      {/* Mobile Header with improved semantics */}
       <header
         className="absolute w-full px-4 z-20"
         style={{ top: '25vh' }}
         role="banner"
       >
         <h1 className="tracking-tighter font-regular text-white leading-none text-4xl">
-          <span className={`block text-white transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-            ${heroReveal[0] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <span className="block text-white">
             Need a
           </span>
           
-          <div className={`transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-            ${heroReveal[1] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <div>
             <RotatingText titles={titles} titleNumber={titleNumber} isMobile={true} />
           </div>
           
-          <span className={`block text-white transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-            ${heroReveal[2] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <span className="block text-white">
             nurse?
           </span>
         </h1>
@@ -49,8 +40,7 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
 
       {/* Mobile CTA Section with improved accessibility and safe area */}
       <section
-        className={`absolute w-full px-4 z-20 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-          ${heroReveal[3] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        className="absolute w-full px-4 z-20"
         style={{
           bottom: '80px',
           paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)'

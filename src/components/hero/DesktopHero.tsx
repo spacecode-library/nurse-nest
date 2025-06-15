@@ -5,42 +5,32 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 import { RotatingText } from "./RotatingText";
 import { BUTTON_GLOW_CONFIGS } from "./constants";
 import { RotatingTextProps } from "./types";
-import { useStaggeredReveal } from "@/hooks/use-staggered-reveal";
 
 interface DesktopHeroProps extends RotatingTextProps {}
 
 export function DesktopHero({ titles, titleNumber }: DesktopHeroProps) {
-  const prefersReducedMotion = typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const heroReveal = useStaggeredReveal(4, { step: 200, initialDelay: 300, disabled: prefersReducedMotion });
-
   return (
     <div className="w-full relative">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex gap-8 py-20 lg:py-40 items-start justify-start flex-col text-left">
           <div className="flex flex-col justify-start max-w-3xl mt-12">
-            {/* Desktop Header with staggered reveal */}
+            {/* Desktop Header */}
             <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tighter text-left font-regular text-white font-extrabold leading-none mb-2">
-              <span className={`text-white block transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-                ${heroReveal[0] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+              <span className="text-white block">
                 Need a
               </span>
               
-              <div className={`transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-                ${heroReveal[1] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+              <div>
                 <RotatingText titles={titles} titleNumber={titleNumber} isMobile={false} />
               </div>
               
-              <span className={`text-white block transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-                ${heroReveal[2] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+              <span className="text-white block">
                 nurse?
               </span>
             </h1>
 
-            {/* Desktop CTA Section with staggered reveal */}
-            <div className={`mt-20 space-y-6 transition-all duration-700 ease-[cubic-bezier(.32,2,.55,.98)]
-              ${heroReveal[3] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+            {/* Desktop CTA Section */}
+            <div className="mt-20 space-y-6">
               <p className="text-base md:text-lg lg:text-xl leading-relaxed tracking-tight text-blue-100 max-w-2xl text-left">
                 Skip the waiting rooms. Skip the stress. Our concierge nursing platform delivers expert care straight to your door, nationwide. Hospital-quality treatment in your living room. Because the best care happens where you feel safest.
               </p>
