@@ -66,6 +66,7 @@ import NurseLlcSetup from "./pages/NurseLlcSetup";
 import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
 import EinApplications from "./pages/EinApplications";
 import NightNurseGuide from "./pages/NightNurseGuide";
+import BusinessBankAccountForNurses from "./pages/business-bank-account-for-nurses";
 
 export default function App() {
   return (
@@ -140,6 +141,7 @@ export default function App() {
               <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
               <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
               <Route path="/blog/ein-applications-independent-contract-nurses" element={<EinApplications />} />
+              <Route path="/business-bank-account-for-nurses" element={<BusinessBankAccountForNurses />} />
               
               {/* 404 Route */}
               <Route path="*" element={<NotFound />} />
