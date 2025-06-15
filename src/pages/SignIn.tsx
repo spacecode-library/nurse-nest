@@ -15,9 +15,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { signIn, getCurrentUser } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
-import { BeamsBackground } from '@/components/ui/beams-background';
-import { OptimizedBackground } from '@/components/ui/optimized-background';
-import DiagonalSplitBackground from '@/components/DiagonalSplitBackground';
+import { DiagonalSplitBackground } from '@/components/DiagonalSplitBackground';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function SignIn() {
@@ -282,9 +280,7 @@ export default function SignIn() {
           </OptimizedBackground>
         </div>
         {/* Right Side - Sign In Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative">
-          <BeamsBackground mode="light" intensity="subtle" className="absolute inset-0" />
-
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-hidden relative bg-white">
           <Card
             className={`
               w-full max-w-md mx-auto p-0
