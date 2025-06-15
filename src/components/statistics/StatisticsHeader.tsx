@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import AnimatedSection from "../AnimatedSection";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { OptimizedImage } from "../ui/optimized-image";
