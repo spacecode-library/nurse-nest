@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import NurseNestNavbar from '@/components/NurseNestNavbar';
-import { ArrowRight, Heart, Shield, Users, Clock, CheckCircle, BookOpen, Home, Stethoscope, Activity, Pill, FirstAid, HandHeart, Wallet, Search } from 'lucide-react';
+import { ArrowRight, Heart, Shield, Users, Clock, CheckCircle, BookOpen, Home, Stethoscope, Activity, Pill, Siren, HandHeart, Wallet, Search } from 'lucide-react';
 
 export default function BestProductsForHomeHealthcare() {
   return (
@@ -398,7 +398,7 @@ export default function BestProductsForHomeHealthcare() {
                       <span><strong>Medication Management:</strong> Schedule, administration methods, and monitoring</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <FirstAid className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                      <Siren className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                       <span><strong>Emergency Protocols:</strong> Response plans for falls, medical emergencies, and natural disasters</span>
                     </li>
                     <li className="flex items-start gap-3">
