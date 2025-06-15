@@ -37,24 +37,32 @@ export async function signUp(
       email,
       password,
       options: {
-        data: fullMetadata
+        data: fullMetadata,
+        emailRedirectTo: `${window.location.origin}/dashboard`
       }
     });
 
     if (error) throw error;
 
-    const { data: metaData, error: metaError } = await supabase
-    .from('user_metadata')
-    .insert({user_id:data.user.id,user_type:userType ,account_status:'active' })
-    .select()
-    
-    // If registration successful, create corresponding profile
+    // Wait for the user to be created before proceeding
     if (data.user) {
+      // Create user metadata first
+      const { error: metaError } = await supabase
+        .from('user_metadata')
+        .insert({
+          user_id: data.user.id,
+          user_type: userType,
+          account_status: userType === 'nurse' ? 'pending' : 'active'
+        });
+
+      if (metaError) {
+        console.error('Error creating user metadata:', metaError);
+      }
+
+      // Create corresponding profile
       if (userType === 'nurse') {
-        // Create initial nurse profile
         await createInitialNurseProfile(data.user.id, metadata);
       } else if (userType === 'client') {
-        // Create initial client profile
         await createInitialClientProfile(data.user.id, metadata);
       }
     }

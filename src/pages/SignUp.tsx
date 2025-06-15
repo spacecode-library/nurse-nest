@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -95,16 +96,19 @@ export default function SignUp() {
             ? "Admin account created successfully!" 
             : userType === 'nurse'
             ? "Account created! Complete your profile to get started."
-            : "Please check your email to verify your account."
+            : "Welcome! Let's set up your profile."
         });
         
-        if (userType === 'nurse') {
-          navigate('/onboarding/nurse');
-        } else if (userType === 'client') {
-          navigate('/onboarding/client');
-        } else if (userType === 'admin') {
-          navigate('/admin');
-        }
+        // Wait a moment for the auth state to update, then navigate
+        setTimeout(() => {
+          if (userType === 'nurse') {
+            navigate('/onboarding/nurse');
+          } else if (userType === 'client') {
+            navigate('/onboarding/client');
+          } else if (userType === 'admin') {
+            navigate('/admin');
+          }
+        }, 1000);
       }
     } catch (error: any) {
       console.error('Auth error:', error);
