@@ -25,6 +25,7 @@ import Disclaimer from "./pages/Disclaimer";
 // Blog Pages
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import BusinessBankingSetupGuideNurses from "./pages/blog/BusinessBankingSetupGuideNurses";
 
 // Payment Pages
 import Payment from "./pages/Payment";
@@ -85,6 +86,7 @@ export default function App() {
               {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:postId" element={<BlogPost />} />
+              <Route path="/blog/business-banking-setup-guide-nurses" element={<BusinessBankingSetupGuideNurses />} />
               
               {/* Payment Routes */}
               <Route path="/payment" element={<Payment />} />

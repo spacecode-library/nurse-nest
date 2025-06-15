@@ -8,6 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import {
+  nurseDropdownSections,
+} from "@/config/navigation";
 
 interface NurseDropdownProps {
   shouldUseDarkText: boolean;
@@ -43,7 +46,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
           For Nurses <ChevronDown className="ml-1 h-4 w-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64">
+      <DropdownMenuContent className="w-64 z-50 bg-white">
         <DropdownMenuItem
           className={itemClass}
           onClick={handleApplyNowClick}
@@ -58,45 +61,35 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
           onClick={() => navigate('/nurse-llc-setup-guide')}
           tabIndex={0}
         >
-          <span className={textClass}>
-            LLC Setup Guide
-          </span>
+          <span className={textClass}>LLC Setup Guide</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/blog/ein-applications-independent-contract-nurses')}
           tabIndex={0}
         >
-          <span className={textClass}>
-            EIN Applications
-          </span>
+          <span className={textClass}>EIN Applications</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className={itemClass}
-          onClick={() => navigate('/business-bank-account-for-nurses')}
+          onClick={() => navigate('/blog/business-banking-setup-guide-nurses')}
           tabIndex={0}
         >
-          <span className={textClass}>
-            Business Banking
-          </span>
+          <span className={textClass}>Business Banking</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/malpractice-insurance-for-nurses')}
           tabIndex={0}
         >
-          <span className={textClass}>
-            Malpractice Insurance
-          </span>
+          <span className={textClass}>Malpractice Insurance</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className={itemClass}
           onClick={() => navigate('/1099-tax-tips')}
           tabIndex={0}
         >
-          <span className={textClass}>
-            1099 Tax Tips
-          </span>
+          <span className={textClass}>1099 Tax Tips</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

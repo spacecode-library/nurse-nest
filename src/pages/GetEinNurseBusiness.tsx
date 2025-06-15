@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -69,6 +68,34 @@ export default function GetEinNurseBusiness() {
                 </a>
               </div>
             </div>
+          </div>
+        </section>
+        <section className="related-articles">
+          <h2>Related Articles</h2>
+          <div className="article-grid">
+            <div className="article-card">
+              <h3>
+                <a href="/blog/business-banking-setup-guide-nurses">
+                  Business Banking Setup Guide for Nurses: Complete Step-by-Step Process
+                </a>
+              </h3>
+              <p>
+                Learn how to set up business banking after obtaining your EIN, including choosing banks and account types.
+              </p>
+              <span className="read-time">11 min read</span>
+            </div>
+            <div className="article-card">
+              <h3>
+                <a href="/blog/ein-applications-independent-contract-nurses">
+                  EIN Applications for Independent Contract Nurses: Complete Guide
+                </a>
+              </h3>
+              <p>
+                Step-by-step guide to applying for an EIN as an independent contract nurse, including application methods and requirements.
+              </p>
+              <span className="read-time">10 min read</span>
+            </div>
+            {/* Other existing articles */}
           </div>
         </section>
       </main>
