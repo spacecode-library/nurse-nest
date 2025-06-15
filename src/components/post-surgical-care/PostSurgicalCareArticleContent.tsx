@@ -5,31 +5,31 @@ import { LuxIcon } from './LuxIcon';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useStaggeredReveal } from '@/hooks/use-staggered-reveal';
 
-// Card data for responsibilities
+// Card data for responsibilities (restored original wording)
 const cards = [
   {
     Icon: Pill,
     iconClass: "text-blue-500",
-    title: "Pain & Medication Management",
-    description: "Administering medications on schedule, monitoring for side effects, and managing pain levels effectively.",
+    title: "Pain and Medication Management",
+    description: "A post-surgical nurse ensures you take the right medications at the right times, monitors for side effects, and provides comfort and support as you recover.",
   },
   {
     Icon: Shield,
     iconClass: "text-green-500",
     title: "Wound Care & Infection Prevention",
-    description: "Properly cleaning and dressing surgical wounds, and monitoring for signs of infection like redness or swelling.",
+    description: "Proper wound cleaning, dressing changes, and monitoring for signs of infection are essential. Your nurse will safeguard your health by catching any complications early.",
   },
   {
     Icon: Activity,
     iconClass: "text-red-500",
     title: "Monitoring Vital Signs",
-    description: "Regularly checking blood pressure, heart rate, temperature, and breathing to ensure stability.",
+    description: "Frequent checks of temperature, blood pressure, and more help track your healing process and alert to any concerning changes that might need a doctor.",
   },
   {
     Icon: CheckCircle,
     iconClass: "text-purple-500",
-    title: "Patient & Family Education",
-    description: "Instructing on proper recovery techniques, dietary needs, and when to contact a doctor.",
+    title: "Family Education and Recovery Support",
+    description: "Nurses provide clear instructions on mobility, nutrition, warning signs, and help relieve anxiety for both patient and loved ones during recovery.",
   },
 ];
 
@@ -38,9 +38,8 @@ export default function PostSurgicalCareArticleContent() {
   const prefersReducedMotion = typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // For hero: 3 elements (title, subtitle, meta)
+  // For hero: 3 elements (lead, What is header, Finding Care header)
   const heroReveal = useStaggeredReveal(3, { step: 150, initialDelay: 70, disabled: prefersReducedMotion });
-  // For cards
   const cardReveal = useStaggeredReveal(cards.length, { step: 130, initialDelay: 180, disabled: prefersReducedMotion });
 
   return (
@@ -48,13 +47,12 @@ export default function PostSurgicalCareArticleContent() {
       <AnimatedSection delay={0} animation="fade-up">
         <p className={
           `lead text-xl text-gray-600 transition-opacity duration-700
-          ${heroReveal[0] ? "opacity-100" : "opacity-0 translate-y-7"}`
+            ${heroReveal[0] ? "opacity-100" : "opacity-0 translate-y-7"}`
         }>
-          Effective post-surgical care is crucial for a smooth and speedy recovery. A dedicated nurse ensures that patients receive the professional medical attention, support, and monitoring they need after a procedure, right in the comfort of their own home.
+          Having surgery is only the first step—what happens at home after is just as important. High-quality post-operative care can make the difference between a smooth recovery and unwanted complications. That’s why many families turn to skilled, in-home nurses for post-surgical support.
         </p>
       </AnimatedSection>
 
-      {/* WHAT IS section */}
       <AnimatedSection delay={80} animation="fade-up" id="what-is-post-surgical-care" className="mb-12">
         <h2 className={
           `text-2xl font-bold text-gray-800 transition-opacity duration-700
@@ -63,11 +61,17 @@ export default function PostSurgicalCareArticleContent() {
           What is Post-Surgical Care?
         </h2>
         <p>
-          Post-surgical care, or post-operative care, is the care a patient receives after a surgical procedure. The goal is to monitor for complications, manage pain and symptoms, and support the body’s healing process. This care is critical in preventing infections and ensuring the best possible outcome.
+          Post-surgical care, also known as post-operative care, refers to the specialized support and medical oversight you receive after your surgery. This care is focused on helping you heal comfortably, monitoring your health, managing pain, and reducing your risk of infection or other setbacks.
         </p>
+        <ul>
+          <li>Daily health checks and vital sign monitoring</li>
+          <li>Pain management guidance</li>
+          <li>Help with bathing, dressing, and mobility</li>
+          <li>Professional wound care</li>
+          <li>Family education and reassurance</li>
+        </ul>
       </AnimatedSection>
 
-      {/* Responsibilities with staggered grid */}
       <section id="key-responsibilities" className="mb-12">
         <AnimatedSection delay={150} animation="fade-up">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -94,25 +98,23 @@ export default function PostSurgicalCareArticleContent() {
         </AnimatedSection>
       </section>
 
-      {/* Floating Insight */}
       <AnimatedSection delay={350} animation="fade-in">
         <div className="lux-floating-insight bg-blue-50 border-l-4 border-blue-400 p-4 my-8 relative shadow-sm">
           <p className="text-gray-700">
-            <strong>Key Insight:</strong> In-home post-surgical nursing care can significantly reduce the risk of hospital readmission by providing professional oversight during the critical initial recovery period.
+            <strong>Insider Tip:</strong> Patients who receive attentive in-home post-op care often recover faster, avoid re-hospitalization, and feel more secure during the crucial first weeks after surgery.
           </p>
         </div>
       </AnimatedSection>
 
-      {/* FINDING CARE section */}
       <AnimatedSection delay={450} animation="fade-up" id="finding-care" className="mb-12">
         <h2 className={
           `text-2xl font-bold text-gray-800 transition-opacity duration-700
             ${heroReveal[2] ? "opacity-100" : "opacity-0 translate-y-7"}`
         }>
-          Finding the Right Care
+          Finding the Right Nurse for Your Needs
         </h2>
         <p>
-          When looking for a post-surgical care nurse, it's important to find someone with experience relevant to the specific type of surgery performed. Platforms like Nurse Nest connect families with qualified, vetted nurses who specialize in providing compassionate and skilled post-operative support.
+          It’s essential to hire a post-surgical nurse with the right expertise for your specific procedure. Ask about their experience, licensing, and comfort with home-based care. There are platforms, like Nurse Nest, where you can connect with background-checked, specialized nurses ready to support your safe recovery.
         </p>
       </AnimatedSection>
     </div>
