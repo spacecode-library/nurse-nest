@@ -11,6 +11,19 @@ const Container: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 function BlogSidebar() {
   return (
     <aside className="blog-sidebar mt-12 md:mt-0 md:ml-10 w-full md:w-72 flex-shrink-0">
+      {/* Top 10 Banks Highlight */}
+      <div className="mb-6 rounded-xl bg-yellow-50 border border-yellow-200 p-4 shadow">
+        <a
+          href="#top-banks-2025"
+          className="block text-lg font-semibold text-yellow-900 hover:underline"
+        >
+          🌟 Top 10 Bank Accounts for Nurses (2025)
+        </a>
+        <p className="mt-1 text-sm text-yellow-800">
+          See the latest top-rated banks for business checking, fees, and features.
+        </p>
+      </div>
+      {/* Related Resources */}
       <div className="related-resources mb-8 rounded-xl bg-blue-50 border border-blue-100 p-5">
         <h3 className="font-semibold text-lg mb-4 text-[#1e293b]">Related Resources</h3>
         <ul className="space-y-2">
@@ -21,6 +34,7 @@ function BlogSidebar() {
           <li><Link className="hover:underline text-blue-700" to="/blog/nurse-llc-formation-guide">LLC Formation Guide</Link></li>
         </ul>
       </div>
+      {/* Quick Links */}
       <div className="quick-links rounded-xl bg-gray-100 border border-gray-200 p-5">
         <h3 className="font-semibold text-lg mb-4 text-[#1e293b]">Professional Services</h3>
         <div className="service-links flex flex-col gap-3">
@@ -90,6 +104,8 @@ export default function BusinessBankingSetupGuideNurses() {
                     ["Essential Account Features for Nurses", "#account-features"],
                     ["Common Fees and How to Avoid Them", "#fees-to-avoid"],
                     ["Online Banks vs Traditional Banks", "#online-vs-traditional"],
+                    ["Banking Showdown: Traditional vs Online vs Specialty", "#banking-showdown"],
+                    ["Top Bank Accounts (2025)", "#top-banks-2025"],
                     ["Business Credit Cards for Nurses", "#business-credit-cards"],
                     ["Record Keeping and Organization", "#record-keeping"],
                     ["Tax Benefits of Business Banking", "#tax-benefits"],
@@ -240,7 +256,7 @@ export default function BusinessBankingSetupGuideNurses() {
                 <h2 className="!text-2xl md:!text-3xl pt-2 mb-3">Critical Banking Features Nurses Overlook (But Shouldn't)</h2>
                 <ul className="list-disc ml-6 mb-4">
                   <li><strong>Virtual Cards:</strong> Use Novo's disposable numbers to prevent fraud on supply purchases.</li>
-                  <li><strong>AP/AR Automation:</strong> Relay’s built-in invoicing syncs with QuickBooks for fast insurance reimbursements.</li>
+                  <li><strong>AP/AR Automation:</strong> Relay's built-in invoicing syncs with QuickBooks for fast insurance reimbursements.</li>
                   <li><strong>Multi-User Access:</strong> Add bookkeepers/office managers with restricted permissions.</li>
                   <li><strong>Sweep Accounts:</strong> Axos Bank sweeps excess funds into high-yield accounts overnight.</li>
                 </ul>
@@ -299,6 +315,232 @@ export default function BusinessBankingSetupGuideNurses() {
                     </tbody>
                   </table>
                 </div>
+              </section>
+
+              <section id="top-banks-2025" className="mb-14 pb-10 border-b border-gray-200">
+                <h2 className="!text-2xl md:!text-3xl pt-2 mb-3 font-bold text-[#0f172a]">
+                  Top 10 Business Bank Accounts in 2025
+                </h2>
+                <p className="mb-5 text-lg md:text-xl leading-relaxed text-[#334155]">
+                  Ranked by fees, features, scalability, and user reviews. Carefully curated for nurse entrepreneurs, side-hustles, and agencies.
+                </p>
+                <div className="overflow-x-auto rounded-xl shadow border bg-white/95 mb-6">
+                  <table className="min-w-[700px] w-full text-xs md:text-base">
+                    <thead>
+                      <tr className="bg-sky-50 border-b font-bold text-[#0f172a]">
+                        <th className="p-3 text-left">Provider</th>
+                        <th className="p-3 text-left">Best For</th>
+                        <th className="p-3 text-left">Startup Cost</th>
+                        <th className="p-3 text-left">Monthly Fees</th>
+                        <th className="p-3 text-left">Key Features</th>
+                        <th className="p-3 text-left">Reviews</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      <tr>
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.bluevine.com/business-checking" target="_blank" rel="noopener" className="hover:underline">Bluevine</a></td>
+                        <td className="p-3">High APY &amp; no fees</td>
+                        <td className="p-3">$0 min deposit</td>
+                        <td className="p-3">$0</td>
+                        <td className="p-3">2.0% APY up to $250k; Unlimited transactions; Free checks</td>
+                        <td className="p-3">4.8 ★ (59)</td>
+                      </tr>
+                      <tr className="bg-blue-50/80">
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.axosbank.com/business-checking" target="_blank" rel="noopener" className="hover:underline">Axos Bank</a></td>
+                        <td className="p-3">ATM access &amp; low costs</td>
+                        <td className="p-3">$100 min deposit</td>
+                        <td className="p-3">$0–$10 (waivable)</td>
+                        <td className="p-3">Unlimited ATM reimbursements; 1.01% APY; QuickBooks integration</td>
+                        <td className="p-3">4.7 ★ (1014)</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.novo.co/" target="_blank" rel="noopener" className="hover:underline">Novo</a></td>
+                        <td className="p-3">Digital integrations</td>
+                        <td className="p-3">$50 min deposit</td>
+                        <td className="p-3">$0</td>
+                        <td className="p-3">Free ACH/wire transfers; Shopify/Stripe integrations; Mobile app</td>
+                        <td className="p-3">4.6 ★ (514)</td>
+                      </tr>
+                      <tr className="bg-blue-50/80">
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.chase.com/business" target="_blank" rel="noopener" className="hover:underline">Chase</a></td>
+                        <td className="p-3">Brick-and-mortar access</td>
+                        <td className="p-3">$0 min deposit</td>
+                        <td className="p-3">$15 (waivable)</td>
+                        <td className="p-3">4,700+ branches; 20 free teller txns; QuickAccept card payments</td>
+                        <td className="p-3">4.3 ★ (914)</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.bankofamerica.com/smallbusiness" target="_blank" rel="noopener" className="hover:underline">Bank of America</a></td>
+                        <td className="p-3">Traditional banking</td>
+                        <td className="p-3">$100 min deposit (savings)</td>
+                        <td className="p-3">$16–$29.95 (waivable)</td>
+                        <td className="p-3">Preferred Rewards; Zelle&reg;; branch services</td>
+                        <td className="p-3">4.0 ★ (39)</td>
+                      </tr>
+                      <tr className="bg-blue-50/80">
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://wise.com/business" target="_blank" rel="noopener" className="hover:underline">Wise</a></td>
+                        <td className="p-3">International businesses</td>
+                        <td className="p-3">$0 min deposit</td>
+                        <td className="p-3">$0</td>
+                        <td className="p-3">40+ currencies; Mid-market FX fees (0.26%); local accounts in 60+ countries</td>
+                        <td className="p-3">4.5 ★ (36)</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.revolut.com/business" target="_blank" rel="noopener" className="hover:underline">Revolut Business</a></td>
+                        <td className="p-3">Scalable startups</td>
+                        <td className="p-3">$0 min deposit</td>
+                        <td className="p-3">$0–$100+/month</td>
+                        <td className="p-3">Multi-currency accounts; Expense analytics; API automation</td>
+                        <td className="p-3">4.7 ★ (412)</td>
+                      </tr>
+                      <tr className="bg-blue-50/80">
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.capitalone.com/small-business-bank-accounts" target="_blank" rel="noopener" className="hover:underline">Capital One</a></td>
+                        <td className="p-3">Customer satisfaction</td>
+                        <td className="p-3">$0 min deposit</td>
+                        <td className="p-3">$15 (waivable)</td>
+                        <td className="p-3">Unlimited digital txns; No-fee cash deposits at Cafés</td>
+                        <td className="p-3">4.8 ★ (J.D. Power #1) (9)</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.rho.co/business-banking" target="_blank" rel="noopener" className="hover:underline">Rho</a></td>
+                        <td className="p-3">High-growth tech startups</td>
+                        <td className="p-3">$0 min deposit</td>
+                        <td className="p-3">$0</td>
+                        <td className="p-3">Treasury mgmt; Integrated AP/AR; 24/7 support</td>
+                        <td className="p-3">4.9 ★ (14)</td>
+                      </tr>
+                      <tr className="bg-blue-50/80">
+                        <td className="p-3 font-semibold text-blue-900"><a href="https://www.lili.co/" target="_blank" rel="noopener" className="hover:underline">Lili</a></td>
+                        <td className="p-3">Freelancers/solopreneurs</td>
+                        <td className="p-3">$0 min deposit</td>
+                        <td className="p-3">$0–$4.99 (Pro)</td>
+                        <td className="p-3">Tax optimizer tools; Auto-savings; No overdraft fees</td>
+                        <td className="p-3">4.4 ★ (5)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                {/* Key Insights */}
+                <div className="grid md:grid-cols-2 gap-6 mb-7">
+                  <div className="p-5 rounded-xl bg-blue-50 border border-blue-200">
+                    <h4 className="font-semibold mb-2 text-blue-900">Lowest Costs:</h4>
+                    <ul className="list-disc ml-5 text-blue-900 text-sm">
+                      <li>Bluevine and Novo: $0 monthly fees, unlimited transactions, high APY.</li>
+                      <li>Axos: All ATM fees reimbursed—ideal for cash-based practices.</li>
+                    </ul>
+                  </div>
+                  <div className="p-5 rounded-xl bg-blue-50 border border-blue-200">
+                    <h4 className="font-semibold mb-2 text-blue-900">Global Operations:</h4>
+                    <ul className="list-disc ml-5 text-blue-900 text-sm">
+                      <li>Wise: FX fees 80% lower than traditional banks.</li>
+                      <li>Revolut: 28 currencies, instant team payments.</li>
+                    </ul>
+                  </div>
+                  <div className="p-5 rounded-xl bg-indigo-50 border border-indigo-200">
+                    <h4 className="font-semibold mb-2 text-indigo-950">Startup-Friendly:</h4>
+                    <ul className="list-disc ml-5 text-indigo-950 text-sm">
+                      <li>Lili: Automates tax savings for freelancers.</li>
+                      <li>Chase: Waives monthly fee with $2k daily balance—great for new LLCs.</li>
+                    </ul>
+                  </div>
+                  <div className="p-5 rounded-xl bg-indigo-50 border border-indigo-200">
+                    <h4 className="font-semibold mb-2 text-indigo-950">Scalability:</h4>
+                    <ul className="list-disc ml-5 text-indigo-950 text-sm">
+                      <li>Rho: Automated invoicing &amp; credit lines for growing practices.</li>
+                      <li>Bank of America: Free savings with Relationship Banking at $15k+ balances.</li>
+                    </ul>
+                  </div>
+                </div>
+                {/* Specialized Comparisons */}
+                <div className="mt-5">
+                  <h4 className="font-semibold mb-2 text-[#1e293b]">Specialized Account Comparisons</h4>
+                  <div className="overflow-x-auto mb-5">
+                    <table className="min-w-[500px] w-full text-xs">
+                      <caption className="caption-top text-sm text-gray-700 mb-1">Startups &amp; High-Growth Companies</caption>
+                      <thead>
+                        <tr className="bg-blue-100 font-bold">
+                          <th className="p-2 text-left">Feature</th>
+                          <th className="p-2 text-left">Rho</th>
+                          <th className="p-2 text-left">Bluevine</th>
+                          <th className="p-2 text-left">Silicon Valley Bank</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="p-2">Funding Support</td>
+                          <td className="p-2">Integrated venture debt</td>
+                          <td className="p-2">Lines of credit up to $250k</td>
+                          <td className="p-2">VC network access</td>
+                        </tr>
+                        <tr className="bg-blue-50/80">
+                          <td className="p-2">Tech Tools</td>
+                          <td className="p-2">API treasury mgmt</td>
+                          <td className="p-2">Sub-accounts for budgeting</td>
+                          <td className="p-2">Global currency hedging</td>
+                        </tr>
+                        <tr>
+                          <td className="p-2">Best For</td>
+                          <td className="p-2">Tech scale-ups</td>
+                          <td className="p-2">LLCs/retail</td>
+                          <td className="p-2">VC-backed firms</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-[400px] w-full text-xs">
+                      <caption className="caption-top text-sm text-gray-700 mb-1">International Banking</caption>
+                      <thead>
+                        <tr className="bg-blue-100 font-bold">
+                          <th className="p-2 text-left">Feature</th>
+                          <th className="p-2 text-left">Wise</th>
+                          <th className="p-2 text-left">Airwallex</th>
+                          <th className="p-2 text-left">Revolut Business</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="p-2">FX Fees</td>
+                          <td className="p-2">0.26–0.5%</td>
+                          <td className="p-2">0.5–1%</td>
+                          <td className="p-2">0.4–1.5%</td>
+                        </tr>
+                        <tr className="bg-blue-50/80">
+                          <td className="p-2">Local Accounts</td>
+                          <td className="p-2">60+ countries</td>
+                          <td className="p-2">60+ countries</td>
+                          <td className="p-2">28 currencies</td>
+                        </tr>
+                        <tr>
+                          <td className="p-2">Payout Speed</td>
+                          <td className="p-2">1–2 days</td>
+                          <td className="p-2">Instant</td>
+                          <td className="p-2">&lt;20 seconds</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                {/* Critical Considerations */}
+                <div className="mt-7 mb-4 p-5 bg-yellow-100 rounded-xl border border-yellow-300">
+                  <h4 className="font-semibold mb-2 text-yellow-900">Critical Considerations</h4>
+                  <ul className="list-disc ml-5 text-yellow-800 text-sm">
+                    <li>Traditional banks often charge $30–$45 per wire transfer.</li>
+                    <li>Chase cash deposits: $0.85–$1.50 per $100; Novo/Bluevine require third-party services for cash.</li>
+                    <li>LLCs <span className="font-bold">must</span> keep business and personal finances separate to protect liability.</li>
+                  </ul>
+                </div>
+                {/* Quick Open Links */}
+                <div className="mb-2 mt-4 flex flex-wrap gap-3">
+                  <a href="https://www.bluevine.com/business-checking" target="_blank" rel="noopener" className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition">Open Bluevine</a>
+                  <a href="https://www.axosbank.com/business-checking" target="_blank" rel="noopener" className="bg-yellow-600 text-white px-4 py-2 rounded-md font-medium hover:bg-yellow-700 transition">Open Axos</a>
+                  <a href="https://wise.com/business" target="_blank" rel="noopener" className="bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition">Open Wise</a>
+                  <a href="https://www.bankofamerica.com/smallbusiness" target="_blank" rel="noopener" className="bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition">Open Bank of America</a>
+                  <a href="https://www.rho.co/business-banking" target="_blank" rel="noopener" className="bg-indigo-600 text-white px-4 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Open Rho</a>
+                </div>
+                <p className="mt-2 text-xs text-[#64748b]">
+                  For full fee schedules or niche needs (e.g., merchant services), refer to provider sites or aggregate comparisons like <a href="https://www.forbes.com/advisor/business/banking/best-business-bank-accounts/" target="_blank" rel="noopener" className="underline hover:text-blue-500">Forbes Advisor</a> or <a href="https://www.bankrate.com/banking/business/best-business-bank-accounts/" target="_blank" rel="noopener" className="underline hover:text-blue-500">Bankrate</a>.
+                </p>
               </section>
 
               <section id="business-credit-cards" className="mb-12 pb-8 border-b border-neutral-light/40">
