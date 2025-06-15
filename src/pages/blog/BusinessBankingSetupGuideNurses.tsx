@@ -1,5 +1,7 @@
+
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import NurseNestNavbar from "@/components/NurseNestNavbar";
 
 // Helper for responsive container
 const Container: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -36,6 +38,8 @@ export default function BusinessBankingSetupGuideNurses() {
 
   return (
     <div>
+      {/* Navbar */}
+      <NurseNestNavbar isHomePage={false} />
       {/* Hero Section */}
       <section
         className="w-full"
