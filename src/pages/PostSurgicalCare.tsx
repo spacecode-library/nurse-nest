@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Heart, Shield, Clock, Users, CheckCircle, AlertTriangle, Phone, FileText, Calendar, Home } from 'lucide-react';
 import NurseNestNavbar from '@/components/NurseNestNavbar';
@@ -64,7 +63,7 @@ export default function PostSurgicalCare() {
                   {/* Introduction */}
                   <div className="mb-12">
                     <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                      Post-surgical care at home has become increasingly common as healthcare systems focus on reducing hospital stays while maintaining quality outcomes. Whether recovering from minor outpatient surgery or major procedures, proper home care is crucial for optimal healing and complication prevention.
+                      Post-surgical home care encompasses all aspects of recovery management outside the hospital setting. This includes wound care, pain management, medication administration, mobility assistance, and monitoring for complications.
                     </p>
                     
                     <p className="text-lg text-gray-700 leading-relaxed">
@@ -302,12 +301,12 @@ export default function PostSurgicalCare() {
                         <div className="text-center">
                           <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
                           <h4 className="font-bold">Contact Surgeon</h4>
-                          <p className="text-sm opacity-90">Fever >101°F, wound separation, severe pain</p>
+                          <p className="text-sm opacity-90">Fever &gt;101°F, wound separation, severe pain</p>
                         </div>
                         <div className="text-center">
                           <Calendar className="h-8 w-8 mx-auto mb-2" />
                           <h4 className="font-bold">Same-Day Visit</h4>
-                          <p className="text-sm opacity-90">Moderate swelling, constipation >3 days</p>
+                          <p className="text-sm opacity-90">Moderate swelling, constipation &gt;3 days</p>
                         </div>
                       </div>
                     </div>
