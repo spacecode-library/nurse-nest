@@ -28,7 +28,7 @@ export const nurseDropdownSections: DropdownSection[] = [
     title: 'Business Setup',
     links: [
       { name: 'LLC Setup Guide', path: '/nurse-llc-setup-guide' },
-      { name: 'EIN Applications', path: '/get-ein-nurse-business' },
+      { name: 'EIN Applications', path: '/blog/ein-applications-independent-contract-nurses' },
       { name: 'Business Banking', path: '/business-bank-account-for-nurses' },
     ]
   },
