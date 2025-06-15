@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -6,11 +7,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import {
-  nurseDropdownSections,
-} from "@/config/navigation";
+import { nurseDropdownSections, NavLink } from "@/config/navigation";
 
 interface NurseDropdownProps {
   shouldUseDarkText: boolean;
@@ -32,6 +33,17 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
   const textClass =
     "font-medium text-gray-900 transition-colors duration-200 " + highlightClass;
 
+  // Helper to handle click for items
+  const handleItemClick = (item: NavLink) => {
+    if (item.name === "Apply Now") {
+      handleApplyNowClick();
+    } else if (item.external) {
+      window.open(item.path, "_blank", "noopener noreferrer");
+    } else {
+      navigate(item.path);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,50 +59,24 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64 z-50 bg-white">
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={handleApplyNowClick}
-          tabIndex={0}
-        >
-          <span className={textClass}>
-            Apply Now
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/nurse-llc-setup-guide')}
-          tabIndex={0}
-        >
-          <span className={textClass}>LLC Setup Guide</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/blog/ein-applications-independent-contract-nurses')}
-          tabIndex={0}
-        >
-          <span className={textClass}>EIN Applications</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/blog/business-banking-setup-guide-nurses')}
-          tabIndex={0}
-        >
-          <span className={textClass}>Business Banking</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/malpractice-insurance-for-nurses')}
-          tabIndex={0}
-        >
-          <span className={textClass}>Malpractice Insurance</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/1099-tax-tips')}
-          tabIndex={0}
-        >
-          <span className={textClass}>1099 Tax Tips</span>
-        </DropdownMenuItem>
+        {nurseDropdownSections.map((section, secIdx) => (
+          <React.Fragment key={section.title}>
+            {secIdx > 0 && <DropdownMenuSeparator />}
+            <DropdownMenuLabel className="text-base font-semibold pt-2 pb-1 px-3">{section.title}</DropdownMenuLabel>
+            {section.links.map((item) => (
+              <DropdownMenuItem
+                key={item.name}
+                className={itemClass}
+                onClick={() => handleItemClick(item)}
+                tabIndex={0}
+              >
+                <span className={textClass}>
+                  {item.name}
+                </span>
+              </DropdownMenuItem>
+            ))}
+          </React.Fragment>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
