@@ -1,4 +1,3 @@
-
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -40,7 +39,7 @@ export default function NurseLlcSetup() {
           <div className="container max-w-3xl mx-auto px-4">
             <h2 className="text-3xl font-bold mb-4">Ready to Start Your Nursing Practice?</h2>
             <p className="mb-7 text-lg">Get the support and resources you need to launch your independent nursing career with confidence.</p>
-            <a href="/apply" className="inline-block px-8 py-4 bg-white text-[#3b82f6] rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow">Learn More About Opportunities</a>
+            <a href="/sign-in" className="inline-block px-8 py-4 bg-white text-[#3b82f6] rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow">Learn More About Opportunities</a>
           </div>
         </section>
       </main>
