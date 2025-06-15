@@ -1,4 +1,3 @@
-
 import React from "react";
 import NurseNestNavbar from "@/components/NurseNestNavbar";
 
@@ -189,7 +188,7 @@ export default function NewbornCareGuideBlog() {
               <h2 id="warning-signs" className="text-2xl font-bold text-nurse-dark mt-10 mb-3">Recognizing Warning Signs</h2>
               <ul>
                 <li>
-                  <b>Respiratory</b>: >60 breaths/min, nasal flaring, retractions, grunting, cyanosis
+                  <b>Respiratory</b>: {'>'}60 breaths/min, nasal flaring, retractions, grunting, cyanosis
                 </li>
                 <li>
                   <b>Feeding</b>: Poor suck, excessive spit up, less than 6 wet diapers/day after day 6
