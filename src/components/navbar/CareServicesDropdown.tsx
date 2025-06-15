@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -49,15 +48,6 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
         >
           <span className={textClass}>
             Newborn Care
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/blog/complete-newborn-care-guide-for-nurses')}
-          tabIndex={0}
-        >
-          <span className={textClass}>
-            📖 Newborn Care Guide
           </span>
         </DropdownMenuItem>
         <DropdownMenuItem
