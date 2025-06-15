@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -32,10 +33,10 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
   const textClass =
     "font-medium text-gray-900 transition-colors duration-200 " + highlightClass;
 
-  // Style for section headers to look like non-clickable headings, more subtle/muted
+  // Style for section headers: large, non-clickable, bolder, colored, spaced, uppercased for emphasis
   const sectionLabelClass =
-    "text-xs text-muted-foreground font-semibold uppercase tracking-wider px-3 pt-3 pb-1 select-none pointer-events-none"
-    + " text-[#9bcbff]"; // Use the requested section title color
+    "text-xs font-bold uppercase tracking-wider px-3 pt-3 pb-1 select-none pointer-events-none"
+    + " text-[#9bcbff] drop-shadow-sm";
 
   // Helper to handle click for items
   const handleItemClick = (item: NavLink) => {
@@ -62,9 +63,9 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
           For Nurses <ChevronDown className="ml-1 h-4 w-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 z-50 bg-white">
+      <DropdownMenuContent className="w-64 z-[99] bg-white shadow-2xl">
         {nurseDropdownSections.map((section, secIdx) => (
-          <React.Fragment key={section.title}>
+          <div key={section.title}>
             {secIdx > 0 && <DropdownMenuSeparator />}
             <div className={sectionLabelClass}>{section.title}</div>
             {section.links.map((item) => (
@@ -79,7 +80,7 @@ export default function NurseDropdown({ shouldUseDarkText, handleApplyNowClick }
                 </span>
               </DropdownMenuItem>
             ))}
-          </React.Fragment>
+          </div>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
