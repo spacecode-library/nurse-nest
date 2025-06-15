@@ -1,8 +1,7 @@
 
 import React from "react";
-import NurseNestNavbar from "@/components/NurseNestNavbar";
-import { Baby } from "lucide-react";
-import BlogHero from "@/components/blog/BlogHero";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import BlogSidebar from "@/components/blog/BlogSidebar";
 import BlogArticle from "@/components/blog/BlogArticle";
 import NightNurseGuideArticleContent from "@/components/night-nurse-guide/NightNurseGuideArticleContent";
@@ -26,16 +25,24 @@ const relatedResources = [
 
 export default function NightNurseGuide() {
   return (
-    <>
-      <NurseNestNavbar isHomePage={false} />
-      <div className="bg-white min-h-screen pt-24">
-        <BlogHero
-          Icon={Baby}
-          title="Night Nurses for Newborn Care: A Complete Guide to Professional Overnight Baby Support"
-          date="June 15, 2025"
-          readTime="15 min read"
-          description="This comprehensive guide explores everything you need to know about hiring night nurses, their qualifications, services, costs, and how to make the best decision for your family's unique needs."
-        />
+    <div className="min-h-screen flex flex-col bg-white text-[#1e293b] font-sans">
+      <Navbar />
+      <main className="flex-grow pt-24">
+        <section className="py-16 md:py-20 bg-gradient-to-br from-slate-100 via-blue-50 to-blue-100">
+          <div className="container max-w-4xl mx-auto px-4 flex flex-col gap-8 text-center">
+            <h1 className="font-extrabold text-4xl md:text-5xl lg:text-6xl tracking-tight text-[#1e293b] leading-tight mb-3 md:mb-6 font-sans">
+              Night Nurses for Newborn Care
+              <span className="block text-2xl md:text-3xl font-medium mt-2 text-blue-700">
+                A Complete Guide to Professional Overnight Baby Support
+              </span>
+            </h1>
+            <div className="flex justify-center items-center text-gray-500 gap-4 text-sm md:text-base">
+              <span>June 15, 2025</span>
+              <span>•</span>
+              <span>15 min read</span>
+            </div>
+          </div>
+        </section>
 
         <section className="py-10 px-4">
           <div className="container mx-auto flex flex-col lg:flex-row gap-10 justify-between max-w-6xl">
@@ -45,7 +52,8 @@ export default function NightNurseGuide() {
             <BlogSidebar quickNavLinks={quickNavLinks} relatedResources={relatedResources} />
           </div>
         </section>
-      </div>
-    </>
+      </main>
+      <Footer />
+    </div>
   );
 }
