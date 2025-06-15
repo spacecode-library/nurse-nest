@@ -7,8 +7,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
+import { careServicesDropdownSections, NavLink } from "@/config/navigation";
 
 interface CareServicesDropdownProps {
   shouldUseDarkText: boolean;
@@ -26,6 +28,18 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
 
   const textClass =
     "font-medium text-gray-900 transition-colors duration-200 " + highlightClass;
+  
+  const sectionLabelClass =
+    "text-xs font-bold uppercase tracking-wider px-3 pt-3 pb-1 select-none pointer-events-none"
+    + " text-[#9bcbff] drop-shadow-sm";
+
+  const handleItemClick = (item: NavLink) => {
+    if (item.external) {
+      window.open(item.path, "_blank", "noopener noreferrer");
+    } else {
+      navigate(item.path);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -42,42 +56,24 @@ export default function CareServicesDropdown({ shouldUseDarkText }: CareServices
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64 z-[99] bg-white shadow-2xl">
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/blog/complete-newborn-care-guide-for-nurses')}
-          tabIndex={0}
-        >
-          <span className={textClass}>
-            Newborn Care
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/elderly-care-nurse-services')}
-          tabIndex={0}
-        >
-          <span className={textClass}>
-            Elderly Care
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/wound-care-nursing-guide')}
-          tabIndex={0}
-        >
-          <span className={textClass}>
-            Wound Care
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={itemClass}
-          onClick={() => navigate('/best-products-for-home-healthcare')}
-          tabIndex={0}
-        >
-          <span className={textClass}>
-            Product Reviews
-          </span>
-        </DropdownMenuItem>
+        {careServicesDropdownSections.map((section, secIdx) => (
+          <div key={section.title}>
+            {secIdx > 0 && <DropdownMenuSeparator />}
+            <div className={sectionLabelClass}>{section.title}</div>
+            {section.links.map((item) => (
+              <DropdownMenuItem
+                key={item.name}
+                className={itemClass}
+                onClick={() => handleItemClick(item)}
+                tabIndex={0}
+              >
+                <span className={textClass}>
+                  {item.name}
+                </span>
+              </DropdownMenuItem>
+            ))}
+          </div>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
