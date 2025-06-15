@@ -31,6 +31,10 @@ import NewbornCareGuideBlog from "./pages/blog/complete-newborn-care-guide-for-n
 import ElderlyCareBlog from "./pages/elderly-care-nurse-services";
 import NewbornNurseSupport from "./pages/NewbornNurseSupport";
 
+// Care Service Pages
+import PostSurgicalCare from "./pages/PostSurgicalCare";
+import BestProductsForHomeHealthcare from "./pages/BestProductsForHomeHealthcare";
+
 // Payment Pages
 import Payment from "./pages/Payment";
 import PaymentSuccess from "./pages/PaymentSuccess";
@@ -86,6 +90,10 @@ export default function App() {
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/disclaimer" element={<Disclaimer />} />
+              
+              {/* Care Service Routes */}
+              <Route path="/post-surgical-care" element={<PostSurgicalCare />} />
+              <Route path="/best-products-for-home-healthcare" element={<BestProductsForHomeHealthcare />} />
               
               {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
