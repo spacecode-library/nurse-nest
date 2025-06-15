@@ -546,14 +546,51 @@ export default function BusinessBankingSetupGuideNurses() {
               <section id="business-credit-cards" className="mb-12 pb-8 border-b border-neutral-light/40">
                 <h2 className="!text-2xl md:!text-3xl pt-2 mb-3">Business Credit Cards for Nurses</h2>
                 <p className="mb-5 text-lg md:text-xl leading-relaxed">
-                  Business credit cards can help nurses build credit and manage expenses.
+                  Business credit cards are a strategic tool for nurses to build business credit, manage cash flow, and tap valuable rewards tailored to common healthcare expenses. Look for cards with <span className="font-semibold">no annual fees</span>, robust rewards on healthcare purchases, and <span className="font-semibold">flexible payment terms</span> that mirror your fluctuating contract payment schedules.
+                </p>
+                <ul className="list-disc ml-6 mb-4">
+                  <li>
+                    <strong>Targeted Rewards:</strong> Many business credit cards offer extra points/cashback for categories that matter to nurse contractors—travel (for assignments), office supplies, training and CEUs, even fuel.
+                  </li>
+                  <li>
+                    <strong>Sign-Up Bonuses:</strong> Opening a new account often comes with sizable sign-up bonuses—these can help offset early business expenses or licensing fees.
+                  </li>
+                  <li>
+                    <strong>Enhanced Protections:</strong> Health-professional cards may include perks like rental car coverage for assignment travel, purchase protections on clinical equipment, or travel insurance and emergency assistance.
+                  </li>
+                  <li>
+                    <strong>Credit Profile Building:</strong> Using a dedicated business card (and paying on time) builds your business credit history—key if you plan to apply for business loans or grow your practice in the future.
+                  </li>
+                </ul>
+                <p className="mb-4 text-base">
+                  Best practice: <span className="font-semibold">Pay in full each month to avoid interest</span> and set up automatic payments to keep your account in good standing. Consistent, responsible card usage elevates your financial flexibility and unlocks more favorable loan terms as your business evolves.
                 </p>
               </section>
 
               <section id="record-keeping" className="mb-12 pb-8 border-b border-neutral-light/40">
                 <h2 className="!text-2xl md:!text-3xl pt-2 mb-3">Record Keeping and Organization</h2>
                 <p className="mb-5 text-lg md:text-xl leading-relaxed">
-                  Maintain accurate records of all transactions for tax purposes.
+                  Effective record keeping is more than a tax-time necessity—it's the heart of sound business operations for independent nurse contractors. Well-organized records help you track multiple contracts, juggle irregular pay schedules, and monitor expenses across varying assignments and locations.
+                </p>
+                <ul className="list-disc ml-6 mb-4">
+                  <li>
+                    <strong>Go Digital:</strong> Use cloud-based systems (Google Drive, Dropbox, etc.) for easy, secure access anywhere. Create folders for contracts, tax filings, certifications, continuing education, and receipts.
+                  </li>
+                  <li>
+                    <strong>Specialized Software:</strong> Consider accounting tools for contractors (like QuickBooks Self-Employed or FreshBooks), which auto-categorize expenses and generate reports.
+                  </li>
+                  <li>
+                    <strong>Track Mileage:</strong> Since travel is often deductible, use apps to log business miles or maintain a detailed travel logbook.
+                  </li>
+                  <li>
+                    <strong>Document Professional Development:</strong> Keep records of CEU fees, certification renewals, and conference expenses—these typically count as business deductions.
+                  </li>
+                  <li>
+                    <strong>Update Weekly:</strong> Dedicate an hour (perhaps every Sunday) to sort receipts, update expense trackers, and review upcoming obligations to avoid year-end scramble.
+                  </li>
+                </ul>
+                <p className="mb-4 text-base">
+                  Many thriving nurse contractors cite <span className="font-semibold">consistent, weekly updates to their financial records</span> as the #1 practice for reducing audit risk and staying financially confident all year.
                 </p>
               </section>
 
@@ -578,13 +615,6 @@ export default function BusinessBankingSetupGuideNurses() {
                   <li><strong>Scale Prep Failure:</strong> Banks freeze accounts if large new deposits suddenly appear from contracts.</li>
                   <li><strong>Tax Nightmares:</strong> The average IRS audit takes 469 hours vs. only 28 hours for separated accounts!</li>
                 </ul>
-              </section>
-
-              <section id="troubleshooting" className="mb-12 pb-8 border-b border-neutral-light/40">
-                <h2 className="!text-2xl md:!text-3xl pt-2 mb-3">Troubleshooting Banking Issues</h2>
-                <p className="mb-5 text-lg md:text-xl leading-relaxed">
-                  Contact your bank's customer service for any issues.
-                </p>
               </section>
 
               {/* FAQ Section */}
