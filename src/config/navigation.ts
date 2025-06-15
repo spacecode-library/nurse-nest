@@ -46,6 +46,7 @@ export const careServicesDropdownSections: DropdownSection[] = [
     title: 'Specialized Care',
     links: [
       { name: 'Newborn Care', path: '/newborn-nurse-support-guide' },
+      { name: 'Night Nurse Guide', path: '/night-nurse-newborn-care-guide' },
       { name: 'Elderly Care', path: '/elderly-care-nurse-services' },
       { name: 'Post-Surgical Care', path: '/post-surgical-care' },
     ]

@@ -65,6 +65,7 @@ import TaxTips from "./pages/TaxTips";
 import NurseLlcSetup from "./pages/NurseLlcSetup";
 import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
 import EinApplications from "./pages/EinApplications";
+import NightNurseGuide from "./pages/NightNurseGuide";
 
 export default function App() {
   return (
@@ -106,6 +107,7 @@ export default function App() {
               />
               {/* Newborn Care Service Route */}
               <Route path="/newborn-nurse-support-guide" element={<NewbornNurseSupport />} />
+              <Route path="/night-nurse-newborn-care-guide" element={<NightNurseGuide />} />
               
               {/* Payment Routes */}
               <Route path="/payment" element={<Payment />} />
