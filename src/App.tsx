@@ -27,6 +27,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import BusinessBankingSetupGuideNurses from "./pages/blog/BusinessBankingSetupGuideNurses";
 import NewbornCareGuideBlog from "./pages/blog/complete-newborn-care-guide-for-nurses";
+import NewbornNurseSupport from "./pages/NewbornNurseSupport";
 
 // Payment Pages
 import Payment from "./pages/Payment";
@@ -91,6 +92,8 @@ export default function App() {
                 path="/blog/complete-newborn-care-guide-for-nurses" 
                 element={<NewbornCareGuideBlog />} 
               />
+              {/* Newborn Care Service Route */}
+              <Route path="/newborn-nurse-support-guide" element={<NewbornNurseSupport />} />
               
               {/* Payment Routes */}
               <Route path="/payment" element={<Payment />} />
