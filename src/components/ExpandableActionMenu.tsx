@@ -46,6 +46,11 @@ export default function ExpandableActionMenu({
     }
   }, [open]);
 
+  const handleGetNurse = () => {
+    setOpen(false);
+    window.location.href = "/sign-up";
+  };
+
   return (
     <div
       ref={containerRef}
@@ -111,10 +116,7 @@ export default function ExpandableActionMenu({
               transitionDelay: open ? "180ms" : "0ms",
               letterSpacing: ".01em"
             }}
-            onClick={() => {
-              setOpen(false);
-              onRequestNurse();
-            }}
+            onClick={handleGetNurse}
             aria-label="Get Nurse"
             tabIndex={open ? 0 : -1}
             autoFocus={false}
@@ -142,4 +144,3 @@ export default function ExpandableActionMenu({
     </div>
   );
 }
-

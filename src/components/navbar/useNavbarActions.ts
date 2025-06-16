@@ -19,7 +19,7 @@ export function useNavbarActions() {
   };
 
   const handleRequestNurseClick = () => {
-    navigate("/apply");
+    navigate("/sign-up");
   };
 
   return { handleApplyNowClick, handleRequestNurseClick };

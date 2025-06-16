@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import NurseNestNavbar from "@/components/NurseNestNavbar";
 import Footer from "@/components/Footer";
@@ -25,7 +26,7 @@ export default function Index() {
   };
 
   const handleRequestNurse = () => {
-    window.location.href = "/apply";
+    window.location.href = "/sign-up";
   };
 
   // Only fade in FAB *after* scrolling past hero (approx 65% vh)
