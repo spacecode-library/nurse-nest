@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 
 interface ExpandableActionMenuProps {
   onFaq: () => void;
@@ -18,6 +19,7 @@ export default function ExpandableActionMenu({
 }: ExpandableActionMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { handleRequestNurse } = useSmartNavigation();
 
   // Close on click outside
   useEffect(() => {
@@ -48,7 +50,7 @@ export default function ExpandableActionMenu({
 
   const handleGetNurse = () => {
     setOpen(false);
-    window.location.href = "/sign-up";
+    handleRequestNurse();
   };
 
   return (

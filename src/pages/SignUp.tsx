@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
-import { signUp, getCurrentUser } from '@/supabase/auth/authService';
+import { signUp } from '@/supabase/auth/authService';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import DiagonalSplitBackground from '@/components/DiagonalSplitBackground';
 import DesktopSignInImage from "@/components/DesktopSignInImage";
 import SignUpDesktopCard from '@/components/auth/SignUpDesktopCard';
@@ -18,26 +20,34 @@ export default function SignUp() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   
+  // Optimized auth check - only redirect if already authenticated
   useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await getCurrentUser();
-      if (data?.user) {
-        const { data: userMetadata } = await supabase
-          .from('user_metadata')
-          .select('user_type')
-          .eq('user_id', data.user.id)
-          .single();
-        
-        if (userMetadata?.user_type === 'admin') {
-          navigate('/admin');
-        } else {
+    if (!authLoading && user) {
+      // Check user type and redirect accordingly
+      const checkUserTypeAndRedirect = async () => {
+        try {
+          const { data: userMetadata } = await supabase
+            .from('user_metadata')
+            .select('user_type')
+            .eq('user_id', user.id)
+            .single();
+          
+          if (userMetadata?.user_type === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/dashboard');
+          }
+        } catch (error) {
+          // If there's an error fetching metadata, just redirect to dashboard
           navigate('/dashboard');
         }
-      }
-    };
-    checkSession();
-  }, [navigate]);
+      };
+      
+      checkUserTypeAndRedirect();
+    }
+  }, [user, authLoading, navigate]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +103,18 @@ export default function SignUp() {
       setLoading(false);
     }
   };
+
+  // Show loading while auth is being checked
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-white flex relative">

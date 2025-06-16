@@ -5,17 +5,12 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 import { RotatingText } from "./RotatingText";
 import { BUTTON_GLOW_CONFIGS } from "./constants";
 import { RotatingTextProps } from "./types";
+import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 
 interface MobileHeroProps extends RotatingTextProps {}
 
 export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
-  const handleRequestNurse = () => {
-    window.location.href = "/sign-up";
-  };
-
-  const handleJoinAsNurse = () => {
-    window.location.href = "/sign-up";
-  };
+  const { handleRequestNurse, handleJoinAsNurse } = useSmartNavigation();
 
   return (
     <div

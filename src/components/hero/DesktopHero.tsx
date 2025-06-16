@@ -5,17 +5,12 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 import { RotatingText } from "./RotatingText";
 import { BUTTON_GLOW_CONFIGS } from "./constants";
 import { RotatingTextProps } from "./types";
+import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 
 interface DesktopHeroProps extends RotatingTextProps {}
 
 export function DesktopHero({ titles, titleNumber }: DesktopHeroProps) {
-  const handleRequestNurse = () => {
-    window.location.href = "/sign-up";
-  };
-
-  const handleJoinAsNurse = () => {
-    window.location.href = "/sign-up";
-  };
+  const { handleRequestNurse, handleJoinAsNurse } = useSmartNavigation();
 
   return (
     <div className="w-full relative">

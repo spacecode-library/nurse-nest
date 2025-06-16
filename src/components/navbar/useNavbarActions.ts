@@ -19,7 +19,11 @@ export function useNavbarActions() {
   };
 
   const handleRequestNurseClick = () => {
-    navigate("/sign-up");
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      navigate("/sign-up");
+    }
   };
 
   return { handleApplyNowClick, handleRequestNurseClick };
