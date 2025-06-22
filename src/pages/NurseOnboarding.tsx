@@ -26,6 +26,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AmericanDateInput, DateUtils } from '@/components/ui/american-date-input';
 import Auth from './Auth';
 import { useAuth } from '@/contexts/AuthContext';
+import ClickwrapAgreement from '@/components/ui/ClickwrapAgreement';
 
 // Constants for form options
 const LICENSE_TYPES = [
@@ -82,12 +83,13 @@ const SHIFT_TYPES = [
   '8-Hour'
 ];
 
-// Define the onboarding steps
+// Define the onboarding steps - UPDATED TO INCLUDE LEGAL AGREEMENTS
 const ONBOARDING_STEPS = [
   'Personal Information',
   'Professional Qualifications',
   'Work Preferences',
   'Documents & Verification',
+  'Legal Agreements',
   'Review & Submit'
 ];
 
@@ -111,10 +113,11 @@ export default function NurseOnboarding() {
   const [submitting, setSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [legalAgreementsAccepted, setLegalAgreementsAccepted] = useState(false); // NEW STATE
   const [nurseProfileId, setNurseProfileId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Personal Information (Step 1)
+  // Personal Information (Step 0)
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -123,7 +126,7 @@ export default function NurseOnboarding() {
   const [state, setState] = useState('');
   const [zipCode, setZipCode] = useState('');
 
-  // Professional Qualifications (Step 2)
+  // Professional Qualifications (Step 1)
   const [licenseType, setLicenseType] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
   const [licenseState, setLicenseState] = useState('');
@@ -133,14 +136,14 @@ export default function NurseOnboarding() {
   const [certifications, setCertifications] = useState<string[]>([]);
   const [customCertification, setCustomCertification] = useState('');
 
-  // Work Preferences (Step 3) - Removed workLocationType
+  // Work Preferences (Step 2) - Removed workLocationType
   const [availabilityStartDate, setAvailabilityStartDate] = useState(''); // Now stores YYYY-MM-DD format
   const [preferredShifts, setPreferredShifts] = useState<string[]>([]);
   const [travelDistance, setTravelDistance] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
   const [bio, setBio] = useState('');
 
-  // Documents (Step 4) - Removed license file upload, kept resume as required
+  // Documents (Step 3) - Removed license file upload, kept resume as required
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeFileName, setResumeFileName] = useState('');
   const [certFile, setCertFile] = useState<File | null>(null);
@@ -181,13 +184,14 @@ export default function NurseOnboarding() {
             
             if (!profileData.onboarding_completed) {
               const percentage = profileData.onboarding_completion_percentage;
-              if (percentage >= 80) setCurrentStep(4);
-              else if (percentage >= 60) setCurrentStep(3);
-              else if (percentage >= 40) setCurrentStep(2);
-              else if (percentage >= 20) setCurrentStep(1);
+              if (percentage >= 83) setCurrentStep(5); // Updated for 6 steps
+              else if (percentage >= 66) setCurrentStep(4);
+              else if (percentage >= 50) setCurrentStep(3);
+              else if (percentage >= 33) setCurrentStep(2);
+              else if (percentage >= 16) setCurrentStep(1);
               else setCurrentStep(0);
               
-              if (percentage >= 20) {
+              if (percentage >= 16) {
                 const { data: qualificationsData } = await supabase
                   .from('nurse_qualifications')
                   .select('specializations, years_experience, resume_url')
@@ -224,7 +228,7 @@ export default function NurseOnboarding() {
                 }
               }
               
-              if (percentage >= 40) {
+              if (percentage >= 33) {
                 const { data: preferencesData } = await supabase
                   .from('nurse_preferences')
                   .select('*')
@@ -456,6 +460,11 @@ export default function NurseOnboarding() {
           
           await updateOnboardingProgress(nurseProfileId, progressPercentage);
           break;
+
+        case 4: // Legal Agreements
+          if (!nurseProfileId) throw new Error("Nurse profile not found");
+          await updateOnboardingProgress(nurseProfileId, progressPercentage);
+          break;
       }
       
       setCurrentStep(currentStep + 1);
@@ -535,6 +544,28 @@ export default function NurseOnboarding() {
           toast({
             title: "Required document missing",
             description: "Please upload your resume or CV",
+            variant: "destructive"
+          });
+          return false;
+        }
+        return true;
+
+      case 4: // Legal Agreements
+        if (!legalAgreementsAccepted) {
+          toast({
+            title: "Legal agreements required",
+            description: "Please review and accept all required legal agreements",
+            variant: "destructive"
+          });
+          return false;
+        }
+        return true;
+      
+      case 5: // Review & Submit
+        if (!termsAccepted) {
+          toast({
+            title: "Terms acceptance required",
+            description: "Please accept the final terms to complete your profile",
             variant: "destructive"
           });
           return false;
@@ -682,8 +713,6 @@ export default function NurseOnboarding() {
           <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="text-center mb-12">
-              <div className="flex justify-center mb-6">
-              </div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-medical-text-primary via-medical-primary to-medical-accent bg-clip-text text-transparent mb-4">
                 Professional Nurse Onboarding
               </h1>
@@ -1245,8 +1274,18 @@ export default function NurseOnboarding() {
                     </div>
                   </div>
                 )}
-                
+
+                {/* Step 4: Legal Agreements */}
                 {currentStep === 4 && (
+                  <div className="space-y-6">
+                    <ClickwrapAgreement
+                      userType="nurse"
+                      onAllAccepted={setLegalAgreementsAccepted}
+                    />
+                  </div>
+                )}
+                
+                {currentStep === 5 && (
                   <div className="space-y-6">
                     <div className="text-center mb-8">
                       <h2 className="text-2xl font-bold text-medical-text-primary mb-2">Review & Submit</h2>
