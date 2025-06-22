@@ -34,6 +34,7 @@ import NurseDashboard from "./components/dashboard/NurseDashboard";
 import DashboardRouter from "./components/DashboardRouter";
 import ClientDashboard from "./components/dashboard/ClientDashboard";
 import PendingApprovalPage from "./components/PendingApprovalPage";
+import { BackgroundCheckPage } from './pages/BackgroundCheckPage';
 
 // New page imports
 import NurseLlcSetup from "./pages/NurseLlcSetup";
@@ -63,6 +64,16 @@ export default function App() {
               <Route path="/pre-result" element={<PreResult />} />
               <Route path="/salary-result" element={<SalaryResult />} />
               
+      {/* Background Check Routes */}
+      <Route 
+        path="/background-check/:nurseId/:clientId" 
+        element={<BackgroundCheckPage />} 
+      />
+      <Route 
+        path="/background-check/:nurseId/:clientId/:jobPostingId" 
+        element={<BackgroundCheckPage />} 
+      />
+
               {/* Dashboard Routes - Updated to handle different user types */}
               <Route path="/dashboard" element={<DashboardRouter />} />
               <Route path="/dashboard/nurse" element={<NurseDashboard />} />
