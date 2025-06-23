@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -35,6 +34,7 @@ import DashboardRouter from "./components/DashboardRouter";
 import ClientDashboard from "./components/dashboard/ClientDashboard";
 import PendingApprovalPage from "./components/PendingApprovalPage";
 import { BackgroundCheckPage } from './pages/BackgroundCheckPage';
+import NurseBackgroundCheckPage from './pages/NurseBackgroundCheckPage';
 
 // New page imports
 import NurseLlcSetup from "./pages/NurseLlcSetup";
@@ -47,6 +47,7 @@ export default function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
+              {/* Main Pages */}
               <Route path="/" element={<Index />} />
               <Route path="/apply" element={<Apply />} />
               <Route path="/auth" element={<Auth />} />
@@ -57,48 +58,63 @@ export default function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              
+              {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:postId" element={<BlogPost />} />
-              <Route path="/disclaimer" element={<Disclaimer />} />
+              
+              {/* Tools and Calculators */}
               <Route path="/salary-calculator" element={<SalaryCalculator />} />
               <Route path="/pre-result" element={<PreResult />} />
               <Route path="/salary-result" element={<SalaryResult />} />
               
-      {/* Background Check Routes */}
-      <Route 
-        path="/background-check/:nurseId/:clientId" 
-        element={<BackgroundCheckPage />} 
-      />
-      <Route 
-        path="/background-check/:nurseId/:clientId/:jobPostingId" 
-        element={<BackgroundCheckPage />} 
-      />
-
-              {/* Dashboard Routes - Updated to handle different user types */}
+              {/* Application and Vetting */}
+              <Route path="/vetting-options" element={<VettingOptions />} />
+              <Route path="/nurse-application" element={<NurseApplication />} />
+              <Route path="/malpractice-insurance" element={<MalpracticeInsurance />} />
+              
+              {/* Business Setup */}
+              <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
+              <Route path="/nurse-llc-setup" element={<NurseLlcSetup />} />
+              <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
+              <Route path="/tax-tips" element={<TaxTips />} />
+              
+              {/* Onboarding Routes */}
+              <Route path="/nurse-onboarding" element={<NurseOnboarding />} />
+              <Route path="/client-onboarding" element={<ClientOnboarding />} />
+              
+              {/* Dashboard Routes */}
               <Route path="/dashboard" element={<DashboardRouter />} />
               <Route path="/dashboard/nurse" element={<NurseDashboard />} />
               <Route path="/dashboard/client" element={<ClientDashboard />} />
+              <Route path="/dashboard/*" element={<DashboardRouter />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminPortal />} />
+              <Route path="/admin/enhanced" element={<EnhancedAdminPortal />} />
+              <Route path="/admin/*" element={<AdminPortal />} />
+              
+              {/* Background Check Routes */}
+              <Route 
+                path="/background-check/:backgroundCheckId" 
+                element={<NurseBackgroundCheckPage />} 
+              />
+              <Route 
+                path="/background-check/:nurseId/:clientId" 
+                element={<BackgroundCheckPage />} 
+              />
+              <Route 
+                path="/background-check/:nurseId/:clientId/:jobPostingId" 
+                element={<BackgroundCheckPage />} 
+              />
+              
+              {/* Approval and Status Pages */}
               <Route path="/pending-approval" element={<PendingApprovalPage />} />
               
-              <Route path="/vetting-options" element={<VettingOptions />} />
-              <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
-              <Route path="/onboarding/client" element={<ClientOnboarding />} />
-              <Route path="/admin" element={<EnhancedAdminPortal />} />
-              
-              {/* Nurse Resources Routes */}
-              <Route path="/nurse-application" element={<NurseApplication />} />
-              <Route path="/malpractice-insurance" element={<MalpracticeInsurance />} />
-              <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
-              <Route path="/1099-tax-tips" element={<TaxTips />} />
-              
-              {/* New Nurse Business Setup Routes */}
-              <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
-              <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
-              
-              {/* Catch-all route for 404 */}
+              {/* Catch All - Must be last */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-            
             <Toaster />
           </BrowserRouter>
         </AuthProvider>

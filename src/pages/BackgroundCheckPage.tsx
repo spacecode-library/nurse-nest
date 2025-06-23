@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { 
   Shield, 
   Clock, 
@@ -63,6 +65,59 @@ interface ClientInfo {
   user_id: string;
 }
 
+// Helper functions to resolve IDs (same logic as in checkrService)
+async function resolveClientProfileId(clientIdentifier: string): Promise<string> {
+  // First try to get by profile ID
+  const { data: directProfile, error: directError } = await supabase
+    .from('client_profiles')
+    .select('id')
+    .eq('id', clientIdentifier)
+    .maybeSingle();
+
+  if (directProfile) {
+    return directProfile.id;
+  }
+
+  // If not found, try by user_id
+  const { data: userProfile, error: userError } = await supabase
+    .from('client_profiles')
+    .select('id')
+    .eq('user_id', clientIdentifier)
+    .maybeSingle();
+
+  if (userProfile) {
+    return userProfile.id;
+  }
+
+  throw new Error(`Client profile not found for identifier: ${clientIdentifier}`);
+}
+
+async function resolveNurseProfileId(nurseIdentifier: string): Promise<string> {
+  // First try to get by profile ID
+  const { data: directProfile, error: directError } = await supabase
+    .from('nurse_profiles')
+    .select('id')
+    .eq('id', nurseIdentifier)
+    .maybeSingle();
+
+  if (directProfile) {
+    return directProfile.id;
+  }
+
+  // If not found, try by user_id
+  const { data: userProfile, error: userError } = await supabase
+    .from('nurse_profiles')
+    .select('id')
+    .eq('user_id', nurseIdentifier)
+    .maybeSingle();
+
+  if (userProfile) {
+    return userProfile.id;
+  }
+
+  throw new Error(`Nurse profile not found for identifier: ${nurseIdentifier}`);
+}
+
 export const BackgroundCheckPage: React.FC = () => {
   const { nurseId, clientId, jobPostingId } = useParams<{
     nurseId: string;
@@ -81,6 +136,10 @@ export const BackgroundCheckPage: React.FC = () => {
   const [userRole, setUserRole] = useState<'nurse' | 'client' | 'admin' | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [updatingNotes, setUpdatingNotes] = useState(false);
+  
+  // Store resolved IDs
+  const [resolvedNurseId, setResolvedNurseId] = useState<string | null>(null);
+  const [resolvedClientId, setResolvedClientId] = useState<string | null>(null);
 
   useEffect(() => {
     if (nurseId && clientId) {
@@ -106,6 +165,25 @@ export const BackgroundCheckPage: React.FC = () => {
         return;
       }
 
+      // Resolve the actual profile IDs first
+      let actualNurseId: string;
+      let actualClientId: string;
+      
+      try {
+        actualNurseId = await resolveNurseProfileId(nurseId!);
+        actualClientId = await resolveClientProfileId(clientId!);
+        setResolvedNurseId(actualNurseId);
+        setResolvedClientId(actualClientId);
+      } catch (error: any) {
+        console.error('Error resolving profile IDs:', error);
+        toast({
+          title: "Profile Not Found",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Determine user role
       const [nurseProfile, clientProfile, adminProfile] = await Promise.all([
         supabase.from('nurse_profiles').select('id').eq('user_id', user.id).maybeSingle(),
@@ -120,7 +198,7 @@ export const BackgroundCheckPage: React.FC = () => {
 
       setUserRole(role);
 
-      // Fetch background check
+      // Fetch background check using the original IDs (checkrService handles resolution)
       const { data: bgCheck, error: bgError } = await getClientNurseBackgroundCheck(nurseId!, clientId!);
       if (bgError) {
         console.error('Error fetching background check:', bgError);
@@ -129,7 +207,7 @@ export const BackgroundCheckPage: React.FC = () => {
         setAdminNotes(bgCheck?.admin_notes || '');
       }
 
-      // Fetch nurse info
+      // Fetch nurse info using resolved ID
       const { data: nurse, error: nurseError } = await supabase
         .from('nurse_profiles')
         .select(`
@@ -141,7 +219,7 @@ export const BackgroundCheckPage: React.FC = () => {
           nurse_qualifications(specializations, years_experience),
           nurse_licenses(license_type, issuing_state, verification_status)
         `)
-        .eq('id', nurseId!)
+        .eq('id', actualNurseId)
         .single();
 
       if (nurseError) {
@@ -162,11 +240,11 @@ export const BackgroundCheckPage: React.FC = () => {
         }
       }
 
-      // Fetch client info
+      // Fetch client info using resolved ID
       const { data: client, error: clientError } = await supabase
         .from('client_profiles')
         .select('id, first_name, last_name, client_type, user_id')
-        .eq('id', clientId!)
+        .eq('id', actualClientId)
         .single();
 
       if (clientError) {
@@ -271,66 +349,71 @@ export const BackgroundCheckPage: React.FC = () => {
           </Badge>
         );
       case 'processing':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Processing</Badge>;
+        return <Badge variant="secondary">Processing</Badge>;
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return <Badge variant="outline">Pending</Badge>;
       case 'failed':
         return <Badge variant="destructive">Failed</Badge>;
       default:
-        return <Badge variant="outline">Unknown</Badge>;
+        return <Badge variant="outline">{status}</Badge>;
     }
-  };
-
-  const canProvideInformation = () => {
-    return userRole === 'nurse' && 
-           backgroundCheck?.status === 'pending' && 
-           nurseInfo?.user_id === currentUser?.id;
-  };
-
-  const canViewDetails = () => {
-    return userRole === 'admin' || 
-           (userRole === 'client' && clientInfo?.user_id === currentUser?.id) ||
-           (userRole === 'nurse' && nurseInfo?.user_id === currentUser?.id);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p className="text-gray-600">Loading background check information...</p>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading background check information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!nurseInfo || !clientInfo) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Information Not Found</h2>
+          <p className="text-gray-600 mb-4">
+            We couldn't find the requested nurse or client information. Please check the URL and try again.
+          </p>
+          <Button onClick={() => navigate('/dashboard')}>
+            Return to Dashboard
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/dashboard')}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
+              Back to Dashboard
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Background Check</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Background Check</h1>
+              <p className="text-gray-600">
+                {nurseInfo.first_name} {nurseInfo.last_name} • {clientInfo.first_name} {clientInfo.last_name}
+              </p>
+            </div>
           </div>
-          
-          {backgroundCheck && canViewDetails() && (
+
+          {backgroundCheck && userRole === 'admin' && (
             <Button
-              variant="outline"
-              size="sm"
               onClick={handleRefresh}
               disabled={refreshing}
+              variant="outline"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh Status
@@ -339,7 +422,7 @@ export const BackgroundCheckPage: React.FC = () => {
         </div>
 
         {/* Participants Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Nurse Info */}
           <Card>
             <CardHeader>
@@ -349,24 +432,20 @@ export const BackgroundCheckPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {nurseInfo ? (
-                <div className="space-y-2">
-                  <p><strong>Name:</strong> {nurseInfo.first_name} {nurseInfo.last_name}</p>
-                  {nurseInfo.email && <p><strong>Email:</strong> {nurseInfo.email}</p>}
-                  {nurseInfo.phone_number && <p><strong>Phone:</strong> {nurseInfo.phone_number}</p>}
-                  {nurseInfo.nurse_qualifications?.[0] && (
-                    <>
-                      <p><strong>Experience:</strong> {nurseInfo.nurse_qualifications[0].years_experience} years</p>
-                      <p><strong>Specializations:</strong> {nurseInfo.nurse_qualifications[0].specializations.join(', ')}</p>
-                    </>
-                  )}
-                  {nurseInfo.nurse_licenses?.[0] && (
-                    <p><strong>License:</strong> {nurseInfo.nurse_licenses[0].license_type} ({nurseInfo.nurse_licenses[0].issuing_state})</p>
-                  )}
-                </div>
-              ) : (
-                <p className="text-gray-500">Loading nurse information...</p>
-              )}
+              <div className="space-y-2">
+                <p><strong>Name:</strong> {nurseInfo.first_name} {nurseInfo.last_name}</p>
+                {nurseInfo.email && <p><strong>Email:</strong> {nurseInfo.email}</p>}
+                {nurseInfo.phone_number && <p><strong>Phone:</strong> {nurseInfo.phone_number}</p>}
+                {nurseInfo.nurse_qualifications?.[0] && (
+                  <>
+                    <p><strong>Experience:</strong> {nurseInfo.nurse_qualifications[0].years_experience} years</p>
+                    <p><strong>Specializations:</strong> {nurseInfo.nurse_qualifications[0].specializations.join(', ')}</p>
+                  </>
+                )}
+                {nurseInfo.nurse_licenses?.[0] && (
+                  <p><strong>License:</strong> {nurseInfo.nurse_licenses[0].license_type} ({nurseInfo.nurse_licenses[0].issuing_state})</p>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -379,21 +458,17 @@ export const BackgroundCheckPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {clientInfo ? (
-                <div className="space-y-2">
-                  <p><strong>Name:</strong> {clientInfo.first_name} {clientInfo.last_name}</p>
-                  <p><strong>Type:</strong> {clientInfo.client_type}</p>
-                  {jobPostingId && <p><strong>Job Posting ID:</strong> {jobPostingId}</p>}
-                </div>
-              ) : (
-                <p className="text-gray-500">Loading client information...</p>
-              )}
+              <div className="space-y-2">
+                <p><strong>Name:</strong> {clientInfo.first_name} {clientInfo.last_name}</p>
+                <p><strong>Type:</strong> {clientInfo.client_type}</p>
+                {jobPostingId && <p><strong>Job Posting ID:</strong> {jobPostingId}</p>}
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Background Check Status */}
-        <Card>
+        <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center">
@@ -406,224 +481,155 @@ export const BackgroundCheckPage: React.FC = () => {
           <CardContent>
             {backgroundCheck ? (
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Status Information */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
                   <div>
-                    <p className="text-sm text-gray-500">Status</p>
-                    <p className="font-semibold">{backgroundCheck.status}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Initiated</p>
-                    <p className="font-semibold">
+                    <Label className="text-sm font-medium text-gray-600">Initiated</Label>
+                    <p className="text-sm text-gray-900">
                       {new Date(backgroundCheck.initiated_at).toLocaleDateString()}
                     </p>
                   </div>
                   {backgroundCheck.completed_at && (
                     <div>
-                      <p className="text-sm text-gray-500">Completed</p>
-                      <p className="font-semibold">
+                      <Label className="text-sm font-medium text-gray-600">Completed</Label>
+                      <p className="text-sm text-gray-900">
                         {new Date(backgroundCheck.completed_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+                  {backgroundCheck.expires_at && (
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Expires</Label>
+                      <p className="text-sm text-gray-900">
+                        {new Date(backgroundCheck.expires_at).toLocaleDateString()}
                       </p>
                     </div>
                   )}
                 </div>
 
-                {/* Status-specific content */}
-                {backgroundCheck.status === 'pending' && canProvideInformation() && !showNurseForm && (
-                  <Alert className="border-blue-200 bg-blue-50">
-                    <Info className="h-4 w-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800">
-                      <strong>Action Required:</strong> Please provide your personal information to complete the background check process.
-                      <Button
-                        onClick={() => setShowNurseForm(true)}
-                        className="ml-4 bg-blue-600 hover:bg-blue-700"
-                        size="sm"
-                      >
-                        Provide Information
-                      </Button>
+                {/* Status Messages */}
+                {backgroundCheck.status === 'pending' && (
+                  <Alert>
+                    <Clock className="h-4 w-4" />
+                    <AlertDescription>
+                      Background check is pending. The nurse needs to provide additional information to proceed.
                     </AlertDescription>
                   </Alert>
                 )}
 
                 {backgroundCheck.status === 'processing' && (
-                  <Alert className="border-yellow-200 bg-yellow-50">
-                    <Clock className="h-4 w-4 text-yellow-600" />
-                    <AlertDescription className="text-yellow-800">
-                      <strong>In Progress:</strong> Your background check is being processed. This typically takes 1-2 business days.
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {backgroundCheck.status === 'completed' && (
-                  <Alert className={`border-${backgroundCheck.result === 'clear' ? 'green' : 'red'}-200 bg-${backgroundCheck.result === 'clear' ? 'green' : 'red'}-50`}>
-                    {backgroundCheck.result === 'clear' ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <XCircle className="h-4 w-4 text-red-600" />
-                    )}
-                    <AlertDescription className={`text-${backgroundCheck.result === 'clear' ? 'green' : 'red'}-800`}>
-                      <strong>Completed:</strong> {getBackgroundCheckResultSummary(backgroundCheck).message}
+                  <Alert>
+                    <Clock className="h-4 w-4" />
+                    <AlertDescription>
+                      Background check is being processed.
+                      This typically takes 1-3 business days to complete.
+                      You'll be notified when results are available.
                     </AlertDescription>
                   </Alert>
                 )}
 
                 {backgroundCheck.status === 'failed' && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertTriangle className="h-4 w-4 text-red-600" />
-                    <AlertDescription className="text-red-800">
-                      <strong>Failed:</strong> There was an issue processing the background check. Please contact support.
+                  <Alert variant="destructive">
+                    <XCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Background check failed to complete. Please contact support for assistance.
                     </AlertDescription>
                   </Alert>
+                )}
+
+                {backgroundCheck.status === 'completed' && (
+                  <Alert variant={getBackgroundCheckResultSummary(backgroundCheck).clientStatus === 'passed' ? 'default' : 'destructive'}>
+                    <CheckCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      {getBackgroundCheckResultSummary(backgroundCheck).message}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Nurse Form for Completing Background Check */}
+                {backgroundCheck.status === 'pending' && userRole === 'nurse' && currentUser?.id === nurseInfo.user_id && (
+                  <div className="mt-6">
+                    <Alert className="mb-4">
+                      <Info className="h-4 w-4" />
+                      <AlertDescription>
+                        To complete your background check, please provide the required information below.
+                        All information is securely encrypted and processed by our verified partner.
+                      </AlertDescription>
+                    </Alert>
+                    
+                    {!showNurseForm ? (
+                      <Button onClick={() => setShowNurseForm(true)} className="w-full">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Complete Background Check Information
+                      </Button>
+                    ) : (
+                      <SecureBackgroundCheckForm
+                        backgroundCheckId={backgroundCheck.id}
+                        nurseInfo={{
+                          firstName: nurseInfo.first_name,
+                          lastName: nurseInfo.last_name,
+                          email: nurseInfo.email || '',
+                          phone: nurseInfo.phone_number || ''
+                        }}
+                        onComplete={handleFormComplete}
+                        onCancel={() => setShowNurseForm(false)}
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* Admin Notes Section */}
+                {userRole === 'admin' && (
+                  <div className="mt-6 p-4 border rounded-lg">
+                    <Label htmlFor="adminNotes" className="text-sm font-medium">
+                      Admin Notes
+                    </Label>
+                    <Textarea
+                      id="adminNotes"
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      placeholder="Add administrative notes..."
+                      className="mt-2"
+                      rows={3}
+                    />
+                    <Button
+                      onClick={handleUpdateAdminNotes}
+                      disabled={updatingNotes}
+                      className="mt-2"
+                      size="sm"
+                    >
+                      {updatingNotes ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        'Update Notes'
+                      )}
+                    </Button>
+                  </div>
                 )}
               </div>
             ) : (
               <div className="text-center py-8">
                 <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No background check found for this nurse-client pair.</p>
-                {userRole === 'client' && (
-                  <Button
-                    onClick={() => navigate(`/dashboard/client`)}
-                    className="mt-4"
-                  >
-                    Initiate Background Check
-                  </Button>
-                )}
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Background Check Found</h3>
+                <p className="text-gray-600 mb-4">
+                  No background check has been initiated for this nurse-client pair.
+                </p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Nurse Form */}
-        {showNurseForm && nurseInfo && backgroundCheck && (
-          <SecureBackgroundCheckForm
-            backgroundCheckId={backgroundCheck.id}
-            nurseInfo={nurseInfo}
-            onComplete={handleFormComplete}
-            onCancel={() => setShowNurseForm(false)}
-          />
-        )}
-
-        {/* Detailed Information (Admin/Client View) */}
-        {backgroundCheck && canViewDetails() && !showNurseForm && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Detailed Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="details" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                  <TabsTrigger value="technical">Technical</TabsTrigger>
-                  <TabsTrigger value="notes">Admin Notes</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="details" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-700">Package Used</p>
-                      <p className="text-sm text-gray-600">{backgroundCheck.package_used}</p>
-                    </div>
-                    {backgroundCheck.expires_at && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">Expires</p>
-                        <p className="text-sm text-gray-600">
-                          {new Date(backgroundCheck.expires_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
-                    {backgroundCheck.result && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">Result</p>
-                        <p className="text-sm text-gray-600">{backgroundCheck.result}</p>
-                      </div>
-                    )}
-                    {backgroundCheck.adjudication && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">Adjudication</p>
-                        <p className="text-sm text-gray-600">{backgroundCheck.adjudication}</p>
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="technical" className="space-y-4">
-                  {userRole === 'admin' && (
-                    <div className="space-y-4">
-                      {backgroundCheck.checkr_candidate_id && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">Checkr Candidate ID</p>
-                          <p className="text-sm font-mono text-gray-600">{backgroundCheck.checkr_candidate_id}</p>
-                        </div>
-                      )}
-                      {backgroundCheck.checkr_report_id && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">Checkr Report ID</p>
-                          <p className="text-sm font-mono text-gray-600">{backgroundCheck.checkr_report_id}</p>
-                        </div>
-                      )}
-                      {backgroundCheck.raw_response && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-700 mb-2">Raw Response</p>
-                          <pre className="text-xs bg-gray-50 p-3 rounded border overflow-auto max-h-64">
-                            {JSON.stringify(backgroundCheck.raw_response, null, 2)}
-                          </pre>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {userRole !== 'admin' && (
-                    <p className="text-gray-500 text-center py-4">
-                      Technical details are only available to administrators.
-                    </p>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="notes" className="space-y-4">
-                  {userRole === 'admin' ? (
-                    <div className="space-y-3">
-                      <div>
-                        <label htmlFor="admin-notes" className="text-sm font-medium text-gray-700">
-                          Admin Notes
-                        </label>
-                        <textarea
-                          id="admin-notes"
-                          value={adminNotes}
-                          onChange={(e) => setAdminNotes(e.target.value)}
-                          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          rows={4}
-                          placeholder="Add internal notes about this background check..."
-                        />
-                      </div>
-                      <Button
-                        onClick={handleUpdateAdminNotes}
-                        disabled={updatingNotes || adminNotes === backgroundCheck.admin_notes}
-                        size="sm"
-                      >
-                        {updatingNotes ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Updating...
-                          </>
-                        ) : (
-                          'Update Notes'
-                        )}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">Admin Notes</p>
-                      <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded border min-h-[100px]">
-                        {backgroundCheck.admin_notes || 'No admin notes available.'}
-                      </p>
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        )}
+        {/* Privacy Notice */}
+        <Alert className="border-amber-200 bg-amber-50">
+          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <AlertDescription className="text-amber-800">
+            <strong>Privacy Notice:</strong> Background check results are confidential and only show 
+            pass/fail status. Detailed information is not shared to protect privacy.
+          </AlertDescription>
+        </Alert>
       </div>
     </div>
   );

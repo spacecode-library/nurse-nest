@@ -739,3 +739,167 @@ export async function updateBackgroundCheckAdminNotes(
     return { data: null, error: error as Error };
   }
 }
+
+/**
+ * Get pending background checks for a specific nurse
+ */
+export async function getNursePendingBackgroundChecks(
+  nurseIdentifier: string
+): Promise<{ data: BackgroundCheckResult[]; error: Error | null }> {
+  try {
+    console.log('🔍 Debug - Getting pending background checks for nurse:', nurseIdentifier);
+
+    // Get current user to verify authorization
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Determine if nurseIdentifier is user_id or nurse_profile_id
+    let nurseUserId = nurseIdentifier;
+    
+    // If it looks like a nurse profile ID, get the user_id
+    const { data: nurseProfile } = await supabase
+      .from('nurse_profiles')
+      .select('user_id')
+      .eq('id', nurseIdentifier)
+      .maybeSingle();
+    
+    if (nurseProfile) {
+      nurseUserId = nurseProfile.user_id;
+    }
+
+    // Authorization check: user must be the nurse, client who initiated, or admin
+    if (user.id !== nurseUserId) {
+      // Check if user is admin
+      const { data: adminProfile } = await supabase
+        .from('admin_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+        
+      if (!adminProfile) {
+        // Check if user is a client who has pending background checks with this nurse
+        const { data: clientProfile } = await supabase
+          .from('client_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+          
+        if (!clientProfile) {
+          throw new Error('Unauthorized: You can only view your own background checks');
+        }
+      }
+    }
+
+    // Get nurse profile ID from user ID
+    const { data: nurse, error: nurseError } = await supabase
+      .from('nurse_profiles')
+      .select('id')
+      .eq('user_id', nurseUserId)
+      .maybeSingle();
+
+    if (nurseError || !nurse) {
+      console.error('🔍 Debug - Nurse not found:', nurseError);
+      return { data: [], error: null };
+    }
+
+    // Get pending background checks for this nurse
+    const { data: backgroundChecks, error: fetchError } = await supabase
+      .from('background_checks')
+      .select(`
+        *,
+        client_profiles:client_id (
+          id,
+          first_name,
+          last_name,
+          client_type,
+          user_id
+        ),
+        job_postings:job_posting_id (
+          id,
+          job_code,
+          care_type,
+          status
+        )
+      `)
+      .eq('nurse_id', nurse.id)
+      .in('status', ['pending', 'processing'])
+      .order('created_at', { ascending: false });
+
+    if (fetchError) {
+      console.error('🔍 Debug - Error fetching background checks:', fetchError);
+      throw fetchError;
+    }
+
+    console.log('🔍 Debug - Found background checks:', backgroundChecks?.length || 0);
+
+    // Transform the data
+    const transformedData = backgroundChecks?.map(transformDatabaseBackgroundCheck).filter(Boolean) || [];
+    
+    return { data: transformedData, error: null };
+
+  } catch (error) {
+    console.error('🔍 Debug - Error in getNursePendingBackgroundChecks:', error);
+    return { data: [], error: error as Error };
+  }
+}
+
+/**
+ * Get background check details for nurse completion form
+ */
+// Alternative solution: Use the background_check_details view
+export async function getNurseBackgroundCheckDetails(backgroundCheckId: string): Promise<{
+  data: BackgroundCheckResult | null;
+  error: Error | null;
+}> {
+  try {
+    console.log('🔍 Debug - Getting background check details:', backgroundCheckId);
+
+    // Use the background_check_details view which already has user info
+    const { data, error } = await supabase
+      .from('background_check_details')
+      .select('*')
+      .eq('id', backgroundCheckId)
+      .single();
+
+    if (error) {
+      console.error('🔍 Debug - Error fetching background check:', error);
+      throw error;
+    }
+
+    // Transform the data to match your expected format
+    const transformedData = {
+      ...data,
+      nurse_profiles: data.nurse_first_name && data.nurse_last_name ? {
+        id: data.nurse_id,
+        first_name: data.nurse_first_name,
+        last_name: data.nurse_last_name,
+        user_accounts: {
+          email: data.nurse_user_id // You may need to fetch this separately
+        }
+      } : null,
+      client_profiles: data.client_first_name && data.client_last_name ? {
+        id: data.client_id,
+        first_name: data.client_first_name,
+        last_name: data.client_last_name,
+        client_type: data.client_status
+      } : null,
+      job_postings: data.job_code ? {
+        id: data.job_posting_id,
+        job_code: data.job_code,
+        care_type: data.care_type
+      } : null
+    };
+
+    console.log('🔍 Debug - Background check data retrieved successfully');
+    return { data: transformedData, error: null };
+
+  } catch (error: any) {
+    console.error('🔍 Debug - Error in getNurseBackgroundCheckDetails:', error);
+    return { 
+      data: null, 
+      error: new Error(error.message || 'Failed to fetch background check details') 
+    };
+  }
+}

@@ -57,6 +57,11 @@ import { getNurseProfileByUserId } from '@/supabase/api/nurseProfileService';
 import { getOpenJobPostings, advancedJobSearch } from '@/supabase/api/jobPostingService';
 import { getApplicationsByNurse, hasApplied } from '@/supabase/api/applicationService';
 import { getNurseTimecards, calculateNurseEarnings } from '@/supabase/api/timecardService';
+
+// Import Checkr integration
+import { getNursePendingBackgroundChecks } from '@/supabase/api/checkrService';
+import PendingBackgroundChecksCard from './nurse/PendingBackgroundChecksCard';
+
 import JobApplicationForm from '@/components/dashboard/nurse/JobApplicationForm';
 
 // Import dashboard cards
@@ -93,6 +98,9 @@ export default function NurseDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Add state for background checks
+  const [pendingBackgroundChecksCount, setPendingBackgroundChecksCount] = useState(0);
   
   // Add state for messages view
   const [showMessagesPage, setShowMessagesPage] = useState(false);
@@ -148,6 +156,20 @@ export default function NurseDashboard() {
       navigate('/');
     }
   };
+
+  // Fetch pending background checks count
+  const fetchPendingBackgroundChecksCount = useCallback(async () => {
+    try {
+      if (!nurseProfile?.id) return;
+      
+      const { data, error } = await getNursePendingBackgroundChecks(nurseProfile.id);
+      if (!error && data) {
+        setPendingBackgroundChecksCount(data.length);
+      }
+    } catch (error) {
+      console.error('Error fetching pending background checks count:', error);
+    }
+  }, [nurseProfile?.id]);
 
   // Fetch unread messages count
   const fetchUnreadMessages = useCallback(async () => {
@@ -338,6 +360,13 @@ export default function NurseDashboard() {
     fetchDashboardData();
   }, [fetchDashboardData, refreshTrigger]);
 
+  // Fetch background checks count when nurse profile is loaded
+  useEffect(() => {
+    if (nurseProfile?.id) {
+      fetchPendingBackgroundChecksCount();
+    }
+  }, [nurseProfile?.id, fetchPendingBackgroundChecksCount]);
+
   // Initialize message functionality when nurse profile is loaded
   useEffect(() => {
     if (user?.id) {
@@ -361,7 +390,10 @@ export default function NurseDashboard() {
     if (user?.id) {
       fetchUnreadMessages();
     }
-  }, [user?.id, fetchUnreadMessages]);
+    if (nurseProfile?.id) {
+      fetchPendingBackgroundChecksCount();
+    }
+  }, [user?.id, nurseProfile?.id, fetchUnreadMessages, fetchPendingBackgroundChecksCount]);
 
   const handlePhotoUpdated = (newPhotoUrl: string) => {
     setNurseProfile(prev => ({
@@ -398,7 +430,7 @@ export default function NurseDashboard() {
     }
   };
 
-  // Sidebar navigation items
+  // Sidebar navigation items (UPDATED with background checks)
   const navigationItems = [
     {
       id: 'overview',
@@ -406,6 +438,14 @@ export default function NurseDashboard() {
       icon: Home,
       isActive: activeTab === 'overview',
       badge: null
+    },
+    {
+      id: 'background-checks',
+      label: 'Background Checks',
+      icon: Shield,
+      isActive: activeTab === 'background-checks',
+      badge: pendingBackgroundChecksCount > 0 ? pendingBackgroundChecksCount : null,
+      badgeColor: 'bg-amber-500'
     },
     {
       id: 'payment',
@@ -563,7 +603,7 @@ export default function NurseDashboard() {
                   item.isActive 
                     ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700' 
                     : 'text-gray-700 hover:bg-gray-100'
-                } ${sidebarCollapsed ? 'px-3' : 'px-4'} transition-all duration-200`}
+                } ${sidebarCollapsed ? 'px-3' : 'px-4'} transition-all duration-200 relative`}
                 onClick={() => setActiveTab(item.id)}
               >
                 <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
@@ -652,6 +692,7 @@ export default function NurseDashboard() {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
                 {activeTab === 'overview' && 'Professional Care Hub'}
+                {activeTab === 'background-checks' && 'Background Checks'}
                 {activeTab === 'payment' && 'Payment Setup'}
                 {activeTab === 'jobs' && 'Available Positions'}
                 {activeTab === 'applications' && 'My Applications'}
@@ -659,6 +700,7 @@ export default function NurseDashboard() {
               </h1>
               <p className="text-gray-600 mt-1">
                 {activeTab === 'overview' && 'Manage your applications, track your work, and discover opportunities'}
+                {activeTab === 'background-checks' && 'Complete and track your background verification requests'}
                 {activeTab === 'payment' && 'Set up your payment account to receive earnings'}
                 {activeTab === 'jobs' && 'Discover and apply for healthcare positions'}
                 {activeTab === 'applications' && 'Track your job applications and responses'}
@@ -704,6 +746,34 @@ export default function NurseDashboard() {
             <div className="space-y-8">
               {/* Alert Cards */}
               <div className="space-y-4">
+                {/* Background Check Alert */}
+                {pendingBackgroundChecksCount > 0 && (
+                  <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
+                          <Shield className="h-5 w-5 text-white animate-pulse" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-amber-900">
+                            🛡️ You have {pendingBackgroundChecksCount} pending background check{pendingBackgroundChecksCount !== 1 ? 's' : ''}!
+                          </p>
+                          <p className="text-sm text-amber-700">
+                            Complete your verification to proceed with job applications
+                          </p>
+                        </div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="bg-amber-500 hover:bg-amber-600 text-white shadow-sm"
+                        onClick={() => setActiveTab('background-checks')}
+                      >
+                        Complete Now
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Payment Setup Alert */}
                 {stats.paymentAccountStatus !== 'active' && (
                   <div className="p-4 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl shadow-sm">
@@ -1041,6 +1111,18 @@ export default function NurseDashboard() {
                   </CardContent>
                 </Card>
               </div>
+            </div>
+          )}
+
+          {/* BACKGROUND CHECKS TAB */}
+          {activeTab === 'background-checks' && (
+            <div className="space-y-6">
+              <PendingBackgroundChecksCard 
+                nurseId={nurseProfile?.id}
+                onBackgroundCheckComplete={() => {
+                  handleRefresh();
+                }}
+              />
             </div>
           )}
 
