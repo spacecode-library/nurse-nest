@@ -1,11 +1,8 @@
 // src/supabase/api/checkrService.ts
-// Complete working implementation with proper error handling
 import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 
-// Configuration
-const CHECKR_API_BASE = "https://api.checkr-staging.com/v1";
-const CHECKR_API_KEY = "7aa01d842eaff05c75f35b16e18d49b38cf648e7";
+// Configuration - API key moved to Edge Function
 const CHECKR_PACKAGE = "test_pro_criminal_and_mvr";
 
 // Types
@@ -187,6 +184,105 @@ async function debugCurrentUser() {
 }
 
 /**
+ * UPDATED: Call Checkr API via Edge Function
+ */
+async function callCheckrAPI(action: string, backgroundCheckId: string, candidateData: any) {
+  try {
+    console.log(`🔍 Debug - Calling Checkr API via Edge Function: ${action}`);
+
+    // Get the current session token
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) {
+      throw new Error('No valid session found');
+    }
+
+    const { data, error } = await supabase.functions.invoke('checkr-api', {
+      body: {
+        action,
+        backgroundCheckId,
+        candidateData
+      },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message || 'Edge function error');
+    }
+
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'API call failed');
+    }
+
+    console.log(`✅ Debug - ${action} completed successfully`);
+    return data.data;
+
+  } catch (error: any) {
+    console.error(`🔍 Debug - Error in ${action}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * UPDATED: Create a Checkr candidate via Edge Function
+ */
+async function createCheckrCandidate(candidateData: BackgroundCheckCandidate, backgroundCheckId: string) {
+  try {
+    console.log('🔍 Debug - Creating Checkr candidate via Edge Function');
+
+    const result = await callCheckrAPI('createCandidate', backgroundCheckId, candidateData);
+
+    console.log('✅ Debug - Checkr candidate created successfully');
+    return { data: result.candidate, error: null };
+
+  } catch (error: any) {
+    console.error('🔍 Debug - Error creating Checkr candidate:', error);
+    return { data: null, error };
+  }
+}
+
+/**
+ * UPDATED: Create a background check report via Edge Function
+ */
+async function createCheckrReport(candidateId: string, backgroundCheckId: string) {
+  try {
+    console.log('🔍 Debug - Creating Checkr report via Edge Function');
+
+    const result = await callCheckrAPI('createReport', backgroundCheckId, {
+      candidateId,
+      package: CHECKR_PACKAGE
+    });
+
+    console.log('✅ Debug - Checkr report created successfully');
+    return { data: result.report, error: null };
+
+  } catch (error: any) {
+    console.error('🔍 Debug - Error creating Checkr report:', error);
+    return { data: null, error };
+  }
+}
+
+/**
+ * UPDATED: Get report status from Checkr via Edge Function
+ */
+async function getCheckrReportStatus(reportId: string, backgroundCheckId: string) {
+  try {
+    console.log('🔍 Debug - Getting Checkr report status via Edge Function');
+
+    const result = await callCheckrAPI('getReport', backgroundCheckId, { reportId });
+
+    console.log('✅ Debug - Checkr report status retrieved successfully');
+    return { data: result.report, error: null };
+
+  } catch (error: any) {
+    console.error('🔍 Debug - Error getting Checkr report status:', error);
+    return { data: null, error };
+  }
+}
+
+/**
  * FIXED: Client-initiated background check
  */
 export async function initiateClientBackgroundCheck(
@@ -348,7 +444,7 @@ export async function getClientNurseBackgroundCheck(
 }
 
 /**
- * Complete background check with candidate data (called when nurse provides info)
+ * UPDATED: Complete background check with candidate data (called when nurse provides info)
  */
 export async function completeBackgroundCheckWithCandidateData(
   backgroundCheckId: string,
@@ -375,15 +471,15 @@ export async function completeBackgroundCheckWithCandidateData(
     }
 
     try {
-      // Create Checkr candidate
-      const { data: candidate, error: candidateError } = await createCheckrCandidate(candidateData);
+      // Create Checkr candidate via Edge Function
+      const { data: candidate, error: candidateError } = await createCheckrCandidate(candidateData, backgroundCheckId);
       
       if (candidateError || !candidate) {
         throw new Error(candidateError?.message || 'Failed to create Checkr candidate');
       }
 
-      // Create background check report
-      const { data: report, error: reportError } = await createCheckrReport(candidate.id);
+      // Create background check report via Edge Function
+      const { data: report, error: reportError } = await createCheckrReport(candidate.id, backgroundCheckId);
       
       if (reportError || !report) {
         throw new Error(reportError?.message || 'Failed to create background check report');
@@ -431,7 +527,7 @@ export async function completeBackgroundCheckWithCandidateData(
 }
 
 /**
- * Check and update background check status
+ * UPDATED: Check and update background check status
  */
 export async function updateBackgroundCheckStatus(backgroundCheckId: string): Promise<{ data: BackgroundCheckResult | null; error: Error | null }> {
   try {
@@ -451,8 +547,8 @@ export async function updateBackgroundCheckStatus(backgroundCheckId: string): Pr
       return { data: transformedCheck, error: null };
     }
 
-    // Get latest status from Checkr
-    const { data: reportStatus, error: statusError } = await getCheckrReportStatus(backgroundCheck.checkr_report_id);
+    // Get latest status from Checkr via Edge Function
+    const { data: reportStatus, error: statusError } = await getCheckrReportStatus(backgroundCheck.checkr_report_id, backgroundCheckId);
     
     if (statusError || !reportStatus) {
       throw new Error(statusError?.message || 'Failed to get report status');
@@ -491,89 +587,6 @@ export async function updateBackgroundCheckStatus(backgroundCheckId: string): Pr
 
   } catch (error) {
     console.error('🔍 Debug - Error updating background check status:', error);
-    return { data: null, error: error as Error };
-  }
-}
-
-/**
- * Create a Checkr candidate
- */
-async function createCheckrCandidate(candidateData: BackgroundCheckCandidate) {
-  try {
-    const response = await fetch(`${CHECKR_API_BASE}/candidates`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${btoa(CHECKR_API_KEY + ':')}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(candidateData)
-    });
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error || `Checkr API error: ${response.status}`);
-    }
-
-    return { data, error: null };
-  } catch (error) {
-    console.error('🔍 Debug - Error creating Checkr candidate:', error);
-    return { data: null, error: error as Error };
-  }
-}
-
-/**
- * Create a background check report
- */
-async function createCheckrReport(candidateId: string) {
-  try {
-    const response = await fetch(`${CHECKR_API_BASE}/reports`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${btoa(CHECKR_API_KEY + ':')}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        candidate_id: candidateId,
-        package: CHECKR_PACKAGE
-      })
-    });
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error || `Checkr API error: ${response.status}`);
-    }
-
-    return { data, error: null };
-  } catch (error) {
-    console.error('🔍 Debug - Error creating Checkr report:', error);
-    return { data: null, error: error as Error };
-  }
-}
-
-/**
- * Get report status from Checkr
- */
-async function getCheckrReportStatus(reportId: string) {
-  try {
-    const response = await fetch(`${CHECKR_API_BASE}/reports/${reportId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Basic ${btoa(CHECKR_API_KEY + ':')}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error || `Checkr API error: ${response.status}`);
-    }
-
-    return { data, error: null };
-  } catch (error) {
-    console.error('🔍 Debug - Error getting Checkr report status:', error);
     return { data: null, error: error as Error };
   }
 }
@@ -848,7 +861,6 @@ export async function getNursePendingBackgroundChecks(
 /**
  * Get background check details for nurse completion form
  */
-// Alternative solution: Use the background_check_details view
 export async function getNurseBackgroundCheckDetails(backgroundCheckId: string): Promise<{
   data: BackgroundCheckResult | null;
   error: Error | null;

@@ -7,28 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface CheckrCandidate {
-  email: string;
-  first_name: string;
-  middle_name?: string;
-  last_name: string;
-  phone: string;
-  zipcode: string;
-  dob: string;
-  ssn: string;
-  driver_license_number?: string;
-  driver_license_state?: string;
-  previous_driver_license_number?: string;
-  previous_driver_license_state?: string;
-  copy_requested: boolean;
-  custom_id?: string;
-  candidate_id?: string;
-  adjudication?: string;
-  package?: string;
-  tags?: string[];
-  no_middle_name?: boolean;
-}
-
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -66,8 +44,10 @@ serve(async (req) => {
       throw new Error('Checkr API key not configured')
     }
 
+    // Use Basic Auth for Checkr API (not Bearer)
+    const checkrAuthHeader = `Basic ${btoa(checkrApiKey + ':')}`
     const headers = {
-      'Authorization': `Bearer ${checkrApiKey}`,
+      'Authorization': checkrAuthHeader,
       'Content-Type': 'application/json',
     }
 
@@ -92,20 +72,6 @@ serve(async (req) => {
         const candidate = await candidateResponse.json()
         console.log('✅ Checkr candidate created:', candidate.id)
 
-        // Update background check with candidate ID
-        const { error: updateError } = await supabaseClient
-          .from('background_checks')
-          .update({
-            checkr_candidate_id: candidate.id,
-            status: 'processing',
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', backgroundCheckId)
-
-        if (updateError) {
-          throw new Error(`Failed to update background check: ${updateError.message}`)
-        }
-
         result = { candidate, backgroundCheckId }
         break
 
@@ -119,7 +85,7 @@ serve(async (req) => {
           headers,
           body: JSON.stringify({
             candidate_id: candidateId,
-            package: packageType || 'standard_plus'
+            package: packageType || 'test_pro_criminal_and_mvr'
           })
         })
 
@@ -131,20 +97,6 @@ serve(async (req) => {
 
         const report = await reportResponse.json()
         console.log('✅ Checkr report created:', report.id)
-
-        // Update background check with report ID
-        const { error: reportUpdateError } = await supabaseClient
-          .from('background_checks')
-          .update({
-            checkr_report_id: report.id,
-            status: 'processing',
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', backgroundCheckId)
-
-        if (reportUpdateError) {
-          throw new Error(`Failed to update background check with report: ${reportUpdateError.message}`)
-        }
 
         result = { report, backgroundCheckId }
         break
@@ -166,24 +118,6 @@ serve(async (req) => {
 
         const reportStatus = await getReportResponse.json()
         console.log('✅ Checkr report status:', reportStatus.status)
-
-        // Update background check if report is complete
-        if (reportStatus.status === 'complete') {
-          const { error: statusUpdateError } = await supabaseClient
-            .from('background_checks')
-            .update({
-              status: 'completed',
-              result: reportStatus.result,
-              completed_at: new Date().toISOString(),
-              raw_response: reportStatus,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', backgroundCheckId)
-
-          if (statusUpdateError) {
-            console.error('Error updating background check status:', statusUpdateError)
-          }
-        }
 
         result = { report: reportStatus, backgroundCheckId }
         break
