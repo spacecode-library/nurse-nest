@@ -1,4 +1,5 @@
 // src/supabase/api/checkrService.ts
+// Updated to use Supabase Edge Function instead of direct Checkr API calls
 import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 
@@ -197,7 +198,7 @@ async function callCheckrAPI(action: string, backgroundCheckId: string, candidat
       throw new Error('No valid session found');
     }
 
-    const { data, error } = await supabase.functions.invoke('checkr-api', {
+    const { data, error } = await supabase.functions.invoke('checkr-service', {
       body: {
         action,
         backgroundCheckId,
@@ -209,10 +210,12 @@ async function callCheckrAPI(action: string, backgroundCheckId: string, candidat
     });
 
     if (error) {
+      console.error('🔍 Debug - Edge function error:', error);
       throw new Error(error.message || 'Edge function error');
     }
 
     if (!data || !data.success) {
+      console.error('🔍 Debug - API call failed:', data);
       throw new Error(data?.error || 'API call failed');
     }
 
@@ -855,6 +858,45 @@ export async function getNursePendingBackgroundChecks(
   } catch (error) {
     console.error('🔍 Debug - Error in getNursePendingBackgroundChecks:', error);
     return { data: [], error: error as Error };
+  }
+}
+
+/**
+ * TEST FUNCTION: Test Edge Function connectivity
+ */
+export async function testCheckrEdgeFunction(): Promise<{ success: boolean; error?: string }> {
+  try {
+    console.log('🔍 Testing Checkr Edge Function connectivity...');
+
+    // Get the current session token
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) {
+      throw new Error('No valid session found');
+    }
+
+    const { data, error } = await supabase.functions.invoke('checkr-service', {
+      body: {
+        action: 'test',
+        backgroundCheckId: 'test-id',
+        candidateData: { test: true }
+      },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (error) {
+      console.error('🔍 Edge Function test failed:', error);
+      return { success: false, error: error.message };
+    }
+
+    console.log('✅ Edge Function test response:', data);
+    return { success: true };
+
+  } catch (error: any) {
+    console.error('🔍 Edge Function test error:', error);
+    return { success: false, error: error.message };
   }
 }
 
