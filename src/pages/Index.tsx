@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import NurseNestNavbar from "@/components/NurseNestNavbar";
 import Footer from "@/components/Footer";
@@ -10,11 +9,9 @@ import FloatingFaqButton from "@/components/FloatingFaqButton";
 import ExpandableActionMenu from "@/components/ExpandableActionMenu";
 import ActionCardsRow from "@/components/ActionCardsRow";
 import { useFadeInOnScroll } from "@/hooks/use-fade-in-on-scroll";
-import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 
 export default function Index() {
   const [isFaqVisible, setIsFaqVisible] = useState(false);
-  const { handleRequestNurse } = useSmartNavigation();
 
   // Show FAQ and scroll into view
   const showFaqAndScroll = () => {
@@ -25,6 +22,10 @@ export default function Index() {
         faqSection.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+  };
+
+  const handleRequestNurse = () => {
+    window.location.href = "/apply";
   };
 
   // Only fade in FAB *after* scrolling past hero (approx 65% vh)

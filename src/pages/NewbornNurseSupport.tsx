@@ -5,8 +5,6 @@ import Footer from "@/components/Footer";
 import BlogArticle from "@/components/blog/BlogArticle";
 import BlogSidebar from "@/components/blog/BlogSidebar";
 import NewbornNurseSupportArticleContent from "@/components/newborn-nurse-support/NewbornNurseSupportArticleContent";
-import AnimatedSection from "@/components/AnimatedSection";
-import { useStaggeredReveal } from "@/hooks/use-staggered-reveal";
 
 const quickNavLinks = [
   { href: "#initial-assessment", text: "Initial Assessment" },
@@ -27,30 +25,19 @@ const relatedResources = [
 ];
 
 export default function NewbornNurseSupport() {
-  const [titleRevealed, subtitleRevealed, metaRevealed] = useStaggeredReveal(3, {
-    initialDelay: 300,
-    step: 120
-  });
-
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#1e293b] font-sans">
       <Navbar />
       <main className="flex-grow pt-24">
         <section className="py-16 md:py-20 bg-gradient-to-br from-slate-100 via-blue-50 to-blue-100">
           <div className="container max-w-4xl mx-auto px-4 flex flex-col gap-8 text-center">
-            <h1 className={`font-extrabold text-4xl md:text-5xl lg:text-6xl tracking-tight text-[#1e293b] leading-tight mb-3 md:mb-6 font-sans transition-all duration-700 ease-out ${
-              titleRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}>
+            <h1 className="font-extrabold text-4xl md:text-5xl lg:text-6xl tracking-tight text-[#1e293b] leading-tight mb-3 md:mb-6 font-sans">
               Complete Newborn Care Guide for Nurses
-              <span className={`block text-2xl md:text-3xl font-medium mt-2 text-blue-700 transition-all duration-700 ease-out delay-100 ${
-                subtitleRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}>
+              <span className="block text-2xl md:text-3xl font-medium mt-2 text-blue-700">
                 Essential Skills and Best Practices
               </span>
             </h1>
-            <div className={`flex justify-center items-center text-gray-500 gap-4 text-sm md:text-base transition-all duration-700 ease-out delay-200 ${
-              metaRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}>
+            <div className="flex justify-center items-center text-gray-500 gap-4 text-sm md:text-base">
               <span>June 15, 2025</span>
               <span>•</span>
               <span>12 min read</span>
@@ -58,16 +45,14 @@ export default function NewbornNurseSupport() {
           </div>
         </section>
 
-        <AnimatedSection animation="fade-up" delay={400}>
-          <section className="py-10 px-4">
-            <div className="container mx-auto flex flex-col lg:flex-row gap-10 justify-between max-w-6xl">
-              <BlogArticle>
-                <NewbornNurseSupportArticleContent />
-              </BlogArticle>
-              <BlogSidebar quickNavLinks={quickNavLinks} relatedResources={relatedResources} />
-            </div>
-          </section>
-        </AnimatedSection>
+        <section className="py-10 px-4">
+          <div className="container mx-auto flex flex-col lg:flex-row gap-10 justify-between max-w-6xl">
+            <BlogArticle>
+              <NewbornNurseSupportArticleContent />
+            </BlogArticle>
+            <BlogSidebar quickNavLinks={quickNavLinks} relatedResources={relatedResources} />
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

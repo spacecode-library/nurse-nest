@@ -1,4 +1,3 @@
-
 export interface NavLink {
   name: string;
   path: string;
@@ -27,7 +26,7 @@ export const nurseDropdownSections: DropdownSection[] = [
   {
     title: 'Business Setup',
     links: [
-      { name: 'LLC Setup Guide', path: '/nurse-llc-setup' },
+      { name: 'LLC Setup Guide', path: '/nurse-llc-setup-guide' },
       { name: 'EIN Applications', path: '/blog/ein-applications-independent-contract-nurses' },
       { name: 'Business Banking', path: '/business-bank-account-for-nurses' },
     ]

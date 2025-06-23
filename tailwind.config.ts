@@ -62,16 +62,6 @@ export default {
 					light: '#F5F5DC',
 					DEFAULT: '#E6D2B5',
 					dark: '#D2B48C'
-				},
-				// Add missing neutral colors
-				neutral: {
-					light: '#f1f5f9',
-					DEFAULT: '#64748b',
-					dark: '#334155'
-				},
-				// Add missing brand colors
-				brand: {
-					navy: '#1e293b'
 				}
 			},
 			borderRadius: {

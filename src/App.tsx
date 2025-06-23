@@ -138,7 +138,7 @@ export default function App() {
               <Route path="/malpractice-insurance" element={<MalpracticeInsurance />} />
               <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
               <Route path="/1099-tax-tips" element={<TaxTips />} />
-              <Route path="/nurse-llc-setup" element={<NurseLlcSetup />} />
+              <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
               <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
               <Route path="/blog/ein-applications-independent-contract-nurses" element={<EinApplications />} />
               <Route path="/business-bank-account-for-nurses" element={<BusinessBankAccountForNurses />} />

@@ -5,13 +5,10 @@ import { GlowEffect } from "@/components/ui/glow-effect";
 import { RotatingText } from "./RotatingText";
 import { BUTTON_GLOW_CONFIGS } from "./constants";
 import { RotatingTextProps } from "./types";
-import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 
 interface MobileHeroProps extends RotatingTextProps {}
 
 export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
-  const { handleRequestNurse, handleJoinAsNurse } = useSmartNavigation();
-
   return (
     <div
       className="w-full h-screen relative pb-[env(safe-area-inset-bottom,0px)]"
@@ -54,7 +51,6 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
               size="lg"
               className="relative gap-2 text-white bg-sky-300 hover:bg-sky-200 w-full min-h-[48px] text-sm px-4"
               aria-label="Request a nurse for medical care"
-              onClick={handleRequestNurse}
             >
               Request a Nurse <PhoneCall className="w-4 h-4" aria-hidden="true" />
             </Button>
@@ -66,7 +62,6 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
               className="relative gap-2 bg-white text-blue-600 hover:bg-blue-50 w-full min-h-[48px] text-sm px-4"
               variant="outline"
               aria-label="Join our platform as a healthcare professional"
-              onClick={handleJoinAsNurse}
             >
               Join as a Nurse <MoveRight className="w-4 h-4" aria-hidden="true" />
             </Button>
@@ -76,3 +71,4 @@ export function MobileHero({ titles, titleNumber }: MobileHeroProps) {
     </div>
   );
 }
+

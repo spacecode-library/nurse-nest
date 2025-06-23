@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 
 interface ExpandableActionMenuProps {
   onFaq: () => void;
@@ -19,7 +18,6 @@ export default function ExpandableActionMenu({
 }: ExpandableActionMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { handleRequestNurse } = useSmartNavigation();
 
   // Close on click outside
   useEffect(() => {
@@ -47,11 +45,6 @@ export default function ExpandableActionMenu({
       setTimeout(() => faqBtn.current?.focus(), 170);
     }
   }, [open]);
-
-  const handleGetNurse = () => {
-    setOpen(false);
-    handleRequestNurse();
-  };
 
   return (
     <div
@@ -118,7 +111,10 @@ export default function ExpandableActionMenu({
               transitionDelay: open ? "180ms" : "0ms",
               letterSpacing: ".01em"
             }}
-            onClick={handleGetNurse}
+            onClick={() => {
+              setOpen(false);
+              onRequestNurse();
+            }}
             aria-label="Get Nurse"
             tabIndex={open ? 0 : -1}
             autoFocus={false}
@@ -146,3 +142,4 @@ export default function ExpandableActionMenu({
     </div>
   );
 }
+
