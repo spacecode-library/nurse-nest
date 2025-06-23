@@ -46,6 +46,38 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "admin_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      api_credentials: {
+        Row: {
+          created_at: string | null
+          credentials: Json
+          id: string
+          service_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          credentials: Json
+          id?: string
+          service_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          credentials?: Json
+          id?: string
+          service_name?: string
+          updated_at?: string | null
+        }
         Relationships: []
       }
       applications: {
@@ -89,6 +121,129 @@ export type Database = {
             columns: ["nurse_id"]
             isOneToOne: false
             referencedRelation: "nurse_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      background_checks: {
+        Row: {
+          adjudication: string | null
+          admin_notes: string | null
+          checkr_candidate_id: string | null
+          checkr_report_id: string | null
+          client_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          initiated_at: string | null
+          job_posting_id: string | null
+          nurse_id: string
+          package_used: string | null
+          raw_response: Json | null
+          result: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          adjudication?: string | null
+          admin_notes?: string | null
+          checkr_candidate_id?: string | null
+          checkr_report_id?: string | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          initiated_at?: string | null
+          job_posting_id?: string | null
+          nurse_id: string
+          package_used?: string | null
+          raw_response?: Json | null
+          result?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          adjudication?: string | null
+          admin_notes?: string | null
+          checkr_candidate_id?: string | null
+          checkr_report_id?: string | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          initiated_at?: string | null
+          job_posting_id?: string | null
+          nurse_id?: string
+          package_used?: string | null
+          raw_response?: Json | null
+          result?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "background_checks_nurse_id_fkey"
+            columns: ["nurse_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_background_checks_client_id"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_background_checks_job_posting_id"
+            columns: ["job_posting_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_participants: {
+        Row: {
+          created_at: string | null
+          id: string
+          joined_at: string | null
+          left_at: string | null
+          participant_type: string
+          total_duration_minutes: number | null
+          user_id: string
+          video_call_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          joined_at?: string | null
+          left_at?: string | null
+          participant_type: string
+          total_duration_minutes?: number | null
+          user_id: string
+          video_call_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          joined_at?: string | null
+          left_at?: string | null
+          participant_type?: string
+          total_duration_minutes?: number | null
+          user_id?: string
+          video_call_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_participants_video_call_id_fkey"
+            columns: ["video_call_id"]
+            isOneToOne: false
+            referencedRelation: "video_calls"
             referencedColumns: ["id"]
           },
         ]
@@ -327,7 +482,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "client_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       contracts: {
         Row: {
@@ -514,7 +677,22 @@ export type Database = {
           sender_id?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       notification_logs: {
         Row: {
@@ -547,7 +725,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notification_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       notification_preferences: {
         Row: {
@@ -592,7 +778,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       nurse_certifications: {
         Row: {
@@ -735,6 +929,9 @@ export type Database = {
       }
       nurse_profiles: {
         Row: {
+          background_check_completed: boolean | null
+          background_check_required: boolean | null
+          background_check_status: string | null
           bio: string | null
           city: string
           created_at: string | null
@@ -760,6 +957,9 @@ export type Database = {
           zip_code: string
         }
         Insert: {
+          background_check_completed?: boolean | null
+          background_check_required?: boolean | null
+          background_check_status?: string | null
           bio?: string | null
           city: string
           created_at?: string | null
@@ -785,6 +985,9 @@ export type Database = {
           zip_code: string
         }
         Update: {
+          background_check_completed?: boolean | null
+          background_check_required?: boolean | null
+          background_check_status?: string | null
           bio?: string | null
           city?: string
           created_at?: string | null
@@ -809,7 +1012,15 @@ export type Database = {
           user_id?: string | null
           zip_code?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "nurse_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       nurse_qualifications: {
         Row: {
@@ -1451,10 +1662,210 @@ export type Database = {
           user_id?: string
           user_type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_metadata_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      video_calls: {
+        Row: {
+          actual_end_time: string | null
+          actual_start_time: string | null
+          conversation_id: string
+          created_at: string | null
+          duration_minutes: number | null
+          id: string
+          initiated_by_user_id: string
+          meeting_topic: string | null
+          recording_url: string | null
+          scheduled_at: string | null
+          status: string | null
+          updated_at: string | null
+          zoom_join_url: string
+          zoom_meeting_id: string
+          zoom_meeting_password: string | null
+          zoom_start_url: string
+        }
+        Insert: {
+          actual_end_time?: string | null
+          actual_start_time?: string | null
+          conversation_id: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          initiated_by_user_id: string
+          meeting_topic?: string | null
+          recording_url?: string | null
+          scheduled_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          zoom_join_url: string
+          zoom_meeting_id: string
+          zoom_meeting_password?: string | null
+          zoom_start_url: string
+        }
+        Update: {
+          actual_end_time?: string | null
+          actual_start_time?: string | null
+          conversation_id?: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          initiated_by_user_id?: string
+          meeting_topic?: string | null
+          recording_url?: string | null
+          scheduled_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          zoom_join_url?: string
+          zoom_meeting_id?: string
+          zoom_meeting_password?: string | null
+          zoom_start_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_calls_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
+      admin_background_checks: {
+        Row: {
+          adjudication: string | null
+          admin_notes: string | null
+          care_type: string | null
+          checkr_candidate_id: string | null
+          checkr_report_id: string | null
+          client_email: string | null
+          client_first_name: string | null
+          client_id: string | null
+          client_last_name: string | null
+          client_phone: string | null
+          client_result_status: string | null
+          client_type: string | null
+          completed_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          initiated_at: string | null
+          job_code: string | null
+          job_posting_id: string | null
+          job_status: string | null
+          nurse_city: string | null
+          nurse_email: string | null
+          nurse_first_name: string | null
+          nurse_id: string | null
+          nurse_last_name: string | null
+          nurse_phone: string | null
+          package_used: string | null
+          raw_response: Json | null
+          result: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "background_checks_nurse_id_fkey"
+            columns: ["nurse_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_background_checks_client_id"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_background_checks_job_posting_id"
+            columns: ["job_posting_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      background_check_details: {
+        Row: {
+          adjudication: string | null
+          admin_notes: string | null
+          care_type: string | null
+          checkr_candidate_id: string | null
+          checkr_report_id: string | null
+          client_first_name: string | null
+          client_id: string | null
+          client_last_name: string | null
+          client_status: string | null
+          client_user_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          days_until_expiry: number | null
+          expires_at: string | null
+          id: string | null
+          initiated_at: string | null
+          is_expired: boolean | null
+          job_code: string | null
+          job_posting_id: string | null
+          nurse_first_name: string | null
+          nurse_id: string | null
+          nurse_last_name: string | null
+          nurse_user_id: string | null
+          package_used: string | null
+          raw_response: Json | null
+          result: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "background_checks_nurse_id_fkey"
+            columns: ["nurse_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_profiles_user_id_fkey"
+            columns: ["client_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_background_checks_client_id"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_background_checks_job_posting_id"
+            columns: ["job_posting_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nurse_profiles_user_id_fkey"
+            columns: ["nurse_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       payment_summary: {
         Row: {
           client_first_name: string | null
@@ -1479,6 +1890,18 @@ export type Database = {
         }
         Relationships: []
       }
+      user_accounts: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          last_name: string | null
+          phone_number: string | null
+          user_id: string | null
+          user_type: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       auto_approve_expired_timecards: {
@@ -1491,6 +1914,10 @@ export type Database = {
           processed_count: number
           timecard_ids: string[]
         }[]
+      }
+      bytea_to_text: {
+        Args: { data: string }
+        Returns: string
       }
       calculate_payment_amounts: {
         Args: { nurse_hourly_rate: number; total_hours: number }
@@ -1516,6 +1943,68 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_old_background_checks: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      create_video_call_with_zoom: {
+        Args: {
+          p_conversation_id: string
+          p_initiated_by_user_id: string
+          p_meeting_topic: string
+          p_scheduled_at?: string
+          p_duration_minutes?: number
+        }
+        Returns: Json
+      }
+      create_zoom_meeting: {
+        Args:
+          | {
+              meeting_topic: string
+              meeting_duration?: number
+              meeting_scheduled_at?: string
+              meeting_timezone?: string
+            }
+          | {
+              meeting_topic?: string
+              meeting_type?: number
+              start_time?: string
+              duration_minutes?: number
+            }
+        Returns: Json
+      }
+      delete_video_call_with_zoom: {
+        Args: { p_video_call_id: string }
+        Returns: Json
+      }
+      delete_zoom_meeting: {
+        Args: { meeting_id: string }
+        Returns: Json
+      }
+      get_background_check_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_checks: number
+          pending_checks: number
+          processing_checks: number
+          completed_checks: number
+          failed_checks: number
+          passed_checks: number
+          expired_checks: number
+          checks_this_month: number
+        }[]
+      }
+      get_client_background_check_result: {
+        Args: { p_nurse_id: string; p_client_id: string }
+        Returns: {
+          background_check_id: string
+          status: string
+          result_status: string
+          message: string
+          initiated_at: string
+          completed_at: string
+        }[]
+      }
       get_overdue_timecards: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1539,8 +2028,83 @@ export type Database = {
           client_user_id: string
         }[]
       }
+      get_user_email: {
+        Args: { user_id: string }
+        Returns: string
+      }
+      get_user_type: {
+        Args: { user_id: string }
+        Returns: string
+      }
+      get_zoom_access_token: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      http: {
+        Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_delete: {
+        Args:
+          | { uri: string }
+          | { uri: string; content: string; content_type: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_get: {
+        Args: { uri: string } | { uri: string; data: Json }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_head: {
+        Args: { uri: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_header: {
+        Args: { field: string; value: string }
+        Returns: Database["public"]["CompositeTypes"]["http_header"]
+      }
+      http_list_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          curlopt: string
+          value: string
+        }[]
+      }
+      http_patch: {
+        Args: { uri: string; content: string; content_type: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_post: {
+        Args:
+          | { uri: string; content: string; content_type: string }
+          | { uri: string; data: Json }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_put: {
+        Args: { uri: string; content: string; content_type: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_reset_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      http_set_curlopt: {
+        Args: { curlopt: string; value: string }
+        Returns: boolean
+      }
+      nurse_has_valid_background_check: {
+        Args: { p_nurse_id: string; p_client_id: string }
+        Returns: boolean
+      }
       round_time_to_quarter: {
         Args: { time_input: string }
+        Returns: string
+      }
+      text_to_bytea: {
+        Args: { data: string }
+        Returns: string
+      }
+      urlencode: {
+        Args: { data: Json } | { string: string } | { string: string }
         Returns: string
       }
     }
@@ -1560,7 +2124,23 @@ export type Database = {
       user_role: "nurse" | "client" | "admin"
     }
     CompositeTypes: {
-      [_ in never]: never
+      http_header: {
+        field: string | null
+        value: string | null
+      }
+      http_request: {
+        method: unknown | null
+        uri: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content_type: string | null
+        content: string | null
+      }
+      http_response: {
+        status: number | null
+        content_type: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content: string | null
+      }
     }
   }
 }
