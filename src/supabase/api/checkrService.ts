@@ -185,18 +185,22 @@ async function debugCurrentUser() {
 }
 
 /**
- * UPDATED: Call Checkr API via Edge Function
+ * UPDATED: Call Checkr API via Edge Function with better error handling
  */
 async function callCheckrAPI(action: string, backgroundCheckId: string, candidateData: any) {
   try {
     console.log(`🔍 Debug - Calling Checkr API via Edge Function: ${action}`);
+    console.log(`🔍 Debug - Request payload:`, { action, backgroundCheckId, candidateData });
 
     // Get the current session token
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     
     if (sessionError || !session) {
+      console.error('🔍 Debug - Session error:', sessionError);
       throw new Error('No valid session found');
     }
+
+    console.log('🔍 Debug - Session found, user:', session.user.id);
 
     const { data, error } = await supabase.functions.invoke('checkr-service', {
       body: {
@@ -209,13 +213,36 @@ async function callCheckrAPI(action: string, backgroundCheckId: string, candidat
       },
     });
 
+    // Enhanced error logging
     if (error) {
-      console.error('🔍 Debug - Edge function error:', error);
-      throw new Error(error.message || 'Edge function error');
+      console.error('🔍 Debug - Edge function error details:', {
+        message: error.message,
+        status: error.status,
+        statusText: error.statusText,
+        context: error.context,
+        details: error.details,
+        fullError: error
+      });
+      
+      // Try to get more details from the error
+      let errorMessage = error.message || 'Edge function error';
+      if (error.context?.response) {
+        try {
+          const responseText = await error.context.response.text();
+          console.error('🔍 Debug - Edge function response body:', responseText);
+          errorMessage = `Edge Function Error: ${responseText}`;
+        } catch (e) {
+          console.error('🔍 Debug - Could not read error response body');
+        }
+      }
+      
+      throw new Error(errorMessage);
     }
 
+    console.log('🔍 Debug - Edge function response:', data);
+
     if (!data || !data.success) {
-      console.error('🔍 Debug - API call failed:', data);
+      console.error('🔍 Debug - API call failed with response:', data);
       throw new Error(data?.error || 'API call failed');
     }
 
@@ -858,6 +885,93 @@ export async function getNursePendingBackgroundChecks(
   } catch (error) {
     console.error('🔍 Debug - Error in getNursePendingBackgroundChecks:', error);
     return { data: [], error: error as Error };
+  }
+}
+
+/**
+ * COMPREHENSIVE TEST: Debug Edge Function issues
+ */
+export async function debugEdgeFunction(): Promise<void> {
+  console.log('🔍 Starting comprehensive Edge Function debugging...');
+  
+  try {
+    // 1. Check authentication
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) {
+      console.error('❌ Authentication failed:', sessionError);
+      return;
+    }
+    
+    console.log('✅ Authentication successful, user:', session.user.id);
+    
+    // 2. Test basic Edge Function connectivity
+    console.log('🔍 Testing basic Edge Function connectivity...');
+    
+    try {
+      const response = await fetch('https://hjgspbyckknhoetrifko.supabase.co/functions/v1/checkr-service', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'test',
+          backgroundCheckId: 'test-id',
+          candidateData: { test: true }
+        })
+      });
+      
+      console.log('🔍 Raw response status:', response.status);
+      console.log('🔍 Raw response headers:', Object.fromEntries(response.headers.entries()));
+      
+      const responseText = await response.text();
+      console.log('🔍 Raw response body:', responseText);
+      
+      if (!response.ok) {
+        console.error('❌ Edge Function returned error status:', response.status);
+        console.error('❌ Error response:', responseText);
+      } else {
+        console.log('✅ Edge Function responded successfully');
+        try {
+          const jsonResponse = JSON.parse(responseText);
+          console.log('✅ Parsed JSON response:', jsonResponse);
+        } catch (e) {
+          console.warn('⚠️ Response is not valid JSON');
+        }
+      }
+      
+    } catch (fetchError) {
+      console.error('❌ Raw fetch failed:', fetchError);
+    }
+    
+    // 3. Test using Supabase client
+    console.log('🔍 Testing via Supabase client...');
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('checkr-service', {
+        body: {
+          action: 'test',
+          backgroundCheckId: 'test-id',
+          candidateData: { test: true }
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      
+      if (error) {
+        console.error('❌ Supabase client error:', error);
+      } else {
+        console.log('✅ Supabase client success:', data);
+      }
+      
+    } catch (clientError) {
+      console.error('❌ Supabase client exception:', clientError);
+    }
+    
+  } catch (error) {
+    console.error('❌ Debug function failed:', error);
   }
 }
 
