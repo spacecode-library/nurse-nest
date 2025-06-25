@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserRound, LogOut, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -29,12 +29,12 @@ export default function UserMenu({ shouldUseDarkText }: UserMenuProps) {
     return (
       <Link to="/auth">
         <Button 
-          variant="ghost"
+          variant="outline"
           className={cn(
-            "sign-in-button",
-            shouldUseDarkText 
-              ? "text-gray-700 hover:text-primary-500 hover:bg-transparent" 
-              : "text-white hover:text-primary-300 hover:bg-transparent"
+            "transition-all duration-300 ease-in-out hover:scale-105 border focus:outline-none focus-visible:outline-none",
+            shouldUseDarkText
+              ? "text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-700" 
+              : "text-white border-white/30 hover:bg-white/10 hover:text-white"
           )}
         >
           Sign In
@@ -49,12 +49,14 @@ export default function UserMenu({ shouldUseDarkText }: UserMenuProps) {
         <Button 
           variant="ghost"
           className={cn(
-            "flex items-center",
-            shouldUseDarkText ? "text-gray-700" : "text-white"
+            "transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus-visible:outline-none",
+            shouldUseDarkText
+              ? "text-gray-700 hover:bg-gray-100 hover:text-gray-700" 
+              : "text-white hover:bg-white/10 hover:text-white"
           )}
         >
           <UserRound className="h-5 w-5 mr-1" />
-          <span className="hidden md:inline">Account</span>
+          <span className="hidden md:inline">Dashboard</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
@@ -70,6 +72,3 @@ export default function UserMenu({ shouldUseDarkText }: UserMenuProps) {
     </DropdownMenu>
   );
 }
-
-// Add missing Link import
-import { Link } from 'react-router-dom';

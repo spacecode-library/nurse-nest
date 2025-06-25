@@ -1,0 +1,53 @@
+
+.mobileMenu {
+  @apply lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg border-t border-gray-200/50 mx-2 sm:mx-4 rounded-b-2xl z-40;
+}
+
+.menuWrapper {
+  @apply px-3 py-3 sm:px-6 sm:py-4 space-y-4;
+}
+
+.mobileMenuTrigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0.25rem;
+  background: transparent;
+  border: none;
+  box-shadow: none !important;
+  outline: none !important;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  color: #374151; /* text-gray-700 */
+  border-radius: 0.5rem;
+  transition: background 0.15s, color 0.15s;
+}
+.mobileMenuTrigger:focus,
+.mobileMenuTrigger[data-state="open"] {
+  outline: none !important;
+  box-shadow: none !important;
+  background: none;
+}
+.mobileMenuTrigger:hover {
+  color: #2563eb;
+  background: none;
+}
+
+.mobileTriggerIcon {
+  margin-right: 0.43em;
+  margin-left: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Remove accordion borders for mobile */
+.mobileAccordionNoBorder > div > [data-state] {
+  border-bottom: none !important;
+}
+
+/* Hide right chevron icon in the accordion trigger */
+.mobileMenuTrigger > svg:last-child {
+  display: none !important;
+}

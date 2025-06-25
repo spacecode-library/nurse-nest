@@ -1,61 +1,16 @@
 
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { 
-  AlertCircle, 
-  LockKeyhole, 
-  Shield, 
-  Mail, 
-  Eye, 
-  EyeOff,
-  Stethoscope,
-  Building2,
-  ArrowRight,
-  Sparkles,
-  CheckCircle
-} from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import { signIn, signUp, getCurrentUser } from '@/supabase/auth/authService';
-import { supabase } from '@/integrations/supabase/client';
-import Navbar from '@/components/Navbar';
 
 export default function Auth() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [userType, setUserType] = useState<'nurse' | 'client' | 'admin'>('client');
-  const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await getCurrentUser();
-      if (data?.user) {
-        const { data: userMetadata } = await supabase
-          .from('user_metadata')
-          .select('user_type')
-          .eq('user_id', data.user.id)
-          .single();
-        
-        if (userMetadata?.user_type === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
-      }
-    };
-    
-    checkSession();
+    // Redirect to the new sign-in page
+    navigate('/sign-in', { replace: true });
   }, [navigate]);
   
+<<<<<<< HEAD
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -451,4 +406,7 @@ export default function Auth() {
       </main>
     </div>
   );
+=======
+  return null;
+>>>>>>> main
 }

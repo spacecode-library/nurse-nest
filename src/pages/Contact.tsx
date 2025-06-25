@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import Navbar from '@/components/Navbar';
+import NurseNestNavbar from '@/components/NurseNestNavbar';
 import Footer from '@/components/Footer';
 import { Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,7 +44,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
+      <NurseNestNavbar />
       
       <main className="flex-1 pt-24">
         <div className="container mx-auto px-4 py-12">
