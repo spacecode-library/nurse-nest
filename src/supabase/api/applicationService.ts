@@ -1,6 +1,9 @@
 // src/supabase/api/applicationService.ts
 import { supabase } from '@/integrations/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
+import { getNurseProfileById, getNurseProfileByUserId } from './nurseProfileService';
+import { EmailService } from '../email/emailService';
+import { useAuth } from '@/contexts/AuthContext';
 
 /**
  * Application status types
@@ -18,6 +21,7 @@ export interface JobApplication {
   cover_message?: string;
   created_at?: string;
   updated_at?: string;
+  nurse_email?:string;
 }
 
 /**
@@ -46,6 +50,7 @@ export interface JobApplicationWithDetails extends JobApplication {
     phone_number: string;
     onboarding_completed: boolean;
   };
+
 }
 
 /**
@@ -54,8 +59,10 @@ export interface JobApplicationWithDetails extends JobApplication {
  * @param applicationData Application data to create
  * @returns Created application
  */
-export async function submitApplication(applicationData: Omit<JobApplication, 'id' | 'status' | 'created_at' | 'updated_at'>) {
+export async function submitApplication(applicationData: Omit<JobApplication, 'id' | 'status' | 'created_at' | 'updated_at' | 'nurse_email'>) {
   try {
+  
+    const emailService = new EmailService();
     // Check if the nurse has already applied for this job
     const { data: existingApp, error: checkError } = await supabase
       .from('applications')
@@ -112,6 +119,12 @@ export async function submitApplication(applicationData: Omit<JobApplication, 'i
         )
       `)
       .single();
+
+      const { data: profile } = await getNurseProfileById(data.nurse_id);
+ 
+      const nurseName = profile?.first_name + " " + profile?.last_name;
+      const { data: { user },} = await supabase.auth.getUser()
+       await emailService.sendNurseApplicationEmail(nurseName,data?.job_postings?.job_code,user?.email);
 
     if (error) throw error;
     

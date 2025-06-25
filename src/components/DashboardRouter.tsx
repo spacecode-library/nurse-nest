@@ -93,6 +93,23 @@ export default function DashboardRouter() {
           break;
 
         case 'client':
+          
+          const { data: clientProfile } = await supabase
+            .from('client_profiles')
+            .select('onboarding_completed')
+            .eq('user_id', user?.id)
+            .single();
+
+          if(!clientProfile){
+            navigate('/onboarding/client',{replace:true})
+            return;
+          }
+
+          if(!clientProfile.onboarding_completed){
+            navigate('/onboarding/client',{replace:true})
+            return;
+          }
+
           navigate('/dashboard/client', { replace: true });
           break;
 

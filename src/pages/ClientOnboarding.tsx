@@ -18,6 +18,7 @@ import { addCareLocation, getCareLocations, updateCareLocation } from '@/supabas
 import { addCareNeeds, getCareNeeds, updateCareNeeds } from '@/supabase/api/careNeedsService';
 import { supabase } from '@/integrations/supabase/client';
 import { AmericanDateInput, DateUtils } from '@/components/ui/american-date-input';
+import ClickwrapAgreement from '@/components/ui/ClickwrapAgreement';
 
 // Constants for form options
 const CLIENT_TYPES = [
@@ -119,13 +120,14 @@ const HEALTH_CONDITIONS = [
   'End-of-Life Care'
 ];
 
-// Define the onboarding steps
+// Define the onboarding steps - Updated to include Legal Agreements
 const ONBOARDING_STEPS = [
   'Client Type',
   'Personal Information',
   'Care Location',
   'Care Needs',
   'Payment Info',
+  'Legal Agreements',
   'Review & Submit'
 ];
 
@@ -139,6 +141,9 @@ export default function ClientOnboarding() {
   const [isLoading, setIsLoading] = useState(true);
   const [careLocationId, setCareLocationId] = useState<string | null>(null);
   const [careNeedsId, setCareNeedsId] = useState<string | null>(null);
+  
+  // Clickwrap agreement state
+  const [allAgreementsAccepted, setAllAgreementsAccepted] = useState(false);
 
   // Client Type (Step 0)
   const [clientType, setClientType] = useState<string>('individual');
@@ -169,7 +174,7 @@ export default function ClientOnboarding() {
   const [specialSkills, setSpecialSkills] = useState<string[]>([]);
   const [healthConditions, setHealthConditions] = useState<string[]>([]);
   const [additionalNotes, setAdditionalNotes] = useState('');
-  const [careStartDate, setCareStartDate] = useState(''); // New field for care start date
+  const [careStartDate, setCareStartDate] = useState('');
 
   // Payment (Step 4)
   const [paymentMethod, setPaymentMethod] = useState('credit_card');
@@ -204,12 +209,13 @@ export default function ClientOnboarding() {
             
             if (!profileData.onboarding_completed) {
               const percentage = profileData.onboarding_completion_percentage;
-              if (percentage >= 80) setCurrentStep(5);
-              else if (percentage >= 60) setCurrentStep(4);
-              else if (percentage >= 40) setCurrentStep(3);
-              else if (percentage >= 20) setCurrentStep(2);
-              else if (percentage >= 10) setCurrentStep(1);
-              else setCurrentStep(0);
+              if (percentage >= 85) setCurrentStep(6); // Review & Submit
+              else if (percentage >= 70) setCurrentStep(5); // Legal Agreements
+              else if (percentage >= 60) setCurrentStep(4); // Payment Info
+              else if (percentage >= 40) setCurrentStep(3); // Care Needs
+              else if (percentage >= 20) setCurrentStep(2); // Care Location
+              else if (percentage >= 10) setCurrentStep(1); // Personal Information
+              else setCurrentStep(0); // Client Type
               
               // Fetch care recipient if client type is family
               if (profileData.client_type === 'family') {
@@ -260,20 +266,21 @@ export default function ClientOnboarding() {
                   setSpecialSkills(needsData.special_skills || []);
                   setHealthConditions(needsData.health_conditions || []);
                   setAdditionalNotes(needsData.additional_notes || '');
-                  // If there's a care_start_date field in your schema, uncomment this:
-                  // setCareStartDate(needsData.care_start_date || '');
                 }
               }
               
               // Fetch payment info if we're at step 4 or beyond
               if (percentage >= 60) {
-                // In a real implementation, we'd fetch payment data
-                // For now we'll simulate with default values
                 setPaymentMethod('credit_card');
                 setSameAsHome(true);
                 if (streetAddress) {
                   setBillingAddress(streetAddress + ', ' + city + ', ' + state + ' ' + zipCode);
                 }
+              }
+
+              // Check if legal agreements were accepted if we're at step 5 or beyond
+              if (percentage >= 70) {
+                setAllAgreementsAccepted(true);
               }
             }
           }
@@ -326,9 +333,9 @@ export default function ClientOnboarding() {
             const { data, error } = await createClientProfile({
               user_id: userId,
               client_type: clientType as "individual" | "family",
-              first_name: firstName || '', // Default empty string to satisfy required field
-              last_name: lastName || '',   // Default empty string to satisfy required field
-              phone_number: phoneNumber || '', // Default empty string to satisfy required field
+              first_name: firstName || '',
+              last_name: lastName || '',
+              phone_number: phoneNumber || '',
               relationship_to_recipient: clientType === 'family' ? relationshipToRecipient : null,
               onboarding_completed: false,
               onboarding_completion_percentage: progressPercentage
@@ -344,14 +351,12 @@ export default function ClientOnboarding() {
         case 1: // Personal Information
           if (!clientProfileId) throw new Error("Client profile not found");
           
-          // Update client profile
           await updateClientProfile(clientProfileId, {
             first_name: firstName,
             last_name: lastName,
             phone_number: phoneNumber
           });
           
-          // If family type, create or update care recipient
           if (clientType === 'family') {
             const { data: existingRecipient } = await supabase
               .from('care_recipients')
@@ -424,8 +429,6 @@ export default function ClientOnboarding() {
               special_skills: specialSkills,
               health_conditions: healthConditions,
               additional_notes: additionalNotes
-              // If you have a care_start_date field, uncomment this:
-              // care_start_date: careStartDate
             });
           } else {
             const { data } = await addCareNeeds({
@@ -436,8 +439,6 @@ export default function ClientOnboarding() {
               special_skills: specialSkills,
               health_conditions: healthConditions,
               additional_notes: additionalNotes
-              // If you have a care_start_date field, uncomment this:
-              // care_start_date: careStartDate
             });
             
             if (data) {
@@ -451,9 +452,13 @@ export default function ClientOnboarding() {
         case 4: // Payment Information
           if (!clientProfileId) throw new Error("Client profile not found");
           
-          // In a real implementation, we'd save payment data
-          // Since we're not using Stripe as mentioned, we'll just update progress
+          await updateOnboardingProgress(clientProfileId, progressPercentage);
+          break;
+
+        case 5: // Legal Agreements
+          if (!clientProfileId) throw new Error("Client profile not found");
           
+          // Save the agreements acceptance status
           await updateOnboardingProgress(clientProfileId, progressPercentage);
           break;
       }
@@ -560,6 +565,17 @@ export default function ClientOnboarding() {
         }
         
         return true;
+
+      case 5: // Legal Agreements
+        if (!allAgreementsAccepted) {
+          toast({
+            title: "Legal agreements required",
+            description: "Please read and accept all legal agreements to continue",
+            variant: "destructive"
+          });
+          return false;
+        }
+        return true;
       
       default:
         return true;
@@ -599,7 +615,7 @@ export default function ClientOnboarding() {
   };
 
   const handleSubmit = async () => {
-    if (!validateCurrentStep() || !termsAccepted || !userId || !clientProfileId) {
+    if (!validateCurrentStep() || !userId || !clientProfileId) {
       return;
     }
     
@@ -779,7 +795,7 @@ export default function ClientOnboarding() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="your.email@example.com"
-                        disabled // Email should come from auth
+                        disabled
                       />
                       <p className="text-xs text-gray-500">This is the email address you registered with</p>
                     </div>
@@ -961,7 +977,6 @@ export default function ClientOnboarding() {
                       />
                     </div>
 
-                    {/* Care Start Date */}
                     <AmericanDateInput
                       id="careStartDate"
                       label="Preferred Care Start Date"
@@ -1097,8 +1112,24 @@ export default function ClientOnboarding() {
                     </div>
                   </div>
                 )}
-                
+
                 {currentStep === 5 && (
+                  <div className="space-y-6">
+                    <div className="text-center mb-6">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Legal Agreements</h3>
+                      <p className="text-gray-600">
+                        Please review and accept all required agreements to complete your registration.
+                      </p>
+                    </div>
+
+                    <ClickwrapAgreement 
+                      userType="client" 
+                      onAllAccepted={setAllAgreementsAccepted}
+                    />
+                  </div>
+                )}
+                
+                {currentStep === 6 && (
                   <div className="space-y-6">
                     <div className="p-4 bg-blue-50 border border-blue-200 rounded-md mb-6">
                       <div className="flex">
@@ -1253,18 +1284,33 @@ export default function ClientOnboarding() {
                         </div>
                       </div>
                     </div>
+
+                    <div className="border rounded-lg overflow-hidden">
+                      <div className="bg-gray-50 px-4 py-2 border-b">
+                        <h3 className="font-medium text-gray-800">Legal Agreements</h3>
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                          <p className="font-medium text-green-800">All legal agreements accepted</p>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2">
+                          You have reviewed and accepted all required legal documents including the Client Master Agreement, Business Associate Agreement, and Data Security Addendum.
+                        </p>
+                      </div>
+                    </div>
                     
                     <div className="space-y-4 mt-6 border-t pt-6">
                       <div className="flex items-start space-x-2">
                         <Checkbox 
-                          id="terms"
+                          id="finalTerms"
                           checked={termsAccepted}
                           onCheckedChange={(checked) => {
                             setTermsAccepted(checked === true);
                           }}
                         />
-                        <Label htmlFor="terms" className="text-sm">
-                          I confirm that all information provided is accurate and complete. I understand the payment structure and agree to Nurse Nest's <span className="text-primary-600 cursor-pointer">Terms of Service</span> and <span className="text-primary-600 cursor-pointer">Privacy Policy</span>.
+                        <Label htmlFor="finalTerms" className="text-sm">
+                          I confirm that all information provided is accurate and complete. I understand the payment structure and acknowledge that I have read and accepted all legal agreements.
                         </Label>
                       </div>
                     </div>
