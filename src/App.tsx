@@ -81,7 +81,7 @@ export default function App() {
               <Route path="/tax-tips" element={<TaxTips />} />
               
               {/* Onboarding Routes */}
-              <Route path="/nurse-onboarding" element={<NurseOnboarding />} />
+              <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
               <Route path="/client-onboarding" element={<ClientOnboarding />} />
               
               {/* Dashboard Routes */}
