@@ -1,4 +1,4 @@
-// components/dashboard/NurseDashboard.tsx - REDESIGNED WITH SIDEBAR LAYOUT
+// components/dashboard/NurseDashboard.tsx - PRODUCTION READY VERSION
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,38 +8,23 @@ import { Progress } from '@/components/ui/progress';
 import {
   Briefcase,
   Clock,
-  FileText,
   Calendar,
   CheckCircle,
-  AlertCircle,
   TrendingUp,
-  MessageSquare,
   Eye,
-  Star,
-  Timer,
-  DollarSign,
-  Award,
   Send,
   Search,
   ChevronRight,
-  ArrowUpRight,
   Activity,
-  MapPin,
   Shield,
-  Heart,
-  UserCircle,
   Upload,
-  X,
-  Filter,
   Bell,
   Plus,
   MessageCircle,
   Sparkles,
   Trophy,
   Zap,
-  Camera,
   Stethoscope,
-  UserCheck,
   HeartHandshake,
   Building2,
   CreditCard,
@@ -49,12 +34,15 @@ import {
   Menu,
   Users,
   ClipboardCheck,
-  Receipt
+  Receipt,
+  DollarSign,
+  AlertTriangle,
+  ChevronLeft
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { getNurseProfileByUserId } from '@/supabase/api/nurseProfileService';
-import { getOpenJobPostings, advancedJobSearch } from '@/supabase/api/jobPostingService';
+import { getOpenJobPostings } from '@/supabase/api/jobPostingService';
 import { getApplicationsByNurse, hasApplied } from '@/supabase/api/applicationService';
 import { getNurseTimecards, calculateNurseEarnings } from '@/supabase/api/timecardService';
 
@@ -71,7 +59,7 @@ import QuickActionsCard from './nurse/QuickActionsCard';
 import NotificationsCard from './nurse/NotificationsCard';
 import QuickApplyWidget from './nurse/QuickApplyWidget';
 
-// Import NEW payment components
+// Import payment components
 import StripeOnboardingCard from './nurse/StripeOnboardingCard';
 import EnhancedTimecardSubmissionForm from './nurse/EnhancedTimecardSubmissionForm';
 
@@ -99,10 +87,10 @@ export default function NurseDashboard() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
-  // Add state for background checks
+  // Background checks state
   const [pendingBackgroundChecksCount, setPendingBackgroundChecksCount] = useState(0);
   
-  // Add state for messages view
+  // Messages and modals state
   const [showMessagesPage, setShowMessagesPage] = useState(false);
   const [showProfileUpload, setShowProfileUpload] = useState(false);
   const [showEnhancedTimecardForm, setShowEnhancedTimecardForm] = useState(false);
@@ -117,14 +105,13 @@ export default function NurseDashboard() {
 
   const [stats, setStats] = useState({
     activeApplications: 0,
-    pendingInvoices: 0, // Changed from pendingTimecards
+    pendingInvoices: 0,
     weeklyEarnings: 0,
     monthlyEarnings: 0,
     totalHours: 0,
     newJobMatches: 0,
     profileViews: 0,
     responseRate: 0,
-    // Payment related stats
     pendingPayments: 0,
     totalEarningsThisMonth: 0,
     averageHourlyRate: 0,
@@ -133,11 +120,9 @@ export default function NurseDashboard() {
 
   const [availableJobs, setAvailableJobs] = useState<any[]>([]);
   const [myApplications, setMyApplications] = useState<any[]>([]);
-  const [recentInvoices, setRecentInvoices] = useState<any[]>([]); // Changed from recentTimecards
+  const [recentInvoices, setRecentInvoices] = useState<any[]>([]);
   const [appliedJobIds, setAppliedJobIds] = useState<Set<string>>(new Set());
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
   const [showApplicationModal, setShowApplicationModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
 
@@ -152,7 +137,6 @@ export default function NurseDashboard() {
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
-      // Still navigate even if there's an error
       navigate('/');
     }
   };
@@ -251,13 +235,13 @@ export default function NurseDashboard() {
       if (!profile.profile_photo_url || profile.profile_photo_url.trim() === '') {
         setShowMandatoryProfilePicture(true);
         setLoading(false);
-        return; // Don't load dashboard data until profile picture is uploaded
+        return;
       }
 
       const [jobsResult, applicationsResult, invoicesResult] = await Promise.all([
         getOpenJobPostings(50, 0),
         getApplicationsByNurse(profile.id, 50, 0),
-        getNurseTimecards(profile.id, 20, 0), // Still uses timecards API but renamed in UI
+        getNurseTimecards(profile.id, 20, 0),
       ]);
 
       const jobs = jobsResult.data || [];
@@ -290,12 +274,12 @@ export default function NurseDashboard() {
       const pendingInvoices = invoices.filter(tc => tc.status === 'Submitted').length;
       const pendingPayments = invoices.filter(tc => tc.status === 'Approved' || tc.status === 'Auto-Approved').length;
 
-      // Calculate completed work based on paid invoices instead of contracts
+      // Calculate completed work based on paid invoices
       const completedWork = invoices.filter(tc => tc.status === 'Paid').length;
       setEliteProgress(prev => ({
         ...prev,
-        completedContracts: Math.floor(completedWork / 3), // 3 paid invoices = 1 "contract equivalent"
-        isElite: completedWork >= 9, // 9 paid invoices for elite status
+        completedContracts: Math.floor(completedWork / 3),
+        isElite: completedWork >= 9,
         nextMilestone: completedWork >= 9 ? 0 : Math.ceil((9 - completedWork) / 3)
       }));
 
@@ -329,14 +313,13 @@ export default function NurseDashboard() {
 
       setStats({
         activeApplications: activeApps,
-        pendingInvoices, // Updated terminology
+        pendingInvoices,
         weeklyEarnings: weeklyEarnings?.totalEarnings || 0,
         monthlyEarnings: monthlyEarnings?.totalEarnings || 0,
         totalHours: monthlyEarnings?.totalHours || 0,
         newJobMatches: newJobs.length,
         profileViews: Math.floor(Math.random() * 50) + 10,
         responseRate,
-        // Payment stats
         pendingPayments,
         totalEarningsThisMonth: monthlyEarnings?.totalEarnings || 0,
         averageHourlyRate: avgHourlyRate,
@@ -410,7 +393,6 @@ export default function NurseDashboard() {
       profile_photo_url: newPhotoUrl
     }));
     setShowMandatoryProfilePicture(false);
-    // Now load the dashboard data
     fetchDashboardData();
   };
 
@@ -430,7 +412,7 @@ export default function NurseDashboard() {
     }
   };
 
-  // Sidebar navigation items (UPDATED with background checks)
+  // Sidebar navigation items
   const navigationItems = [
     {
       id: 'overview',
@@ -472,32 +454,28 @@ export default function NurseDashboard() {
       badgeColor: 'bg-blue-500'
     },
     {
-      id: 'invoicing', // Changed from 'timecards'
-      label: 'Invoicing', // Changed from 'Timecards'
-      icon: ClipboardCheck, // Changed from Clock
+      id: 'invoicing',
+      label: 'Invoicing',
+      icon: ClipboardCheck,
       isActive: activeTab === 'invoicing',
       badge: stats.pendingInvoices > 0 ? stats.pendingInvoices : null,
       badgeColor: 'bg-orange-500'
     }
-    // Removed contracts tab as requested
   ];
 
   if (loading && !showMandatoryProfilePicture) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-slate-50">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center space-y-6">
+          <div className="text-center space-y-4">
             <div className="relative">
-              <div className="w-20 h-20 bg-white rounded-full shadow-lg mx-auto flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Stethoscope className="w-6 h-6 text-blue-600 animate-pulse" />
+              <div className="w-16 h-16 bg-white rounded-full shadow-sm mx-auto flex items-center justify-center">
+                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
               </div>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-gray-900">Loading your dashboard...</h3>
-              <p className="text-gray-600">Setting up your personalized care experience</p>
+            <div className="space-y-1">
+              <h3 className="text-lg font-medium text-slate-900">Loading Dashboard</h3>
+              <p className="text-sm text-slate-600">Setting up your workspace...</p>
             </div>
           </div>
         </div>
@@ -508,7 +486,7 @@ export default function NurseDashboard() {
   // Show Messages Page if showMessagesPage is true
   if (showMessagesPage) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-slate-50">
         <ConversationsList 
           nurseId={nurseProfile?.id}
           userId={user?.id}
@@ -518,22 +496,19 @@ export default function NurseDashboard() {
     );
   }
 
-  // Show mandatory profile picture upload (this blocks the dashboard)
+  // Show mandatory profile picture upload
   if (showMandatoryProfilePicture && nurseProfile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Background dashboard preview (blurred) */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 opacity-50">
+      <div className="min-h-screen bg-slate-50">
+        <div className="absolute inset-0 bg-slate-50/80">
           <div className="flex items-center justify-center min-h-screen">
-            <div className="text-center space-y-6">
-              <div className="relative">
-                <div className="w-20 h-20 bg-white rounded-full shadow-lg mx-auto flex items-center justify-center">
-                  <Stethoscope className="w-6 h-6 text-blue-600" />
-                </div>
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-white rounded-full shadow-sm mx-auto flex items-center justify-center">
+                <Stethoscope className="w-6 h-6 text-blue-600" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-semibold text-gray-900">Complete Your Profile</h3>
-                <p className="text-gray-600">Add a professional photo to get started</p>
+              <div className="space-y-1">
+                <h3 className="text-lg font-medium text-slate-900">Complete Your Profile</h3>
+                <p className="text-sm text-slate-600">Add a professional photo to get started</p>
               </div>
             </div>
           </div>
@@ -551,20 +526,22 @@ export default function NurseDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Fixed Sidebar */}
-      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 fixed left-0 top-0 h-full z-30 flex flex-col`}>
-        {/* Logo and Brand */}
-        <div className="p-6 border-b border-gray-200 flex-shrink-0">
+    <div className="min-h-screen bg-slate-50">
+      {/* Sidebar */}
+      <div className={`${sidebarCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-slate-200 transition-all duration-200 fixed left-0 top-0 h-full z-30 flex flex-col`}>
+        {/* Header */}
+        <div className="p-4 border-b border-slate-200">
           <div className="flex items-center justify-between">
-            <div className={`flex items-center space-x-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
-                <Stethoscope className="h-6 w-6 text-white" />
+            <div className={`flex items-center gap-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Stethoscope className="h-4 w-4 text-white" />
               </div>
               {!sidebarCollapsed && (
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Nurse Nest</h1>
-                  <p className="text-sm text-gray-500">Professional Care Dashboard</p>
+                  <h1 className="text-sm font-semibold text-slate-900">
+                    Nurse<span className="text-sky-500">Nest</span>
+                  </h1>
+                  <p className="text-xs text-slate-500">Professional Dashboard</p>
                 </div>
               )}
             </div>
@@ -573,9 +550,9 @@ export default function NurseDashboard() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarCollapsed(true)}
-                className="text-gray-500 hover:text-gray-700"
+                className="h-8 w-8 p-0 text-slate-400 hover:text-slate-600"
               >
-                <Menu className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4" />
               </Button>
             )}
             {sidebarCollapsed && (
@@ -583,43 +560,43 @@ export default function NurseDashboard() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarCollapsed(false)}
-                className="absolute -right-3 top-6 bg-white shadow-lg rounded-full p-1 border"
+                className="absolute -right-3 top-4 h-6 w-6 p-0 bg-white shadow-md rounded-full border border-slate-200"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3 w-3" />
               </Button>
             )}
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             return (
               <Button
                 key={item.id}
                 variant={item.isActive ? "default" : "ghost"}
-                className={`w-full justify-start h-12 ${
+                className={`w-full justify-start h-10 ${
                   item.isActive 
-                    ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                } ${sidebarCollapsed ? 'px-3' : 'px-4'} transition-all duration-200 relative`}
+                    ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700' 
+                    : 'text-slate-700 hover:bg-slate-100'
+                } ${sidebarCollapsed ? 'px-2' : 'px-3'} transition-colors`}
                 onClick={() => setActiveTab(item.id)}
               >
-                <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
+                <Icon className={`h-4 w-4 ${sidebarCollapsed ? '' : 'mr-2'} flex-shrink-0`} />
                 {!sidebarCollapsed && (
                   <>
-                    <span className="flex-1 text-left">{item.label}</span>
+                    <span className="flex-1 text-left text-sm">{item.label}</span>
                     {item.badge && (
-                      <Badge className={`${item.badgeColor || 'bg-gray-500'} text-white text-xs border-0 shadow-sm ml-2`}>
+                      <Badge className={`${item.badgeColor || 'bg-slate-500'} text-white text-xs h-5 px-1.5`}>
                         {item.badge}
                       </Badge>
                     )}
                   </>
                 )}
                 {sidebarCollapsed && item.badge && (
-                  <div className={`absolute -top-1 -right-1 w-5 h-5 ${item.badgeColor || 'bg-gray-500'} rounded-full flex items-center justify-center`}>
-                    <span className="text-xs text-white font-semibold">{item.badge}</span>
+                  <div className={`absolute -top-1 -right-1 w-4 h-4 ${item.badgeColor || 'bg-slate-500'} rounded-full flex items-center justify-center`}>
+                    <span className="text-xs text-white font-medium">{item.badge}</span>
                   </div>
                 )}
               </Button>
@@ -627,11 +604,11 @@ export default function NurseDashboard() {
           })}
         </nav>
 
-        {/* Fixed User Profile Section at Bottom */}
-        <div className="p-4 border-t border-gray-200 flex-shrink-0">
+        {/* User Profile */}
+        <div className="p-3 border-t border-slate-200">
           {!sidebarCollapsed ? (
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+            <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
                 {nurseProfile?.profile_photo_url ? (
                   <img 
                     src={nurseProfile.profile_photo_url} 
@@ -639,17 +616,17 @@ export default function NurseDashboard() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-white font-semibold text-sm">
+                  <span className="text-white font-medium text-sm">
                     {nurseProfile?.first_name?.charAt(0)}{nurseProfile?.last_name?.charAt(0)}
                   </span>
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-slate-900 truncate">
                   {nurseProfile?.first_name} {nurseProfile?.last_name}
                 </p>
-                <div className="flex items-center space-x-2">
-                  <p className="text-xs text-gray-500 truncate">Licensed Professional</p>
+                <div className="flex items-center gap-1">
+                  <p className="text-xs text-slate-500">Licensed Professional</p>
                   {eliteProgress.isElite && (
                     <Trophy className="h-3 w-3 text-yellow-500" />
                   )}
@@ -658,7 +635,7 @@ export default function NurseDashboard() {
             </div>
           ) : (
             <div className="flex justify-center">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center relative">
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden relative">
                 {nurseProfile?.profile_photo_url ? (
                   <img 
                     src={nurseProfile.profile_photo_url} 
@@ -666,12 +643,12 @@ export default function NurseDashboard() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-white font-semibold text-sm">
+                  <span className="text-white font-medium text-sm">
                     {nurseProfile?.first_name?.charAt(0)}{nurseProfile?.last_name?.charAt(0)}
                   </span>
                 )}
                 {eliteProgress.isElite && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full flex items-center justify-center">
                     <Trophy className="h-2 w-2 text-white" />
                   </div>
                 )}
@@ -681,47 +658,43 @@ export default function NurseDashboard() {
         </div>
       </div>
 
-      {/* Main Content Container */}
-      <div className={`${sidebarCollapsed ? 'ml-20' : 'ml-64'} transition-all duration-300 min-h-screen flex flex-col`}>
-        {/* Fixed Top Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 fixed top-0 right-0 left-0 z-20" style={{ 
-          left: sidebarCollapsed ? '5rem' : '16rem',
-          transition: 'left 300ms'
-        }}>
+      {/* Main Content */}
+      <div className={`${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-200 min-h-screen`}>
+        {/* Fixed Header */}
+        <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-20 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {activeTab === 'overview' && 'Professional Care Hub'}
+              <h1 className="text-xl font-semibold text-slate-900">
+                {activeTab === 'overview' && 'Dashboard'}
                 {activeTab === 'background-checks' && 'Background Checks'}
                 {activeTab === 'payment' && 'Payment Setup'}
                 {activeTab === 'jobs' && 'Available Positions'}
                 {activeTab === 'applications' && 'My Applications'}
-                {activeTab === 'invoicing' && 'Invoice Management'} {/* Updated terminology */}
+                {activeTab === 'invoicing' && 'Invoice Management'}
               </h1>
-              <p className="text-gray-600 mt-1">
-                {activeTab === 'overview' && 'Manage your applications, track your work, and discover opportunities'}
-                {activeTab === 'background-checks' && 'Complete and track your background verification requests'}
-                {activeTab === 'payment' && 'Set up your payment account to receive earnings'}
-                {activeTab === 'jobs' && 'Discover and apply for healthcare positions'}
-                {activeTab === 'applications' && 'Track your job applications and responses'}
-                {activeTab === 'invoicing' && 'Submit and track your work invoices'} {/* Updated */}
+              <p className="text-sm text-slate-600 mt-0.5">
+                {activeTab === 'overview' && 'Welcome back to your professional care hub'}
+                {activeTab === 'background-checks' && 'Complete your background verification'}
+                {activeTab === 'payment' && 'Set up payment processing'}
+                {activeTab === 'jobs' && 'Discover new opportunities'}
+                {activeTab === 'applications' && 'Track your job applications'}
+                {activeTab === 'invoicing' && 'Submit and track work invoices'}
               </p>
             </div>
-            <div className="flex items-center space-x-3">
-              {/* Messages Button */}
+            <div className="flex items-center gap-3">
               <Button 
                 variant={hasNewMessages ? "default" : "outline"} 
                 size="sm" 
                 onClick={() => setShowMessagesPage(true)}
-                className={`${hasNewMessages 
-                  ? "bg-blue-600 hover:bg-blue-700 text-white border-0 animate-pulse shadow-lg" 
-                  : "hover:bg-blue-50 hover:border-blue-300 text-gray-700"
-                } transition-all duration-300`}
+                className={hasNewMessages 
+                  ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                  : ""
+                }
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Messages
                 {totalUnreadMessages > 0 && (
-                  <Badge className="ml-2 bg-red-500 text-white text-xs border-0 min-w-[20px] h-5">
+                  <Badge className="ml-2 bg-red-500 text-white text-xs h-5 px-1.5">
                     {totalUnreadMessages}
                   </Badge>
                 )}
@@ -730,7 +703,6 @@ export default function NurseDashboard() {
               <Button 
                 variant="outline"
                 size="sm" 
-                className="hover:bg-red-50 hover:border-red-300 text-gray-700 transition-all duration-300" 
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4 mr-2" />
@@ -740,115 +712,55 @@ export default function NurseDashboard() {
           </div>
         </header>
 
-        {/* Main Content Area with Top Padding */}
-        <main className="flex-1 p-6 mt-24 overflow-auto">
+        {/* Content */}
+        <main className="p-6">
           {activeTab === 'overview' && (
-            <div className="space-y-8">
-              {/* Alert Cards */}
-              <div className="space-y-4">
-                {/* Background Check Alert */}
+            <div className="space-y-6">
+              {/* Critical Alerts */}
+              <div className="space-y-3">
                 {pendingBackgroundChecksCount > 0 && (
-                  <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl shadow-sm">
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
-                          <Shield className="h-5 w-5 text-white animate-pulse" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
+                          <Shield className="h-4 w-4 text-white" />
                         </div>
                         <div>
-                          <p className="font-semibold text-amber-900">
-                            🛡️ You have {pendingBackgroundChecksCount} pending background check{pendingBackgroundChecksCount !== 1 ? 's' : ''}!
+                          <p className="font-medium text-amber-900">
+                            {pendingBackgroundChecksCount} pending background check{pendingBackgroundChecksCount !== 1 ? 's' : ''}
                           </p>
-                          <p className="text-sm text-amber-700">
-                            Complete your verification to proceed with job applications
-                          </p>
+                          <p className="text-sm text-amber-700">Complete verification to apply for jobs</p>
                         </div>
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-amber-500 hover:bg-amber-600 text-white shadow-sm"
+                        className="bg-amber-500 hover:bg-amber-600 text-white"
                         onClick={() => setActiveTab('background-checks')}
                       >
-                        Complete Now
+                        Complete
                       </Button>
                     </div>
                   </div>
                 )}
 
-                {/* Payment Setup Alert */}
                 {stats.paymentAccountStatus !== 'active' && (
-                  <div className="p-4 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl shadow-sm">
+                  <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                          <CreditCard className="h-5 w-5 text-white animate-pulse" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                          <CreditCard className="h-4 w-4 text-white" />
                         </div>
                         <div>
-                          <p className="font-semibold text-orange-900">
-                            💳 Complete your payment setup to receive earnings!
-                          </p>
-                          <p className="text-sm text-orange-700">
-                            Set up your bank account to get paid instantly when invoices are approved
-                          </p>
+                          <p className="font-medium text-orange-900">Set up payment processing</p>
+                          <p className="text-sm text-orange-700">Required to receive earnings</p>
                         </div>
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm"
+                        className="bg-orange-500 hover:bg-orange-600 text-white"
                         onClick={() => setActiveTab('payment')}
                       >
-                        Setup Now
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Pending Payments Alert */}
-                {stats.pendingPayments > 0 && (
-                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                          <DollarSign className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-green-900">
-                            💰 You have {stats.pendingPayments} approved invoice{stats.pendingPayments !== 1 ? 's' : ''} ready for payment!
-                          </p>
-                          <p className="text-sm text-green-700">Money will be transferred as soon as client approves</p>
-                        </div>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="bg-green-500 hover:bg-green-600 text-white shadow-sm"
-                        onClick={() => setActiveTab('invoicing')}
-                      >
-                        View Status
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* New Jobs Alert */}
-                {stats.newJobMatches > 0 && (
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                          <Briefcase className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-blue-900">
-                            ✨ {stats.newJobMatches} new position{stats.newJobMatches !== 1 ? 's' : ''} match your expertise!
-                          </p>
-                          <p className="text-sm text-blue-700">Perfect opportunities await your application</p>
-                        </div>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
-                        onClick={() => setActiveTab('jobs')}
-                      >
-                        View Positions
+                        Setup
                       </Button>
                     </div>
                   </div>
@@ -861,36 +773,36 @@ export default function NurseDashboard() {
                 onApplicationSubmitted={handleRefresh}
               />
 
-              {/* Enhanced Elite Progress Card */}
+              {/* Elite Progress */}
               {!eliteProgress.isElite && (
-                <Card className="border-0 shadow-lg bg-gradient-to-br from-yellow-50 to-orange-50">
+                <Card className="border-0 shadow-sm bg-gradient-to-r from-yellow-50 to-orange-50">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg">
-                          <Trophy className="h-8 w-8 text-white" />
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center">
+                          <Trophy className="h-6 w-6 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-xl text-orange-900 mb-2">Path to Elite Status</h3>
-                          <p className="text-orange-700 mb-4">
-                            Complete {eliteProgress.nextMilestone} more work cycle{eliteProgress.nextMilestone !== 1 ? 's' : ''} to unlock Elite benefits
+                          <h3 className="font-semibold text-orange-900 mb-1">Elite Status Progress</h3>
+                          <p className="text-sm text-orange-700 mb-3">
+                            Complete {eliteProgress.nextMilestone} more cycles to unlock elite benefits
                           </p>
-                          <div className="flex items-center space-x-4 text-sm">
-                            <span className="text-3xl font-bold text-orange-600">
+                          <div className="flex items-center gap-3 text-sm">
+                            <span className="text-2xl font-bold text-orange-600">
                               {eliteProgress.completedContracts}/3
                             </span>
-                            <span className="text-orange-700">Work Cycles Completed</span>
+                            <span className="text-orange-700">Work Cycles</span>
                           </div>
                         </div>
                       </div>
-                      <div className="min-w-[300px]">
+                      <div className="w-64">
                         <Progress
                           value={(eliteProgress.completedContracts / 3) * 100}
-                          className="h-4 mb-4"
+                          className="h-3 mb-3"
                         />
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1">
                           {eliteProgress.benefits.map((benefit, index) => (
-                            <Badge key={index} variant="outline" className="bg-white/80 text-orange-600 border-orange-300">
+                            <Badge key={index} variant="outline" className="text-xs bg-white/80 text-orange-600 border-orange-300">
                               {benefit}
                             </Badge>
                           ))}
@@ -901,54 +813,50 @@ export default function NurseDashboard() {
                 </Card>
               )}
 
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { 
-                    title: 'Applications', 
+                    title: 'Active Applications', 
                     value: stats.activeApplications, 
                     icon: Send, 
-                    bgColor: 'bg-blue-500',
-                    textColor: 'text-blue-600',
-                    bgLight: 'bg-blue-50'
+                    color: 'text-blue-600',
+                    bg: 'bg-blue-50'
                   },
                   { 
-                    title: 'Messages', 
+                    title: 'Unread Messages', 
                     value: totalUnreadMessages, 
                     icon: MessageCircle, 
-                    bgColor: 'bg-green-500',
-                    textColor: 'text-green-600',
-                    bgLight: 'bg-green-50',
-                    pulse: hasNewMessages
+                    color: 'text-green-600',
+                    bg: 'bg-green-50',
+                    highlight: hasNewMessages
                   },
                   { 
-                    title: 'Weekly', 
+                    title: 'Weekly Earnings', 
                     value: `$${stats.weeklyEarnings}`, 
                     icon: DollarSign, 
-                    bgColor: 'bg-purple-500',
-                    textColor: 'text-purple-600',
-                    bgLight: 'bg-purple-50'
+                    color: 'text-purple-600',
+                    bg: 'bg-purple-50'
                   },
                   { 
-                    title: 'Pending Invoices', // Updated terminology
+                    title: 'Pending Invoices', 
                     value: stats.pendingInvoices, 
-                    icon: ClipboardCheck, // Updated icon
-                    bgColor: 'bg-orange-500',
-                    textColor: 'text-orange-600',
-                    bgLight: 'bg-orange-50'
+                    icon: ClipboardCheck, 
+                    color: 'text-orange-600',
+                    bg: 'bg-orange-50'
                   },
                 ].map((stat, index) => {
                   const Icon = stat.icon;
                   return (
-                    <Card key={index} className={`border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${stat.pulse ? 'animate-pulse ring-2 ring-blue-500/20' : ''}`}>
-                      <CardContent className="p-6">
+                    <Card key={index} className={`border-0 shadow-sm ${stat.highlight ? 'ring-2 ring-blue-500/20' : ''}`}>
+                      <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                            <p className="text-sm text-slate-600 mb-1">{stat.title}</p>
+                            <p className="text-2xl font-semibold text-slate-900">{stat.value}</p>
                           </div>
-                          <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center shadow-lg`}>
-                            <Icon className="h-6 w-6 text-white" />
+                          <div className={`w-10 h-10 ${stat.bg} rounded-lg flex items-center justify-center`}>
+                            <Icon className={`h-5 w-5 ${stat.color}`} />
                           </div>
                         </div>
                       </CardContent>
@@ -957,21 +865,21 @@ export default function NurseDashboard() {
                 })}
               </div>
 
-              {/* Two Column Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Two Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recommended Jobs */}
-                <Card className="border-0 shadow-lg bg-white">
-                  <CardHeader className="pb-4">
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
-                        <Sparkles className="h-5 w-5 mr-2 text-blue-600" />
+                      <CardTitle className="text-lg font-semibold text-slate-900 flex items-center">
+                        <Sparkles className="h-4 w-4 mr-2 text-blue-600" />
                         Recommended Positions
                       </CardTitle>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => setActiveTab('jobs')}
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="text-blue-600 hover:text-blue-700"
                       >
                         View All
                       </Button>
@@ -979,22 +887,22 @@ export default function NurseDashboard() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     {availableJobs.length > 0 ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {availableJobs.slice(0, 3).map((job) => (
-                          <div key={job.id} className="p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
-                            <div className="flex items-start justify-between mb-3">
+                          <div key={job.id} className="p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+                            <div className="flex items-start justify-between mb-2">
                               <div>
-                                <h4 className="font-semibold text-gray-900">{job.care_type}</h4>
-                                <p className="text-sm text-gray-500 flex items-center mt-1">
+                                <h4 className="font-medium text-slate-900">{job.care_type}</h4>
+                                <p className="text-sm text-slate-500 flex items-center mt-1">
                                   <Building2 className="h-3 w-3 mr-1" />
                                   {job.client_profiles?.first_name} {job.client_profiles?.last_name}
                                 </p>
                               </div>
-                              <Badge className={`${getStatusColor(job.status)} border shadow-sm`}>
+                              <Badge className={`${getStatusColor(job.status)} text-xs`}>
                                 {job.status}
                               </Badge>
                             </div>
-                            <div className="flex items-center space-x-4 text-xs text-gray-500 mb-3">
+                            <div className="flex items-center gap-4 text-xs text-slate-500 mb-3">
                               <span className="flex items-center">
                                 <Calendar className="h-3 w-3 mr-1" />
                                 {job.duration}
@@ -1004,7 +912,7 @@ export default function NurseDashboard() {
                                 {job.preferred_time}
                               </span>
                             </div>
-                            <div className="flex space-x-2">
+                            <div className="flex gap-2">
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -1012,14 +920,14 @@ export default function NurseDashboard() {
                                   setSelectedJob(job);
                                   setShowApplicationModal(true);
                                 }}
-                                className="border-gray-300"
+                                className="flex-1 h-8 text-xs"
                               >
-                                <Eye className="h-4 w-4 mr-1" />
-                                View Details
+                                <Eye className="h-3 w-3 mr-1" />
+                                View
                               </Button>
                               {appliedJobIds.has(job.id) ? (
-                                <Button size="sm" variant="outline" disabled className="bg-green-50 text-green-600 border-green-300">
-                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                <Button size="sm" variant="outline" disabled className="flex-1 h-8 text-xs bg-green-50 text-green-600">
+                                  <CheckCircle className="h-3 w-3 mr-1" />
                                   Applied
                                 </Button>
                               ) : (
@@ -1029,9 +937,9 @@ export default function NurseDashboard() {
                                     setSelectedJob(job);
                                     setShowApplicationModal(true);
                                   }}
-                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                  className="flex-1 h-8 text-xs"
                                 >
-                                  <Send className="h-4 w-4 mr-1" />
+                                  <Send className="h-3 w-3 mr-1" />
                                   Apply
                                 </Button>
                               )}
@@ -1040,18 +948,18 @@ export default function NurseDashboard() {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Briefcase className="h-8 w-8 text-gray-400" />
+                      <div className="text-center py-8">
+                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Briefcase className="h-6 w-6 text-slate-400" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Positions Available</h3>
-                        <p className="text-gray-600 mb-4">Check back later for new opportunities</p>
+                        <h3 className="font-medium text-slate-900 mb-1">No positions available</h3>
+                        <p className="text-sm text-slate-600 mb-3">Check back later for new opportunities</p>
                         <Button 
                           variant="outline" 
+                          size="sm"
                           onClick={() => setActiveTab('jobs')}
-                          className="border-blue-300 text-blue-600 hover:bg-blue-50"
                         >
-                          Browse All Jobs
+                          Browse Jobs
                         </Button>
                       </div>
                     )}
@@ -1059,15 +967,15 @@ export default function NurseDashboard() {
                 </Card>
 
                 {/* My Applications */}
-                <Card className="border-0 shadow-lg bg-white">
-                  <CardHeader className="pb-4">
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-bold text-gray-900">My Applications</CardTitle>
+                      <CardTitle className="text-lg font-semibold text-slate-900">My Applications</CardTitle>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => setActiveTab('applications')}
-                        className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                        className="text-purple-600 hover:text-purple-700"
                       >
                         View All
                       </Button>
@@ -1075,34 +983,34 @@ export default function NurseDashboard() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     {myApplications.length > 0 ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {myApplications.slice(0, 3).map((app) => (
-                          <div key={app.id} className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                          <div key={app.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
                             <div>
-                              <p className="font-medium text-gray-900">
+                              <p className="font-medium text-slate-900 text-sm">
                                 {app.job_postings?.care_type}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-xs text-slate-500">
                                 Applied {formatRelativeTime(app.created_at)}
                               </p>
                             </div>
-                            <Badge className={`${getStatusColor(app.status)} border shadow-sm`}>
+                            <Badge className={`${getStatusColor(app.status)} text-xs`}>
                               {app.status === 'favorited' ? 'Favorite' : app.status}
                             </Badge>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Send className="h-8 w-8 text-gray-400" />
+                      <div className="text-center py-8">
+                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Send className="h-6 w-6 text-slate-400" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Yet</h3>
-                        <p className="text-gray-600 mb-4">Apply to positions to track your progress</p>
+                        <h3 className="font-medium text-slate-900 mb-1">No applications yet</h3>
+                        <p className="text-sm text-slate-600 mb-3">Apply to positions to track progress</p>
                         <Button 
                           variant="outline" 
+                          size="sm"
                           onClick={() => setActiveTab('jobs')}
-                          className="border-purple-300 text-purple-600 hover:bg-purple-50"
                         >
                           Browse Positions
                         </Button>
@@ -1114,16 +1022,11 @@ export default function NurseDashboard() {
             </div>
           )}
 
-          {/* BACKGROUND CHECKS TAB */}
           {activeTab === 'background-checks' && (
-            <div className="space-y-6">
-              <PendingBackgroundChecksCard 
-                nurseId={nurseProfile?.id}
-                onBackgroundCheckComplete={() => {
-                  handleRefresh();
-                }}
-              />
-            </div>
+            <PendingBackgroundChecksCard 
+              nurseId={nurseProfile?.id}
+              onBackgroundCheckComplete={handleRefresh}
+            />
           )}
 
           {activeTab === 'payment' && (
@@ -1151,7 +1054,7 @@ export default function NurseDashboard() {
             />
           )}
 
-          {activeTab === 'invoicing' && ( // Changed from 'timecards'
+          {activeTab === 'invoicing' && (
             <TimecardsCard
               nurseId={nurseProfile?.id || ''}
               onTimecardSubmitted={handleRefresh}
@@ -1161,10 +1064,10 @@ export default function NurseDashboard() {
         </main>
       </div>
 
-      {/* Enhanced Application Modal */}
+      {/* Application Modal */}
       {showApplicationModal && selectedJob && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-3xl bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <JobApplicationForm
               nurseEmail={user?.email}
               job={selectedJob}
@@ -1182,10 +1085,10 @@ export default function NurseDashboard() {
         </div>
       )}
 
-      {/* Enhanced Invoice Submission Modal */}
+      {/* Timecard Form Modal */}
       {showEnhancedTimecardForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-3xl bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <EnhancedTimecardSubmissionForm
               nurseId={nurseProfile?.id || ''}
               stripeAccountStatus={nurseProfile?.stripe_account_status}
