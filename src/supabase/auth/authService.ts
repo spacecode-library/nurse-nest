@@ -38,7 +38,7 @@ export async function signUp(
       password,
       options: {
         data: fullMetadata,
-        emailRedirectTo: `${window.location.origin}/dashboard`
+        // emailRedirectTo: `${window.location.origin}/dashboard`
       }
     });
 

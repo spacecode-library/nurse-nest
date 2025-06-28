@@ -12,7 +12,7 @@ import NotFound from "./pages/NotFound";
 import Apply from "./pages/Apply";
 import Auth from "./pages/Auth";
 import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
+// import SignUp from "./pages/SignUp";
 
 // Info Pages
 import About from "./pages/About";
@@ -83,8 +83,8 @@ export default function App() {
               
               {/* Authentication Routes */}
               <Route path="/auth" element={<Auth />} />
-              <Route path="/sign-in" element={<SignIn />} />
-              <Route path="/sign-up" element={<SignUp />} />
+              {/* <Route path="/sign-in" element={<SignIn />} />
+              <Route path="/sign-up" element={<SignUp />} /> */}
               
               {/* Information Routes */}
               <Route path="/about" element={<About />} />
@@ -133,9 +133,9 @@ export default function App() {
               <Route path="/tax-tips" element={<TaxTips />} />
               
               {/* Onboarding Routes */}
-              <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
-              <Route path="/client-onboarding" element={<ClientOnboarding />} />
-              
+              {/* <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
+              <Route path="/client-onboarding" element={<ClientOnboarding />} /> */}
+
               {/* Dashboard Routes */}
               <Route path="/dashboard" element={<DashboardRouter />} />
               <Route path="/dashboard/nurse" element={<NurseDashboard />} />
