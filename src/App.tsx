@@ -66,7 +66,6 @@ import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
 import EinApplications from "./pages/EinApplications";
 import NightNurseGuide from "./pages/NightNurseGuide";
 import BusinessBankAccountForNurses from "./pages/business-bank-account-for-nurses";
-import AdminPortal from "./components/AdminPortal";
 import NurseBackgroundCheckPage from "./pages/NurseBackgroundCheckPage";
 import { BackgroundCheckPage } from "./pages/BackgroundCheckPage";
 
@@ -143,9 +142,7 @@ export default function App() {
               <Route path="/dashboard/*" element={<DashboardRouter />} />
               
               {/* Admin Routes */}
-              <Route path="/admin" element={<AdminPortal />} />
-              <Route path="/admin/enhanced" element={<EnhancedAdminPortal />} />
-              <Route path="/admin/*" element={<AdminPortal />} />
+              <Route path="/admin" element={<EnhancedAdminPortal />} />
               
               {/* Background Check Routes */}
               <Route 

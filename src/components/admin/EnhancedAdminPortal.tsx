@@ -172,7 +172,7 @@ export default function EnhancedAdminPortal() {
 
   const loadUsers = async () => {
     try {
-      const offset = (currentPage - 1) * itemsPerPage;  
+      const offset = (currentPage - 1) * itemsPerPage;
       const { data, count } = await getAllUsers(undefined, itemsPerPage, offset, searchTerm);
       
       if (data) {
