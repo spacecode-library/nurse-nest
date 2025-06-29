@@ -581,10 +581,8 @@ export async function getAllTimecardDisputes(
       .from('timecard_disputes')
       .select('*', { count: 'exact' });
 
-    // Only filter by status if it's a valid dispute status
-    const validStatuses = ['pending', 'investigating', 'resolved_client', 'resolved_nurse', 'resolved_admin'];
-    if (status && validStatuses.includes(status)) {
-      query = query.eq('status', status as 'pending' | 'investigating' | 'resolved_client' | 'resolved_nurse' | 'resolved_admin');
+    if (status) {
+      query = query.eq('status', status);
     }
 
     const { data: disputes, error: disputeError, count } = await query
