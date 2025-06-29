@@ -49,6 +49,8 @@ interface Conversation {
   created_at: string | null;
   updated_at: string | null;
   last_message_at: string | null;
+  client_profiles?:{user_id:string} | null;
+  nurse_profiles?:{user_id:string} | null;
 }
 
 interface ChatWindowProps {
@@ -84,7 +86,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, currentUserId, us
         .select('first_name, last_name')
         .eq('user_id', userId)
         .single();
-
+      console.log('Fetched client profile:', client,userId, 'Error:', clientErr);
       if (client && !clientErr) {
         profile = {
           ...client,
@@ -99,7 +101,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, currentUserId, us
           .select('first_name, last_name')
           .eq('user_id', userId)
           .single();
-
+        
         if (nurse && !nurseErr) {
           profile = {
             ...nurse,
@@ -245,9 +247,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, currentUserId, us
     if (conversation?.id) {
       fetchMessages();
       markMessagesAsRead();
-      
+      console.log('Fetching messages for conversation:', conversation);
       // Determine other participant
-      const otherUserId = conversation.nurse_id === currentUserId ? conversation.client_id : conversation.nurse_id;
+      const otherUserId = conversation?.nurse_profiles?.user_id === currentUserId ? conversation.client_profiles.user_id : conversation?.nurse_profiles?.user_id;
       if (otherUserId) {
         fetchUserProfile(otherUserId).then(setOtherParticipant);
       }
@@ -267,7 +269,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, currentUserId, us
 
     setLoading(true);
     try {
-      const recipientId = conversation.nurse_id === currentUserId ? conversation.client_id : conversation.nurse_id;
+      const recipientId = conversation?.nurse_profiles?.user_id === currentUserId ? conversation?.client_profiles?.user_id : conversation?.nurse_profiles?.user_id;
 
       const { data, error } = await supabase
         .from('messages')
@@ -443,11 +445,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, currentUserId, us
                     }`}
                   >
                     {formatTime(message.created_at)}
-                    {!message.is_read && !isFromCurrentUser && (
+                    {/* {!message.is_read && !isFromCurrentUser && (
                       <Badge variant="secondary" className="ml-2 text-xs">
                         New
                       </Badge>
-                    )}
+                    )} */}
                   </p>
                 </div>
               </div>

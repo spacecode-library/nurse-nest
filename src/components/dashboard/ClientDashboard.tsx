@@ -1,4 +1,4 @@
-// components/dashboard/ClientDashboard.tsx - REDESIGNED WITH SIDEBAR LAYOUT
+// components/dashboard/ClientDashboard.tsx - PRODUCTION READY VERSION
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,46 +8,29 @@ import {
   Briefcase, 
   Clock, 
   Users, 
-  FileText, 
   Calendar,
   CheckCircle,
-  AlertCircle,
   TrendingUp,
-  MessageSquare,
   UserCheck,
   Eye,
-  Star,
-  Timer,
   DollarSign,
   Home,
   Plus,
-  Filter,
   Search,
   ChevronRight,
   Activity,
-  Copy,
-  MoreVertical,
-  X,
-  Bell,
+  Building2,
+  CreditCard,
+  ClipboardCheck,
+  Loader2,
+  Menu,
+  LogOut,
   MessageCircle,
   Sparkles,
-  Crown,
   Zap,
-  Heart,
-  Trophy,
-  Shield,
-  Stethoscope,
   HeartHandshake,
-  Building2,
-  UserCircle2,
-  CreditCard,
-  BarChart3,
-  ClipboardCheck,
-  Award,
-  Loader2,
-  Receipt,
-  Menu,
-  LogOut
+  Star,
+  ChevronLeft
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -65,7 +48,7 @@ import JobManagementCard from './client/JobManagementCard';
 import ApplicantReviewCard from './client/ApplicantReviewCard';
 import BrowseNursesCard from './client/BrowseNursesCard';
 
-// Import NEW payment components
+// Import payment components
 import PaymentMethodSetup from './client/PaymentMethodSetup';
 import EnhancedTimecardApprovalCard from './client/EnhancedTimecardApprovalCard';
 import PaymentHistoryCard from './client/PaymentHistoryCard';
@@ -91,7 +74,7 @@ export default function ClientDashboard() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
-  // Add state for messages page
+  // Messages page state
   const [showMessagesPage, setShowMessagesPage] = useState(false);
   
   const [stats, setStats] = useState({
@@ -125,7 +108,6 @@ export default function ClientDashboard() {
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
-      // Still navigate even if there's an error
       navigate('/');
     }
   };
@@ -496,20 +478,17 @@ export default function ClientDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-slate-50">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center space-y-6">
+          <div className="text-center space-y-4">
             <div className="relative">
-              <div className="w-20 h-20 bg-white rounded-full shadow-lg mx-auto flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <HeartHandshake className="w-6 h-6 text-blue-600 animate-pulse" />
+              <div className="w-16 h-16 bg-white rounded-full shadow-sm mx-auto flex items-center justify-center">
+                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
               </div>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-gray-900">Loading your dashboard...</h3>
-              <p className="text-gray-600">Preparing your care management center</p>
+            <div className="space-y-1">
+              <h3 className="text-lg font-medium text-slate-900">Loading Dashboard</h3>
+              <p className="text-sm text-slate-600">Preparing your care management center...</p>
             </div>
           </div>
         </div>
@@ -520,7 +499,7 @@ export default function ClientDashboard() {
   // Show Messages Page if showMessagesPage is true
   if (showMessagesPage) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-slate-50">
         <ClientConversationsList 
           clientId={clientProfile?.id}
           userId={user?.id}
@@ -531,20 +510,22 @@ export default function ClientDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Fixed Sidebar */}
-      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-xl border-r border-gray-200 transition-all duration-300 fixed left-0 top-0 h-full z-30 flex flex-col`}>
-        {/* Logo and Brand */}
-        <div className="p-6 border-b border-gray-200 flex-shrink-0">
+    <div className="min-h-screen bg-slate-50">
+      {/* Sidebar */}
+      <div className={`${sidebarCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-slate-200 transition-all duration-200 fixed left-0 top-0 h-full z-30 flex flex-col`}>
+        {/* Header */}
+        <div className="p-4 border-b border-slate-200">
           <div className="flex items-center justify-between">
-            <div className={`flex items-center space-x-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
-                <HeartHandshake className="h-6 w-6 text-white" />
+            <div className={`flex items-center gap-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <HeartHandshake className="h-4 w-4 text-white" />
               </div>
               {!sidebarCollapsed && (
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Nurse Nest</h1>
-                  <p className="text-sm text-gray-500">Premium Care Management</p>
+                  <h1 className="text-sm font-semibold text-slate-900">
+                    Nurse<span className="text-sky-500">Nest</span>
+                  </h1>
+                  <p className="text-xs text-slate-500">Care Management</p>
                 </div>
               )}
             </div>
@@ -553,9 +534,9 @@ export default function ClientDashboard() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarCollapsed(true)}
-                className="text-gray-500 hover:text-gray-700"
+                className="h-8 w-8 p-0 text-slate-400 hover:text-slate-600"
               >
-                <Menu className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4" />
               </Button>
             )}
             {sidebarCollapsed && (
@@ -563,43 +544,43 @@ export default function ClientDashboard() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarCollapsed(false)}
-                className="absolute -right-3 top-6 bg-white shadow-lg rounded-full p-1 border"
+                className="absolute -right-3 top-4 h-6 w-6 p-0 bg-white shadow-md rounded-full border border-slate-200"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3 w-3" />
               </Button>
             )}
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             return (
               <Button
                 key={item.id}
                 variant={item.isActive ? "default" : "ghost"}
-                className={`w-full justify-start h-12 ${
+                className={`w-full justify-start h-10 ${
                   item.isActive 
-                    ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                } ${sidebarCollapsed ? 'px-3' : 'px-4'} transition-all duration-200`}
+                    ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700' 
+                    : 'text-slate-700 hover:bg-slate-100'
+                } ${sidebarCollapsed ? 'px-2' : 'px-3'} transition-colors`}
                 onClick={() => setActiveTab(item.id)}
               >
-                <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
+                <Icon className={`h-4 w-4 ${sidebarCollapsed ? '' : 'mr-2'} flex-shrink-0`} />
                 {!sidebarCollapsed && (
                   <>
-                    <span className="flex-1 text-left">{item.label}</span>
+                    <span className="flex-1 text-left text-sm">{item.label}</span>
                     {item.badge && (
-                      <Badge className={`${item.badgeColor || 'bg-gray-500'} text-white text-xs border-0 shadow-sm ml-2`}>
+                      <Badge className={`${item.badgeColor || 'bg-slate-500'} text-white text-xs h-5 px-1.5`}>
                         {item.badge}
                       </Badge>
                     )}
                   </>
                 )}
                 {sidebarCollapsed && item.badge && (
-                  <div className={`absolute -top-1 -right-1 w-5 h-5 ${item.badgeColor || 'bg-gray-500'} rounded-full flex items-center justify-center`}>
-                    <span className="text-xs text-white font-semibold">{item.badge}</span>
+                  <div className={`absolute -top-1 -right-1 w-4 h-4 ${item.badgeColor || 'bg-slate-500'} rounded-full flex items-center justify-center`}>
+                    <span className="text-xs text-white font-medium">{item.badge}</span>
                   </div>
                 )}
               </Button>
@@ -607,28 +588,28 @@ export default function ClientDashboard() {
           })}
         </nav>
 
-        {/* Fixed User Profile Section at Bottom */}
-        <div className="p-4 border-t border-gray-200 flex-shrink-0">
+        {/* User Profile */}
+        <div className="p-3 border-t border-slate-200">
           {!sidebarCollapsed ? (
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">
+            <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-medium text-sm">
                   {clientProfile?.first_name?.charAt(0)}{clientProfile?.last_name?.charAt(0)}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-slate-900 truncate">
                   {clientProfile?.first_name} {clientProfile?.last_name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-slate-500 truncate">
                   {clientProfile?.client_type === 'family' ? 'Family Account' : 'Individual Account'}
                 </p>
               </div>
             </div>
           ) : (
             <div className="flex justify-center">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-medium text-sm">
                   {clientProfile?.first_name?.charAt(0)}{clientProfile?.last_name?.charAt(0)}
                 </span>
               </div>
@@ -637,47 +618,43 @@ export default function ClientDashboard() {
         </div>
       </div>
 
-      {/* Main Content Container */}
-      <div className={`${sidebarCollapsed ? 'ml-20' : 'ml-64'} transition-all duration-300 min-h-screen flex flex-col`}>
-        {/* Fixed Top Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 fixed top-0 right-0 left-0 z-20" style={{ 
-          left: sidebarCollapsed ? '5rem' : '16rem',
-          transition: 'left 300ms'
-        }}>
+      {/* Main Content */}
+      <div className={`${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-200 min-h-screen`}>
+        {/* Fixed Header */}
+        <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-20 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {activeTab === 'overview' && 'Dashboard Overview'}
+              <h1 className="text-xl font-semibold text-slate-900">
+                {activeTab === 'overview' && 'Dashboard'}
                 {activeTab === 'jobs' && 'Job Management'}
                 {activeTab === 'browse' && 'Browse Nurses'}
                 {activeTab === 'applicants' && 'Review Applicants'}
                 {activeTab === 'invoicing' && 'Invoice Management'}
                 {activeTab === 'billing' && 'Billing & Payments'}
               </h1>
-              <p className="text-gray-600 mt-1">
-                {activeTab === 'overview' && 'Your premium care management command center'}
-                {activeTab === 'jobs' && 'Create and manage your job postings'}
+              <p className="text-sm text-slate-600 mt-0.5">
+                {activeTab === 'overview' && 'Your care management command center'}
+                {activeTab === 'jobs' && 'Create and manage job postings'}
                 {activeTab === 'browse' && 'Find qualified healthcare professionals'}
                 {activeTab === 'applicants' && 'Review and manage applications'}
                 {activeTab === 'invoicing' && 'Review and approve invoices'}
                 {activeTab === 'billing' && 'Manage payments and billing'}
               </p>
             </div>
-            <div className="flex items-center space-x-3">
-              {/* Messages Button */}
+            <div className="flex items-center gap-3">
               <Button 
                 variant={hasNewMessages ? "default" : "outline"} 
                 size="sm" 
                 onClick={() => setShowMessagesPage(true)}
-                className={`${hasNewMessages 
-                  ? "bg-blue-600 hover:bg-blue-700 text-white border-0 animate-pulse shadow-lg" 
-                  : "hover:bg-blue-50 hover:border-blue-300 text-gray-700"
-                } transition-all duration-300`}
+                className={hasNewMessages 
+                  ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                  : ""
+                }
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Messages
                 {totalUnreadMessages > 0 && (
-                  <Badge className="ml-2 bg-red-500 text-white text-xs border-0 min-w-[20px] h-5">
+                  <Badge className="ml-2 bg-red-500 text-white text-xs h-5 px-1.5">
                     {totalUnreadMessages}
                   </Badge>
                 )}
@@ -686,7 +663,6 @@ export default function ClientDashboard() {
               <Button 
                 variant="outline"
                 size="sm" 
-                className="hover:bg-red-50 hover:border-red-300 text-gray-700 transition-all duration-300" 
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4 mr-2" />
@@ -696,84 +672,114 @@ export default function ClientDashboard() {
           </div>
         </header>
 
-        {/* Main Content Area with Top Padding */}
-        <main className="flex-1 p-6 mt-24 overflow-auto">
+        {/* Content */}
+        <main className="p-6">
           {activeTab === 'overview' && (
-            <div className="space-y-8">
-              {/* Alert Cards */}
-              <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Welcome Section */}
+              <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+                <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+                  Welcome back, {clientProfile?.first_name}!
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                      <Briefcase className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600">Active Jobs</p>
+                      <p className="text-xl font-semibold text-slate-900">{stats.activeJobs}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                      <Users className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600">Pending Applications</p>
+                      <p className="text-xl font-semibold text-slate-900">{stats.totalApplications}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                      <DollarSign className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600">Total Paid</p>
+                      <p className="text-xl font-semibold text-slate-900">${Math.round(stats.totalPaid)}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Critical Alerts */}
+              <div className="space-y-3">
                 {!stats.paymentSetupComplete && (
-                  <div className="p-4 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl shadow-sm">
+                  <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                          <CreditCard className="h-5 w-5 text-white animate-pulse" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                          <CreditCard className="h-4 w-4 text-white" />
                         </div>
                         <div>
-                          <p className="font-semibold text-orange-900">
-                            💳 Set up instant payments to approve invoices seamlessly!
-                          </p>
+                          <p className="font-medium text-orange-900">Set up instant payments</p>
                           <p className="text-sm text-orange-700">Add a payment method for automatic invoice processing</p>
                         </div>
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm"
+                        className="bg-orange-500 hover:bg-orange-600 text-white"
                         onClick={() => setActiveTab('billing')}
                       >
-                        Setup Now
+                        Setup
                       </Button>
                     </div>
                   </div>
                 )}
 
                 {hasNewMessages && (
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                          <MessageCircle className="h-5 w-5 text-white animate-pulse" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                          <MessageCircle className="h-4 w-4 text-white" />
                         </div>
                         <div>
-                          <p className="font-semibold text-blue-900">
-                            💬 You have {totalUnreadMessages} new message{totalUnreadMessages !== 1 ? 's' : ''} from nurses!
+                          <p className="font-medium text-blue-900">
+                            {totalUnreadMessages} new message{totalUnreadMessages !== 1 ? 's' : ''} from nurses
                           </p>
                           <p className="text-sm text-blue-700">Stay connected with your care team</p>
                         </div>
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm"
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
                         onClick={() => setShowMessagesPage(true)}
                       >
-                        View Messages
+                        View
                       </Button>
                     </div>
                   </div>
                 )}
 
                 {stats.pendingApprovals > 0 && (
-                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm">
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                           {stats.paymentSetupComplete ? (
-                            <Zap className="h-5 w-5 text-white" />
+                            <Zap className="h-4 w-4 text-white" />
                           ) : (
-                            <Clock className="h-5 w-5 text-white" />
+                            <Clock className="h-4 w-4 text-white" />
                           )}
                         </div>
                         <div>
-                          <p className="font-semibold text-green-900">
-                            {stats.paymentSetupComplete ? (
-                              <>⚡ {stats.pendingApprovals} invoice{stats.pendingApprovals !== 1 ? 's' : ''} ready for instant approval!</>
-                            ) : (
-                              <>⏰ {stats.pendingApprovals} invoice{stats.pendingApprovals !== 1 ? 's' : ''} need your approval</>
-                            )}
+                          <p className="font-medium text-green-900">
+                            {stats.pendingApprovals} invoice{stats.pendingApprovals !== 1 ? 's' : ''} ready for approval
                           </p>
                           <p className="text-sm text-green-700">
                             {stats.paymentSetupComplete 
-                              ? 'Click "Approve & Pay" for instant payment processing'
+                              ? 'Click "Approve & Pay" for instant processing'
                               : 'Review and approve care hours'
                             }
                           </p>
@@ -781,7 +787,7 @@ export default function ClientDashboard() {
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-green-500 hover:bg-green-600 text-white shadow-sm"
+                        className="bg-green-500 hover:bg-green-600 text-white"
                         onClick={() => setActiveTab('invoicing')}
                       >
                         {stats.paymentSetupComplete ? 'Approve & Pay' : 'Review'}
@@ -791,76 +797,21 @@ export default function ClientDashboard() {
                 )}
               </div>
 
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { 
-                    title: 'Active Jobs', 
-                    value: stats.activeJobs, 
-                    icon: Briefcase, 
-                    bgColor: 'bg-blue-500',
-                    textColor: 'text-blue-600',
-                    bgLight: 'bg-blue-50'
-                  },
-                  { 
-                    title: 'Applications', 
-                    value: stats.totalApplications, 
-                    icon: Users, 
-                    bgColor: 'bg-green-500',
-                    textColor: 'text-green-600',
-                    bgLight: 'bg-green-50'
-                  },
-                  { 
-                    title: 'Total Paid', 
-                    value: `$${Math.round(stats.totalPaid)}`, 
-                    icon: DollarSign, 
-                    bgColor: 'bg-purple-500',
-                    textColor: 'text-purple-600',
-                    bgLight: 'bg-purple-50'
-                  },
-                  { 
-                    title: 'Pending Invoices', 
-                    value: stats.pendingApprovals, 
-                    icon: ClipboardCheck, 
-                    bgColor: 'bg-orange-500',
-                    textColor: 'text-orange-600',
-                    bgLight: 'bg-orange-50'
-                  },
-                ].map((stat, index) => {
-                  const Icon = stat.icon;
-                  return (
-                    <Card key={index} className="border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                          </div>
-                          <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center shadow-lg`}>
-                            <Icon className="h-6 w-6 text-white" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-
               {/* Quick Actions */}
-              <Card className="border-0 shadow-lg bg-white">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center text-xl font-bold text-gray-900">
-                    <Sparkles className="h-5 w-5 mr-2 text-blue-600" />
+              <Card className="border-0 shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center text-lg font-semibold text-slate-900">
+                    <Sparkles className="h-4 w-4 mr-2 text-blue-600" />
                     Quick Actions
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
                     {[
                       {
                         id: 'post-job',
                         title: 'Post New Job',
-                        description: 'Create a new job posting',
+                        description: 'Create a job posting',
                         icon: Plus,
                         color: 'bg-blue-500 hover:bg-blue-600',
                         action: () => setActiveTab('jobs')
@@ -876,7 +827,7 @@ export default function ClientDashboard() {
                       {
                         id: 'review-applicants',
                         title: 'Review Applicants',
-                        description: 'Check new applications',
+                        description: 'Check applications',
                         icon: Users,
                         color: 'bg-green-500 hover:bg-green-600',
                         action: () => setActiveTab('applicants')
@@ -892,7 +843,7 @@ export default function ClientDashboard() {
                       {
                         id: 'view-billing',
                         title: 'View Billing',
-                        description: 'Check payments & invoices',
+                        description: 'Check payments',
                         icon: CreditCard,
                         color: 'bg-indigo-500 hover:bg-indigo-600',
                         action: () => setActiveTab('billing')
@@ -903,15 +854,15 @@ export default function ClientDashboard() {
                         <Button
                           key={action.id}
                           variant="outline"
-                          className="h-auto p-6 flex flex-col items-center space-y-3 hover:shadow-lg transition-all duration-300 border-gray-200 hover:border-gray-300"
+                          className="h-auto p-4 flex flex-col items-center gap-2 hover:shadow-md transition-all border-slate-200 hover:border-slate-300"
                           onClick={action.action}
                         >
-                          <div className={`p-4 rounded-full ${action.color} text-white shadow-lg`}>
-                            <Icon className="h-6 w-6" />
+                          <div className={`p-3 rounded-full ${action.color} text-white`}>
+                            <Icon className="h-4 w-4" />
                           </div>
                           <div className="text-center">
-                            <p className="font-semibold text-gray-900">{action.title}</p>
-                            <p className="text-sm text-gray-600 mt-1">{action.description}</p>
+                            <p className="font-medium text-slate-900 text-sm">{action.title}</p>
+                            <p className="text-xs text-slate-600 mt-1">{action.description}</p>
                           </div>
                         </Button>
                       );
@@ -920,18 +871,18 @@ export default function ClientDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Two Column Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Two Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Applications */}
-                <Card className="border-0 shadow-lg bg-white">
-                  <CardHeader className="pb-4">
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-bold text-gray-900">Recent Applications</CardTitle>
+                      <CardTitle className="text-lg font-semibold text-slate-900">Recent Applications</CardTitle>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => setActiveTab('applicants')}
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="text-blue-600 hover:text-blue-700"
                       >
                         View All
                       </Button>
@@ -939,49 +890,49 @@ export default function ClientDashboard() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     {recentApplications.length > 0 ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {recentApplications.slice(0, 3).map((app) => (
-                          <div key={app.id} className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                          <div key={app.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
                                 {app.nurse_profiles?.profile_photo_url ? (
                                   <img 
                                     src={app.nurse_profiles.profile_photo_url} 
                                     alt="Nurse" 
-                                    className="w-full h-full object-cover rounded-full"
+                                    className="w-full h-full object-cover"
                                   />
                                 ) : (
-                                  <span className="text-white font-semibold text-sm">
+                                  <span className="text-white font-medium text-sm">
                                     {app.nurse_profiles?.first_name?.charAt(0)}{app.nurse_profiles?.last_name?.charAt(0)}
                                   </span>
                                 )}
                               </div>
                               <div>
-                                <p className="font-semibold text-gray-900">
+                                <p className="font-medium text-slate-900 text-sm">
                                   {app.nurse_profiles?.first_name} {app.nurse_profiles?.last_name}
                                 </p>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-xs text-slate-500">
                                   Applied {formatRelativeTime(app.created_at)}
                                 </p>
                               </div>
                             </div>
-                            <Badge className={`${getStatusColor(app.status)} border shadow-sm`}>
+                            <Badge className={`${getStatusColor(app.status)} text-xs`}>
                               {app.status === 'favorited' ? 'Favorite' : app.status}
                             </Badge>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Users className="h-8 w-8 text-gray-400" />
+                      <div className="text-center py-8">
+                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Users className="h-6 w-6 text-slate-400" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Yet</h3>
-                        <p className="text-gray-600 mb-4">Post a job to get started</p>
+                        <h3 className="font-medium text-slate-900 mb-1">No applications yet</h3>
+                        <p className="text-sm text-slate-600 mb-3">Post a job to get started</p>
                         <Button 
                           variant="outline" 
+                          size="sm"
                           onClick={() => setActiveTab('jobs')}
-                          className="border-blue-300 text-blue-600 hover:bg-blue-50"
                         >
                           Post a Job
                         </Button>
@@ -990,18 +941,18 @@ export default function ClientDashboard() {
                   </CardContent>
                 </Card>
 
-                {/* Instant Payment Center */}
-                <Card className="border-0 shadow-lg bg-white">
-                  <CardHeader className="pb-4">
+                {/* Payment Center */}
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-bold text-gray-900">
+                      <CardTitle className="text-lg font-semibold text-slate-900">
                         {stats.paymentSetupComplete ? 'Instant Payment Center' : 'Pending Invoices'}
                       </CardTitle>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => setActiveTab('invoicing')}
-                        className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                        className="text-orange-600 hover:text-orange-700"
                       >
                         View All
                       </Button>
@@ -1009,37 +960,37 @@ export default function ClientDashboard() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     {pendingInvoices.length > 0 ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {pendingInvoices.slice(0, 3).map((invoice) => (
-                          <div key={invoice.id} className="p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                            <div className="flex items-center justify-between mb-3">
+                          <div key={invoice.id} className="p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+                            <div className="flex items-center justify-between mb-2">
                               <div>
-                                <p className="font-semibold text-gray-900">
+                                <p className="font-medium text-slate-900 text-sm">
                                   {invoice.nurse_profiles?.first_name} {invoice.nurse_profiles?.last_name}
                                 </p>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-xs text-slate-500">
                                   {formatShortPremiumDate(invoice.shift_date)}
                                 </p>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg text-gray-900">{invoice.total_hours} hrs</p>
-                                <p className="text-sm text-gray-500">
+                                <p className="font-semibold text-slate-900">{invoice.total_hours} hrs</p>
+                                <p className="text-xs text-slate-500">
                                   {formatCurrency((invoice.total_hours * 50 * 1.15))}
                                 </p>
                               </div>
                             </div>
-                            <div className="flex space-x-2">
+                            <div className="flex gap-2">
                               {stats.paymentSetupComplete ? (
-                                <Button size="sm" className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0">
-                                  <Zap className="h-4 w-4 mr-1" />
+                                <Button size="sm" className="flex-1 h-8 text-xs bg-green-500 hover:bg-green-600 text-white">
+                                  <Zap className="h-3 w-3 mr-1" />
                                   Approve & Pay
                                 </Button>
                               ) : (
-                                <Button size="sm" className="flex-1 bg-green-500 hover:bg-green-600 text-white">
+                                <Button size="sm" className="flex-1 h-8 text-xs bg-green-500 hover:bg-green-600 text-white">
                                   Quick Approve
                                 </Button>
                               )}
-                              <Button size="sm" variant="outline" className="border-gray-300">
+                              <Button size="sm" variant="outline" className="h-8 text-xs">
                                 Review
                               </Button>
                             </div>
@@ -1047,12 +998,12 @@ export default function ClientDashboard() {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <ClipboardCheck className="h-8 w-8 text-gray-400" />
+                      <div className="text-center py-8">
+                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <ClipboardCheck className="h-6 w-6 text-slate-400" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Pending Invoices</h3>
-                        <p className="text-gray-600">Invoices will appear here for verification</p>
+                        <h3 className="font-medium text-slate-900 mb-1">No pending invoices</h3>
+                        <p className="text-sm text-slate-600">Invoices will appear here for verification</p>
                       </div>
                     )}
                   </CardContent>
@@ -1090,7 +1041,7 @@ export default function ClientDashboard() {
           )}
 
           {activeTab === 'billing' && (
-            <div className="space-y-8">
+            <div className="space-y-6">
               <PaymentMethodSetup
                 clientId={clientProfile?.id || ''}
                 clientEmail={user?.email || ''}
@@ -1101,47 +1052,6 @@ export default function ClientDashboard() {
               <PaymentHistoryCard
                 clientId={clientProfile?.id || ''}
               />
-
-              <Card className="border-0 shadow-lg bg-white">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
-                    <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
-                    Billing Analytics
-                  </CardTitle>
-                  <CardDescription>Your spending patterns and cost analysis</CardDescription>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="border-0 shadow-sm bg-gradient-to-br from-green-50 to-emerald-50">
-                      <CardContent className="p-6 text-center">
-                        <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <TrendingUp className="h-6 w-6 text-white" />
-                        </div>
-                        <p className="text-sm text-green-600 font-medium mb-2">This Month</p>
-                        <p className="text-3xl font-bold text-green-700">{formatCurrency(stats.thisMonthSpend)}</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-indigo-50">
-                      <CardContent className="p-6 text-center">
-                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <Building2 className="h-6 w-6 text-white" />
-                        </div>
-                        <p className="text-sm text-blue-600 font-medium mb-2">Platform Fee (15%)</p>
-                        <p className="text-3xl font-bold text-blue-700">{formatCurrency(stats.thisMonthSpend * 0.15)}</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-pink-50">
-                      <CardContent className="p-6 text-center">
-                        <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <HeartHandshake className="h-6 w-6 text-white" />
-                        </div>
-                        <p className="text-sm text-purple-600 font-medium mb-2">Nurse Payments (85%)</p>
-                        <p className="text-3xl font-bold text-purple-700">{formatCurrency(stats.thisMonthSpend * 0.85)}</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           )}
         </main>
