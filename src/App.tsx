@@ -143,9 +143,7 @@ export default function App() {
               <Route path="/dashboard/*" element={<DashboardRouter />} />
               
               {/* Admin Routes */}
-              <Route path="/admin" element={<AdminPortal />} />
-              <Route path="/admin/enhanced" element={<EnhancedAdminPortal />} />
-              <Route path="/admin/*" element={<AdminPortal />} />
+              <Route path="/admin" element={<EnhancedAdminPortal />} />
               
               {/* Background Check Routes */}
               <Route 
