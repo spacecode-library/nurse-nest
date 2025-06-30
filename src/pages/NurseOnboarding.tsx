@@ -1,486 +1,456 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { Upload, CheckCircle, AlertCircle, HelpCircle, Shield, Stethoscope } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import { getCurrentUser } from '@/supabase/auth/authService';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { saveNurseQualification } from '@/supabase/api/nurseQualificationService';
-import { saveNursePreferences } from '@/supabase/api/nursePreferencesService';
-import { addNurseCertification } from '@/supabase/api/nurseCertificationService';
-import { addNurseLicense } from '@/supabase/api/nurseLicenseService';
-import { 
-  createNurseProfile, 
-  getNurseProfileByUserId, 
-  updateNurseProfile, 
-  updateOnboardingProgress 
-} from '@/supabase/api/nurseProfileService';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, ArrowRight, Upload, FileText, CheckCircle, User, Briefcase, MapPin, Shield, Calendar } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import { getCurrentUser, completeOnboarding, updateUserMetadata } from '@/supabase/auth/authService';
+import { getNurseProfileByUserId, createNurseProfile, updateNurseProfile } from '@/supabase/api/nurseProfileService';
 import { supabase } from '@/integrations/supabase/client';
-import { AmericanDateInput, DateUtils } from '@/components/ui/american-date-input';
-import Auth from './Auth';
-import { useAuth } from '@/contexts/AuthContext';
-import ClickwrapAgreement from '@/components/ui/ClickwrapAgreement';
 
-// Constants for form options
-const LICENSE_TYPES = [
-  'Registered Nurse (RN)',
-  'Licensed Practical Nurse (LPN)',
-  'Nurse Practitioner (NP)',
-  'Clinical Nurse Specialist (CNS)',
-  'Certified Registered Nurse Anesthetist (CRNA)',
-  'Certified Nurse Midwife (CNM)'
+// Types
+interface OnboardingStep {
+  id: number;
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+const ONBOARDING_STEPS: OnboardingStep[] = [
+  {
+    id: 1,
+    title: "Personal Information",
+    icon: <User className="h-5 w-5" />,
+    description: "Tell us about yourself"
+  },
+  {
+    id: 2,
+    title: "Professional Qualifications",
+    icon: <Briefcase className="h-5 w-5" />,
+    description: "Your education and experience"
+  },
+  {
+    id: 3,
+    title: "Licenses & Certifications",
+    icon: <Shield className="h-5 w-5" />,
+    description: "Your professional credentials"
+  },
+  {
+    id: 4,
+    title: "Employment Preferences",
+    icon: <MapPin className="h-5 w-5" />,
+    description: "Where and how you'd like to work"
+  },
+  {
+    id: 5,
+    title: "Additional Documents",
+    icon: <FileText className="h-5 w-5" />,
+    description: "Upload supporting documents"
+  },
+  {
+    id: 6,
+    title: "Review & Submit",
+    icon: <CheckCircle className="h-5 w-5" />,
+    description: "Review your application"
+  }
 ];
-
-const SPECIALTIES = [
-  'Medical-Surgical',
-  'Intensive Care (ICU)',
-  'Emergency (ER)',
-  'Pediatrics',
-  'Obstetrics & Gynecology',
-  'Oncology',
-  'Psychiatric/Mental Health',
-  'Geriatrics',
-  'Home Health',
-  'Telemetry',
-  'Operating Room (OR)',
-  'Post-Anesthesia Care (PACU)',
-  'Neonatal Intensive Care (NICU)',
-  'Cardiovascular',
-  'Orthopedics',
-  'Neurology',
-  'Rehabilitation',
-  'Dialysis',
-  'Hospice & Palliative Care',
-  'Primary Care'
-];
-
-const COMMON_CERTIFICATIONS = [
-  'Basic Life Support (BLS)',
-  'Advanced Cardiac Life Support (ACLS)',
-  'Pediatric Advanced Life Support (PALS)',
-  'Trauma Nursing Core Course (TNCC)',
-  'Certified Emergency Nurse (CEN)',
-  'Critical Care Registered Nurse (CCRN)',
-  'Medical-Surgical Nursing Certification (MEDSURG-BC)',
-  'Oncology Certified Nurse (OCN)'
-];
-
-const SHIFT_TYPES = [
-  'Day Shift',
-  'Night Shift',
-  'Evening Shift',
-  'Weekend',
-  'Weekday',
-  'Per Diem',
-  '12-Hour',
-  '8-Hour'
-];
-
-// Define the onboarding steps - UPDATED TO INCLUDE LEGAL AGREEMENTS
-const ONBOARDING_STEPS = [
-  'Personal Information',
-  'Professional Qualifications',
-  'Work Preferences',
-  'Documents & Verification',
-  'Legal Agreements',
-  'Review & Submit'
-];
-
-// Validation helper function for license expiry (updated for American format)
-const validateLicenseExpiry = (expiryDate: string): boolean => {
-  if (!expiryDate) return false;
-  
-  const expiry = new Date(expiryDate + 'T00:00:00');
-  const today = new Date();
-  
-  // License should not be expired and should be valid for at least 30 days
-  const thirtyDaysFromNow = new Date();
-  thirtyDaysFromNow.setDate(today.getDate() + 30);
-  
-  return expiry > thirtyDaysFromNow;
-};
 
 export default function NurseOnboarding() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const [submitting, setSubmitting] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [legalAgreementsAccepted, setLegalAgreementsAccepted] = useState(false); // NEW STATE
-  const [nurseProfileId, setNurseProfileId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [userId, setUserId] = useState<string>('');
+  const [nurseProfileId, setNurseProfileId] = useState<string>('');
 
-  // Personal Information (Step 0)
+  // Step 1: Personal Information
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [address, setAddress] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
   const [city, setCity] = useState('');
+  const [email,setEmail] = useState('');
   const [state, setState] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
   const [zipCode, setZipCode] = useState('');
-
-  // Professional Qualifications (Step 1)
-  const [licenseType, setLicenseType] = useState('');
-  const [licenseNumber, setLicenseNumber] = useState('');
-  const [licenseState, setLicenseState] = useState('');
-  const [licenseExpiryDate, setLicenseExpiryDate] = useState(''); // Now stores YYYY-MM-DD format
-  const [specialty, setSpecialty] = useState('');
-  const [yearsOfExperience, setYearsOfExperience] = useState('');
-  const [certifications, setCertifications] = useState<string[]>([]);
-  const [customCertification, setCustomCertification] = useState('');
-
-  // Work Preferences (Step 2) - Removed workLocationType
-  const [availabilityStartDate, setAvailabilityStartDate] = useState(''); // Now stores YYYY-MM-DD format
-  const [preferredShifts, setPreferredShifts] = useState<string[]>([]);
-  const [travelDistance, setTravelDistance] = useState('');
-  const [hourlyRate, setHourlyRate] = useState('');
   const [bio, setBio] = useState('');
 
-  // Documents (Step 3) - Removed license file upload, kept resume as required
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [resumeFileName, setResumeFileName] = useState('');
-  const [certFile, setCertFile] = useState<File | null>(null);
-  const [certFileName, setCertFileName] = useState('');
+  // Step 2: Professional Qualifications
+  const [specializations, setSpecializations] = useState<string[]>([]);
+  const [yearsExperience, setYearsExperience] = useState('');
+  const [educationLevel, setEducationLevel] = useState('');
+  const [schoolName, setSchoolName] = useState('');
+  const [graduationYear, setGraduationYear] = useState('');
+  const [resume, setResume] = useState<File | null>(null);
+  const [resumeUrl, setResumeUrl] = useState('');
 
-  // Document upload status (for Step 5) - Removed license upload status
-  const [hasResumeUploaded, setHasResumeUploaded] = useState(false);
-  const [hasCertificationsUploaded, setHasCertificationsUploaded] = useState(false);
+  // Step 3: Licenses & Certifications
+  const [licenseType, setLicenseType] = useState('');
+  const [licenseNumber, setLicenseNumber] = useState('');
+  const [issuingState, setIssuingState] = useState('');
+  const [licenseExpiration, setLicenseExpiration] = useState('');
+  const [certifications, setCertifications] = useState<Array<{
+    name: string;
+    file: File | null;
+    fileUrl: string;
+  }>>([]);
 
-  // Calculate onboarding progress percentage
-  const calculateProgress = (step: number): number => {
-    const stepPercentage = 100 / ONBOARDING_STEPS.length;
-    return Math.round(stepPercentage * (step + 1));
-  };
+  // Step 4: Employment Preferences
+  const [availabilityTypes, setAvailabilityTypes] = useState<string[]>([]);
+  const [preferredShifts, setPreferredShifts] = useState<string[]>([]);
+  const [locationPreferences, setLocationPreferences] = useState<string[]>([]);
+  const [travelRadius, setTravelRadius] = useState('');
+  const [desiredHourlyRate, setDesiredHourlyRate] = useState('');
 
-  const {user} = useAuth();
+  // Step 5: Additional Documents
+  const [additionalDocs, setAdditionalDocs] = useState<Array<{
+    name: string;
+    file: File | null;
+    fileUrl: string;
+  }>>([]);
 
+  // Step 6: Review & Submit
+  const [agreementAccepted, setAgreementAccepted] = useState(false);
+
+  // Data for dropdowns
+  const specializationOptions = ['Pediatric', 'Geriatric', 'Critical Care', 'Oncology', 'Emergency', 'Postpartum', 'Mental Health', 'Surgical', 'Home Health'];
+  const educationLevelOptions = ['Associate', 'Bachelor', 'Master', 'Doctorate'];
+  const licenseTypeOptions = ['RN', 'LPN', 'CNA', 'NP'];
+  const availabilityOptions = ['Full-time', 'Part-time', 'Per diem', 'Contract'];
+  const shiftOptions = ['Day', 'Night', 'Weekend', 'Flexible'];
+  const stateOptions = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+  ];
+
+  // Load existing user data and profile
   useEffect(() => {
-    const fetchUserAndProfile = async () => {
-      setIsLoading(true);
+    const loadExistingData = async () => {
       try {
         const { data } = await getCurrentUser();
-        if (data?.user) {
-          const userId = data.user.id;
-          setUserId(userId);
-          
-          const { data: profileData, error } = await getNurseProfileByUserId(userId);
-          
-          if (profileData) {
-            setNurseProfileId(profileData.id);
-            setFirstName(profileData.first_name || '');
-            setLastName(profileData.last_name || '');
-            setPhoneNumber(profileData.phone_number || '');
-            setAddress(profileData.street_address || '');
-            setCity(profileData.city || '');
-            setState(profileData.state || '');
-            setZipCode(profileData.zip_code || '');
-            
-            if (!profileData.onboarding_completed) {
-              const percentage = profileData.onboarding_completion_percentage;
-              if (percentage >= 83) setCurrentStep(5); // Updated for 6 steps
-              else if (percentage >= 66) setCurrentStep(4);
-              else if (percentage >= 50) setCurrentStep(3);
-              else if (percentage >= 33) setCurrentStep(2);
-              else if (percentage >= 16) setCurrentStep(1);
-              else setCurrentStep(0);
-              
-              if (percentage >= 16) {
-                const { data: qualificationsData } = await supabase
-                  .from('nurse_qualifications')
-                  .select('specializations, years_experience, resume_url')
-                  .eq('nurse_id', profileData.id)
-                  .single();
-                
-                if (qualificationsData) {
-                  setSpecialty(qualificationsData.specializations[0] || '');
-                  setYearsOfExperience(qualificationsData.years_experience?.toString() || '');
-                  setHasResumeUploaded(!!qualificationsData.resume_url);
-                }
-                
-                const { data: licenseData } = await supabase
-                  .from('nurse_licenses')
-                  .select('license_type, license_number, issuing_state, expiration_date')
-                  .eq('nurse_id', profileData.id)
-                  .single();
-                
-                if (licenseData) {
-                  setLicenseType(licenseData.license_type || '');
-                  setLicenseNumber(licenseData.license_number || '');
-                  setLicenseState(licenseData.issuing_state || '');
-                  setLicenseExpiryDate(licenseData.expiration_date || '');
-                }
-                
-                const { data: certData } = await supabase
-                  .from('nurse_certifications')
-                  .select('certification_name, certification_file_url')
-                  .eq('nurse_id', profileData.id);
-                
-                if (certData) {
-                  setCertifications(certData.map(cert => cert.certification_name));
-                  setHasCertificationsUploaded(certData.some(cert => !!cert.certification_file_url));
-                }
-              }
-              
-              if (percentage >= 33) {
-                const { data: preferencesData } = await supabase
-                  .from('nurse_preferences')
-                  .select('*')
-                  .eq('nurse_id', profileData.id)
-                  .single();
-                
-                if (preferencesData) {
-                  setPreferredShifts(preferencesData.preferred_shifts || []);
-                  setTravelDistance(preferencesData.travel_radius?.toString() || '');
-                  setHourlyRate(preferencesData.desired_hourly_rate?.toString() || '');
-                  // Note: availability_start_date would need to be added to the preferences table if needed
-                }
-                
-                if (profileData.bio) {
-                  setBio(profileData.bio);
-                }
-              }
-            }
-          }
-        } else {
+        if (!data?.user) {
           navigate('/auth');
+          return;
+        }
+
+        const userId = data.user.id;
+        setUserId(userId);
+        
+        // Get metadata from auth user
+        const metadata = data.user.user_metadata;
+        if (metadata?.first_name) setFirstName(metadata.first_name);
+        if (metadata?.last_name) setLastName(metadata.last_name);
+        
+        const { data: profileData, error } = await getNurseProfileByUserId(userId);
+        
+        if (profileData) {
+          setNurseProfileId(profileData.id);
+          setFirstName(profileData.first_name || metadata?.first_name || '');
+          setLastName(profileData.last_name || metadata?.last_name || '');
+          setPhoneNumber(profileData.phone_number || '');
+          setEmail(profileData.email || '');
+          setProfilePhotoUrl(profileData.profile_photo_url || '');
+          setCity(profileData.city || '');
+          setState(profileData.state || '');
+          setStreetAddress(profileData.street_address || '');
+          setZipCode(profileData.zip_code || '');
+          setBio(profileData.bio || '');
+          
+          if (!profileData.onboarding_completed) {
+            const percentage = profileData.onboarding_completion_percentage || 0;
+            const stepIndex = Math.floor((percentage / 100) * ONBOARDING_STEPS.length);
+            setCurrentStep(Math.min(stepIndex, ONBOARDING_STEPS.length - 1));
+          } else {
+            // If already completed, redirect to dashboard
+            navigate('/dashboard');
+          }
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        toast({
-          title: "Error loading profile",
-          description: "There was a problem loading your profile data.",
-          variant: "destructive"
-        });
+        navigate('/auth');
       } finally {
         setIsLoading(false);
       }
     };
-    
-    fetchUserAndProfile();
+
+    loadExistingData();
   }, [navigate]);
 
-  const nextStep = async () => {
-    if (!validateCurrentStep()) {
-      return;
+  const updateOnboardingProgress = async (profileId: string, percentage: number, completed: boolean = false) => {
+    await updateNurseProfile(profileId, {
+      onboarding_completion_percentage: percentage,
+      onboarding_completed: completed,
+      updated_at: new Date().toISOString()
+    });
+  };
+
+  const uploadFile = async (file: File, bucket: string, path: string): Promise<string> => {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file);
+
+    if (error) throw error;
+
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(data.path);
+
+    return urlData.publicUrl;
+  };
+
+  const validateCurrentStep = (): boolean => {
+    switch (currentStep) {
+      case 0: // Personal Information
+        if (!firstName.trim() || !lastName.trim() || !phoneNumber.trim() || !city.trim() || !state || !streetAddress.trim() || !zipCode.trim() || !email.trim()) {
+          toast({
+            title: "Required Fields Missing",
+            description: "Please fill in all required fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 1: // Professional Qualifications
+        if (!specializations.length || !yearsExperience || !educationLevel || !schoolName || !graduationYear) {
+          toast({
+            title: "Required Fields Missing",
+            description: "Please fill in all professional qualification fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        if (!resume && !resumeUrl) {
+          toast({
+            title: "Resume Required",
+            description: "Please upload your resume.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 2: // Licenses & Certifications
+        if (!licenseType || !licenseNumber || !issuingState || !licenseExpiration) {
+          toast({
+            title: "License Information Required",
+            description: "Please fill in all license information fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 3: // Employment Preferences
+        if (!availabilityTypes.length || !preferredShifts.length || !travelRadius || !desiredHourlyRate) {
+          toast({
+            title: "Employment Preferences Required",
+            description: "Please fill in all employment preference fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 5: // Review & Submit
+        if (!agreementAccepted) {
+          toast({
+            title: "Agreement Required",
+            description: "Please accept the terms and conditions to proceed.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
     }
+    return true;
+  };
+
+  const nextStep = async () => {
+    if (!validateCurrentStep()) return;
     
     setSubmitting(true);
-    
     try {
-      const progressPercentage = calculateProgress(currentStep);
+      const progressPercentage = Math.round(((currentStep + 1) / ONBOARDING_STEPS.length) * 100);
       
-      switch (currentStep) {
-        case 0:
-          if (nurseProfileId) {
-            await updateNurseProfile(nurseProfileId, {
-              first_name: firstName,
-              last_name: lastName,
-              phone_number: phoneNumber,
-              street_address: address,
-              city: city,
-              state: state,
-              zip_code: zipCode,
-            });
-            await updateOnboardingProgress(nurseProfileId, progressPercentage);
-          } else if (userId) {
-            const { data, error } = await createNurseProfile({
-              user_id: userId,
-              first_name: firstName,
-              last_name: lastName,
-              phone_number: phoneNumber,
-              profile_photo_url: '',
-              onboarding_completed: false,
-              onboarding_completion_percentage: progressPercentage,
-              street_address: address,
-              city: city,
-              state: state,
-              zip_code: zipCode,
-              bio: '',
-              email: user?.email || '',
-            });
-            
-            if (error) throw error;
-            if (data) {
-              setNurseProfileId(data.id);
-            }
-          }
-          break;
-          
-        case 1:
-          if (!nurseProfileId) throw new Error("Nurse profile not found");
-          
-          const { data: existingLicense } = await supabase
-            .from('nurse_licenses')
-            .select('id')
-            .eq('nurse_id', nurseProfileId)
-            .maybeSingle();
-            
-          if (existingLicense?.id) {
-            await supabase
-              .from('nurse_licenses')
-              .update({
-                license_type: licenseType,
-                license_number: licenseNumber,
-                issuing_state: licenseState,
-                expiration_date: licenseExpiryDate,
-                verification_status: 'pending',
-                updated_at: new Date().toISOString()
-              })
-              .eq('id', existingLicense.id);
-          } else {
-            await addNurseLicense({
-              nurse_id: nurseProfileId,
-              license_type: licenseType,
-              license_number: licenseNumber,
-              issuing_state: licenseState,
-              expiration_date: licenseExpiryDate,
-              verification_status: 'pending',
-              license_photo_url: ''
-            });
-          }
-          
-          await saveNurseQualification({
-            nurse_id: nurseProfileId,
-            specializations: [specialty],
-            years_experience: parseInt(yearsOfExperience) || 0,
-            education_level: 'Not Specified',
-            school_name: 'Not Specified',
-            graduation_year: new Date().getFullYear(),
-            resume_url: ''
-          });
-          
-          const { data: existingCerts } = await supabase
-            .from('nurse_certifications')
-            .select('id, certification_name')
-            .eq('nurse_id', nurseProfileId);
-            
-          if (existingCerts && existingCerts.length > 0) {
-            const existingCertMap = existingCerts.reduce((map, cert) => {
-              map[cert.certification_name] = cert.id;
-              return map;
-            }, {} as Record<string, string>);
-            
-            const certsToDelete = existingCerts
-              .filter(cert => !certifications.includes(cert.certification_name))
-              .map(cert => cert.id);
-              
-            if (certsToDelete.length > 0) {
-              await supabase
-                .from('nurse_certifications')
-                .delete()
-                .in('id', certsToDelete);
-            }
-            
-            for (const cert of certifications) {
-              if (!existingCertMap[cert]) {
-                await addNurseCertification({
-                  nurse_id: nurseProfileId,
-                  certification_name: cert,
-                  certification_file_url: '',
-                  is_malpractice_insurance: cert.toLowerCase().includes('malpractice'),
-                  expiration_date: new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split('T')[0]
-                });
-              }
-            }
-          } else {
-            for (const cert of certifications) {
-              await addNurseCertification({
-                nurse_id: nurseProfileId,
-                certification_name: cert,
-                certification_file_url: '',
-                is_malpractice_insurance: cert.toLowerCase().includes('malpractice'),
-                expiration_date: new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split('T')[0]
-              });
-            }
-          }
-          
-          await updateOnboardingProgress(nurseProfileId, progressPercentage);
-          break;
-          
-        case 2:
-          if (!nurseProfileId) throw new Error("Nurse profile not found");
-          
-          // Always set location_preferences to ['on-site'] since we removed the work location selection
-          await saveNursePreferences({
-            nurse_id: nurseProfileId,
-            availability_types: ['full-time'],
-            preferred_shifts: preferredShifts,
-            location_preferences: ['on-site'], // Always on-site
-            travel_radius: parseInt(travelDistance) || 0,
-            desired_hourly_rate: parseFloat(hourlyRate) || 0
-          });
-          
-          await updateNurseProfile(nurseProfileId, { 
-            bio: bio
-          });
-          
-          await updateOnboardingProgress(nurseProfileId, progressPercentage);
-          break;
-          
-        case 3:
-          if (!nurseProfileId) throw new Error("Nurse profile not found");
-          
-          let resumeFilePath = '';
-          let certFilePath = '';
-          
-          // Resume upload (now required)
-          if (resumeFile) {
-            resumeFilePath = await uploadFile(resumeFile, 'resumes');
-            const { data: qualData } = await supabase
-              .from('nurse_qualifications')
-              .select('id')
-              .eq('nurse_id', nurseProfileId)
-              .single();
-              
-            if (qualData) {
-              await supabase
-                .from('nurse_qualifications')
-                .update({ resume_url: resumeFilePath })
-                .eq('id', qualData.id);
-              setHasResumeUploaded(true);
-            }
-          }
-          
-          // Certification upload (optional)
-          if (certFile) {
-            certFilePath = await uploadFile(certFile, 'certifications');
-            await supabase
-              .from('nurse_certifications')
-              .update({ certification_file_url: certFilePath })
-              .eq('nurse_id', nurseProfileId);
-            setHasCertificationsUploaded(true);
-          }
-          
-          await updateOnboardingProgress(nurseProfileId, progressPercentage);
-          break;
+      if (currentStep === 0) {
+        // Save personal information
+        let photoUrl = profilePhotoUrl;
+        if (profilePhoto) {
+          photoUrl = await uploadFile(profilePhoto, 'nurse-profiles', `${userId}/profile-photo-${Date.now()}`);
+          setProfilePhotoUrl(photoUrl);
+        }
 
-        case 4: // Legal Agreements
-          if (!nurseProfileId) throw new Error("Nurse profile not found");
-          await updateOnboardingProgress(nurseProfileId, progressPercentage);
-          break;
+        const profileData = {
+          user_id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber,
+          email: email,
+          profile_photo_url: photoUrl,
+          city,
+          state,
+          street_address: streetAddress,
+          zip_code: zipCode,
+          bio,
+          onboarding_completion_percentage: progressPercentage
+        };
+
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, profileData);
+        } else {
+          const { data: newProfile } = await createNurseProfile(profileData);
+          if (newProfile) {
+            setNurseProfileId(newProfile.id);
+          }
+        }
+
+        // Update user metadata with the profile information (FIXED: removed userId parameter)
+        await updateUserMetadata({
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber
+        });
+
+      } else if (currentStep === 1) {
+        // Save professional qualifications
+        let resumeUrlToSave = resumeUrl;
+        if (resume) {
+          resumeUrlToSave = await uploadFile(resume, 'nurse-documents', `${userId}/resume-${Date.now()}`);
+          setResumeUrl(resumeUrlToSave);
+        }
+
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: progressPercentage
+          });
+
+          // Save qualifications to separate table
+          await supabase.from('nurse_qualifications').upsert({
+            nurse_id: nurseProfileId,
+            specializations,
+            years_experience: parseInt(yearsExperience),
+            education_level: educationLevel,
+            school_name: schoolName,
+            graduation_year: parseInt(graduationYear),
+            resume_url: resumeUrlToSave
+          });
+        }
+      } else if (currentStep === 2) {
+        // Save licenses and certifications
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: progressPercentage
+          });
+
+          // Save license
+          await supabase.from('nurse_licenses').upsert({
+            nurse_id: nurseProfileId,
+            license_type: licenseType,
+            license_number: licenseNumber,
+            issuing_state: issuingState,
+            expiration_date: licenseExpiration,
+            verification_status: 'pending'
+          });
+
+          // Save certifications
+          for (const cert of certifications) {
+            let certFileUrl = cert.fileUrl;
+            if (cert.file) {
+              certFileUrl = await uploadFile(cert.file, 'nurse-documents', `${userId}/cert-${Date.now()}`);
+            }
+
+            await supabase.from('nurse_certifications').upsert({
+              nurse_id: nurseProfileId,
+              certification_name: cert.name,
+              certification_file_url: certFileUrl
+            });
+          }
+        }
+      } else if (currentStep === 3) {
+        // Save employment preferences
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: progressPercentage
+          });
+
+          await supabase.from('nurse_preferences').upsert({
+            nurse_id: nurseProfileId,
+            availability_types: availabilityTypes,
+            preferred_shifts: preferredShifts,
+            location_preferences: locationPreferences,
+            travel_radius: parseInt(travelRadius),
+            desired_hourly_rate: parseFloat(desiredHourlyRate)
+          });
+        }
+      } else if (currentStep === 4) {
+        // Save additional documents
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: progressPercentage
+          });
+
+          // Save additional documents
+          for (const doc of additionalDocs) {
+            let docFileUrl = doc.fileUrl;
+            if (doc.file) {
+              docFileUrl = await uploadFile(doc.file, 'nurse-documents', `${userId}/doc-${Date.now()}`);
+            }
+
+            await supabase.from('nurse_certifications').upsert({
+              nurse_id: nurseProfileId,
+              certification_name: doc.name,
+              certification_file_url: docFileUrl,
+              is_malpractice_insurance: doc.name.toLowerCase().includes('malpractice')
+            });
+          }
+        }
+      } else if (currentStep === 5) {
+        // Complete onboarding
+        if (nurseProfileId) {
+          // First update the nurse profile to mark as completed
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: 100,
+            onboarding_completed: true
+          });
+
+          // Now call completeOnboarding which will synchronize data with user_metadata (FIXED: destructuring)
+          const { success, error } = await completeOnboarding('nurse');
+          
+          if (success) {
+            toast({
+              title: "Application Submitted!",
+              description: "Your nurse application has been submitted for review. You'll be notified once it's approved.",
+            });
+            
+            // Navigate to a waiting/pending page or dashboard
+            navigate('/dashboard');
+          } else {
+            toast({
+              title: "Error",
+              description: error || "Failed to complete onboarding. Please try again.",
+              variant: "destructive"
+            });
+            return;
+          }
+        }
       }
-      
-      setCurrentStep(currentStep + 1);
-      window.scrollTo(0, 0);
-      
+
+      if (currentStep < ONBOARDING_STEPS.length - 1) {
+        setCurrentStep(currentStep + 1);
+      }
+    } catch (error) {
+      console.error('Error saving step data:', error);
       toast({
-        title: "Progress saved",
-        description: `Successfully saved your ${ONBOARDING_STEPS[currentStep]} information`,
-        variant: "default"
-      });
-      
-    } catch (error: any) {
-      console.error('Error saving data:', error);
-      toast({
-        title: "Error saving data",
-        description: error.message || "An unexpected error occurred",
+        title: "Error",
+        description: "Failed to save your information. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -489,1030 +459,635 @@ export default function NurseOnboarding() {
   };
 
   const prevStep = () => {
-    setCurrentStep(currentStep - 1);
-    window.scrollTo(0, 0);
-  };
-
-  const validateCurrentStep = () => {
-    switch (currentStep) {
-      case 0:
-        if (!firstName || !lastName || !phoneNumber || !address || !city || !state || !zipCode) {
-          toast({
-            title: "Required fields missing",
-            description: "Please fill out all required fields",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-      
-      case 1:
-        if (!licenseType || !licenseNumber || !licenseState || !licenseExpiryDate || !specialty) {
-          toast({
-            title: "Required fields missing",
-            description: "Please fill out all required fields",
-            variant: "destructive"
-          });
-          return false;
-        }
-        
-        if (!validateLicenseExpiry(licenseExpiryDate)) {
-          toast({
-            title: "Invalid license expiration date",
-            description: "Your license must be valid for at least 30 days from today",
-            variant: "destructive"
-          });
-          return false;
-        }
-        
-        return true;
-      
-      case 2:
-        if (preferredShifts.length === 0) {
-          toast({
-            title: "Required fields missing",
-            description: "Please select at least one shift type",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-      
-      case 3:
-        // Resume is now required
-        if (!resumeFile && !hasResumeUploaded) {
-          toast({
-            title: "Required document missing",
-            description: "Please upload your resume or CV",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-
-      case 4: // Legal Agreements
-        if (!legalAgreementsAccepted) {
-          toast({
-            title: "Legal agreements required",
-            description: "Please review and accept all required legal agreements",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-      
-      case 5: // Review & Submit
-        if (!termsAccepted) {
-          toast({
-            title: "Terms acceptance required",
-            description: "Please accept the final terms to complete your profile",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-      
-      default:
-        return true;
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
-  const toggleCertification = (cert: string) => {
-    setCertifications(prev => 
-      prev.includes(cert) 
-        ? prev.filter(c => c !== cert) 
-        : [...prev, cert]
-    );
+  const addCertification = () => {
+    setCertifications([...certifications, { name: '', file: null, fileUrl: '' }]);
   };
 
-  const addCustomCertification = () => {
-    if (customCertification && !certifications.includes(customCertification)) {
-      setCertifications(prev => [...prev, customCertification]);
-      setCustomCertification('');
-    }
+  const updateCertification = (index: number, field: string, value: any) => {
+    const updated = [...certifications];
+    updated[index] = { ...updated[index], [field]: value };
+    setCertifications(updated);
   };
 
-  const toggleShift = (shift: string) => {
-    setPreferredShifts(prev => 
-      prev.includes(shift) 
-        ? prev.filter(s => s !== shift) 
-        : [...prev, shift]
-    );
+  const removeCertification = (index: number) => {
+    setCertifications(certifications.filter((_, i) => i !== index));
   };
 
-  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setResumeFile(file);
-      setResumeFileName(file.name);
-    }
+  const addAdditionalDoc = () => {
+    setAdditionalDocs([...additionalDocs, { name: '', file: null, fileUrl: '' }]);
   };
 
-  const handleCertUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setCertFile(file);
-      setCertFileName(file.name);
-    }
+  const updateAdditionalDoc = (index: number, field: string, value: any) => {
+    const updated = [...additionalDocs];
+    updated[index] = { ...updated[index], [field]: value };
+    setAdditionalDocs(updated);
   };
 
-  const uploadFile = async (file: File, path: string): Promise<string> => {
-    try {
-      if (!file) {
-        throw new Error("No file provided");
-      }
-      
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}-${Date.now()}.${fileExt}`;
-      const filePath = `${path}/${fileName}`;
-      
-      const { error } = await supabase.storage
-        .from('nurse-documents')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
-        
-      if (error) {
-        console.error('Upload error:', error);
-        throw error;
-      }
-      
-      const { data: { publicUrl } } = supabase.storage
-        .from('nurse-documents')
-        .getPublicUrl(filePath);
-      
-      return publicUrl;
-    } catch (error) {
-      console.error('Error in uploadFile:', error);
-      throw error;
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!validateCurrentStep() || !termsAccepted || !userId || !nurseProfileId) {
-      return;
-    }
-    
-    setSubmitting(true);
-    
-    try {
-      await updateOnboardingProgress(nurseProfileId, 100, true);
-      
-      toast({
-        title: "🎉 Profile completed!",
-        description: "Your profile has been successfully submitted for review. You'll be notified once approved by our team.",
-        variant: "default"
-      });
-      
-      // Redirect to dashboard router which will handle the pending approval state
-      navigate('/dashboard');
-      
-    } catch (error: any) {
-      console.error('Error submitting profile:', error);
-      toast({
-        title: "Profile submission failed",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive"
-      });
-    } finally {
-      setSubmitting(false);
-    }
+  const removeAdditionalDoc = (index: number) => {
+    setAdditionalDocs(additionalDocs.filter((_, i) => i !== index));
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-medical-gradient-primary">
-        <Navbar />
-        <main className="flex-1 pt-20 flex items-center justify-center">
-          <div className="text-center space-y-6">
-            <div className="relative">
-              <div className="w-20 h-20 bg-white rounded-full shadow-medical-soft mx-auto flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-3 border-medical-primary border-t-transparent rounded-full"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Stethoscope className="w-6 w-6 text-medical-primary animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-medical-text-primary">Loading your profile...</h3>
-              <p className="text-medical-text-secondary">Setting up your professional onboarding experience</p>
-            </div>
-          </div>
-        </main>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your profile...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-medical-gradient-primary">
-      <Navbar />
-      
-      <main className="flex-1 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-medical-text-primary via-medical-primary to-medical-accent bg-clip-text text-transparent mb-4">
-                Professional Nurse Onboarding
-              </h1>
-              <p className="text-xl text-medical-text-secondary max-w-2xl mx-auto">
-                Complete your professional profile to start connecting with clients who need quality nursing care
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Nurse Registration</h1>
+            <p className="text-gray-600">Complete your profile to join our healthcare network</p>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-gray-700">Progress</span>
+              <span className="text-sm font-medium text-gray-700">
+                {Math.round(((currentStep + 1) / ONBOARDING_STEPS.length) * 100)}%
+              </span>
             </div>
-            
-            {/* Progress Bar */}
-            <div className="mb-8">
-              <div className="flex justify-between mb-4">
-                {ONBOARDING_STEPS.map((step, index) => (
-                  <div key={index} className="flex flex-col items-center flex-1">
-                    <div className={`w-12 h-12 flex items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                      currentStep === index 
-                        ? 'bg-medical-primary text-white border-medical-primary shadow-medical-soft'
-                        : currentStep > index
-                          ? 'bg-medical-success text-white border-medical-success'
-                          : 'bg-white text-medical-text-secondary border-medical-border'
-                    }`}>
-                      {currentStep > index ? (
-                        <CheckCircle className="h-6 w-6" />
-                      ) : (
-                        <span className="font-semibold">{index + 1}</span>
-                      )}
-                    </div>
-                    <span className={`text-xs mt-2 text-center px-2 transition-colors duration-300 ${
-                      currentStep === index ? 'text-medical-primary font-semibold' : 'text-medical-text-secondary'
-                    }`}>
-                      {step}
-                    </span>
+            <Progress 
+              value={((currentStep + 1) / ONBOARDING_STEPS.length) * 100} 
+              className="w-full h-2"
+            />
+          </div>
+
+          {/* Steps Indicator */}
+          <div className="flex items-center justify-center mb-8 overflow-x-auto">
+            {ONBOARDING_STEPS.map((step, index) => (
+              <div key={step.id} className="flex items-center">
+                <div className={`flex flex-col items-center ${index <= currentStep ? 'text-blue-600' : 'text-gray-400'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                    index <= currentStep ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300'
+                  }`}>
+                    {index < currentStep ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      step.icon
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
-            
-            <Card className="border-0 shadow-medical-elevated bg-white">
-              <CardContent className="pt-8 px-8">
-                {currentStep === 0 && (
-                  <div className="space-y-6">
-                    <div className="text-center mb-8">
-                      <h2 className="text-2xl font-bold text-medical-text-primary mb-2">Personal Information</h2>
-                      <p className="text-medical-text-secondary">Let's start with your basic information</p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName" className="text-medical-text-primary font-medium">
-                          First Name <span className="text-medical-error">*</span>
-                        </Label>
-                        <Input
-                          id="firstName"
-                          value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
-                          placeholder="First name"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName" className="text-medical-text-primary font-medium">
-                          Last Name <span className="text-medical-error">*</span>
-                        </Label>
-                        <Input
-                          id="lastName"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
-                          placeholder="Last name"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="phoneNumber" className="text-medical-text-primary font-medium">
-                        Phone Number <span className="text-medical-error">*</span>
-                      </Label>
-                      <Input
-                        id="phoneNumber"
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder="(123) 456-7890"
-                        className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="address" className="text-medical-text-primary font-medium">
-                        Street Address <span className="text-medical-error">*</span>
-                      </Label>
-                      <Input
-                        id="address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="123 Main Street"
-                        className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="city" className="text-medical-text-primary font-medium">
-                          City <span className="text-medical-error">*</span>
-                        </Label>
-                        <Input
-                          id="city"
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          placeholder="City"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="state" className="text-medical-text-primary font-medium">
-                          State <span className="text-medical-error">*</span>
-                        </Label>
-                        <Input
-                          id="state"
-                          value={state}
-                          onChange={(e) => setState(e.target.value)}
-                          placeholder="State"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="zipCode" className="text-medical-text-primary font-medium">
-                          ZIP Code <span className="text-medical-error">*</span>
-                        </Label>
-                        <Input
-                          id="zipCode"
-                          value={zipCode}
-                          onChange={(e) => setZipCode(e.target.value)}
-                          placeholder="ZIP Code"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <span className="text-xs mt-1 text-center max-w-16">{step.title}</span>
+                </div>
+                {index < ONBOARDING_STEPS.length - 1 && (
+                  <div className={`w-12 h-0.5 mx-2 ${index < currentStep ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
                 )}
-                
-                {currentStep === 1 && (
-                  <div className="space-y-6">
-                    <div className="text-center mb-8">
-                      <h2 className="text-2xl font-bold text-medical-text-primary mb-2">Professional Qualifications</h2>
-                      <p className="text-medical-text-secondary">Tell us about your nursing credentials and experience</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Step Content */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {ONBOARDING_STEPS[currentStep].icon}
+                {ONBOARDING_STEPS[currentStep].title}
+              </CardTitle>
+              <p className="text-gray-600">{ONBOARDING_STEPS[currentStep].description}</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Step 1: Personal Information */}
+              {currentStep === 0 && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input
+                        id="firstName"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Enter your first name"
+                      />
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <Label htmlFor="licenseType" className="text-medical-text-primary font-medium">
-                            License Type <span className="text-medical-error">*</span>
-                          </Label>
-                          <div className="flex items-center group relative ml-2">
-                            <HelpCircle className="h-4 w-4 text-medical-text-secondary cursor-help" />
-                            <span className="absolute hidden group-hover:block bg-medical-text-primary text-white text-xs rounded p-2 -mt-14 ml-6 min-w-[200px] z-10">
-                              Select the type of nursing license you currently hold
-                            </span>
-                          </div>
+                    <div>
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input
+                        id="lastName"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Enter your last name"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="phoneNumber">Phone Number *</Label>
+                    <Input
+                      id="phoneNumber"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      value={email}
+                      type="email"
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email address"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="profilePhoto">Profile Photo</Label>
+                    <Input
+                      id="profilePhoto"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setProfilePhoto(e.target.files?.[0] || null)}
+                    />
+                    {profilePhotoUrl && (
+                      <img src={profilePhotoUrl} alt="Profile" className="mt-2 w-20 h-20 rounded-full object-cover" />
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="streetAddress">Street Address *</Label>
+                    <Input
+                      id="streetAddress"
+                      value={streetAddress}
+                      onChange={(e) => setStreetAddress(e.target.value)}
+                      placeholder="Enter your street address"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="city">City *</Label>
+                      <Input
+                        id="city"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Enter your city"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="state">State *</Label>
+                      <Select value={state} onValueChange={setState}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {stateOptions.map(state => (
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="zipCode">ZIP Code *</Label>
+                      <Input
+                        id="zipCode"
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        placeholder="Enter ZIP code"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="bio">Bio (Optional)</Label>
+                    <Textarea
+                      id="bio"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      placeholder="Tell us about yourself..."
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Professional Qualifications */}
+              {currentStep === 1 && (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Specializations *</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                      {specializationOptions.map(spec => (
+                        <div key={spec} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={spec}
+                            checked={specializations.includes(spec)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSpecializations([...specializations, spec]);
+                              } else {
+                                setSpecializations(specializations.filter(s => s !== spec));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={spec} className="text-sm">{spec}</Label>
                         </div>
-                        <Select value={licenseType} onValueChange={setLicenseType}>
-                          <SelectTrigger className="border-medical-border focus:border-medical-primary">
-                            <SelectValue placeholder="Select license type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {LICENSE_TYPES.map(type => (
-                              <SelectItem key={type} value={type}>{type}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="licenseNumber" className="text-medical-text-primary font-medium">
-                          License Number <span className="text-medical-error">*</span>
-                        </Label>
-                        <Input
-                          id="licenseNumber"
-                          value={licenseNumber}
-                          onChange={(e) => setLicenseNumber(e.target.value)}
-                          placeholder="Enter license number"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
-                        />
-                      </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="yearsExperience">Years of Experience *</Label>
+                      <Input
+                        id="yearsExperience"
+                        type="number"
+                        value={yearsExperience}
+                        onChange={(e) => setYearsExperience(e.target.value)}
+                        placeholder="Enter years of experience"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="educationLevel">Education Level *</Label>
+                      <Select value={educationLevel} onValueChange={setEducationLevel}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select education level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {educationLevelOptions.map(level => (
+                            <SelectItem key={level} value={level}>{level}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="schoolName">School Name *</Label>
+                      <Input
+                        id="schoolName"
+                        value={schoolName}
+                        onChange={(e) => setSchoolName(e.target.value)}
+                        placeholder="Enter school name"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="graduationYear">Graduation Year *</Label>
+                      <Input
+                        id="graduationYear"
+                        type="number"
+                        value={graduationYear}
+                        onChange={(e) => setGraduationYear(e.target.value)}
+                        placeholder="Enter graduation year"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="resume">Resume *</Label>
+                    <Input
+                      id="resume"
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => setResume(e.target.files?.[0] || null)}
+                    />
+                    {resumeUrl && (
+                      <p className="mt-2 text-sm text-green-600">Resume uploaded successfully</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Licenses & Certifications */}
+              {currentStep === 2 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">License Information</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="licenseType">License Type *</Label>
+                      <Select value={licenseType} onValueChange={setLicenseType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select license type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {licenseTypeOptions.map(type => (
+                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="licenseNumber">License Number *</Label>
+                      <Input
+                        id="licenseNumber"
+                        value={licenseNumber}
+                        onChange={(e) => setLicenseNumber(e.target.value)}
+                        placeholder="Enter license number"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="issuingState">Issuing State *</Label>
+                      <Select value={issuingState} onValueChange={setIssuingState}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select issuing state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {stateOptions.map(state => (
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="licenseExpiration">Expiration Date *</Label>
+                      <Input
+                        id="licenseExpiration"
+                        type="date"
+                        value={licenseExpiration}
+                        onChange={(e) => setLicenseExpiration(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">Certifications (Optional)</h3>
+                      <Button type="button" variant="outline" onClick={addCertification}>
+                        Add Certification
+                      </Button>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="licenseState" className="text-medical-text-primary font-medium">
-                          Issuing State <span className="text-medical-error">*</span>
-                        </Label>
-                        <Input
-                          id="licenseState"
-                          value={licenseState}
-                          onChange={(e) => setLicenseState(e.target.value)}
-                          placeholder="State"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <AmericanDateInput
-                          id="licenseExpiryDate"
-                          label="Expiration Date"
-                          value={licenseExpiryDate}
-                          onChange={setLicenseExpiryDate}
-                          required={true}
-                          error={licenseExpiryDate && !validateLicenseExpiry(licenseExpiryDate) ? 
-                            "License must be valid for at least 30 days from today" : undefined}
-                        />
-                        <div className="flex items-center group relative ml-2 mt-1">
-                          <HelpCircle className="h-4 w-4 text-medical-text-secondary cursor-help" />
-                          <span className="absolute hidden group-hover:block bg-medical-text-primary text-white text-xs rounded p-2 -mt-14 ml-6 min-w-[200px] z-10">
-                            License must be valid for at least 30 days from today
-                          </span>
+                    {certifications.map((cert, index) => (
+                      <div key={index} className="p-4 border rounded-lg space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Input
+                            placeholder="Certification name"
+                            value={cert.name}
+                            onChange={(e) => updateCertification(index, 'name', e.target.value)}
+                          />
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => removeCertification(index)}
+                          >
+                            Remove
+                          </Button>
                         </div>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="specialty" className="text-medical-text-primary font-medium">
-                          Primary Specialty <span className="text-medical-error">*</span>
-                        </Label>
-                        <Select value={specialty} onValueChange={setSpecialty}>
-                          <SelectTrigger className="border-medical-border focus:border-medical-primary">
-                            <SelectValue placeholder="Select specialty" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {SPECIALTIES.map(s => (
-                              <SelectItem key={s} value={s}>{s}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <p className="text-xs text-medical-text-secondary">
-                          This will be displayed as your primary specialty. You can add additional specialties later.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="yearsOfExperience" className="text-medical-text-primary font-medium">
-                          Years of Experience
-                        </Label>
                         <Input
-                          id="yearsOfExperience"
-                          type="number"
-                          min="0"
-                          max="50"
-                          value={yearsOfExperience}
-                          onChange={(e) => setYearsOfExperience(e.target.value)}
-                          placeholder="Years of experience"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => updateCertification(index, 'file', e.target.files?.[0] || null)}
                         />
                       </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center">
-                        <Label className="text-medical-text-primary font-medium">Professional Certifications</Label>
-                        <div className="flex items-center group relative ml-2">
-                          <HelpCircle className="h-4 w-4 text-medical-text-secondary cursor-help" />
-                          <span className="absolute hidden group-hover:block bg-medical-text-primary text-white text-xs rounded p-2 -mt-14 ml-6 min-w-[200px] z-10">
-                            Select all certifications you currently hold
-                          </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Employment Preferences */}
+              {currentStep === 3 && (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Availability Types *</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {availabilityOptions.map(type => (
+                        <div key={type} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={type}
+                            checked={availabilityTypes.includes(type)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setAvailabilityTypes([...availabilityTypes, type]);
+                              } else {
+                                setAvailabilityTypes(availabilityTypes.filter(t => t !== type));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={type} className="text-sm">{type}</Label>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {COMMON_CERTIFICATIONS.map(cert => (
-                          <div key={cert} className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-primary/5 transition-colors">
-                            <Checkbox 
-                              id={`cert-${cert}`}
-                              checked={certifications.includes(cert)}
-                              onCheckedChange={() => toggleCertification(cert)}
-                              className="border-medical-border"
-                            />
-                            <Label 
-                              htmlFor={`cert-${cert}`}
-                              className="text-sm cursor-pointer flex-1 text-medical-text-primary"
-                            >
-                              {cert}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="flex space-x-2">
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Preferred Shifts *</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {shiftOptions.map(shift => (
+                        <div key={shift} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={shift}
+                            checked={preferredShifts.includes(shift)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setPreferredShifts([...preferredShifts, shift]);
+                              } else {
+                                setPreferredShifts(preferredShifts.filter(s => s !== shift));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={shift} className="text-sm">{shift}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="travelRadius">Travel Radius (miles) *</Label>
+                      <Input
+                        id="travelRadius"
+                        type="number"
+                        value={travelRadius}
+                        onChange={(e) => setTravelRadius(e.target.value)}
+                        placeholder="Enter travel radius"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="desiredHourlyRate">Desired Hourly Rate ($) *</Label>
+                      <Input
+                        id="desiredHourlyRate"
+                        type="number"
+                        step="0.01"
+                        value={desiredHourlyRate}
+                        onChange={(e) => setDesiredHourlyRate(e.target.value)}
+                        placeholder="Enter desired hourly rate"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 5: Additional Documents */}
+              {currentStep === 4 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Additional Documents (Optional)</h3>
+                    <Button type="button" variant="outline" onClick={addAdditionalDoc}>
+                      Add Document
+                    </Button>
+                  </div>
+                  
+                  <p className="text-gray-600">
+                    Upload any additional documents such as malpractice insurance, CPR certifications, or other relevant credentials.
+                  </p>
+
+                  {additionalDocs.map((doc, index) => (
+                    <div key={index} className="p-4 border rounded-lg space-y-2">
+                      <div className="flex items-center justify-between">
                         <Input
-                          value={customCertification}
-                          onChange={(e) => setCustomCertification(e.target.value)}
-                          placeholder="Add another certification"
-                          className="flex-grow border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
+                          placeholder="Document name (e.g., Malpractice Insurance)"
+                          value={doc.name}
+                          onChange={(e) => updateAdditionalDoc(index, 'name', e.target.value)}
                         />
                         <Button 
                           type="button" 
-                          onClick={addCustomCertification}
-                          disabled={!customCertification}
-                          variant="outline"
-                          className="border-medical-primary text-medical-primary hover:bg-medical-primary hover:text-white"
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => removeAdditionalDoc(index)}
                         >
-                          Add
+                          Remove
                         </Button>
                       </div>
-                      
-                      {certifications.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {certifications.map(cert => (
-                            <div 
-                              key={cert}
-                              className="bg-medical-primary/10 text-medical-primary rounded-full px-3 py-1 text-sm flex items-center border border-medical-primary/20"
-                            >
-                              {cert}
-                              <Button 
-                                type="button"
-                                variant="ghost"
-                                className="h-5 w-5 p-0 ml-2 hover:bg-medical-primary/20"
-                                onClick={() => toggleCertification(cert)}
-                              >
-                                ×
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="p-4 bg-medical-primary/5 border border-medical-primary/20 rounded-xl">
-                      <div className="flex">
-                        <Shield className="h-5 w-5 text-medical-primary mr-3 flex-shrink-0 mt-0.5" />
-                        <div className="text-sm">
-                          <p className="font-semibold text-medical-primary mb-1">Verification Process</p>
-                          <p className="text-medical-text-secondary">
-                            Your license and certifications will be verified as part of our onboarding process. 
-                            You will be able to upload supporting documents in the next step.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {currentStep === 2 && (
-                  <div className="space-y-6">
-                    <div className="text-center mb-8">
-                      <h2 className="text-2xl font-bold text-medical-text-primary mb-2">Work Preferences</h2>
-                      <p className="text-medical-text-secondary">Tell us about your availability and work preferences</p>
-                    </div>
-                    
-                    <AmericanDateInput
-                      id="availabilityStartDate"
-                      label="Availability Start Date"
-                      value={availabilityStartDate}
-                      onChange={setAvailabilityStartDate}
-                    />
-                    
-                    <div className="space-y-4">
-                      <Label className="text-medical-text-primary font-medium">
-                        Preferred Shifts <span className="text-medical-error">*</span>
-                      </Label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {SHIFT_TYPES.map(shift => (
-                          <Button
-                            key={shift}
-                            type="button"
-                            variant={preferredShifts.includes(shift) ? "default" : "outline"}
-                            className={`transition-all ${
-                              preferredShifts.includes(shift) 
-                                ? "bg-medical-primary hover:bg-medical-primary/90 text-white shadow-medical-soft" 
-                                : "border-medical-border hover:border-medical-primary hover:bg-medical-primary/5"
-                            }`}
-                            onClick={() => toggleShift(shift)}
-                          >
-                            {shift}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="travelDistance" className="text-medical-text-primary font-medium">
-                          Maximum Travel Distance (miles)
-                        </Label>
-                        <Input
-                          id="travelDistance"
-                          type="number"
-                          min="0"
-                          value={travelDistance}
-                          onChange={(e) => setTravelDistance(e.target.value)}
-                          placeholder="Distance willing to travel"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                        />
-                        <p className="text-xs text-medical-text-secondary">How far are you willing to travel for on-site work?</p>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="hourlyRate" className="text-medical-text-primary font-medium">
-                          Desired Hourly Rate ($)
-                        </Label>
-                        <Input
-                          id="hourlyRate"
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={hourlyRate}
-                          onChange={(e) => setHourlyRate(e.target.value)}
-                          placeholder="Your desired hourly rate"
-                          className="border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="bio" className="text-medical-text-primary font-medium">
-                        Professional Bio
-                      </Label>
-                      <Textarea
-                        id="bio"
-                        value={bio}
-                        onChange={(e) => setBio(e.target.value)}
-                        placeholder="Tell potential clients about your experience, specialties, and nursing philosophy..."
-                        className="min-h-[120px] border-medical-border focus:border-medical-primary focus:ring-medical-primary/20"
+                      <Input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => updateAdditionalDoc(index, 'file', e.target.files?.[0] || null)}
                       />
-                      <p className="text-xs text-medical-text-secondary">This will be visible on your public profile</p>
                     </div>
+                  ))}
 
-                    <div className="p-4 bg-medical-primary/5 border border-medical-primary/20 rounded-xl">
-                      <div className="flex">
-                        <Shield className="h-5 w-5 text-medical-primary mr-3 flex-shrink-0 mt-0.5" />
-                        <div className="text-sm">
-                          <p className="font-semibold text-medical-primary mb-1">Work Location</p>
-                          <p className="text-medical-text-secondary">
-                            All nursing positions are on-site at client locations. This ensures the highest quality of personalized care for our clients.
-                          </p>
-                        </div>
-                      </div>
+                  {additionalDocs.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>No additional documents added yet.</p>
+                      <p className="text-sm">Click "Add Document" to upload additional credentials.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Step 6: Review & Submit */}
+              {currentStep === 5 && (
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold">Review Your Application</h3>
+                  
+                  {/* Personal Information Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Personal Information</h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <p><strong>Name:</strong> {firstName} {lastName}</p>
+                      <p><strong>Phone:</strong> {phoneNumber}</p>
+                      <p><strong>Address:</strong> {streetAddress}, {city}, {state} {zipCode}</p>
                     </div>
                   </div>
-                )}
-                
-                {currentStep === 3 && (
-                  <div className="space-y-6">
-                    <div className="text-center mb-8">
-                      <h2 className="text-2xl font-bold text-medical-text-primary mb-2">Documents & Verification</h2>
-                      <p className="text-medical-text-secondary">Upload your professional documents for verification</p>
-                    </div>
-                    
-                    <div className="p-4 bg-medical-warning/10 border border-medical-warning/20 rounded-xl mb-6">
-                      <div className="flex">
-                        <HelpCircle className="h-5 w-5 text-medical-warning mr-3 flex-shrink-0 mt-0.5" />
-                        <div className="text-sm">
-                          <p className="font-semibold text-medical-warning mb-1">Important Information</p>
-                          <p className="text-medical-text-secondary">
-                            All documents are securely stored and will only be used for verification purposes. 
-                            Your qualifications will be verified before you can start accepting assignments.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Resume Upload - Now Required */}
-                    <div className="border-2 border-medical-border rounded-xl p-6 bg-medical-primary/5">
-                      <h3 className="font-semibold text-medical-text-primary mb-2 flex items-center">
-                        <Shield className="h-5 w-5 mr-2 text-medical-primary" />
-                        Resume or CV <span className="text-medical-error ml-1">*</span>
-                      </h3>
-                      <p className="text-sm text-medical-text-secondary mb-4">Upload your current resume or CV (Required)</p>
-                      
-                      <div className="flex items-center justify-center border-2 border-dashed border-medical-border rounded-lg p-8 bg-white hover:border-medical-primary transition-colors">
-                        <div className="text-center">
-                          <Upload className="h-12 w-12 text-medical-text-secondary mx-auto mb-3" />
-                          
-                          {resumeFileName ? (
-                            <div>
-                              <p className="text-medical-primary text-sm font-medium mb-1">
-                                {resumeFileName}
-                              </p>
-                              <p className="text-xs text-medical-success mb-2 flex items-center justify-center">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                File selected
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="text-sm text-medical-text-secondary mb-3">
-                              Drag & drop your resume or click to browse
-                            </p>
-                          )}
-                          
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => document.getElementById('resumeFileUpload')?.click()}
-                            className="border-medical-primary text-medical-primary hover:bg-medical-primary hover:text-white"
-                          >
-                            {resumeFileName ? 'Replace File' : 'Browse Files'}
-                          </Button>
-                          <input
-                            type="file"
-                            id="resumeFileUpload"
-                            className="hidden"
-                            accept=".pdf,.doc,.docx"
-                            onChange={handleResumeUpload}
-                          />
-                          <p className="text-xs text-medical-text-secondary mt-2">PDF, DOC, DOCX (max 10MB)</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Certification Documents Upload - Optional */}
-                    <div className="border-2 border-medical-border rounded-xl p-6 bg-white">
-                      <h3 className="font-semibold text-medical-text-primary mb-2">Certification Documents</h3>
-                      <p className="text-sm text-medical-text-secondary mb-4">Upload copies of your professional certifications (Optional)</p>
-                      
-                      <div className="flex items-center justify-center border-2 border-dashed border-medical-border rounded-lg p-8 hover:border-medical-primary transition-colors">
-                        <div className="text-center">
-                          <Upload className="h-12 w-12 text-medical-text-secondary mx-auto mb-3" />
-                          
-                          {certFileName ? (
-                            <div>
-                              <p className="text-medical-primary text-sm font-medium mb-1">
-                                {certFileName}
-                              </p>
-                              <p className="text-xs text-medical-success mb-2 flex items-center justify-center">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                File selected
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="text-sm text-medical-text-secondary mb-3">
-                              Drag & drop your certification documents or click to browse
-                            </p>
-                          )}
-                          
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => document.getElementById('certFileUpload')?.click()}
-                            className="border-medical-primary text-medical-primary hover:bg-medical-primary hover:text-white"
-                          >
-                            {certFileName ? 'Replace File' : 'Browse Files'}
-                          </Button>
-                          <input
-                            type="file"
-                            id="certFileUpload"
-                            className="hidden"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={handleCertUpload}
-                          />
-                          <p className="text-xs text-medical-text-secondary mt-2">PDF, JPG, PNG (max 10MB)</p>
-                        </div>
-                      </div>
+
+                  {/* Professional Information Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Professional Qualifications</h4>
+                    <div className="text-sm space-y-1">
+                      <p><strong>Specializations:</strong> {specializations.join(', ')}</p>
+                      <p><strong>Experience:</strong> {yearsExperience} years</p>
+                      <p><strong>Education:</strong> {educationLevel} from {schoolName} ({graduationYear})</p>
                     </div>
                   </div>
-                )}
 
-                {/* Step 4: Legal Agreements */}
-                {currentStep === 4 && (
-                  <div className="space-y-6">
-                    <ClickwrapAgreement
-                      userType="nurse"
-                      onAllAccepted={setLegalAgreementsAccepted}
-                    />
+                  {/* License Information Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">License Information</h4>
+                    <div className="text-sm">
+                      <p><strong>License:</strong> {licenseType} #{licenseNumber}</p>
+                      <p><strong>Issued by:</strong> {issuingState}</p>
+                      <p><strong>Expires:</strong> {licenseExpiration}</p>
+                    </div>
                   </div>
-                )}
-                
-                {currentStep === 5 && (
-                  <div className="space-y-6">
-                    <div className="text-center mb-8">
-                      <h2 className="text-2xl font-bold text-medical-text-primary mb-2">Review & Submit</h2>
-                      <p className="text-medical-text-secondary">Please review your information before final submission</p>
-                    </div>
-                    
-                    <div className="p-6 bg-medical-primary/5 border border-medical-primary/20 rounded-xl mb-6">
-                      <div className="flex">
-                        <CheckCircle className="h-5 w-5 text-medical-primary mr-3 flex-shrink-0 mt-0.5" />
-                        <div className="text-sm">
-                          <p className="font-semibold text-medical-primary mb-1">Almost there!</p>
-                          <p className="text-medical-text-secondary">
-                            Please review your information before final submission. You can go back to previous steps to make changes if needed.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-6">
-                      {/* Personal Information Summary */}
-                      <div className="border border-medical-border rounded-xl overflow-hidden">
-                        <div className="bg-medical-primary/5 px-6 py-4 border-b border-medical-border">
-                          <h3 className="font-semibold text-medical-text-primary">Personal Information</h3>
-                        </div>
-                        <div className="p-6">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Name</p>
-                              <p className="font-medium text-medical-text-primary">{firstName} {lastName}</p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Phone</p>
-                              <p className="font-medium text-medical-text-primary">{phoneNumber || 'Not provided'}</p>
-                            </div>
-                            <div className="col-span-2">
-                              <p className="text-sm text-medical-text-secondary">Address</p>
-                              <p className="font-medium text-medical-text-primary">
-                                {address ? `${address}, ${city}, ${state} ${zipCode}` : 'Not provided'}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* Credentials Summary */}
-                      <div className="border border-medical-border rounded-xl overflow-hidden">
-                        <div className="bg-medical-primary/5 px-6 py-4 border-b border-medical-border">
-                          <h3 className="font-semibold text-medical-text-primary">Credentials & Experience</h3>
-                        </div>
-                        <div className="p-6">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">License Type</p>
-                              <p className="font-medium text-medical-text-primary">{licenseType || 'Not provided'}</p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">License Number</p>
-                              <p className="font-medium text-medical-text-primary">{licenseNumber || 'Not provided'}</p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Expiration Date</p>
-                              <p className="font-medium text-medical-text-primary">
-                                {licenseExpiryDate ? DateUtils.isoToAmerican(licenseExpiryDate) : 'Not provided'}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Primary Specialty</p>
-                              <p className="font-medium text-medical-text-primary">{specialty || 'Not provided'}</p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Experience</p>
-                              <p className="font-medium text-medical-text-primary">{yearsOfExperience ? `${yearsOfExperience} years` : 'Not provided'}</p>
-                            </div>
-                            <div className="col-span-2">
-                              <p className="text-sm text-medical-text-secondary">Certifications</p>
-                              <p className="font-medium text-medical-text-primary">
-                                {certifications.length > 0 
-                                  ? certifications.join(', ') 
-                                  : 'None provided'}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Documents Summary */}
-                      <div className="border border-medical-border rounded-xl overflow-hidden">
-                        <div className="bg-medical-primary/5 px-6 py-4 border-b border-medical-border">
-                          <h3 className="font-semibold text-medical-text-primary">Documents</h3>
-                        </div>
-                        <div className="p-6">
-                          <div className="space-y-3">
-                            <div className="flex items-center">
-                              <div className={`h-5 w-5 rounded-full ${hasResumeUploaded || resumeFile ? 'bg-medical-success' : 'bg-medical-error'} mr-3`}></div>
-                              <p className="font-medium text-medical-text-primary">Resume/CV: {hasResumeUploaded || resumeFile ? 'Uploaded' : 'Required - Not uploaded'}</p>
-                            </div>
-                            <div className="flex items-center">
-                              <div className={`h-5 w-5 rounded-full ${hasCertificationsUploaded || certFile ? 'bg-medical-success' : 'bg-medical-neutral-300'} mr-3`}></div>
-                              <p className="font-medium text-medical-text-primary">Certifications: {hasCertificationsUploaded || certFile ? 'Uploaded' : 'Not uploaded (Optional)'}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Work Preferences Summary */}
-                      <div className="border border-medical-border rounded-xl overflow-hidden">
-                        <div className="bg-medical-primary/5 px-6 py-4 border-b border-medical-border">
-                          <h3 className="font-semibold text-medical-text-primary">Work Preferences</h3>
-                        </div>
-                        <div className="p-6">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Available From</p>
-                              <p className="font-medium text-medical-text-primary">
-                                {availabilityStartDate ? DateUtils.isoToAmerican(availabilityStartDate) : 'Not specified'}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Work Location</p>
-                              <p className="font-medium text-medical-text-primary">On-site only</p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Desired Hourly Rate</p>
-                              <p className="font-medium text-medical-text-primary">{hourlyRate ? `$${hourlyRate}/hour` : 'Not specified'}</p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-medical-text-secondary">Travel Distance</p>
-                              <p className="font-medium text-medical-text-primary">{travelDistance ? `${travelDistance} miles` : 'Not specified'}</p>
-                            </div>
-                            <div className="col-span-2">
-                              <p className="text-sm text-medical-text-secondary">Preferred Shifts</p>
-                              <p className="font-medium text-medical-text-primary">
-                                {preferredShifts.length > 0 
-                                  ? preferredShifts.join(', ') 
-                                  : 'None selected'}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                  {/* Employment Preferences Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Employment Preferences</h4>
+                    <div className="text-sm space-y-1">
+                      <p><strong>Availability:</strong> {availabilityTypes.join(', ')}</p>
+                      <p><strong>Preferred Shifts:</strong> {preferredShifts.join(', ')}</p>
+                      <p><strong>Travel Radius:</strong> {travelRadius} miles</p>
+                      <p><strong>Desired Rate:</strong> ${desiredHourlyRate}/hour</p>
                     </div>
-                    
-                    <div className="space-y-4 pt-6 border-t border-medical-border">
-                      <div className="flex items-start space-x-3 p-4 bg-medical-warning/10 border border-medical-warning/20 rounded-xl">
-                        <Checkbox 
-                          id="terms"
-                          checked={termsAccepted}
-                          onCheckedChange={(checked) => {
-                            setTermsAccepted(checked === true);
-                          }}
-                          className="border-medical-border mt-1"
-                        />
-                        <Label htmlFor="terms" className="text-sm text-medical-text-primary leading-relaxed">
-                          I confirm that all information provided is accurate and complete. I understand that my profile
-                          will need to be reviewed and approved by our team before I can start accepting assignments. 
-                          I acknowledge that providing false information may result in termination of my account.
+                  </div>
+
+                  {/* Terms and Conditions */}
+                  <div className="border-t pt-6">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="agreement"
+                        checked={agreementAccepted}
+                        onCheckedChange={setAgreementAccepted}
+                      />
+                      <div className="text-sm">
+                        <Label htmlFor="agreement" className="cursor-pointer">
+                          I agree to the <a href="/terms" className="text-blue-600 hover:underline" target="_blank">Terms of Service</a> and{' '}
+                          <a href="/privacy" className="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>. 
+                          I understand that my application will be reviewed by administrators and I will be notified of the approval status.
                         </Label>
                       </div>
                     </div>
                   </div>
-                )}
-              </CardContent>
-              
-              <CardFooter className="flex justify-between pt-6 px-8 pb-8 bg-medical-neutral-50 border-t border-medical-border">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={currentStep === 0 ? () => navigate('/dashboard') : prevStep}
-                  disabled={submitting}
-                  className="border-medical-border hover:border-medical-primary hover:bg-medical-primary/5"
-                >
-                  {currentStep === 0 ? 'Cancel' : 'Previous'}
-                </Button>
-                
-                {currentStep < ONBOARDING_STEPS.length - 1 ? (
-                  <Button 
-                    type="button" 
-                    onClick={nextStep}
-                    disabled={submitting}
-                    className="bg-gradient-to-r from-medical-primary to-medical-accent hover:shadow-medical-elevated text-white min-w-[120px]"
-                  >
-                    {submitting ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent border-white"></div>
-                        Saving...
-                      </>
-                    ) : (
-                      'Continue'
-                    )}
-                  </Button>
-                ) : (
-                  <Button 
-                    type="button" 
-                    onClick={handleSubmit}
-                    disabled={submitting || !termsAccepted}
-                    className="bg-gradient-to-r from-medical-success to-medical-accent hover:shadow-medical-elevated text-white min-w-[160px]"
-                  >
-                    {submitting ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent border-white"></div>
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Complete Profile
-                      </>
-                    )}
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
-            
-            <div className="text-center mt-8">
-              <p className="text-sm text-medical-text-secondary">
-                Need help with your profile setup? 
-                <button 
-                  onClick={() => navigate('/contact')}
-                  className="text-medical-primary hover:text-medical-primary/80 ml-1 font-medium transition-colors"
-                >
-                  Contact our support team
-                </button>
-              </p>
-            </div>
+
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-blue-800 mb-2">What happens next?</h4>
+                    <div className="text-sm text-blue-700 space-y-1">
+                      <p>1. Your application will be reviewed by our administrators</p>
+                      <p>2. We'll verify your license and credentials</p>
+                      <p>3. You'll receive an email notification about your approval status</p>
+                      <p>4. Once approved, you can start browsing and applying for jobs</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </Button>
+
+            <Button
+              type="button"
+              onClick={nextStep}
+              disabled={submitting}
+              className="flex items-center gap-2"
+            >
+              {submitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  {currentStep === ONBOARDING_STEPS.length - 1 ? 'Submit Application' : 'Next'}
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

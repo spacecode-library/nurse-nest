@@ -41,7 +41,7 @@ import {
   Minus
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { getCurrentUser } from '@/supabase/auth/authService';
+import { getCurrentUser, approveNurse, denyNurse } from '@/supabase/auth/authService';
 import { checkAdminStatus } from '@/supabase/api/adminService';
 import {
   getPlatformMetrics,
@@ -144,27 +144,72 @@ export default function EnhancedAdminPortal() {
 
   const loadInitialData = async () => {
     try {
-      // Load platform metrics
-      const { data: metrics } = await getPlatformMetrics();
-      setPlatformMetrics(metrics);
+      // Load platform metrics if available
+      try {
+        const { data: metrics } = await getPlatformMetrics();
+        setPlatformMetrics(metrics);
+      } catch (error) {
+        console.log('Platform metrics not available, using basic data');
+        // Create basic metrics from user data
+        setPlatformMetrics({
+          totalRevenue: 0,
+          revenueGrowth: 0,
+          totalUsers: 0,
+          userGrowth: 0,
+          activeJobs: 0,
+          jobGrowth: 0,
+          completedJobs: 0,
+          jobCompletionRate: 0,
+          averageRating: 0,
+          totalDisputes: 0,
+          resolvedDisputes: 0,
+          disputeResolutionRate: 0,
+          topPerformingNurses: [],
+          recentActivity: []
+        });
+      }
 
-      // Load activity feed
-      const { data: activities } = await getPlatformActivityFeed(20);
-      setActivityFeed(activities);
+      // Load activity feed if available
+      try {
+        const { data: activities } = await getPlatformActivityFeed(20);
+        setActivityFeed(activities || []);
+      } catch (error) {
+        console.log('Activity feed not available');
+        setActivityFeed([]);
+      }
 
       // Load initial users
       await loadUsers();
       
-      // Load disputes
-      await loadDisputes();
+      // Load disputes if available
+      try {
+        await loadDisputes();
+      } catch (error) {
+        console.log('Disputes not available');
+        setDisputes([]);
+      }
       
-      // Load jobs data
-      await loadJobs();
+      // Load jobs data if available
+      try {
+        await loadJobs();
+      } catch (error) {
+        console.log('Jobs data not available');
+        setJobs([]);
+        setJobStatistics({
+          totalJobs: 0,
+          activeJobs: 0,
+          completedJobs: 0,
+          averageJobValue: 0,
+          jobCompletionRate: 0,
+          topClients: [],
+          recentJobs: []
+        });
+      }
     } catch (error) {
       console.error('Error loading initial data:', error);
       toast({
         title: "Error",
-        description: "Failed to load dashboard data",
+        description: "Failed to load some dashboard data",
         variant: "destructive"
       });
     }
@@ -190,6 +235,7 @@ export default function EnhancedAdminPortal() {
       setDisputes(data || []);
     } catch (error) {
       console.error('Error loading disputes:', error);
+      setDisputes([]);
     }
   };
 
@@ -204,6 +250,7 @@ export default function EnhancedAdminPortal() {
       setJobs(jobsData || []);
     } catch (error) {
       console.error('Error loading jobs:', error);
+      setJobs([]);
     }
   };
 
@@ -245,12 +292,25 @@ export default function EnhancedAdminPortal() {
       
       switch (view) {
         case 'nurse-detail':
-          const { data: nurseData } = await getDetailedNurseProfile(itemId);
-          setDetailData(nurseData);
+          try {
+            const { data: nurseData } = await getDetailedNurseProfile(itemId);
+            setDetailData(nurseData);
+          } catch (error) {
+            console.error('Error loading nurse detail:', error);
+            // Fallback to basic user data
+            const user = users.find(u => u.user_id === itemId || u.profile_data?.id === itemId);
+            setDetailData(user);
+          }
           break;
         case 'client-detail':
-          const { data: clientData } = await getDetailedClientProfile(itemId);
-          setDetailData(clientData);
+          try {
+            const { data: clientData } = await getDetailedClientProfile(itemId);
+            setDetailData(clientData);
+          } catch (error) {
+            console.error('Error loading client detail:', error);
+            const user = users.find(u => u.user_id === itemId || u.profile_data?.id === itemId);
+            setDetailData(user);
+          }
           break;
         case 'dispute-detail':
           const { data: disputeData } = await getTimecardDisputeDetails(itemId);
@@ -276,13 +336,15 @@ export default function EnhancedAdminPortal() {
   const handleNurseApproval = async (nurseId: string, approve: boolean, notes?: string) => {
     try {
       if (approve) {
-        await approveNurseRegistration(nurseId, notes);
+        // Use our authService function
+        await approveNurse(nurseId);
         toast({
           title: "Nurse Approved",
           description: "Nurse registration has been approved successfully.",
         });
       } else {
-        await denyNurseRegistration(nurseId, notes || 'Registration denied by admin');
+        // Use our authService function
+        await denyNurse(nurseId, notes || 'Registration denied by admin');
         toast({
           title: "Nurse Denied",
           description: "Nurse registration has been denied.",
@@ -429,7 +491,14 @@ export default function EnhancedAdminPortal() {
                 Dashboard
               </TabsTrigger>
               <TabsTrigger value="nurses" className="rounded-md font-medium transition-all">
-                Nurses
+                <span className="flex items-center space-x-2">
+                  <span>Nurses</span>
+                  {users.filter(u => u.user_type === 'nurse' && u.account_status === 'pending' && u.profile_data?.onboarding_completed).length > 0 && (
+                    <Badge className="bg-orange-600 text-white text-xs animate-pulse">
+                      {users.filter(u => u.user_type === 'nurse' && u.account_status === 'pending' && u.profile_data?.onboarding_completed).length}
+                    </Badge>
+                  )}
+                </span>
               </TabsTrigger>
               <TabsTrigger value="clients" className="rounded-md font-medium transition-all">
                 Clients
@@ -453,12 +522,21 @@ export default function EnhancedAdminPortal() {
             </TabsList>
 
             <TabsContent value="dashboard">
-              <PlatformDashboard 
-                metrics={platformMetrics}
-                activityFeed={activityFeed}
-                onNavigate={navigateToDetail}
-                onRefresh={loadInitialData}
-              />
+              {platformMetrics && PlatformDashboard ? (
+                <PlatformDashboard 
+                  metrics={platformMetrics}
+                  activityFeed={activityFeed}
+                  onNavigate={navigateToDetail}
+                  onRefresh={loadInitialData}
+                />
+              ) : (
+                <BasicDashboard 
+                  users={users}
+                  disputes={disputes}
+                  onNavigate={navigateToDetail}
+                  onRefresh={loadInitialData}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="nurses">
@@ -473,40 +551,65 @@ export default function EnhancedAdminPortal() {
             </TabsContent>
 
             <TabsContent value="clients">
-              <ClientManagement 
-                users={users.filter(u => u.user_type === 'client')}
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                onViewDetails={(clientId, name) => navigateToDetail('client-detail', clientId, `Client: ${name}`)}
-                onRefresh={loadUsers}
-              />
+              {ClientManagement ? (
+                <ClientManagement 
+                  users={users.filter(u => u.user_type === 'client')}
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  onViewDetails={(clientId, name) => navigateToDetail('client-detail', clientId, `Client: ${name}`)}
+                  onRefresh={loadUsers}
+                />
+              ) : (
+                <BasicClientManagement 
+                  users={users.filter(u => u.user_type === 'client')}
+                  onRefresh={loadUsers}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="jobs">
-              <JobsManagement 
-                jobs={jobs}
-                statistics={jobStatistics}
-                searchTerm={jobSearchTerm}
-                onSearchChange={setJobSearchTerm}
-                onViewDetails={(jobId, jobCode) => navigateToDetail('job-detail', jobId, `Job: ${jobCode}`)}
-                onRefresh={loadJobs}
-              />
+              {JobsManagement ? (
+                <JobsManagement 
+                  jobs={jobs}
+                  statistics={jobStatistics}
+                  searchTerm={jobSearchTerm}
+                  onSearchChange={setJobSearchTerm}
+                  onViewDetails={(jobId, jobCode) => navigateToDetail('job-detail', jobId, `Job: ${jobCode}`)}
+                  onRefresh={loadJobs}
+                />
+              ) : (
+                <BasicJobsManagement onRefresh={loadJobs} />
+              )}
             </TabsContent>
 
             <TabsContent value="disputes">
-              <DisputeResolution 
-                disputes={disputes}
-                onViewDetails={(disputeId) => navigateToDetail('dispute-detail', disputeId, 'Dispute Resolution')}
-                onResolve={handleDisputeResolution}
-                onRefresh={loadDisputes}
-              />
+              {DisputeResolution ? (
+                <DisputeResolution 
+                  disputes={disputes}
+                  onViewDetails={(disputeId) => navigateToDetail('dispute-detail', disputeId, 'Dispute Resolution')}
+                  onResolve={handleDisputeResolution}
+                  onRefresh={loadDisputes}
+                />
+              ) : (
+                <BasicDisputeManagement 
+                  disputes={disputes}
+                  onRefresh={loadDisputes}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="analytics">
-              <AnalyticsHub 
-                metrics={platformMetrics}
-                onRefresh={loadInitialData}
-              />
+              {AnalyticsHub ? (
+                <AnalyticsHub 
+                  metrics={platformMetrics}
+                  onRefresh={loadInitialData}
+                />
+              ) : (
+                <BasicAnalytics 
+                  users={users}
+                  disputes={disputes}
+                />
+              )}
             </TabsContent>
           </Tabs>
         ) : (
@@ -535,7 +638,7 @@ export default function EnhancedAdminPortal() {
               />
             )}
 
-            {selectedView === 'job-detail' && detailData && (
+            {selectedView === 'job-detail' && detailData && JobDetailView && (
               <JobDetailView 
                 job={detailData}
                 onRefresh={() => loadDetailData('job-detail', selectedItemId)}
@@ -548,27 +651,271 @@ export default function EnhancedAdminPortal() {
   );
 }
 
-// Individual detail view components
+// Basic Dashboard Component (fallback)
+function BasicDashboard({ 
+  users, 
+  disputes, 
+  onNavigate, 
+  onRefresh 
+}: { 
+  users: AdminUser[]; 
+  disputes: any[]; 
+  onNavigate: (view: string, itemId: string, label: string) => void;
+  onRefresh: () => void;
+}) {
+  const pendingNurses = users.filter(u => u.user_type === 'nurse' && u.account_status === 'pending' && u.profile_data?.onboarding_completed);
+  const activeNurses = users.filter(u => u.user_type === 'nurse' && u.account_status === 'active');
+  const totalClients = users.filter(u => u.user_type === 'client');
+  const pendingDisputes = disputes.filter(d => d.status === 'pending');
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-800">Admin Dashboard</h2>
+          <p className="text-slate-600">Platform overview and key metrics</p>
+        </div>
+        <Button onClick={onRefresh} variant="outline">
+          <Activity className="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-medium">Total Nurses</p>
+                <h3 className="text-3xl font-bold">{users.filter(u => u.user_type === 'nurse').length}</h3>
+              </div>
+              <Users className="h-8 w-8 text-blue-200" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-green-100 text-sm font-medium">Total Clients</p>
+                <h3 className="text-3xl font-bold">{totalClients.length}</h3>
+              </div>
+              <Building2 className="h-8 w-8 text-green-200" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-orange-100 text-sm font-medium">Pending Approvals</p>
+                <h3 className="text-3xl font-bold">{pendingNurses.length}</h3>
+              </div>
+              <Clock className="h-8 w-8 text-orange-200" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-red-600 text-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-red-100 text-sm font-medium">Active Disputes</p>
+                <h3 className="text-3xl font-bold">{pendingDisputes.length}</h3>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-red-200" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Pending Approvals */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Clock className="h-5 w-5 mr-2 text-orange-600" />
+              Pending Nurse Approvals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {pendingNurses.length > 0 ? (
+              <div className="space-y-3">
+                {pendingNurses.slice(0, 5).map((nurse) => (
+                  <div key={nurse.user_id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                    <div>
+                      <p className="font-medium">{nurse.profile_data?.first_name} {nurse.profile_data?.last_name}</p>
+                      <p className="text-sm text-gray-600">{nurse.email}</p>
+                    </div>
+                    <Badge className="bg-orange-100 text-orange-800">
+                      Pending
+                    </Badge>
+                  </div>
+                ))}
+                {pendingNurses.length > 5 && (
+                  <p className="text-sm text-gray-600 text-center">
+                    +{pendingNurses.length - 5} more pending approvals
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-3" />
+                <p className="text-gray-600">No pending approvals</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Activity className="h-5 w-5 mr-2 text-blue-600" />
+              Recent Users
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {users.slice(0, 5).map((user) => (
+                <div key={user.user_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="font-medium">{user.profile_data?.first_name} {user.profile_data?.last_name}</p>
+                    <p className="text-sm text-gray-600">{user.user_type} • {new Date(user.created_at || '').toLocaleDateString()}</p>
+                  </div>
+                  <Badge variant="outline">
+                    {user.account_status}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// Basic fallback components
+function BasicClientManagement({ users, onRefresh }: { users: AdminUser[]; onRefresh: () => void }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Client Management</CardTitle>
+        <CardDescription>View and manage client accounts</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="text-center py-8">
+          <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+          <h3 className="text-lg font-semibold mb-2">Client Management</h3>
+          <p className="text-gray-600 mb-4">Total Clients: {users.length}</p>
+          <Button onClick={onRefresh} variant="outline">
+            Refresh Data
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function BasicJobsManagement({ onRefresh }: { onRefresh: () => void }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Jobs Management</CardTitle>
+        <CardDescription>Manage job postings and applications</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="text-center py-8">
+          <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+          <h3 className="text-lg font-semibold mb-2">Jobs Management</h3>
+          <p className="text-gray-600 mb-4">Job management functionality coming soon</p>
+          <Button onClick={onRefresh} variant="outline">
+            Refresh Data
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function BasicDisputeManagement({ disputes, onRefresh }: { disputes: any[]; onRefresh: () => void }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Dispute Management</CardTitle>
+        <CardDescription>Handle timecard disputes and resolutions</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="text-center py-8">
+          <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+          <h3 className="text-lg font-semibold mb-2">Dispute Management</h3>
+          <p className="text-gray-600 mb-4">Total Disputes: {disputes.length}</p>
+          <Button onClick={onRefresh} variant="outline">
+            Refresh Data
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function BasicAnalytics({ users, disputes }: { users: AdminUser[]; disputes: any[] }) {
+  const nurses = users.filter(u => u.user_type === 'nurse');
+  const clients = users.filter(u => u.user_type === 'client');
+  
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Platform Analytics</CardTitle>
+          <CardDescription>Basic platform statistics</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <h3 className="text-2xl font-bold text-blue-600">{nurses.length}</h3>
+              <p className="text-sm text-gray-600">Total Nurses</p>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <h3 className="text-2xl font-bold text-green-600">{clients.length}</h3>
+              <p className="text-sm text-gray-600">Total Clients</p>
+            </div>
+            <div className="text-center p-4 bg-orange-50 rounded-lg">
+              <h3 className="text-2xl font-bold text-orange-600">
+                {nurses.filter(n => n.account_status === 'pending').length}
+              </h3>
+              <p className="text-sm text-gray-600">Pending Approvals</p>
+            </div>
+            <div className="text-center p-4 bg-red-50 rounded-lg">
+              <h3 className="text-2xl font-bold text-red-600">{disputes.length}</h3>
+              <p className="text-sm text-gray-600">Total Disputes</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Individual detail view components (simplified versions)
 function NurseDetailView({ 
   nurse, 
   onApproval, 
   onRefresh 
 }: { 
-  nurse: AdminNurseProfile; 
+  nurse: AdminNurseProfile | AdminUser; 
   onApproval: (nurseId: string, approve: boolean, notes?: string) => void;
   onRefresh: () => void;
 }) {
   const [approvalNotes, setApprovalNotes] = useState('');
-  const [showApprovalSection, setShowApprovalSection] = useState(!nurse.onboarding_completed);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'verified': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const isAdminUser = 'user_id' in nurse;
+  const isPending = isAdminUser ? nurse.account_status === 'pending' : !nurse.onboarding_completed;
 
   return (
     <div className="space-y-6">
@@ -578,46 +925,46 @@ function NurseDetailView({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-                {nurse.profile_photo_url ? (
-                  <img src={nurse.profile_photo_url} alt={nurse.first_name} className="w-full h-full rounded-full object-cover" />
-                ) : (
-                  <Users className="h-8 w-8 text-white" />
-                )}
+                <Users className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">{nurse.first_name} {nurse.last_name}</h2>
+                <h2 className="text-2xl font-bold text-slate-800">
+                  {isAdminUser 
+                    ? `${nurse.profile_data?.first_name || ''} ${nurse.profile_data?.last_name || ''}` 
+                    : `${nurse.first_name} ${nurse.last_name}`}
+                </h2>
                 <div className="flex items-center space-x-4 mt-1">
                   <div className="flex items-center space-x-1 text-slate-600">
                     <Mail className="h-4 w-4" />
-                    <span>{nurse.email}</span>
+                    <span>{isAdminUser ? nurse.email : nurse.email}</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-slate-600">
-                    <Phone className="h-4 w-4" />
-                    <span>{nurse.phone_number}</span>
-                  </div>
-                  <div className="flex items-center space-x-1 text-slate-600">
-                    <MapPin className="h-4 w-4" />
-                    <span>{nurse.city}, {nurse.state}</span>
-                  </div>
+                  {(isAdminUser ? nurse.profile_data?.phone_number : nurse.phone_number) && (
+                    <div className="flex items-center space-x-1 text-slate-600">
+                      <Phone className="h-4 w-4" />
+                      <span>{isAdminUser ? nurse.profile_data?.phone_number : nurse.phone_number}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
             
             <div className="text-right">
-              <Badge className={nurse.onboarding_completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                {nurse.onboarding_completed ? 'Approved' : 'Pending Approval'}
+              <Badge className={isPending ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}>
+                {isPending ? 'Pending Approval' : 'Approved'}
               </Badge>
-              <p className="text-sm text-slate-600 mt-1">Joined {new Date(nurse.created_at).toLocaleDateString()}</p>
+              <p className="text-sm text-slate-600 mt-1">
+                Joined {new Date(isAdminUser ? nurse.created_at || '' : nurse.created_at).toLocaleDateString()}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Approval Section */}
-      {showApprovalSection && (
-        <Card className="border-2 border-yellow-200 bg-yellow-50">
+      {isPending && (
+        <Card className="border-2 border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-yellow-800">
+            <CardTitle className="flex items-center text-orange-800">
               <AlertTriangle className="h-5 w-5 mr-2" />
               Nurse Approval Required
             </CardTitle>
@@ -638,7 +985,7 @@ function NurseDetailView({
             </div>
             <div className="flex space-x-3">
               <Button 
-                onClick={() => onApproval(nurse.id, true, approvalNotes)}
+                onClick={() => onApproval(isAdminUser ? nurse.user_id : nurse.id, true, approvalNotes)}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
@@ -646,7 +993,7 @@ function NurseDetailView({
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => onApproval(nurse.id, false, approvalNotes)}
+                onClick={() => onApproval(isAdminUser ? nurse.user_id : nurse.id, false, approvalNotes)}
                 className="border-red-600 text-red-600 hover:bg-red-50"
               >
                 <XCircle className="h-4 w-4 mr-2" />
@@ -657,126 +1004,32 @@ function NurseDetailView({
         </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Performance Metrics */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Performance Metrics</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <p className="text-2xl font-bold text-blue-600">{nurse.totalApplications}</p>
-                <p className="text-sm text-slate-600">Applications</p>
-              </div>
-              <div className="text-center p-3 bg-green-50 rounded-lg">
-                <p className="text-2xl font-bold text-green-600">{nurse.acceptedApplications}</p>
-                <p className="text-sm text-slate-600">Accepted</p>
-              </div>
-              <div className="text-center p-3 bg-purple-50 rounded-lg">
-                <p className="text-2xl font-bold text-purple-600">{nurse.activeContracts}</p>
-                <p className="text-sm text-slate-600">Active</p>
-              </div>
-              <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                <p className="text-2xl font-bold text-yellow-600">${nurse.totalEarnings.toLocaleString()}</p>
-                <p className="text-sm text-slate-600">Earned</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* License Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Licenses & Certifications</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {nurse.licenses.map((license) => (
-              <div key={license.id} className="p-3 border rounded-lg">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <p className="font-medium">{license.license_type}</p>
-                    <p className="text-sm text-slate-600">{license.license_number}</p>
-                  </div>
-                  <Badge className={getStatusColor(license.verification_status)}>
-                    {license.verification_status}
-                  </Badge>
-                </div>
-                <div className="text-xs text-slate-500">
-                  <p>State: {license.issuing_state}</p>
-                  <p>Expires: {new Date(license.expiration_date).toLocaleDateString()}</p>
-                </div>
-              </div>
-            ))}
-            
-            {nurse.certifications.map((cert) => (
-              <div key={cert.id} className="p-3 border rounded-lg">
-                <p className="font-medium">{cert.certification_name}</p>
-                {cert.is_malpractice_insurance && (
-                  <Badge className="bg-blue-100 text-blue-800 mt-1">Malpractice Insurance</Badge>
+      {/* Basic Profile Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 className="font-medium text-gray-900">Contact Information</h4>
+              <div className="mt-2 space-y-1 text-sm text-gray-600">
+                <p>Email: {isAdminUser ? nurse.email : nurse.email}</p>
+                {(isAdminUser ? nurse.profile_data?.phone_number : nurse.phone_number) && (
+                  <p>Phone: {isAdminUser ? nurse.profile_data?.phone_number : nurse.phone_number}</p>
                 )}
               </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Qualifications & Preferences */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Professional Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {nurse.qualifications && (
-              <div>
-                <h4 className="font-medium mb-2">Education</h4>
-                <p className="text-sm text-slate-600">{nurse.qualifications.education_level}</p>
-                <p className="text-sm text-slate-600">{nurse.qualifications.school_name} ({nurse.qualifications.graduation_year})</p>
-                <p className="text-sm text-slate-600">{nurse.qualifications.years_experience} years experience</p>
-                
-                <h4 className="font-medium mt-3 mb-2">Specializations</h4>
-                <div className="flex flex-wrap gap-1">
-                  {nurse.qualifications.specializations.map((spec, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {spec}
-                    </Badge>
-                  ))}
-                </div>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900">Account Status</h4>
+              <div className="mt-2 space-y-1 text-sm text-gray-600">
+                <p>Status: {isAdminUser ? nurse.account_status : (nurse.onboarding_completed ? 'Active' : 'Pending')}</p>
+                <p>User Type: Nurse</p>
               </div>
-            )}
-            
-            {nurse.preferences && (
-              <div>
-                <h4 className="font-medium mb-2">Preferences</h4>
-                <p className="text-sm text-slate-600">Rate: ${nurse.preferences.desired_hourly_rate}/hr</p>
-                <p className="text-sm text-slate-600">Travel: {nurse.preferences.travel_radius} miles</p>
-                
-                <div className="mt-2">
-                  <p className="text-xs font-medium text-slate-700">Preferred Shifts:</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {nurse.preferences.preferred_shifts.map((shift, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {shift}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Bio Section */}
-      {nurse.bio && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Professional Bio</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-slate-700 leading-relaxed">{nurse.bio}</p>
-          </CardContent>
-        </Card>
-      )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -785,9 +1038,11 @@ function ClientDetailView({
   client, 
   onRefresh 
 }: { 
-  client: AdminClientProfile; 
+  client: AdminClientProfile | AdminUser; 
   onRefresh: () => void;
 }) {
+  const isAdminUser = 'user_id' in client;
+
   return (
     <div className="space-y-6">
       {/* Client Header */}
@@ -799,154 +1054,56 @@ function ClientDetailView({
                 <Building2 className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">{client.first_name} {client.last_name}</h2>
+                <h2 className="text-2xl font-bold text-slate-800">
+                  {isAdminUser 
+                    ? `${client.profile_data?.first_name || ''} ${client.profile_data?.last_name || ''}` 
+                    : `${client.first_name} ${client.last_name}`}
+                </h2>
                 <div className="flex items-center space-x-4 mt-1">
                   <div className="flex items-center space-x-1 text-slate-600">
                     <Mail className="h-4 w-4" />
-                    <span>{client.email}</span>
+                    <span>{isAdminUser ? client.email : client.email}</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-slate-600">
-                    <Phone className="h-4 w-4" />
-                    <span>{client.phone_number}</span>
-                  </div>
-                  <Badge className="bg-blue-100 text-blue-800">
-                    {client.client_type}
-                  </Badge>
+                  {(isAdminUser ? client.profile_data?.phone_number : client.phone_number) && (
+                    <div className="flex items-center space-x-1 text-slate-600">
+                      <Phone className="h-4 w-4" />
+                      <span>{isAdminUser ? client.profile_data?.phone_number : client.phone_number}</span>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-            
-            <div className="text-right">
-              <Badge className={client.onboarding_completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                {client.onboarding_completed ? 'Active' : 'Incomplete Setup'}
-              </Badge>
-              <p className="text-sm text-slate-600 mt-1">Joined {new Date(client.created_at).toLocaleDateString()}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Activity Metrics */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Activity Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <p className="text-2xl font-bold text-blue-600">{client.totalJobPostings}</p>
-                <p className="text-sm text-slate-600">Jobs Posted</p>
-              </div>
-              <div className="text-center p-3 bg-green-50 rounded-lg">
-                <p className="text-2xl font-bold text-green-600">{client.hiredNurses}</p>
-                <p className="text-sm text-slate-600">Nurses Hired</p>
-              </div>
-              <div className="text-center p-3 bg-purple-50 rounded-lg">
-                <p className="text-2xl font-bold text-purple-600">${client.totalSpent.toLocaleString()}</p>
-                <p className="text-sm text-slate-600">Total Spent</p>
-              </div>
-              <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                <p className="text-2xl font-bold text-yellow-600">${client.averageHourlyRate.toFixed(0)}</p>
-                <p className="text-sm text-slate-600">Avg Rate</p>
+      {/* Basic Client Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Client Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 className="font-medium text-gray-900">Contact Information</h4>
+              <div className="mt-2 space-y-1 text-sm text-gray-600">
+                <p>Email: {isAdminUser ? client.email : client.email}</p>
+                {(isAdminUser ? client.profile_data?.phone_number : client.phone_number) && (
+                  <p>Phone: {isAdminUser ? client.profile_data?.phone_number : client.phone_number}</p>
+                )}
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Care Recipients */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Care Recipients</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {client.care_recipients.map((recipient) => (
-              <div key={recipient.id} className="p-3 border rounded-lg">
-                <p className="font-medium">{recipient.first_name} {recipient.last_name}</p>
-                <p className="text-sm text-slate-600">Age: {recipient.age}</p>
-              </div>
-            ))}
-            {client.care_recipients.length === 0 && (
-              <p className="text-sm text-slate-500 italic">No care recipients added</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Care Locations */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Care Locations</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {client.care_locations.map((location) => (
-              <div key={location.id} className="p-3 border rounded-lg">
-                <p className="font-medium">{location.street_address}</p>
-                <p className="text-sm text-slate-600">{location.city}, {location.state} {location.zip_code}</p>
-                <Badge variant="outline" className="mt-1 text-xs">
-                  {location.home_environment}
-                </Badge>
-              </div>
-            ))}
-            {client.care_locations.length === 0 && (
-              <p className="text-sm text-slate-500 italic">No locations added</p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Care Needs */}
-      {client.care_needs && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Care Requirements</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium mb-2">Care Types</h4>
-                <div className="flex flex-wrap gap-1">
-                  {client.care_needs.care_types.map((type, index) => (
-                    <Badge key={index} variant="outline">{type}</Badge>
-                  ))}
-                </div>
-                
-                <h4 className="font-medium mt-3 mb-2">Schedule</h4>
-                <div className="flex flex-wrap gap-1">
-                  {client.care_needs.care_schedule.map((schedule, index) => (
-                    <Badge key={index} variant="outline">{schedule}</Badge>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <h4 className="font-medium mb-2">Requirements</h4>
-                <p className="text-sm text-slate-600">Hours per week: {client.care_needs.hours_per_week}</p>
-                
-                <h4 className="font-medium mt-3 mb-2">Special Skills</h4>
-                <div className="flex flex-wrap gap-1">
-                  {client.care_needs.special_skills.map((skill, index) => (
-                    <Badge key={index} variant="outline">{skill}</Badge>
-                  ))}
-                </div>
-                
-                <h4 className="font-medium mt-3 mb-2">Health Conditions</h4>
-                <div className="flex flex-wrap gap-1">
-                  {client.care_needs.health_conditions.map((condition, index) => (
-                    <Badge key={index} variant="outline" className="bg-red-50 text-red-700">{condition}</Badge>
-                  ))}
-                </div>
+            <div>
+              <h4 className="font-medium text-gray-900">Account Details</h4>
+              <div className="mt-2 space-y-1 text-sm text-gray-600">
+                <p>Status: {isAdminUser ? client.account_status : 'Active'}</p>
+                <p>User Type: Client</p>
+                <p>Joined: {new Date(isAdminUser ? client.created_at || '' : client.created_at).toLocaleDateString()}</p>
               </div>
             </div>
-            
-            {client.care_needs.additional_notes && (
-              <div>
-                <h4 className="font-medium mb-2">Additional Notes</h4>
-                <p className="text-sm text-slate-700 bg-slate-50 p-3 rounded-lg">{client.care_needs.additional_notes}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -961,289 +1118,42 @@ function DisputeDetailView({
   onRefresh: () => void;
 }) {
   const [resolutionNotes, setResolutionNotes] = useState('');
-  const [adjustedHours, setAdjustedHours] = useState(dispute.timecard.total_hours);
-  const [showResolutionForm, setShowResolutionForm] = useState(dispute.dispute.status === 'pending');
 
   return (
-    <div className="space-y-6">
-      {/* Dispute Header */}
-      <Card className="border-2 border-red-200 bg-red-50">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-red-800">Timecard Dispute</h2>
-              <p className="text-red-600 mt-1">
-                Initiated by {dispute.dispute.initiated_by_type} on {new Date(dispute.dispute.created_at).toLocaleDateString()}
-              </p>
-              <p className="text-slate-600 mt-1">Dispute ID: {dispute.dispute.id}</p>
-            </div>
-            <Badge className={dispute.dispute.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
-              {dispute.dispute.status}
-            </Badge>
+    <Card>
+      <CardHeader>
+        <CardTitle>Dispute Details</CardTitle>
+        <CardDescription>Dispute ID: {dispute.dispute.id}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-medium">Resolution Notes</h4>
+            <Textarea
+              placeholder="Add resolution notes..."
+              value={resolutionNotes}
+              onChange={(e) => setResolutionNotes(e.target.value)}
+              className="mt-2"
+            />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Resolution Form */}
-      {showResolutionForm && (
-        <Card className="border-2 border-blue-200 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="text-blue-800">Resolve Dispute</CardTitle>
-            <CardDescription>Review the evidence and make a decision on this timecard dispute.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="resolution-notes">Resolution Notes</Label>
-              <Textarea
-                id="resolution-notes"
-                placeholder="Explain your decision and reasoning..."
-                value={resolutionNotes}
-                onChange={(e) => setResolutionNotes(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="adjusted-hours">Adjusted Hours (if partial approval)</Label>
-              <Input
-                id="adjusted-hours"
-                type="number"
-                step="0.25"
-                value={adjustedHours}
-                onChange={(e) => setAdjustedHours(parseFloat(e.target.value))}
-                className="mt-1 max-w-32"
-              />
-            </div>
-            
-            <div className="flex space-x-3">
-              <Button 
-                onClick={() => onResolve(dispute.dispute.id, 'approve_timecard', resolutionNotes)}
-                className="bg-green-600 hover:bg-green-700"
-                disabled={!resolutionNotes.trim()}
-              >
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Approve Timecard
-              </Button>
-              <Button 
-                onClick={() => onResolve(dispute.dispute.id, 'partial_approval', resolutionNotes, adjustedHours)}
-                className="bg-yellow-600 hover:bg-yellow-700"
-                disabled={!resolutionNotes.trim() || adjustedHours === dispute.timecard.total_hours}
-              >
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                Partial Approval ({adjustedHours}h)
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={() => onResolve(dispute.dispute.id, 'deny_timecard', resolutionNotes)}
-                className="border-red-600 text-red-600 hover:bg-red-50"
-                disabled={!resolutionNotes.trim()}
-              >
-                <XCircle className="h-4 w-4 mr-2" />
-                Deny Timecard
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Nurse Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Nurse Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <Users className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="font-medium">{dispute.nurse.first_name} {dispute.nurse.last_name}</p>
-                <p className="text-sm text-slate-600">{dispute.nurse.email}</p>
-                <p className="text-sm text-slate-600">{dispute.nurse.phone_number}</p>
-              </div>
-            </div>
-            
-            <div className="pt-3 border-t">
-              <h4 className="font-medium mb-2">Performance</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-slate-600">Total Earnings</p>
-                  <p className="font-medium">${dispute.nurse.totalEarnings.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-slate-600">Active Contracts</p>
-                  <p className="font-medium">{dispute.nurse.activeContracts}</p>
-                </div>
-              </div>
-            </div>
-
-            {dispute.dispute.nurse_evidence && (
-              <div className="pt-3 border-t">
-                <h4 className="font-medium mb-2">Nurse Evidence</h4>
-                <p className="text-sm text-slate-700 bg-blue-50 p-3 rounded-lg">{dispute.dispute.nurse_evidence}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Client Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Client Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <Building2 className="h-6 w-6 text-green-600" />
-              </div>
-              <div>
-                <p className="font-medium">{dispute.client.first_name} {dispute.client.last_name}</p>
-                <p className="text-sm text-slate-600">{dispute.client.email}</p>
-                <p className="text-sm text-slate-600">{dispute.client.phone_number}</p>
-              </div>
-            </div>
-            
-            <div className="pt-3 border-t">
-              <h4 className="font-medium mb-2">Activity</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-slate-600">Total Spent</p>
-                  <p className="font-medium">${dispute.client.totalSpent.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-slate-600">Nurses Hired</p>
-                  <p className="font-medium">{dispute.client.hiredNurses}</p>
-                </div>
-              </div>
-            </div>
-
-            {dispute.dispute.client_evidence && (
-              <div className="pt-3 border-t">
-                <h4 className="font-medium mb-2">Client Evidence</h4>
-                <p className="text-sm text-slate-700 bg-green-50 p-3 rounded-lg">{dispute.dispute.client_evidence}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Timecard Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Disputed Timecard</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <h4 className="font-medium mb-3">Shift Information</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Date:</span>
-                  <span className="font-medium">{new Date(dispute.timecard.shift_date).toLocaleDateString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Start Time:</span>
-                  <span className="font-medium">{dispute.timecard.start_time}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">End Time:</span>
-                  <span className="font-medium">{dispute.timecard.end_time}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Total Hours:</span>
-                  <span className="font-medium">{dispute.timecard.total_hours}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Job Code:</span>
-                  <span className="font-medium">{dispute.timecard.job_code}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-medium mb-3">Financial Details</h4>
-              <div className="space-y-2 text-sm">
-                {dispute.timecard.hourly_rate_at_time && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Hourly Rate:</span>
-                    <span className="font-medium">${dispute.timecard.hourly_rate_at_time}/hr</span>
-                  </div>
-                )}
-                {dispute.timecard.payment_amount && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Payment Amount:</span>
-                    <span className="font-medium">${dispute.timecard.payment_amount}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Status:</span>
-                  <Badge className={dispute.timecard.status === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                    {dispute.timecard.status}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-medium mb-3">Dispute Information</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Reason:</span>
-                  <span className="font-medium">{dispute.dispute.dispute_reason}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Initiated By:</span>
-                  <span className="font-medium capitalize">{dispute.dispute.initiated_by_type}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Created:</span>
-                  <span className="font-medium">{new Date(dispute.dispute.created_at).toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
+          <div className="flex space-x-2">
+            <Button 
+              onClick={() => onResolve(dispute.dispute.id, 'approve_timecard', resolutionNotes)}
+              className="bg-green-600 hover:bg-green-700"
+              disabled={!resolutionNotes.trim()}
+            >
+              Approve
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => onResolve(dispute.dispute.id, 'deny_timecard', resolutionNotes)}
+              disabled={!resolutionNotes.trim()}
+            >
+              Deny
+            </Button>
           </div>
-
-          {dispute.timecard.notes && (
-            <div className="mt-6 pt-4 border-t">
-              <h4 className="font-medium mb-2">Timecard Notes</h4>
-              <p className="text-sm text-slate-700 bg-slate-50 p-3 rounded-lg">{dispute.timecard.notes}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Conversations */}
-      {dispute.conversations.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Conversation History</CardTitle>
-            <CardDescription>Messages between nurse and client</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {dispute.conversations.map((message) => (
-                <div 
-                  key={message.id} 
-                  className={`p-3 rounded-lg max-w-[80%] ${
-                    message.sender_type === 'nurse' 
-                      ? 'bg-blue-50 text-blue-900 ml-auto' 
-                      : 'bg-green-50 text-green-900'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium capitalize">{message.sender_type}</span>
-                    <span className="text-xs text-slate-500">
-                      {new Date(message.created_at).toLocaleString()}
-                    </span>
-                  </div>
-                  <p className="text-sm">{message.message_content}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

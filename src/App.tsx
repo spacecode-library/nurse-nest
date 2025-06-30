@@ -12,7 +12,6 @@ import NotFound from "./pages/NotFound";
 import Apply from "./pages/Apply";
 import Auth from "./pages/Auth";
 import SignIn from "./pages/SignIn";
-// import SignUp from "./pages/SignUp";
 
 // Info Pages
 import About from "./pages/About";
@@ -60,47 +59,43 @@ import EnhancedAdminPortal from "./components/admin/EnhancedAdminPortal";
 import NurseApplication from "./pages/NurseApplication";
 import MalpracticeInsurance from "./pages/MalpracticeInsurance";
 import LlcSetupHelp from "./pages/LlcSetupHelp";
-import TaxTips from "./pages/TaxTips";
 import NurseLlcSetup from "./pages/NurseLlcSetup";
 import GetEinNurseBusiness from "./pages/GetEinNurseBusiness";
-import EinApplications from "./pages/EinApplications";
+import TaxTips from "./pages/TaxTips";
 import NightNurseGuide from "./pages/NightNurseGuide";
-import BusinessBankAccountForNurses from "./pages/business-bank-account-for-nurses";
-import NurseBackgroundCheckPage from "./pages/NurseBackgroundCheckPage";
-import { BackgroundCheckPage } from "./pages/BackgroundCheckPage";
 
-export default function App() {
+function App() {
   return (
-    <ErrorBoundary>
-      <LanguageProvider>
-        <AuthProvider>
-          <BrowserRouter>
+    <BrowserRouter>
+      <ErrorBoundary>
+        <LanguageProvider>
+          <AuthProvider>
             <Routes>
-              {/* Main Pages */}
+              {/* Core Routes */}
               <Route path="/" element={<Index />} />
-              <Route path="/apply" element={<Apply />} />
-              
-              {/* Authentication Routes */}
-              <Route path="/auth" element={<Auth />} />
-              {/* <Route path="/sign-in" element={<SignIn />} />
-              <Route path="/sign-up" element={<SignUp />} /> */}
-              
-              {/* Information Routes */}
               <Route path="/about" element={<About />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/contact" element={<Contact />} />
+              
+              {/* Legal Pages */}
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/disclaimer" element={<Disclaimer />} />
               
-              {/* Care Service Routes */}
-              <Route path="/post-surgical-care" element={<PostSurgicalCare />} />
+              {/* Auth Routes */}
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/sign-in" element={<SignIn />} />
+              <Route path="/apply" element={<Apply />} />
               
               {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:postId" element={<BlogPost />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route 
-                path="/blog/complete-newborn-care-guide-for-nurses" 
+                path="/business-bank-account-for-nurses" 
+                element={<BusinessBankingSetupGuideNurses />} 
+              />
+              <Route 
+                path="/complete-newborn-care-guide-for-nurses" 
                 element={<NewbornCareGuideBlog />} 
               />
               <Route 
@@ -110,6 +105,9 @@ export default function App() {
               {/* Newborn Care Service Route */}
               <Route path="/newborn-nurse-support-guide" element={<NewbornNurseSupport />} />
               <Route path="/night-nurse-newborn-care-guide" element={<NightNurseGuide />} />
+              
+              {/* Care Service Pages */}
+              <Route path="/post-surgical-care" element={<PostSurgicalCare />} />
               
               {/* Payment Routes */}
               <Route path="/payment" element={<Payment />} />
@@ -127,13 +125,13 @@ export default function App() {
               
               {/* Business Setup */}
               <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
-              <Route path="/nurse-llc-setup" element={<NurseLlcSetup />} />
+              <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
               <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
-              <Route path="/tax-tips" element={<TaxTips />} />
+              <Route path="/1099-tax-tips" element={<TaxTips />} />
               
-              {/* Onboarding Routes */}
-              {/* <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
-              <Route path="/client-onboarding" element={<ClientOnboarding />} /> */}
+              {/* Onboarding Routes - FIXED: Uncommented these routes */}
+              <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
+              <Route path="/onboarding/client" element={<ClientOnboarding />} />
 
               {/* Dashboard Routes */}
               <Route path="/dashboard" element={<DashboardRouter />} />
@@ -144,48 +142,18 @@ export default function App() {
               {/* Admin Routes */}
               <Route path="/admin" element={<EnhancedAdminPortal />} />
               
-              {/* Background Check Routes */}
-              <Route 
-                path="/background-check/:backgroundCheckId" 
-                element={<NurseBackgroundCheckPage />} 
-              />
-              <Route 
-                path="/background-check/:nurseId/:clientId" 
-                element={<BackgroundCheckPage />} 
-              />
-              <Route 
-                path="/background-check/:nurseId/:clientId/:jobPostingId" 
-                element={<BackgroundCheckPage />} 
-              />
-              
-              {/* Approval and Status Pages */}
+              {/* Pending Approval */}
               <Route path="/pending-approval" element={<PendingApprovalPage />} />
-              
-              {/* Onboarding Routes */}
-              <Route path="/vetting-options" element={<VettingOptions />} />
-              <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
-              <Route path="/onboarding/client" element={<ClientOnboarding />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin" element={<EnhancedAdminPortal />} />
-              
-              {/* Nurse Resource Routes */}
-              <Route path="/nurse-application" element={<NurseApplication />} />
-              <Route path="/malpractice-insurance" element={<MalpracticeInsurance />} />
-              <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
-              <Route path="/1099-tax-tips" element={<TaxTips />} />
-              <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
-              <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
-              <Route path="/blog/ein-applications-independent-contract-nurses" element={<EinApplications />} />
-              <Route path="/business-bank-account-for-nurses" element={<BusinessBankAccountForNurses />} />
               
               {/* 404 Route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Toaster />
-          </BrowserRouter>
-        </AuthProvider>
-      </LanguageProvider>
-    </ErrorBoundary>
+          </AuthProvider>
+        </LanguageProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
   );
 }
+
+export default App;

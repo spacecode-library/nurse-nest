@@ -27,17 +27,13 @@ export interface AdminProfile {
 export interface AdminUser {
   user_id: string;
   user_type: 'nurse' | 'client' | 'admin';
-  account_status: 'active' | 'suspended' | 'deactivated' | 'dormant';
+  account_status: 'active' | 'suspended' | 'deactivated' | 'dormant' | 'pending';
   email?: string;
   created_at?: string;
   last_login?: string;
   profile_data?: {
-    care_recipients: any;
-    relationship_to_recipient: any;
-    relationship_to_recipient: ReactNode;
-    care_recipients: any;
-    care_recipients: boolean;
-    care_recipients: any;
+    care_recipients?: any;
+    relationship_to_recipient?: any;
     id?: string;
     first_name?: string;
     last_name?: string;
@@ -90,134 +86,10 @@ export interface AdminTask {
 }
 
 /**
- * Create admin profile using raw SQL
- */
-export async function createAdminProfile(profileData: Omit<AdminProfile, 'id' | 'created_at' | 'updated_at'>) {
-  try {
-    const { data, error } = await supabase.rpc('create_admin_profile', {
-      p_user_id: profileData.user_id,
-      p_first_name: profileData.first_name,
-      p_last_name: profileData.last_name,
-      p_email: profileData.email,
-      p_phone_number: profileData.phone_number || null,
-      p_role: profileData.role,
-      p_permissions: profileData.permissions
-    });
-
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error creating admin profile:', error);
-    
-    // Fallback to direct SQL query
-    try {
-      const { data, error: sqlError } = await supabase
-        .from('admin_profiles' as any)
-        .insert(profileData)
-        .select()
-        .single();
-
-      if (sqlError) throw sqlError;
-      return { data, error: null };
-    } catch (fallbackError) {
-      return { data: null, error: fallbackError as PostgrestError };
-    }
-  }
-}
-
-/**
- * Get admin profile by user ID using raw SQL
- */
-export async function getAdminProfileByUserId(userId: string) {
-  try {
-    const { data, error } = await supabase
-      .from('admin_profiles' as any)
-      .select('*')
-      .eq('user_id', userId)
-      .single();
-
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error getting admin profile:', error);
-    return { data: null, error: error as PostgrestError };
-  }
-}
-
-/**
- * Get dashboard statistics using individual queries
- */
-export async function getDashboardStats(): Promise<{ data: DashboardStats | null; error: PostgrestError | null }> {
-  try {
-    // Get pending nurse profiles
-    const { count: pendingNurses, error: nurseError } = await supabase
-      .from('nurse_profiles')
-      .select('*', { count: 'exact', head: true })
-      .eq('onboarding_completed', false);
-
-    if (nurseError) throw nurseError;
-
-    // Get pending client profiles
-    const { count: pendingClients, error: clientError } = await supabase
-      .from('client_profiles')
-      .select('*', { count: 'exact', head: true })
-      .eq('onboarding_completed', false);
-
-    if (clientError) throw clientError;
-
-    // Get new applications
-    const { count: newApplications, error: appError } = await supabase
-      .from('applications')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'new');
-
-    if (appError) throw appError;
-
-    // Get pending timecards
-    const { count: pendingTimecards, error: timecardError } = await supabase
-      .from('timecards')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'Submitted');
-
-    if (timecardError) throw timecardError;
-
-    // Get open jobs
-    const { count: openJobs, error: jobError } = await supabase
-      .from('job_postings')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'open');
-
-    if (jobError) throw jobError;
-
-    // Get pending verifications
-    const { count: pendingVerifications, error: verificationError } = await supabase
-      .from('nurse_licenses')
-      .select('*', { count: 'exact', head: true })
-      .eq('verification_status', 'pending');
-
-    if (verificationError) throw verificationError;
-
-    const stats: DashboardStats = {
-      pending_nurse_profiles: pendingNurses || 0,
-      pending_client_profiles: pendingClients || 0,
-      new_applications: newApplications || 0,
-      pending_timecards: pendingTimecards || 0,
-      open_jobs: openJobs || 0,
-      pending_verifications: pendingVerifications || 0
-    };
-
-    return { data: stats, error: null };
-  } catch (error) {
-    console.error('Error getting dashboard stats:', error);
-    return { data: null, error: error as PostgrestError };
-  }
-}
-
-/**
- * Get all users with pagination and filtering - Enhanced version
+ * Get all users with their metadata and profile data
  */
 export async function getAllUsers(
-  userType?: 'nurse' | 'client' | 'admin',
+  userType: 'nurse' | 'client' | 'admin',
   limit: number = 20,
   offset: number = 0,
   searchTerm?: string
@@ -261,10 +133,10 @@ export async function getAllUsers(
 
         let profileData: any = {
           id: authUser.id,
-          first_name: '',
-          last_name: '',
-          phone_number: '',
-          onboarding_completed: false,
+          first_name: metadata.first_name || '',
+          last_name: metadata.last_name || '',
+          phone_number: metadata.phone_number || '',
+          onboarding_completed: metadata.onboarding_completed || false,
           onboarding_completion_percentage: 0
         };
 
@@ -277,7 +149,15 @@ export async function getAllUsers(
             .single();
 
           if (nurseProfile) {
-            profileData = { ...profileData, ...nurseProfile };
+            // Use profile data as fallback if metadata doesn't have names
+            profileData = { 
+              ...profileData, 
+              ...nurseProfile,
+              // Prioritize metadata first_name/last_name (synchronized data), fallback to profile data
+              first_name: metadata.first_name || nurseProfile.first_name || '',
+              last_name: metadata.last_name || nurseProfile.last_name || '',
+              phone_number: metadata.phone_number || nurseProfile.phone_number || ''
+            };
 
             // Get license information
             const { data: licenseInfo } = await supabase
@@ -311,7 +191,15 @@ export async function getAllUsers(
             .single();
 
           if (clientProfile) {
-            profileData = { ...profileData, ...clientProfile };
+            // Use profile data as fallback if metadata doesn't have names
+            profileData = { 
+              ...profileData, 
+              ...clientProfile,
+              // Prioritize metadata first_name/last_name (synchronized data), fallback to profile data
+              first_name: metadata.first_name || clientProfile.first_name || '',
+              last_name: metadata.last_name || clientProfile.last_name || '',
+              phone_number: metadata.phone_number || clientProfile.phone_number || ''
+            };
 
             // Get care needs
             const { data: careNeeds } = await supabase
@@ -334,6 +222,16 @@ export async function getAllUsers(
             if (careLocation) {
               profileData.care_location = careLocation;
             }
+
+            // Get care recipients
+            const { data: careRecipients } = await supabase
+              .from('care_recipients')
+              .select('*')
+              .eq('client_id', clientProfile.id);
+
+            if (careRecipients) {
+              profileData.care_recipients = careRecipients;
+            }
           }
         } else if (metadata.user_type === 'admin') {
           // Get admin profile
@@ -345,12 +243,18 @@ export async function getAllUsers(
               .single();
 
             if (adminProfile) {
-              profileData = { ...profileData, ...adminProfile };
+              profileData = { 
+                ...profileData, 
+                ...adminProfile,
+                // Prioritize metadata first_name/last_name, fallback to profile data
+                first_name: metadata.first_name || adminProfile.first_name || '',
+                last_name: metadata.last_name || adminProfile.last_name || ''
+              };
             }
           } catch (error) {
-            // Admin profile might not exist, use auth data
-            profileData.first_name = authUser.user_metadata?.first_name || '';
-            profileData.last_name = authUser.user_metadata?.last_name || '';
+            // Admin profile might not exist, use auth data and metadata
+            profileData.first_name = metadata.first_name || authUser.user_metadata?.first_name || '';
+            profileData.last_name = metadata.last_name || authUser.user_metadata?.last_name || '';
           }
         }
 
@@ -394,7 +298,6 @@ export async function getAllUsers(
   }
 }
 
-
 /**
  * Get detailed user information by ID
  */
@@ -424,7 +327,13 @@ export async function getUserDetails(userId: string) {
         .single();
 
       if (nurseProfile) {
-        detailedProfile.profile = nurseProfile;
+        detailedProfile.profile = {
+          ...nurseProfile,
+          // Use metadata names if available (synchronized data)
+          first_name: metadata.first_name || nurseProfile.first_name,
+          last_name: metadata.last_name || nurseProfile.last_name,
+          phone_number: metadata.phone_number || nurseProfile.phone_number
+        };
 
         // Get all licenses
         const { data: licenses } = await supabase
@@ -480,7 +389,13 @@ export async function getUserDetails(userId: string) {
         .single();
 
       if (clientProfile) {
-        detailedProfile.profile = clientProfile;
+        detailedProfile.profile = {
+          ...clientProfile,
+          // Use metadata names if available (synchronized data)
+          first_name: metadata.first_name || clientProfile.first_name,
+          last_name: metadata.last_name || clientProfile.last_name,
+          phone_number: metadata.phone_number || clientProfile.phone_number
+        };
 
         // Get care recipients
         const { data: careRecipients } = await supabase
@@ -541,11 +456,14 @@ export async function getUserDetails(userId: string) {
 /**
  * Update user account status
  */
-export async function updateUserAccountStatus(userId: string, status: 'active' | 'suspended' | 'deactivated' | 'dormant') {
+export async function updateUserAccountStatus(userId: string, status: 'active' | 'suspended' | 'deactivated' | 'dormant' | 'pending') {
   try {
     const { data, error } = await supabase
       .from('user_metadata')
-      .update({ account_status: status })
+      .update({ 
+        account_status: status,
+        updated_at: new Date().toISOString()
+      })
       .eq('user_id', userId)
       .select()
       .single();
@@ -640,45 +558,33 @@ export async function getJobPostingsForReview(
   try {
     let query = supabase
       .from('job_postings')
-      .select('*', { count: 'exact' });
+      .select(`
+        *,
+        client_profiles (
+          first_name,
+          last_name,
+          client_type
+        ),
+        applications (
+          id,
+          status,
+          nurse_profiles (
+            first_name,
+            last_name
+          )
+        )
+      `)
+      .range(offset, offset + limit - 1)
+      .order('created_at', { ascending: false });
 
     if (status) {
       query = query.eq('status', status);
     }
 
-    const { data: jobs, error: jobError, count } = await query
-      .range(offset, offset + limit - 1)
-      .order('created_at', { ascending: false });
+    const { data, error, count } = await query;
 
-    if (jobError) throw jobError;
-
-    if (!jobs || jobs.length === 0) {
-      return { data: [], count: 0, error: null };
-    }
-
-    // Get client profile and applications for each job
-    const enrichedJobs = await Promise.all(
-      jobs.map(async (job) => {
-        const { data: clientProfile } = await supabase
-          .from('client_profiles')
-          .select('id, first_name, last_name, client_type')
-          .eq('id', job.client_id)
-          .single();
-
-        const { data: applications } = await supabase
-          .from('applications')
-          .select('id, status, created_at')
-          .eq('job_id', job.id);
-
-        return {
-          ...job,
-          client_profiles: clientProfile,
-          applications: applications || []
-        };
-      })
-    );
-
-    return { data: enrichedJobs, count, error: null };
+    if (error) throw error;
+    return { data: data || [], count, error: null };
   } catch (error) {
     console.error('Error getting job postings for review:', error);
     return { data: null, count: null, error: error as PostgrestError };
@@ -686,119 +592,100 @@ export async function getJobPostingsForReview(
 }
 
 /**
- * Get timecards for admin review/dispute resolution
+ * Get dashboard statistics
  */
-export async function getTimecardsForAdmin(
-  status?: 'Submitted' | 'Approved' | 'Rejected' | 'Paid',
-  limit: number = 20,
-  offset: number = 0
-) {
+export async function getDashboardStats(): Promise<{ data: DashboardStats | null; error: PostgrestError | null }> {
   try {
-    let query = supabase
-      .from('timecards')
-      .select('*', { count: 'exact' });
+    const [
+      pendingNurses,
+      pendingClients,
+      newApplications,
+      pendingTimecards,
+      openJobs,
+      pendingVerifications
+    ] = await Promise.all([
+      // Pending nurse profiles (onboarding completed but status pending)
+      supabase
+        .from('user_metadata')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_type', 'nurse')
+        .eq('account_status', 'pending')
+        .eq('onboarding_completed', true),
+      
+      // Pending client profiles (shouldn't be many as clients auto-approve)
+      supabase
+        .from('user_metadata')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_type', 'client')
+        .eq('account_status', 'pending'),
+      
+      // New applications in the last 7 days
+      supabase
+        .from('applications')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
+      
+      // Pending timecards
+      supabase
+        .from('timecards')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'Submitted'),
+      
+      // Open job postings
+      supabase
+        .from('job_postings')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'open'),
+      
+      // Pending license verifications
+      supabase
+        .from('nurse_licenses')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'pending')
+    ]);
 
-    if (status) {
-      query = query.eq('status', status);
-    }
-
-    const { data: timecards, error: timecardError, count } = await query
-      .range(offset, offset + limit - 1)
-      .order('created_at', { ascending: false });
-
-    if (timecardError) throw timecardError;
-
-    if (!timecards || timecards.length === 0) {
-      return { data: [], count: 0, error: null };
-    }
-
-    // Get nurse and client profiles for each timecard
-    const enrichedTimecards = await Promise.all(
-      timecards.map(async (timecard) => {
-        const { data: nurseProfile } = await supabase
-          .from('nurse_profiles')
-          .select('id, first_name, last_name')
-          .eq('id', timecard.nurse_id)
-          .single();
-
-        const { data: clientProfile } = await supabase
-          .from('client_profiles')
-          .select('id, first_name, last_name')
-          .eq('id', timecard.client_id)
-          .single();
-
-        return {
-          ...timecard,
-          nurse_profiles: nurseProfile,
-          client_profiles: clientProfile
-        };
-      })
-    );
-
-    return { data: enrichedTimecards, count, error: null };
-  } catch (error) {
-    console.error('Error getting timecards for admin:', error);
-    return { data: null, count: null, error: error as PostgrestError };
-  }
-}
-
-/**
- * Check if user is admin
- */
-export async function checkAdminStatus(userId: string) {
-  try {
-    const { data, error } = await supabase
-      .from('user_metadata')
-      .select('user_type')
-      .eq('user_id', userId)
-      .eq('user_type', 'admin')
-      .single();
-
-    if (error && error.code !== 'PGRST116') throw error; // PGRST116 is "not found"
-    return { isAdmin: !!data, error: null };
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    return { isAdmin: false, error: error as PostgrestError };
-  }
-}
-
-/**
- * Get system metrics for admin dashboard
- */
-export async function getSystemMetrics() {
-  try {
-    // Get user registrations by month
-    const { data: registrationData, error: regError } = await supabase
-      .from('nurse_profiles')
-      .select('created_at');
-
-    if (regError) throw regError;
-
-    // Get applications by status
-    const { data: applicationData, error: appError } = await supabase
-      .from('applications')
-      .select('status, created_at');
-
-    if (appError) throw appError;
-
-    // Get timecard statistics
-    const { data: timecardData, error: timeError } = await supabase
-      .from('timecards')
-      .select('status, total_hours, created_at');
-
-    if (timeError) throw timeError;
-
-    // Process data for charts/metrics
-    const metrics = {
-      userRegistrations: registrationData?.length || 0,
-      applicationStats: applicationData || [],
-      timecardStats: timecardData || [],
-      totalHours: timecardData?.reduce((sum, tc) => sum + tc.total_hours, 0) || 0
+    const stats: DashboardStats = {
+      pending_nurse_profiles: pendingNurses.count || 0,
+      pending_client_profiles: pendingClients.count || 0,
+      new_applications: newApplications.count || 0,
+      pending_timecards: pendingTimecards.count || 0,
+      open_jobs: openJobs.count || 0,
+      pending_verifications: pendingVerifications.count || 0
     };
 
-    return { data: metrics, error: null };
+    return { data: stats, error: null };
   } catch (error) {
-    console.error('Error getting system metrics:', error);
+    console.error('Error getting dashboard stats:', error);
     return { data: null, error: error as PostgrestError };
+  }
+}
+
+/**
+ * Check if current user is admin
+ */
+export async function checkAdminStatus() {
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error || !user) {
+      return { isAdmin: false, error: 'No authenticated user' };
+    }
+
+    const { data: metadata, error: metadataError } = await supabase
+      .from('user_metadata')
+      .select('user_type, account_status')
+      .eq('user_id', user.id)
+      .single();
+
+    if (metadataError || !metadata) {
+      return { isAdmin: false, error: 'User metadata not found' };
+    }
+
+    const isAdmin = metadata.user_type === 'admin' && metadata.account_status === 'active';
+    
+    return { isAdmin, error: null };
+  } catch (error: any) {
+    console.error('Error checking admin status:', error);
+    return { isAdmin: false, error: error.message };
   }
 }

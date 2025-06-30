@@ -28,6 +28,8 @@ import {
   TrendingUp,
   RefreshCw
 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import { approveNurse, denyNurse } from '@/supabase/auth/authService';
 import { AdminUser } from '@/supabase/api/adminService';
 
 interface NurseManagementProps {
@@ -51,6 +53,40 @@ export default function NurseManagement({
   const [onboardingFilter, setOnboardingFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [loading, setLoading] = useState(false);
+
+  // Handle approval with our auth service
+  const handleApproval = async (userId: string, approve: boolean, notes?: string) => {
+    try {
+      setLoading(true);
+      
+      if (approve) {
+        await approveNurse(userId);
+        toast({
+          title: "Nurse Approved",
+          description: "Nurse has been approved and can now access their dashboard.",
+        });
+      } else {
+        await denyNurse(userId, notes || 'Application denied by administrator');
+        toast({
+          title: "Nurse Denied",
+          description: "Nurse application has been denied.",
+        });
+      }
+      
+      // Refresh the data
+      onRefresh();
+    } catch (error) {
+      console.error('Error handling nurse approval:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update nurse status",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter and sort nurses
   const filteredAndSortedNurses = useMemo(() => {
@@ -58,9 +94,9 @@ export default function NurseManagement({
       // Status filter
       if (statusFilter !== 'all' && user.account_status !== statusFilter) return false;
       
-      // Onboarding filter
-      if (onboardingFilter === 'completed' && !user.profile_data?.onboarding_completed) return false;
-      if (onboardingFilter === 'pending' && user.profile_data?.onboarding_completed) return false;
+      // Onboarding filter - Updated logic for pending approvals
+      if (onboardingFilter === 'completed' && (!user.profile_data?.onboarding_completed || user.account_status === 'pending')) return false;
+      if (onboardingFilter === 'pending' && (user.profile_data?.onboarding_completed && user.account_status !== 'pending')) return false;
       
       // Search filter
       if (searchTerm) {
@@ -108,10 +144,10 @@ export default function NurseManagement({
     return filtered;
   }, [users, statusFilter, onboardingFilter, searchTerm, sortBy, sortOrder]);
 
-  // Statistics
+  // Statistics - Updated for our approval flow
   const stats = useMemo(() => {
     const total = users.length;
-    const pending = users.filter(u => !u.profile_data?.onboarding_completed).length;
+    const pending = users.filter(u => u.account_status === 'pending' && u.profile_data?.onboarding_completed).length;
     const active = users.filter(u => u.account_status === 'active').length;
     const suspended = users.filter(u => u.account_status === 'suspended').length;
     const needsVerification = users.filter(u => 
@@ -124,6 +160,7 @@ export default function NurseManagement({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800 border-green-200';
+      case 'pending': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'suspended': return 'bg-red-100 text-red-800 border-red-200';
       case 'deactivated': return 'bg-gray-100 text-gray-800 border-gray-200';
       case 'dormant': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
@@ -147,6 +184,10 @@ export default function NurseManagement({
     return 'Unknown User';
   };
 
+  const isNewUser = (user: AdminUser) => {
+    return user.account_status === 'pending' && user.profile_data?.onboarding_completed;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -155,8 +196,8 @@ export default function NurseManagement({
           <h2 className="text-3xl font-bold text-slate-800">Nurse Management</h2>
           <p className="text-slate-600 mt-1">Review, approve, and manage healthcare professionals</p>
         </div>
-        <Button onClick={onRefresh} variant="outline" size="sm">
-        <RefreshCw className="h-4 w-4 mr-2" />
+        <Button onClick={onRefresh} variant="outline" size="sm" disabled={loading}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh Data
         </Button>
       </div>
@@ -175,11 +216,17 @@ export default function NurseManagement({
 
         <Card className="border-0 shadow-md">
           <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Clock className="h-5 w-5 text-yellow-600" />
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Clock className="h-5 w-5 text-orange-600" />
             </div>
             <p className="text-2xl font-bold text-slate-800">{stats.pending}</p>
             <p className="text-sm text-slate-600">Pending Approval</p>
+            {stats.pending > 0 && (
+              <div className="mt-2">
+                <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse inline-block mr-2"></div>
+                <span className="text-xs text-orange-700">Requires attention</span>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -205,14 +252,45 @@ export default function NurseManagement({
 
         <Card className="border-0 shadow-md">
           <CardContent className="p-6 text-center">
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Shield className="h-5 w-5 text-orange-600" />
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Shield className="h-5 w-5 text-purple-600" />
             </div>
             <p className="text-2xl font-bold text-slate-800">{stats.needsVerification}</p>
             <p className="text-sm text-slate-600">Need Verification</p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Priority Alert for Pending Approvals */}
+      {stats.pending > 0 && (
+        <Card className="border-l-4 border-l-orange-500 bg-orange-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <AlertTriangle className="h-5 w-5 text-orange-600" />
+                <div>
+                  <h4 className="font-semibold text-orange-900">
+                    {stats.pending} Nurse{stats.pending > 1 ? 's' : ''} Awaiting Approval
+                  </h4>
+                  <p className="text-sm text-orange-700">
+                    These nurses have completed onboarding and are waiting for admin approval to access their dashboard.
+                  </p>
+                </div>
+              </div>
+              <Button 
+                size="sm" 
+                className="bg-orange-600 hover:bg-orange-700"
+                onClick={() => {
+                  setStatusFilter('pending');
+                  setOnboardingFilter('pending');
+                }}
+              >
+                Review Now
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters and Search */}
       <Card className="border-0 shadow-md">
@@ -246,6 +324,7 @@ export default function NurseManagement({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="suspended">Suspended</SelectItem>
                   <SelectItem value="deactivated">Deactivated</SelectItem>
@@ -255,15 +334,15 @@ export default function NurseManagement({
             </div>
 
             <div>
-              <Label htmlFor="onboarding-filter">Onboarding</Label>
+              <Label htmlFor="onboarding-filter">Approval Status</Label>
               <Select value={onboardingFilter} onValueChange={setOnboardingFilter}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="pending">Needs Approval</SelectItem>
+                  <SelectItem value="completed">Approved</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -312,127 +391,143 @@ export default function NurseManagement({
         <CardContent className="p-0">
           {filteredAndSortedNurses.length > 0 ? (
             <div className="divide-y divide-slate-100">
-              {filteredAndSortedNurses.map((user) => (
-                <div key={user.user_id} className="p-6 hover:bg-slate-50 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Stethoscope className="h-6 w-6 text-blue-600" />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h4 className="font-semibold text-slate-900 truncate">
-                            {getUserDisplayName(user)}
-                          </h4>
-                          <Badge className={getStatusColor(user.account_status)}>
-                            {user.account_status}
-                          </Badge>
-                          {!user.profile_data?.onboarding_completed && (
-                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 animate-pulse">
-                              Needs Approval
-                            </Badge>
+              {filteredAndSortedNurses.map((user) => {
+                const isNew = isNewUser(user);
+                
+                return (
+                  <div 
+                    key={user.user_id} 
+                    className={`p-6 hover:bg-slate-50 transition-colors ${
+                      isNew ? 'bg-orange-50/50 border-l-4 border-l-orange-400' : ''
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 flex-1">
+                        <div className="relative w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Stethoscope className="h-6 w-6 text-blue-600" />
+                          {isNew && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-orange-600 rounded-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                            </div>
                           )}
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-slate-600">
-                          <div className="flex items-center space-x-1">
-                            <Mail className="h-3 w-3" />
-                            <span className="truncate">{user.email}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h4 className="font-semibold text-slate-900 truncate">
+                              {getUserDisplayName(user)}
+                            </h4>
+                            <Badge className={getStatusColor(user.account_status)}>
+                              {user.account_status}
+                            </Badge>
+                            {isNew && (
+                              <Badge className="bg-orange-600 text-white animate-pulse">
+                                NEW - Needs Approval
+                              </Badge>
+                            )}
                           </div>
                           
-                          {user.profile_data?.phone_number && (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-slate-600">
                             <div className="flex items-center space-x-1">
-                              <Phone className="h-3 w-3" />
-                              <span>{user.profile_data.phone_number}</span>
+                              <Mail className="h-3 w-3" />
+                              <span className="truncate">{user.email}</span>
+                            </div>
+                            
+                            {user.profile_data?.phone_number && (
+                              <div className="flex items-center space-x-1">
+                                <Phone className="h-3 w-3" />
+                                <span>{user.profile_data.phone_number}</span>
+                              </div>
+                            )}
+                            
+                            <div className="flex items-center space-x-1">
+                              <Calendar className="h-3 w-3" />
+                              <span>Joined {new Date(user.created_at || '').toLocaleDateString()}</span>
+                            </div>
+                            
+                            {user.profile_data?.years_experience && (
+                              <div className="flex items-center space-x-1">
+                                <Award className="h-3 w-3" />
+                                <span>{user.profile_data.years_experience} years exp.</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Specializations */}
+                          {user.profile_data?.specializations && user.profile_data.specializations.length > 0 && (
+                            <div className="mt-3">
+                              <div className="flex flex-wrap gap-1">
+                                {user.profile_data.specializations.slice(0, 3).map((spec, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">
+                                    {spec}
+                                  </Badge>
+                                ))}
+                                {user.profile_data.specializations.length > 3 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    +{user.profile_data.specializations.length - 3} more
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                           )}
-                          
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="h-3 w-3" />
-                            <span>Joined {new Date(user.created_at || '').toLocaleDateString()}</span>
-                          </div>
-                          
-                          {user.profile_data?.years_experience && (
-                            <div className="flex items-center space-x-1">
-                              <Award className="h-3 w-3" />
-                              <span>{user.profile_data.years_experience} years exp.</span>
+
+                          {/* License Status */}
+                          {user.profile_data?.license_info && (
+                            <div className="mt-3 flex items-center space-x-4">
+                              <div className="flex items-center space-x-2">
+                                <Shield className="h-4 w-4 text-slate-400" />
+                                <span className="text-sm text-slate-600">
+                                  {user.profile_data.license_info.license_type} - {user.profile_data.license_info.issuing_state}
+                                </span>
+                                <Badge className={getVerificationStatusColor(user.profile_data.license_info.verification_status || 'pending')}>
+                                  {user.profile_data.license_info.verification_status || 'pending'}
+                                </Badge>
+                              </div>
                             </div>
                           )}
                         </div>
+                      </div>
 
-                        {/* Specializations */}
-                        {user.profile_data?.specializations && user.profile_data.specializations.length > 0 && (
-                          <div className="mt-3">
-                            <div className="flex flex-wrap gap-1">
-                              {user.profile_data.specializations.slice(0, 3).map((spec, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
-                                  {spec}
-                                </Badge>
-                              ))}
-                              {user.profile_data.specializations.length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{user.profile_data.specializations.length - 3} more
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        )}
+                      {/* Action Buttons */}
+                      <div className="flex items-center space-x-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onViewDetails(user.profile_data?.id || user.user_id, getUserDisplayName(user))}
+                          className="flex items-center space-x-1"
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span className="hidden sm:inline">Details</span>
+                        </Button>
 
-                        {/* License Status */}
-                        {user.profile_data?.license_info && (
-                          <div className="mt-3 flex items-center space-x-4">
-                            <div className="flex items-center space-x-2">
-                              <Shield className="h-4 w-4 text-slate-400" />
-                              <span className="text-sm text-slate-600">
-                                {user.profile_data.license_info.license_type} - {user.profile_data.license_info.issuing_state}
-                              </span>
-                              <Badge className={getVerificationStatusColor(user.profile_data.license_info.verification_status || 'pending')}>
-                                {user.profile_data.license_info.verification_status || 'pending'}
-                              </Badge>
-                            </div>
+                        {isNew && (
+                          <div className="flex space-x-1">
+                            <Button
+                              size="sm"
+                              onClick={() => handleApproval(user.user_id, true)}
+                              disabled={loading}
+                              className="bg-green-600 hover:bg-green-700 text-white flex items-center space-x-1"
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                              <span className="hidden sm:inline">Approve</span>
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleApproval(user.user_id, false)}
+                              disabled={loading}
+                              className="border-red-600 text-red-600 hover:bg-red-50 flex items-center space-x-1"
+                            >
+                              <XCircle className="h-4 w-4" />
+                              <span className="hidden sm:inline">Deny</span>
+                            </Button>
                           </div>
                         )}
                       </div>
                     </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center space-x-2 ml-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onViewDetails(user.profile_data?.id || user.user_id, getUserDisplayName(user))}
-                        className="flex items-center space-x-1"
-                      >
-                        <Eye className="h-4 w-4" />
-                        <span className="hidden sm:inline">Details</span>
-                      </Button>
-
-                      {!user.profile_data?.onboarding_completed && (
-                        <div className="flex space-x-1">
-                          <Button
-                            size="sm"
-                            onClick={() => onApproval(user.profile_data?.id || user.user_id, true)}
-                            className="bg-green-600 hover:bg-green-700 text-white flex items-center space-x-1"
-                          >
-                            <CheckCircle className="h-4 w-4" />
-                            <span className="hidden sm:inline">Approve</span>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => onApproval(user.profile_data?.id || user.user_id, false)}
-                            className="border-red-600 text-red-600 hover:bg-red-50 flex items-center space-x-1"
-                          >
-                            <XCircle className="h-4 w-4" />
-                            <span className="hidden sm:inline">Deny</span>
-                          </Button>
-                        </div>
-                      )}
-                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="p-12 text-center text-slate-500">

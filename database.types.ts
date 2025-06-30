@@ -1649,16 +1649,28 @@ export type Database = {
       user_metadata: {
         Row: {
           account_status: string
+          first_name: string | null
+          last_name: string | null
+          onboarding_completed: boolean | null
+          updated_at: string | null
           user_id: string
           user_type: string
         }
         Insert: {
           account_status?: string
+          first_name?: string | null
+          last_name?: string | null
+          onboarding_completed?: boolean | null
+          updated_at?: string | null
           user_id: string
           user_type: string
         }
         Update: {
           account_status?: string
+          first_name?: string | null
+          last_name?: string | null
+          onboarding_completed?: boolean | null
+          updated_at?: string | null
           user_id?: string
           user_type?: string
         }
