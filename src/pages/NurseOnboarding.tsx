@@ -77,6 +77,7 @@ export default function NurseOnboarding() {
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
   const [city, setCity] = useState('');
+  const [email,setEmail] = useState('');
   const [state, setState] = useState('');
   const [streetAddress, setStreetAddress] = useState('');
   const [zipCode, setZipCode] = useState('');
@@ -158,6 +159,7 @@ export default function NurseOnboarding() {
           setFirstName(profileData.first_name || metadata?.first_name || '');
           setLastName(profileData.last_name || metadata?.last_name || '');
           setPhoneNumber(profileData.phone_number || '');
+          setEmail(profileData.email || '');
           setProfilePhotoUrl(profileData.profile_photo_url || '');
           setCity(profileData.city || '');
           setState(profileData.state || '');
@@ -210,7 +212,7 @@ export default function NurseOnboarding() {
   const validateCurrentStep = (): boolean => {
     switch (currentStep) {
       case 0: // Personal Information
-        if (!firstName.trim() || !lastName.trim() || !phoneNumber.trim() || !city.trim() || !state || !streetAddress.trim() || !zipCode.trim()) {
+        if (!firstName.trim() || !lastName.trim() || !phoneNumber.trim() || !city.trim() || !state || !streetAddress.trim() || !zipCode.trim() || !email.trim()) {
           toast({
             title: "Required Fields Missing",
             description: "Please fill in all required fields.",
@@ -291,6 +293,7 @@ export default function NurseOnboarding() {
           first_name: firstName,
           last_name: lastName,
           phone_number: phoneNumber,
+          email: email,
           profile_photo_url: photoUrl,
           city,
           state,
@@ -588,6 +591,17 @@ export default function NurseOnboarding() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="Enter your phone number"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      value={email}
+                      type="email"
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email address"
                     />
                   </div>
 
