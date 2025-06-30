@@ -91,7 +91,7 @@ function App() {
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route 
-                path="/business-banking-setup-guide-nurses" 
+                path="/business-bank-account-for-nurses" 
                 element={<BusinessBankingSetupGuideNurses />} 
               />
               <Route 
@@ -125,9 +125,9 @@ function App() {
               
               {/* Business Setup */}
               <Route path="/llc-setup-help" element={<LlcSetupHelp />} />
-              <Route path="/nurse-llc-setup" element={<NurseLlcSetup />} />
+              <Route path="/nurse-llc-setup-guide" element={<NurseLlcSetup />} />
               <Route path="/get-ein-nurse-business" element={<GetEinNurseBusiness />} />
-              <Route path="/tax-tips" element={<TaxTips />} />
+              <Route path="/1099-tax-tips" element={<TaxTips />} />
               
               {/* Onboarding Routes - FIXED: Uncommented these routes */}
               <Route path="/onboarding/nurse" element={<NurseOnboarding />} />
