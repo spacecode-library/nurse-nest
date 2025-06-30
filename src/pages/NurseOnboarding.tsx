@@ -1,213 +1,178 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  CheckCircle, 
-  User, 
-  Home, 
-  Heart, 
-  CreditCard,
-  FileText,
-  Users,
-  MapPin,
-  Stethoscope
-} from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, ArrowRight, Upload, FileText, CheckCircle, User, Briefcase, MapPin, Shield, Calendar } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { getCurrentUser, completeOnboarding } from '@/supabase/auth/authService';
-import { getClientProfileByUserId, createClientProfile, updateClientProfile } from '@/supabase/api/clientProfileService';
+import { getCurrentUser, completeOnboarding, updateUserMetadata } from '@/supabase/auth/authService';
+import { getNurseProfileByUserId, createNurseProfile, updateNurseProfile } from '@/supabase/api/nurseProfileService';
 import { supabase } from '@/integrations/supabase/client';
-import Navbar from '@/components/NurseNestNavbar';
-import ClickwrapAgreement from '@/components/ui/ClickwrapAgreement';
 
-// Constants for form options
-const US_STATES = [
-  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+// Types
+interface OnboardingStep {
+  id: number;
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+const ONBOARDING_STEPS: OnboardingStep[] = [
+  {
+    id: 1,
+    title: "Personal Information",
+    icon: <User className="h-5 w-5" />,
+    description: "Tell us about yourself"
+  },
+  {
+    id: 2,
+    title: "Professional Qualifications",
+    icon: <Briefcase className="h-5 w-5" />,
+    description: "Your education and experience"
+  },
+  {
+    id: 3,
+    title: "Licenses & Certifications",
+    icon: <Shield className="h-5 w-5" />,
+    description: "Your professional credentials"
+  },
+  {
+    id: 4,
+    title: "Employment Preferences",
+    icon: <MapPin className="h-5 w-5" />,
+    description: "Where and how you'd like to work"
+  },
+  {
+    id: 5,
+    title: "Additional Documents",
+    icon: <FileText className="h-5 w-5" />,
+    description: "Upload supporting documents"
+  },
+  {
+    id: 6,
+    title: "Review & Submit",
+    icon: <CheckCircle className="h-5 w-5" />,
+    description: "Review your application"
+  }
 ];
 
-const CLIENT_TYPES = ['individual', 'family'];
-const RELATIONSHIP_OPTIONS = ['Parent', 'Spouse', 'Child', 'Sibling', 'Other'];
-
-const CARE_TYPES = [
-  'Adult Care',
-  'Pediatric Care', 
-  'Elderly Care',
-  'Postpartum Care',
-  'Post-Surgery Recovery Care',
-  'Chronic Illness Management',
-  'Wound Care',
-  'IV Therapy',
-  'Medication Management',
-  'Physical Therapy Support',
-  'Dementia/Alzheimer\'s Care',
-  'Respite Care',
-  'End-of-Life Care',
-  'Special Needs Care'
-];
-
-const CARE_SCHEDULES = [
-  'Day Shift',
-  'Night Shift',
-  'Evening Shift',
-  'Weekend',
-  'Weekday',
-  '24/7 Care',
-  '12-Hour Shifts',
-  '8-Hour Shifts'
-];
-
-const SPECIAL_SKILLS = [
-  'IV Therapy',
-  'Wound Care',
-  'Ventilator Management',
-  'Tracheostomy Care',
-  'Feeding Tube Management',
-  'Medication Administration',
-  'Dementia Care',
-  'Pediatric Experience',
-  'Neonatal Experience',
-  'Physical Therapy',
-  'Occupational Therapy',
-  'Oxygen Therapy',
-  'Catheter Care',
-  'Ostomy Care',
-  'Diabetes Management',
-  'Stroke Recovery Care',
-  'Hospice/Palliative Care',
-  'ADL Assistance'
-];
-
-const HEALTH_CONDITIONS = [
-  'Diabetes',
-  'Hypertension', 
-  'COPD',
-  'Stroke Recovery',
-  'Heart Disease',
-  'Alzheimer\'s/Dementia',
-  'Cancer',
-  'Parkinson\'s Disease',
-  'Mobility Issues',
-  'Post-Surgery',
-  'Developmental Disability',
-  'Mental Health Condition',
-  'Premature Infant',
-  'Respiratory Conditions',
-  'Feeding Difficulties',
-  'Catheter/Ostomy Needs',
-  'End-of-Life Care'
-];
-
-const HOME_ENVIRONMENTS = ['House', 'Apartment', 'Condo', 'Assisted Living', 'Other'];
-
-// Define the onboarding steps - Updated to include Legal Agreements
-const ONBOARDING_STEPS = [
-  'Client Type',
-  'Personal Information',
-  'Care Location',
-  'Care Needs',
-  'Payment Info',
-  'Legal Agreements',
-  'Review & Submit'
-];
-
-export default function ClientOnboarding() {
+export default function NurseOnboarding() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const [submitting, setSubmitting] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [clientProfileId, setClientProfileId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [careLocationId, setCareLocationId] = useState<string | null>(null);
-  const [careNeedsId, setCareNeedsId] = useState<string | null>(null);
-  
-  // Clickwrap agreement state
-  const [allAgreementsAccepted, setAllAgreementsAccepted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [userId, setUserId] = useState<string>('');
+  const [nurseProfileId, setNurseProfileId] = useState<string>('');
 
-  // Client Type (Step 0)
-  const [clientType, setClientType] = useState<'individual' | 'family'>('individual');
-  const [relationshipToRecipient, setRelationshipToRecipient] = useState('');
-
-  // Personal Information (Step 1)
+  // Step 1: Personal Information
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-
-  // Care recipient info (for family clients)
-  const [recipientFirstName, setRecipientFirstName] = useState('');
-  const [recipientLastName, setRecipientLastName] = useState('');
-  const [recipientAge, setRecipientAge] = useState('');
-
-  // Care Location (Step 2)
-  const [streetAddress, setStreetAddress] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
   const [zipCode, setZipCode] = useState('');
-  const [homeEnvironment, setHomeEnvironment] = useState('');
+  const [bio, setBio] = useState('');
 
-  // Care Needs (Step 3)
-  const [careTypes, setCareTypes] = useState<string[]>([]);
-  const [careSchedule, setCareSchedule] = useState<string[]>([]);
-  const [hoursPerWeek, setHoursPerWeek] = useState('');
-  const [specialSkills, setSpecialSkills] = useState<string[]>([]);
-  const [healthConditions, setHealthConditions] = useState<string[]>([]);
-  const [additionalNotes, setAdditionalNotes] = useState('');
+  // Step 2: Professional Qualifications
+  const [specializations, setSpecializations] = useState<string[]>([]);
+  const [yearsExperience, setYearsExperience] = useState('');
+  const [educationLevel, setEducationLevel] = useState('');
+  const [schoolName, setSchoolName] = useState('');
+  const [graduationYear, setGraduationYear] = useState('');
+  const [resume, setResume] = useState<File | null>(null);
+  const [resumeUrl, setResumeUrl] = useState('');
 
-  // Payment Info (Step 4) - Simplified for now
-  const [paymentMethodAdded, setPaymentMethodAdded] = useState(false);
+  // Step 3: Licenses & Certifications
+  const [licenseType, setLicenseType] = useState('');
+  const [licenseNumber, setLicenseNumber] = useState('');
+  const [issuingState, setIssuingState] = useState('');
+  const [licenseExpiration, setLicenseExpiration] = useState('');
+  const [certifications, setCertifications] = useState<Array<{
+    name: string;
+    file: File | null;
+    fileUrl: string;
+  }>>([]);
 
-  // Calculate onboarding progress percentage
-  const calculateProgress = (step: number): number => {
-    const stepPercentage = 100 / ONBOARDING_STEPS.length;
-    return Math.round(stepPercentage * (step + 1));
-  };
+  // Step 4: Employment Preferences
+  const [availabilityTypes, setAvailabilityTypes] = useState<string[]>([]);
+  const [preferredShifts, setPreferredShifts] = useState<string[]>([]);
+  const [locationPreferences, setLocationPreferences] = useState<string[]>([]);
+  const [travelRadius, setTravelRadius] = useState('');
+  const [desiredHourlyRate, setDesiredHourlyRate] = useState('');
 
+  // Step 5: Additional Documents
+  const [additionalDocs, setAdditionalDocs] = useState<Array<{
+    name: string;
+    file: File | null;
+    fileUrl: string;
+  }>>([]);
+
+  // Step 6: Review & Submit
+  const [agreementAccepted, setAgreementAccepted] = useState(false);
+
+  // Data for dropdowns
+  const specializationOptions = ['Pediatric', 'Geriatric', 'Critical Care', 'Oncology', 'Emergency', 'Postpartum', 'Mental Health', 'Surgical', 'Home Health'];
+  const educationLevelOptions = ['Associate', 'Bachelor', 'Master', 'Doctorate'];
+  const licenseTypeOptions = ['RN', 'LPN', 'CNA', 'NP'];
+  const availabilityOptions = ['Full-time', 'Part-time', 'Per diem', 'Contract'];
+  const shiftOptions = ['Day', 'Night', 'Weekend', 'Flexible'];
+  const stateOptions = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+  ];
+
+  // Load existing user data and profile
   useEffect(() => {
-    const fetchUserAndProfile = async () => {
-      setIsLoading(true);
+    const loadExistingData = async () => {
       try {
         const { data } = await getCurrentUser();
-        if (data?.user) {
-          const userId = data.user.id;
-          setUserId(userId);
-          
-          // Get metadata from auth user
-          const metadata = data.user.user_metadata;
-          if (metadata?.first_name) setFirstName(metadata.first_name);
-          if (metadata?.last_name) setLastName(metadata.last_name);
-          
-          const { data: profileData, error } = await getClientProfileByUserId(userId);
-          
-          if (profileData) {
-            setClientProfileId(profileData.id);
-            setClientType(profileData.client_type || 'individual');
-            setFirstName(profileData.first_name || metadata?.first_name || '');
-            setLastName(profileData.last_name || metadata?.last_name || '');
-            setPhoneNumber(profileData.phone_number || '');
-            setRelationshipToRecipient(profileData.relationship_to_recipient || '');
-            
-            if (!profileData.onboarding_completed) {
-              const percentage = profileData.onboarding_completion_percentage;
-              if (percentage >= 85) setCurrentStep(6); // Updated for 7 steps
-              else if (percentage >= 71) setCurrentStep(5);
-              else if (percentage >= 57) setCurrentStep(4);
-              else if (percentage >= 42) setCurrentStep(3);
-              else if (percentage >= 28) setCurrentStep(2);
-              else if (percentage >= 14) setCurrentStep(1);
-              else setCurrentStep(0);
-            } else {
-              navigate('/dashboard');
-            }
-          }
-        } else {
+        if (!data?.user) {
           navigate('/auth');
+          return;
+        }
+
+        const userId = data.user.id;
+        setUserId(userId);
+        
+        // Get metadata from auth user
+        const metadata = data.user.user_metadata;
+        if (metadata?.first_name) setFirstName(metadata.first_name);
+        if (metadata?.last_name) setLastName(metadata.last_name);
+        
+        const { data: profileData, error } = await getNurseProfileByUserId(userId);
+        
+        if (profileData) {
+          setNurseProfileId(profileData.id);
+          setFirstName(profileData.first_name || metadata?.first_name || '');
+          setLastName(profileData.last_name || metadata?.last_name || '');
+          setPhoneNumber(profileData.phone_number || '');
+          setProfilePhotoUrl(profileData.profile_photo_url || '');
+          setCity(profileData.city || '');
+          setState(profileData.state || '');
+          setStreetAddress(profileData.street_address || '');
+          setZipCode(profileData.zip_code || '');
+          setBio(profileData.bio || '');
+          
+          if (!profileData.onboarding_completed) {
+            const percentage = profileData.onboarding_completion_percentage || 0;
+            const stepIndex = Math.floor((percentage / 100) * ONBOARDING_STEPS.length);
+            setCurrentStep(Math.min(stepIndex, ONBOARDING_STEPS.length - 1));
+          } else {
+            // If already completed, redirect to dashboard
+            navigate('/dashboard');
+          }
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -217,237 +182,272 @@ export default function ClientOnboarding() {
       }
     };
 
-    fetchUserAndProfile();
+    loadExistingData();
   }, [navigate]);
 
-  const toggleCareType = (careType: string) => {
-    setCareTypes(prev => 
-      prev.includes(careType) 
-        ? prev.filter(c => c !== careType) 
-        : [...prev, careType]
-    );
+  const updateOnboardingProgress = async (profileId: string, percentage: number, completed: boolean = false) => {
+    await updateNurseProfile(profileId, {
+      onboarding_completion_percentage: percentage,
+      onboarding_completed: completed,
+      updated_at: new Date().toISOString()
+    });
   };
 
-  const toggleCareSchedule = (schedule: string) => {
-    setCareSchedule(prev => 
-      prev.includes(schedule) 
-        ? prev.filter(s => s !== schedule) 
-        : [...prev, schedule]
-    );
+  const uploadFile = async (file: File, bucket: string, path: string): Promise<string> => {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file);
+
+    if (error) throw error;
+
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(data.path);
+
+    return urlData.publicUrl;
   };
 
-  const toggleSpecialSkill = (skill: string) => {
-    setSpecialSkills(prev => 
-      prev.includes(skill) 
-        ? prev.filter(s => s !== skill) 
-        : [...prev, skill]
-    );
-  };
-
-  const toggleHealthCondition = (condition: string) => {
-    setHealthConditions(prev => 
-      prev.includes(condition) 
-        ? prev.filter(c => c !== condition) 
-        : [...prev, condition]
-    );
-  };
-
-  const updateOnboardingProgress = async (profileId: string, percentage: number, completed = false) => {
-    try {
-      await updateClientProfile(profileId, {
-        onboarding_completion_percentage: percentage,
-        onboarding_completed: completed,
-        updated_at: new Date().toISOString()
-      });
-    } catch (error) {
-      console.error('Error updating onboarding progress:', error);
+  const validateCurrentStep = (): boolean => {
+    switch (currentStep) {
+      case 0: // Personal Information
+        if (!firstName.trim() || !lastName.trim() || !phoneNumber.trim() || !city.trim() || !state || !streetAddress.trim() || !zipCode.trim()) {
+          toast({
+            title: "Required Fields Missing",
+            description: "Please fill in all required fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 1: // Professional Qualifications
+        if (!specializations.length || !yearsExperience || !educationLevel || !schoolName || !graduationYear) {
+          toast({
+            title: "Required Fields Missing",
+            description: "Please fill in all professional qualification fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        if (!resume && !resumeUrl) {
+          toast({
+            title: "Resume Required",
+            description: "Please upload your resume.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 2: // Licenses & Certifications
+        if (!licenseType || !licenseNumber || !issuingState || !licenseExpiration) {
+          toast({
+            title: "License Information Required",
+            description: "Please fill in all license information fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 3: // Employment Preferences
+        if (!availabilityTypes.length || !preferredShifts.length || !travelRadius || !desiredHourlyRate) {
+          toast({
+            title: "Employment Preferences Required",
+            description: "Please fill in all employment preference fields.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
+      case 5: // Review & Submit
+        if (!agreementAccepted) {
+          toast({
+            title: "Agreement Required",
+            description: "Please accept the terms and conditions to proceed.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        break;
     }
+    return true;
   };
 
   const nextStep = async () => {
     if (!validateCurrentStep()) return;
     
     setSubmitting(true);
-    
     try {
-      const progressPercentage = calculateProgress(currentStep);
+      const progressPercentage = Math.round(((currentStep + 1) / ONBOARDING_STEPS.length) * 100);
       
-      switch (currentStep) {
-        case 0: // Client Type
-          if (!clientProfileId) {
-            // Create new profile
-            const { data: newProfile } = await createClientProfile({
-              user_id: userId!,
-              client_type: clientType,
-              first_name: firstName,
-              last_name: lastName,
-              phone_number: phoneNumber || '',
-              relationship_to_recipient: clientType === 'family' ? relationshipToRecipient : null,
-              onboarding_completion_percentage: progressPercentage
-            });
-            setClientProfileId(newProfile.id);
-          } else {
-            // Update existing profile
-            await updateClientProfile(clientProfileId, {
-              client_type: clientType,
-              relationship_to_recipient: clientType === 'family' ? relationshipToRecipient : null,
-              onboarding_completion_percentage: progressPercentage
-            });
-          }
-          break;
+      if (currentStep === 0) {
+        // Save personal information
+        let photoUrl = profilePhotoUrl;
+        if (profilePhoto) {
+          photoUrl = await uploadFile(profilePhoto, 'nurse-profiles', `${userId}/profile-photo-${Date.now()}`);
+          setProfilePhotoUrl(photoUrl);
+        }
 
-        case 1: // Personal Information
-          if (!clientProfileId) throw new Error("Client profile not found");
-          
-          await updateClientProfile(clientProfileId, {
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phoneNumber,
+        const profileData = {
+          user_id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber,
+          profile_photo_url: photoUrl,
+          city,
+          state,
+          street_address: streetAddress,
+          zip_code: zipCode,
+          bio,
+          onboarding_completion_percentage: progressPercentage
+        };
+
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, profileData);
+        } else {
+          const { data: newProfile } = await createNurseProfile(profileData);
+          if (newProfile) {
+            setNurseProfileId(newProfile.id);
+          }
+        }
+
+        // Update user metadata with the profile information (FIXED: removed userId parameter)
+        await updateUserMetadata({
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber
+        });
+
+      } else if (currentStep === 1) {
+        // Save professional qualifications
+        let resumeUrlToSave = resumeUrl;
+        if (resume) {
+          resumeUrlToSave = await uploadFile(resume, 'nurse-documents', `${userId}/resume-${Date.now()}`);
+          setResumeUrl(resumeUrlToSave);
+        }
+
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
             onboarding_completion_percentage: progressPercentage
           });
-          
-          // Handle care recipient for family clients
-          if (clientType === 'family') {
-            const { data: existingRecipient } = await supabase
-              .from('care_recipients')
-              .select('id')
-              .eq('client_id', clientProfileId)
-              .single();
-              
-            if (existingRecipient) {
-              await supabase
-                .from('care_recipients')
-                .update({
-                  first_name: recipientFirstName,
-                  last_name: recipientLastName,
-                  age: parseInt(recipientAge),
-                  updated_at: new Date().toISOString()
-                })
-                .eq('id', existingRecipient.id);
-            } else {
-              await supabase
-                .from('care_recipients')
-                .insert({
-                  client_id: clientProfileId,
-                  first_name: recipientFirstName,
-                  last_name: recipientLastName,
-                  age: parseInt(recipientAge)
-                });
+
+          // Save qualifications to separate table
+          await supabase.from('nurse_qualifications').upsert({
+            nurse_id: nurseProfileId,
+            specializations,
+            years_experience: parseInt(yearsExperience),
+            education_level: educationLevel,
+            school_name: schoolName,
+            graduation_year: parseInt(graduationYear),
+            resume_url: resumeUrlToSave
+          });
+        }
+      } else if (currentStep === 2) {
+        // Save licenses and certifications
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: progressPercentage
+          });
+
+          // Save license
+          await supabase.from('nurse_licenses').upsert({
+            nurse_id: nurseProfileId,
+            license_type: licenseType,
+            license_number: licenseNumber,
+            issuing_state: issuingState,
+            expiration_date: licenseExpiration,
+            verification_status: 'pending'
+          });
+
+          // Save certifications
+          for (const cert of certifications) {
+            let certFileUrl = cert.fileUrl;
+            if (cert.file) {
+              certFileUrl = await uploadFile(cert.file, 'nurse-documents', `${userId}/cert-${Date.now()}`);
             }
-          }
-          break;
 
-        case 2: // Care Location
-          if (!clientProfileId) throw new Error("Client profile not found");
+            await supabase.from('nurse_certifications').upsert({
+              nurse_id: nurseProfileId,
+              certification_name: cert.name,
+              certification_file_url: certFileUrl
+            });
+          }
+        }
+      } else if (currentStep === 3) {
+        // Save employment preferences
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: progressPercentage
+          });
+
+          await supabase.from('nurse_preferences').upsert({
+            nurse_id: nurseProfileId,
+            availability_types: availabilityTypes,
+            preferred_shifts: preferredShifts,
+            location_preferences: locationPreferences,
+            travel_radius: parseInt(travelRadius),
+            desired_hourly_rate: parseFloat(desiredHourlyRate)
+          });
+        }
+      } else if (currentStep === 4) {
+        // Save additional documents
+        if (nurseProfileId) {
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: progressPercentage
+          });
+
+          // Save additional documents
+          for (const doc of additionalDocs) {
+            let docFileUrl = doc.fileUrl;
+            if (doc.file) {
+              docFileUrl = await uploadFile(doc.file, 'nurse-documents', `${userId}/doc-${Date.now()}`);
+            }
+
+            await supabase.from('nurse_certifications').upsert({
+              nurse_id: nurseProfileId,
+              certification_name: doc.name,
+              certification_file_url: docFileUrl,
+              is_malpractice_insurance: doc.name.toLowerCase().includes('malpractice')
+            });
+          }
+        }
+      } else if (currentStep === 5) {
+        // Complete onboarding
+        if (nurseProfileId) {
+          // First update the nurse profile to mark as completed
+          await updateNurseProfile(nurseProfileId, {
+            onboarding_completion_percentage: 100,
+            onboarding_completed: true
+          });
+
+          // Now call completeOnboarding which will synchronize data with user_metadata (FIXED: destructuring)
+          const { success, error } = await completeOnboarding('nurse');
           
-          const { data: existingLocation } = await supabase
-            .from('care_locations')
-            .select('id')
-            .eq('client_id', clientProfileId)
-            .single();
+          if (success) {
+            toast({
+              title: "Application Submitted!",
+              description: "Your nurse application has been submitted for review. You'll be notified once it's approved.",
+            });
             
-          if (existingLocation) {
-            await supabase
-              .from('care_locations')
-              .update({
-                street_address: streetAddress,
-                city: city,
-                state: state,
-                zip_code: zipCode,
-                home_environment: homeEnvironment,
-                updated_at: new Date().toISOString()
-              })
-              .eq('id', existingLocation.id);
-            setCareLocationId(existingLocation.id);
+            // Navigate to a waiting/pending page or dashboard
+            navigate('/dashboard');
           } else {
-            const { data: newLocation } = await supabase
-              .from('care_locations')
-              .insert({
-                client_id: clientProfileId,
-                street_address: streetAddress,
-                city: city,
-                state: state,
-                zip_code: zipCode,
-                home_environment: homeEnvironment
-              })
-              .select('id')
-              .single();
-            setCareLocationId(newLocation.id);
+            toast({
+              title: "Error",
+              description: error || "Failed to complete onboarding. Please try again.",
+              variant: "destructive"
+            });
+            return;
           }
-          
-          await updateOnboardingProgress(clientProfileId, progressPercentage);
-          break;
-
-        case 3: // Care Needs
-          if (!clientProfileId) throw new Error("Client profile not found");
-          
-          const { data: existingNeeds } = await supabase
-            .from('care_needs')
-            .select('id')
-            .eq('client_id', clientProfileId)
-            .single();
-            
-          if (existingNeeds) {
-            await supabase
-              .from('care_needs')
-              .update({
-                care_types: careTypes,
-                care_schedule: careSchedule,
-                hours_per_week: parseInt(hoursPerWeek),
-                special_skills: specialSkills,
-                health_conditions: healthConditions,
-                additional_notes: additionalNotes,
-                updated_at: new Date().toISOString()
-              })
-              .eq('id', existingNeeds.id);
-            setCareNeedsId(existingNeeds.id);
-          } else {
-            const { data: newNeeds } = await supabase
-              .from('care_needs')
-              .insert({
-                client_id: clientProfileId,
-                care_types: careTypes,
-                care_schedule: careSchedule,
-                hours_per_week: parseInt(hoursPerWeek),
-                special_skills: specialSkills,
-                health_conditions: healthConditions,
-                additional_notes: additionalNotes
-              })
-              .select('id')
-              .single();
-            setCareNeedsId(newNeeds.id);
-          }
-          
-          await updateOnboardingProgress(clientProfileId, progressPercentage);
-          break;
-
-        case 4: // Payment Info
-          if (!clientProfileId) throw new Error("Client profile not found");
-          // For now, just mark as completed - payment integration would go here
-          setPaymentMethodAdded(true);
-          await updateOnboardingProgress(clientProfileId, progressPercentage);
-          break;
-
-        case 5: // Legal Agreements
-          if (!clientProfileId) throw new Error("Client profile not found");
-          await updateOnboardingProgress(clientProfileId, progressPercentage);
-          break;
+        }
       }
-      
-      setCurrentStep(currentStep + 1);
-      window.scrollTo(0, 0);
-      
+
+      if (currentStep < ONBOARDING_STEPS.length - 1) {
+        setCurrentStep(currentStep + 1);
+      }
+    } catch (error) {
+      console.error('Error saving step data:', error);
       toast({
-        title: "Progress saved",
-        description: `Successfully saved your ${ONBOARDING_STEPS[currentStep]} information`,
-        variant: "default"
-      });
-      
-    } catch (error: any) {
-      console.error('Error saving data:', error);
-      toast({
-        title: "Error saving data",
-        description: error.message || "An unexpected error occurred",
+        title: "Error",
+        description: "Failed to save your information. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -456,868 +456,624 @@ export default function ClientOnboarding() {
   };
 
   const prevStep = () => {
-    setCurrentStep(currentStep - 1);
-    window.scrollTo(0, 0);
-  };
-
-  const validateCurrentStep = () => {
-    switch (currentStep) {
-      case 0:
-        if (clientType === 'family' && !relationshipToRecipient) {
-          toast({
-            title: "Required field missing",
-            description: "Please specify your relationship to the care recipient",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-
-      case 1:
-        if (!firstName || !lastName || !phoneNumber) {
-          toast({
-            title: "Required fields missing",
-            description: "Please fill out all required fields",
-            variant: "destructive"
-          });
-          return false;
-        }
-        
-        if (clientType === 'family' && (!recipientFirstName || !recipientLastName || !recipientAge)) {
-          toast({
-            title: "Care recipient information required",
-            description: "Please provide care recipient details",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-
-      case 2:
-        if (!streetAddress || !city || !state || !zipCode || !homeEnvironment) {
-          toast({
-            title: "Required fields missing",
-            description: "Please fill out all care location fields",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-
-      case 3:
-        if (careTypes.length === 0 || careSchedule.length === 0 || !hoursPerWeek || 
-            specialSkills.length === 0 || healthConditions.length === 0) {
-          toast({
-            title: "Required fields missing",
-            description: "Please fill out all care needs information",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-
-      case 4:
-        // Payment validation would go here
-        return true;
-
-      case 5: // Legal Agreements step
-        if (!allAgreementsAccepted) {
-          toast({
-            title: "Legal agreements required",
-            description: "Please accept all legal agreements to continue",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-
-      default:
-        return true;
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
-  const handleSubmit = async () => {
-    if (!validateCurrentStep() || !allAgreementsAccepted || !userId || !clientProfileId) {
-      return;
-    }
-    
-    setSubmitting(true);
-    
-    try {
-      await updateOnboardingProgress(clientProfileId, 100, true);
-      
-      // Complete onboarding in auth metadata
-      await completeOnboarding();
-      
-      toast({
-        title: "🎉 Profile completed!",
-        description: "Your profile has been successfully created. You can now start posting care needs and finding nurses.",
-        variant: "default"
-      });
-      
-      // Redirect to dashboard
-      navigate('/pending-approval');
-      
-    } catch (error: any) {
-      console.error('Error submitting profile:', error);
-      toast({
-        title: "Profile submission failed",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive"
-      });
-    } finally {
-      setSubmitting(false);
-    }
+  const addCertification = () => {
+    setCertifications([...certifications, { name: '', file: null, fileUrl: '' }]);
+  };
+
+  const updateCertification = (index: number, field: string, value: any) => {
+    const updated = [...certifications];
+    updated[index] = { ...updated[index], [field]: value };
+    setCertifications(updated);
+  };
+
+  const removeCertification = (index: number) => {
+    setCertifications(certifications.filter((_, i) => i !== index));
+  };
+
+  const addAdditionalDoc = () => {
+    setAdditionalDocs([...additionalDocs, { name: '', file: null, fileUrl: '' }]);
+  };
+
+  const updateAdditionalDoc = (index: number, field: string, value: any) => {
+    const updated = [...additionalDocs];
+    updated[index] = { ...updated[index], [field]: value };
+    setAdditionalDocs(updated);
+  };
+
+  const removeAdditionalDoc = (index: number) => {
+    setAdditionalDocs(additionalDocs.filter((_, i) => i !== index));
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-medical-gradient-primary">
-        <Navbar />
-        <main className="flex-1 pt-20 flex items-center justify-center">
-          <div className="text-center space-y-6">
-            <div className="relative">
-              <div className="w-20 h-20 bg-white rounded-full shadow-medical-soft mx-auto flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-3 border-medical-primary border-t-transparent rounded-full"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Heart className="w-6 w-6 text-medical-primary animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-medical-text-primary">Loading your profile...</h3>
-              <p className="text-medical-text-secondary">Setting up your care profile</p>
-            </div>
-          </div>
-        </main>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your profile...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-medical-gradient-primary">
-      <Navbar />
-      
-      <main className="flex-1 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-medical-text-primary via-medical-primary to-medical-accent bg-clip-text text-transparent mb-4">
-                Client Care Profile Setup
-              </h1>
-              <p className="text-xl text-medical-text-secondary max-w-2xl mx-auto">
-                Tell us about your care needs so we can connect you with the perfect nursing professional
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Nurse Registration</h1>
+            <p className="text-gray-600">Complete your profile to join our healthcare network</p>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-gray-700">Progress</span>
+              <span className="text-sm font-medium text-gray-700">
+                {Math.round(((currentStep + 1) / ONBOARDING_STEPS.length) * 100)}%
+              </span>
             </div>
-            
-            {/* Progress Bar */}
-            <div className="mb-8">
-              <div className="flex justify-between mb-4">
-                {ONBOARDING_STEPS.map((step, index) => (
-                  <div key={index} className="flex flex-col items-center flex-1">
-                    <div className={`w-12 h-12 flex items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                      currentStep === index 
-                        ? 'bg-medical-primary border-medical-primary text-white shadow-medical-elevated' 
-                        : currentStep > index 
-                          ? 'bg-medical-success border-medical-success text-white' 
-                          : 'bg-white border-medical-border text-medical-text-muted'
-                    }`}>
-                      {currentStep > index ? (
-                        <CheckCircle className="h-6 w-6" />
-                      ) : (
-                        <span className="text-sm font-medium">{index + 1}</span>
-                      )}
-                    </div>
-                    <span className={`text-xs mt-2 text-center px-2 transition-colors duration-300 ${
-                      currentStep >= index ? 'text-medical-text-primary font-medium' : 'text-medical-text-muted'
-                    }`}>
-                      {step}
-                    </span>
+            <Progress 
+              value={((currentStep + 1) / ONBOARDING_STEPS.length) * 100} 
+              className="w-full h-2"
+            />
+          </div>
+
+          {/* Steps Indicator */}
+          <div className="flex items-center justify-center mb-8 overflow-x-auto">
+            {ONBOARDING_STEPS.map((step, index) => (
+              <div key={step.id} className="flex items-center">
+                <div className={`flex flex-col items-center ${index <= currentStep ? 'text-blue-600' : 'text-gray-400'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                    index <= currentStep ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300'
+                  }`}>
+                    {index < currentStep ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      step.icon
+                    )}
                   </div>
-                ))}
+                  <span className="text-xs mt-1 text-center max-w-16">{step.title}</span>
+                </div>
+                {index < ONBOARDING_STEPS.length - 1 && (
+                  <div className={`w-12 h-0.5 mx-2 ${index < currentStep ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                )}
               </div>
-              <div className="w-full bg-medical-neutral-200 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-medical-primary to-medical-accent h-2 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${calculateProgress(currentStep)}%` }}
-                ></div>
-              </div>
-              <div className="text-right mt-2">
-                <span className="text-sm text-medical-text-secondary font-medium">
-                  {calculateProgress(currentStep)}% Complete
-                </span>
-              </div>
-            </div>
+            ))}
+          </div>
 
-            {/* Main Form Card */}
-            <Card className="shadow-medical-elevated border-0 bg-white/95 backdrop-blur-sm">
-              <CardContent className="p-8">
-                {/* Step 0: Client Type */}
-                {currentStep === 0 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-medical-primary to-medical-accent rounded-lg flex items-center justify-center">
-                        <Users className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-medical-text-primary">Client Type</h2>
-                        <p className="text-medical-text-secondary">Let us know who needs care</p>
-                      </div>
+          {/* Step Content */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {ONBOARDING_STEPS[currentStep].icon}
+                {ONBOARDING_STEPS[currentStep].title}
+              </CardTitle>
+              <p className="text-gray-600">{ONBOARDING_STEPS[currentStep].description}</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Step 1: Personal Information */}
+              {currentStep === 0 && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input
+                        id="firstName"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Enter your first name"
+                      />
                     </div>
-
-                    <div className="space-y-6">
-                      <div className="space-y-4">
-                        <Label className="text-medical-text-primary font-medium">
-                          Who needs care? *
-                        </Label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <label className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                            clientType === 'individual' 
-                              ? 'border-medical-primary bg-medical-primary/5' 
-                              : 'border-medical-border hover:border-medical-primary/50'
-                          }`}>
-                            <input
-                              type="radio"
-                              name="clientType"
-                              value="individual"
-                              checked={clientType === 'individual'}
-                              onChange={(e) => setClientType(e.target.value as 'individual' | 'family')}
-                              className="sr-only"
-                            />
-                            <div className="text-center">
-                              <User className="h-12 w-12 mx-auto mb-3 text-medical-primary" />
-                              <h3 className="text-lg font-semibold text-medical-text-primary mb-2">Individual</h3>
-                              <p className="text-sm text-medical-text-secondary">I need care for myself</p>
-                            </div>
-                          </label>
-
-                          <label className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                            clientType === 'family' 
-                              ? 'border-medical-primary bg-medical-primary/5' 
-                              : 'border-medical-border hover:border-medical-primary/50'
-                          }`}>
-                            <input
-                              type="radio"
-                              name="clientType"
-                              value="family"
-                              checked={clientType === 'family'}
-                              onChange={(e) => setClientType(e.target.value as 'individual' | 'family')}
-                              className="sr-only"
-                            />
-                            <div className="text-center">
-                              <Users className="h-12 w-12 mx-auto mb-3 text-medical-primary" />
-                              <h3 className="text-lg font-semibold text-medical-text-primary mb-2">Family Member</h3>
-                              <p className="text-sm text-medical-text-secondary">I need care for a family member</p>
-                            </div>
-                          </label>
-                        </div>
-                      </div>
-
-                      {clientType === 'family' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="relationship" className="text-medical-text-primary font-medium">
-                            Your relationship to the care recipient *
-                          </Label>
-                          <select
-                            id="relationship"
-                            value={relationshipToRecipient}
-                            onChange={(e) => setRelationshipToRecipient(e.target.value)}
-                            className="w-full h-11 px-3 border border-medical-border focus:border-medical-primary rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-medical-primary/20"
-                            required
-                          >
-                            <option value="">Select relationship</option>
-                            {RELATIONSHIP_OPTIONS.map(relationship => (
-                              <option key={relationship} value={relationship}>{relationship}</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
+                    <div>
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input
+                        id="lastName"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Enter your last name"
+                      />
                     </div>
                   </div>
-                )}
 
-                {/* Step 1: Personal Information */}
-                {currentStep === 1 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-medical-primary to-medical-accent rounded-lg flex items-center justify-center">
-                        <User className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-medical-text-primary">Personal Information</h2>
-                        <p className="text-medical-text-secondary">Your contact information</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      {/* Client Information */}
-                      <div>
-                        <h3 className="text-lg font-semibold text-medical-text-primary mb-4">Your Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="firstName" className="text-medical-text-primary font-medium">
-                              First Name *
-                            </Label>
-                            <Input
-                              id="firstName"
-                              type="text"
-                              value={firstName}
-                              onChange={(e) => setFirstName(e.target.value)}
-                              className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                              required
-                              placeholder="Your first name"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label htmlFor="lastName" className="text-medical-text-primary font-medium">
-                              Last Name *
-                            </Label>
-                            <Input
-                              id="lastName"
-                              type="text"
-                              value={lastName}
-                              onChange={(e) => setLastName(e.target.value)}
-                              className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                              required
-                              placeholder="Your last name"
-                            />
-                          </div>
-
-                          <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="phoneNumber" className="text-medical-text-primary font-medium">
-                              Phone Number *
-                            </Label>
-                            <Input
-                              id="phoneNumber"
-                              type="tel"
-                              value={phoneNumber}
-                              onChange={(e) => setPhoneNumber(e.target.value)}
-                              className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                              required
-                              placeholder="(555) 123-4567"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Care Recipient Information (for family clients) */}
-                      {clientType === 'family' && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-medical-text-primary mb-4">Care Recipient Information</h3>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="recipientFirstName" className="text-medical-text-primary font-medium">
-                                First Name *
-                              </Label>
-                              <Input
-                                id="recipientFirstName"
-                                type="text"
-                                value={recipientFirstName}
-                                onChange={(e) => setRecipientFirstName(e.target.value)}
-                                className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                                required
-                                placeholder="Recipient's first name"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label htmlFor="recipientLastName" className="text-medical-text-primary font-medium">
-                                Last Name *
-                              </Label>
-                              <Input
-                                id="recipientLastName"
-                                type="text"
-                                value={recipientLastName}
-                                onChange={(e) => setRecipientLastName(e.target.value)}
-                                className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                                required
-                                placeholder="Recipient's last name"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label htmlFor="recipientAge" className="text-medical-text-primary font-medium">
-                                Age *
-                              </Label>
-                              <Input
-                                id="recipientAge"
-                                type="number"
-                                value={recipientAge}
-                                onChange={(e) => setRecipientAge(e.target.value)}
-                                className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                                required
-                                min="0"
-                                max="120"
-                                placeholder="Age"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 2: Care Location */}
-                {currentStep === 2 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-medical-primary to-medical-accent rounded-lg flex items-center justify-center">
-                        <MapPin className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-medical-text-primary">Care Location</h2>
-                        <p className="text-medical-text-secondary">Where will care be provided?</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="streetAddress" className="text-medical-text-primary font-medium">
-                          Street Address *
-                        </Label>
-                        <Input
-                          id="streetAddress"
-                          type="text"
-                          value={streetAddress}
-                          onChange={(e) => setStreetAddress(e.target.value)}
-                          className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                          required
-                          placeholder="123 Main Street"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="city" className="text-medical-text-primary font-medium">
-                          City *
-                        </Label>
-                        <Input
-                          id="city"
-                          type="text"
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                          required
-                          placeholder="Your city"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="state" className="text-medical-text-primary font-medium">
-                          State *
-                        </Label>
-                        <select
-                          id="state"
-                          value={state}
-                          onChange={(e) => setState(e.target.value)}
-                          className="w-full h-11 px-3 border border-medical-border focus:border-medical-primary rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-medical-primary/20"
-                          required
-                        >
-                          <option value="">Select State</option>
-                          {US_STATES.map(state => (
-                            <option key={state} value={state}>{state}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="zipCode" className="text-medical-text-primary font-medium">
-                          ZIP Code *
-                        </Label>
-                        <Input
-                          id="zipCode"
-                          type="text"
-                          value={zipCode}
-                          onChange={(e) => setZipCode(e.target.value)}
-                          className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white"
-                          required
-                          placeholder="12345"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="homeEnvironment" className="text-medical-text-primary font-medium">
-                          Home Environment *
-                        </Label>
-                        <select
-                          id="homeEnvironment"
-                          value={homeEnvironment}
-                          onChange={(e) => setHomeEnvironment(e.target.value)}
-                          className="w-full h-11 px-3 border border-medical-border focus:border-medical-primary rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-medical-primary/20"
-                          required
-                        >
-                          <option value="">Select environment</option>
-                          {HOME_ENVIRONMENTS.map(env => (
-                            <option key={env} value={env}>{env}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 3: Care Needs */}
-                {currentStep === 3 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-medical-primary to-medical-accent rounded-lg flex items-center justify-center">
-                        <Heart className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-medical-text-primary">Care Needs</h2>
-                        <p className="text-medical-text-secondary">Tell us about the specific care requirements</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      {/* Care Types */}
-                      <div className="space-y-4">
-                        <Label className="text-medical-text-primary font-medium">
-                          Type of Care Needed * (Select all that apply)
-                        </Label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {CARE_TYPES.map(careType => (
-                            <label key={careType} className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-neutral-50 cursor-pointer transition-colors">
-                              <input
-                                type="checkbox"
-                                checked={careTypes.includes(careType)}
-                                onChange={() => toggleCareType(careType)}
-                                className="rounded border-medical-border text-medical-primary focus:ring-medical-primary/20"
-                              />
-                              <span className="text-sm text-medical-text-primary">{careType}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Care Schedule */}
-                      <div className="space-y-4">
-                        <Label className="text-medical-text-primary font-medium">
-                          Preferred Schedule * (Select all that apply)
-                        </Label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          {CARE_SCHEDULES.map(schedule => (
-                            <label key={schedule} className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-neutral-50 cursor-pointer transition-colors">
-                              <input
-                                type="checkbox"
-                                checked={careSchedule.includes(schedule)}
-                                onChange={() => toggleCareSchedule(schedule)}
-                                className="rounded border-medical-border text-medical-primary focus:ring-medical-primary/20"
-                              />
-                              <span className="text-sm text-medical-text-primary">{schedule}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Hours per week */}
-                      <div className="space-y-2">
-                        <Label htmlFor="hoursPerWeek" className="text-medical-text-primary font-medium">
-                          Hours per Week *
-                        </Label>
-                        <Input
-                          id="hoursPerWeek"
-                          type="number"
-                          value={hoursPerWeek}
-                          onChange={(e) => setHoursPerWeek(e.target.value)}
-                          className="h-11 border-medical-border focus:border-medical-primary rounded-lg bg-white max-w-xs"
-                          required
-                          min="1"
-                          max="168"
-                          placeholder="Hours needed per week"
-                        />
-                      </div>
-
-                      {/* Special Skills */}
-                      <div className="space-y-4">
-                        <Label className="text-medical-text-primary font-medium">
-                          Special Skills Required * (Select all that apply)
-                        </Label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {SPECIAL_SKILLS.map(skill => (
-                            <label key={skill} className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-neutral-50 cursor-pointer transition-colors">
-                              <input
-                                type="checkbox"
-                                checked={specialSkills.includes(skill)}
-                                onChange={() => toggleSpecialSkill(skill)}
-                                className="rounded border-medical-border text-medical-primary focus:ring-medical-primary/20"
-                              />
-                              <span className="text-sm text-medical-text-primary">{skill}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Health Conditions */}
-                      <div className="space-y-4">
-                        <Label className="text-medical-text-primary font-medium">
-                          Health Conditions * (Select all that apply)
-                        </Label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {HEALTH_CONDITIONS.map(condition => (
-                            <label key={condition} className="flex items-center space-x-3 p-3 border border-medical-border rounded-lg hover:bg-medical-neutral-50 cursor-pointer transition-colors">
-                              <input
-                                type="checkbox"
-                                checked={healthConditions.includes(condition)}
-                                onChange={() => toggleHealthCondition(condition)}
-                                className="rounded border-medical-border text-medical-primary focus:ring-medical-primary/20"
-                              />
-                              <span className="text-sm text-medical-text-primary">{condition}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Additional Notes */}
-                      <div className="space-y-2">
-                        <Label htmlFor="additionalNotes" className="text-medical-text-primary font-medium">
-                          Additional Notes (Optional)
-                        </Label>
-                        <textarea
-                          id="additionalNotes"
-                          value={additionalNotes}
-                          onChange={(e) => setAdditionalNotes(e.target.value)}
-                          className="w-full h-32 p-3 border border-medical-border focus:border-medical-primary rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-medical-primary/20 resize-none"
-                          placeholder="Any additional information about care needs, preferences, or special requirements..."
-                          maxLength={500}
-                        />
-                        <p className="text-xs text-medical-text-muted text-right">{additionalNotes.length}/500 characters</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 4: Payment Info */}
-                {currentStep === 4 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-medical-primary to-medical-accent rounded-lg flex items-center justify-center">
-                        <CreditCard className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-medical-text-primary">Payment Information</h2>
-                        <p className="text-medical-text-secondary">Set up your payment method for care services</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div className="p-6 bg-medical-info/10 border border-medical-info/20 rounded-lg">
-                        <div className="flex items-start space-x-3">
-                          <CreditCard className="h-5 w-5 text-medical-info mt-0.5 flex-shrink-0" />
-                          <div className="text-sm">
-                            <p className="font-medium text-medical-info mb-1">Secure Payment Setup</p>
-                            <p className="text-medical-text-secondary">
-                              Your payment information is securely processed through our payment partner. 
-                              You'll only be charged for approved services after they're completed.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="text-center py-8">
-                        <CreditCard className="h-16 w-16 mx-auto text-medical-text-muted mb-4" />
-                        <h3 className="text-lg font-semibold text-medical-text-primary mb-2">Payment Method Setup</h3>
-                        <p className="text-medical-text-secondary mb-6">
-                          Payment integration will be set up here. For now, you can continue with your profile setup.
-                        </p>
-                        <Button
-                          type="button"
-                          onClick={() => setPaymentMethodAdded(true)}
-                          className="bg-gradient-to-r from-medical-primary to-medical-accent text-white"
-                        >
-                          Continue Setup Later
-                        </Button>
-                      </div>
-
-                      {paymentMethodAdded && (
-                        <div className="flex items-center space-x-2 p-3 bg-medical-success/10 border border-medical-success/20 rounded-lg">
-                          <CheckCircle className="h-5 w-5 text-medical-success" />
-                          <span className="text-sm text-medical-success font-medium">
-                            Payment setup marked for completion
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 5: Legal Agreements */}
-                {currentStep === 5 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-medical-primary to-medical-accent rounded-lg flex items-center justify-center">
-                        <FileText className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-medical-text-primary">Legal Agreements</h2>
-                        <p className="text-medical-text-secondary">Please review and accept our terms to continue</p>
-                      </div>
-                    </div>
-
-                    <ClickwrapAgreement 
-                      userType="client" 
-                      onAllAccepted={setAllAgreementsAccepted}
+                  <div>
+                    <Label htmlFor="phoneNumber">Phone Number *</Label>
+                    <Input
+                      id="phoneNumber"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Enter your phone number"
                     />
                   </div>
-                )}
 
-                {/* Step 6: Review & Submit */}
-                {currentStep === 6 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-medical-success to-medical-accent rounded-lg flex items-center justify-center">
-                        <CheckCircle className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-medical-text-primary">Review & Submit</h2>
-                        <p className="text-medical-text-secondary">Review your care profile before submitting</p>
-                      </div>
+                  <div>
+                    <Label htmlFor="profilePhoto">Profile Photo</Label>
+                    <Input
+                      id="profilePhoto"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setProfilePhoto(e.target.files?.[0] || null)}
+                    />
+                    {profilePhotoUrl && (
+                      <img src={profilePhotoUrl} alt="Profile" className="mt-2 w-20 h-20 rounded-full object-cover" />
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="streetAddress">Street Address *</Label>
+                    <Input
+                      id="streetAddress"
+                      value={streetAddress}
+                      onChange={(e) => setStreetAddress(e.target.value)}
+                      placeholder="Enter your street address"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="city">City *</Label>
+                      <Input
+                        id="city"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Enter your city"
+                      />
                     </div>
-
-                    <div className="p-4 bg-medical-info/10 border border-medical-info/20 rounded-lg mb-6">
-                      <div className="flex items-start space-x-3">
-                        <CheckCircle className="h-5 w-5 text-medical-info mt-0.5 flex-shrink-0" />
-                        <div className="text-sm">
-                          <p className="font-medium text-medical-info mb-1">Almost there!</p>
-                          <p className="text-medical-text-secondary">
-                            Please review your information before final submission. You can go back to previous steps to make changes if needed.
-                          </p>
-                        </div>
-                      </div>
+                    <div>
+                      <Label htmlFor="state">State *</Label>
+                      <Select value={state} onValueChange={setState}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {stateOptions.map(state => (
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-
-                    {/* Summary sections */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-medical-text-primary">Client Information</h3>
-                        <div className="space-y-2 text-sm">
-                          <p><span className="font-medium">Client Type:</span> {clientType}</p>
-                          {clientType === 'family' && (
-                            <p><span className="font-medium">Relationship:</span> {relationshipToRecipient}</p>
-                          )}
-                          <p><span className="font-medium">Name:</span> {firstName} {lastName}</p>
-                          <p><span className="font-medium">Phone:</span> {phoneNumber}</p>
-                        </div>
-                        
-                        {clientType === 'family' && (
-                          <div className="pt-4 border-t">
-                            <h4 className="font-medium mb-2">Care Recipient</h4>
-                            <div className="space-y-1 text-sm">
-                              <p><span className="font-medium">Name:</span> {recipientFirstName} {recipientLastName}</p>
-                              <p><span className="font-medium">Age:</span> {recipientAge}</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-medical-text-primary">Care Location</h3>
-                        <div className="space-y-2 text-sm">
-                          <p><span className="font-medium">Address:</span> {streetAddress}</p>
-                          <p><span className="font-medium">City:</span> {city}, {state} {zipCode}</p>
-                          <p><span className="font-medium">Environment:</span> {homeEnvironment}</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-medical-text-primary">Care Needs</h3>
-                        <div className="space-y-2 text-sm">
-                          <p><span className="font-medium">Care Types:</span> {careTypes.slice(0, 3).join(', ')}{careTypes.length > 3 && '...'}</p>
-                          <p><span className="font-medium">Schedule:</span> {careSchedule.slice(0, 2).join(', ')}{careSchedule.length > 2 && '...'}</p>
-                          <p><span className="font-medium">Hours/Week:</span> {hoursPerWeek}</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-medical-text-primary">Requirements</h3>
-                        <div className="space-y-2 text-sm">
-                          <p><span className="font-medium">Special Skills:</span> {specialSkills.slice(0, 2).join(', ')}{specialSkills.length > 2 && '...'}</p>
-                          <p><span className="font-medium">Health Conditions:</span> {healthConditions.slice(0, 2).join(', ')}{healthConditions.length > 2 && '...'}</p>
-                          <p><span className="font-medium">Agreements:</span> {allAgreementsAccepted ? 'Accepted' : 'Pending'}</p>
-                        </div>
-                      </div>
+                    <div>
+                      <Label htmlFor="zipCode">ZIP Code *</Label>
+                      <Input
+                        id="zipCode"
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        placeholder="Enter ZIP code"
+                      />
                     </div>
+                  </div>
 
-                    {/* Final confirmation */}
-                    <div className="p-4 bg-medical-warning/10 border border-medical-warning/20 rounded-lg">
-                      <div className="flex items-start space-x-3">
-                        <CheckCircle className="h-5 w-5 text-medical-warning mt-0.5 flex-shrink-0" />
-                        <div className="text-sm">
-                          <p className="font-medium text-medical-warning mb-1">Final Confirmation</p>
-                          <p className="text-medical-text-secondary">
-                            By submitting this profile, I confirm that all information provided is accurate and complete. 
-                            I understand that I can start posting care needs and connecting with qualified nurses immediately after submission.
-                          </p>
+                  <div>
+                    <Label htmlFor="bio">Bio (Optional)</Label>
+                    <Textarea
+                      id="bio"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      placeholder="Tell us about yourself..."
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Professional Qualifications */}
+              {currentStep === 1 && (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Specializations *</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                      {specializationOptions.map(spec => (
+                        <div key={spec} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={spec}
+                            checked={specializations.includes(spec)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSpecializations([...specializations, spec]);
+                              } else {
+                                setSpecializations(specializations.filter(s => s !== spec));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={spec} className="text-sm">{spec}</Label>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="yearsExperience">Years of Experience *</Label>
+                      <Input
+                        id="yearsExperience"
+                        type="number"
+                        value={yearsExperience}
+                        onChange={(e) => setYearsExperience(e.target.value)}
+                        placeholder="Enter years of experience"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="educationLevel">Education Level *</Label>
+                      <Select value={educationLevel} onValueChange={setEducationLevel}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select education level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {educationLevelOptions.map(level => (
+                            <SelectItem key={level} value={level}>{level}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="schoolName">School Name *</Label>
+                      <Input
+                        id="schoolName"
+                        value={schoolName}
+                        onChange={(e) => setSchoolName(e.target.value)}
+                        placeholder="Enter school name"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="graduationYear">Graduation Year *</Label>
+                      <Input
+                        id="graduationYear"
+                        type="number"
+                        value={graduationYear}
+                        onChange={(e) => setGraduationYear(e.target.value)}
+                        placeholder="Enter graduation year"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="resume">Resume *</Label>
+                    <Input
+                      id="resume"
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => setResume(e.target.files?.[0] || null)}
+                    />
+                    {resumeUrl && (
+                      <p className="mt-2 text-sm text-green-600">Resume uploaded successfully</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Licenses & Certifications */}
+              {currentStep === 2 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">License Information</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="licenseType">License Type *</Label>
+                      <Select value={licenseType} onValueChange={setLicenseType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select license type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {licenseTypeOptions.map(type => (
+                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="licenseNumber">License Number *</Label>
+                      <Input
+                        id="licenseNumber"
+                        value={licenseNumber}
+                        onChange={(e) => setLicenseNumber(e.target.value)}
+                        placeholder="Enter license number"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="issuingState">Issuing State *</Label>
+                      <Select value={issuingState} onValueChange={setIssuingState}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select issuing state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {stateOptions.map(state => (
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="licenseExpiration">Expiration Date *</Label>
+                      <Input
+                        id="licenseExpiration"
+                        type="date"
+                        value={licenseExpiration}
+                        onChange={(e) => setLicenseExpiration(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">Certifications (Optional)</h3>
+                      <Button type="button" variant="outline" onClick={addCertification}>
+                        Add Certification
+                      </Button>
+                    </div>
+                    
+                    {certifications.map((cert, index) => (
+                      <div key={index} className="p-4 border rounded-lg space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Input
+                            placeholder="Certification name"
+                            value={cert.name}
+                            onChange={(e) => updateCertification(index, 'name', e.target.value)}
+                          />
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => removeCertification(index)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                        <Input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => updateCertification(index, 'file', e.target.files?.[0] || null)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Employment Preferences */}
+              {currentStep === 3 && (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Availability Types *</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {availabilityOptions.map(type => (
+                        <div key={type} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={type}
+                            checked={availabilityTypes.includes(type)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setAvailabilityTypes([...availabilityTypes, type]);
+                              } else {
+                                setAvailabilityTypes(availabilityTypes.filter(t => t !== type));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={type} className="text-sm">{type}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Preferred Shifts *</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {shiftOptions.map(shift => (
+                        <div key={shift} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={shift}
+                            checked={preferredShifts.includes(shift)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setPreferredShifts([...preferredShifts, shift]);
+                              } else {
+                                setPreferredShifts(preferredShifts.filter(s => s !== shift));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={shift} className="text-sm">{shift}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="travelRadius">Travel Radius (miles) *</Label>
+                      <Input
+                        id="travelRadius"
+                        type="number"
+                        value={travelRadius}
+                        onChange={(e) => setTravelRadius(e.target.value)}
+                        placeholder="Enter travel radius"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="desiredHourlyRate">Desired Hourly Rate ($) *</Label>
+                      <Input
+                        id="desiredHourlyRate"
+                        type="number"
+                        step="0.01"
+                        value={desiredHourlyRate}
+                        onChange={(e) => setDesiredHourlyRate(e.target.value)}
+                        placeholder="Enter desired hourly rate"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 5: Additional Documents */}
+              {currentStep === 4 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Additional Documents (Optional)</h3>
+                    <Button type="button" variant="outline" onClick={addAdditionalDoc}>
+                      Add Document
+                    </Button>
+                  </div>
+                  
+                  <p className="text-gray-600">
+                    Upload any additional documents such as malpractice insurance, CPR certifications, or other relevant credentials.
+                  </p>
+
+                  {additionalDocs.map((doc, index) => (
+                    <div key={index} className="p-4 border rounded-lg space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Input
+                          placeholder="Document name (e.g., Malpractice Insurance)"
+                          value={doc.name}
+                          onChange={(e) => updateAdditionalDoc(index, 'name', e.target.value)}
+                        />
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => removeAdditionalDoc(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                      <Input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => updateAdditionalDoc(index, 'file', e.target.files?.[0] || null)}
+                      />
+                    </div>
+                  ))}
+
+                  {additionalDocs.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>No additional documents added yet.</p>
+                      <p className="text-sm">Click "Add Document" to upload additional credentials.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Step 6: Review & Submit */}
+              {currentStep === 5 && (
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold">Review Your Application</h3>
+                  
+                  {/* Personal Information Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Personal Information</h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <p><strong>Name:</strong> {firstName} {lastName}</p>
+                      <p><strong>Phone:</strong> {phoneNumber}</p>
+                      <p><strong>Address:</strong> {streetAddress}, {city}, {state} {zipCode}</p>
+                    </div>
+                  </div>
+
+                  {/* Professional Information Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Professional Qualifications</h4>
+                    <div className="text-sm space-y-1">
+                      <p><strong>Specializations:</strong> {specializations.join(', ')}</p>
+                      <p><strong>Experience:</strong> {yearsExperience} years</p>
+                      <p><strong>Education:</strong> {educationLevel} from {schoolName} ({graduationYear})</p>
+                    </div>
+                  </div>
+
+                  {/* License Information Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">License Information</h4>
+                    <div className="text-sm">
+                      <p><strong>License:</strong> {licenseType} #{licenseNumber}</p>
+                      <p><strong>Issued by:</strong> {issuingState}</p>
+                      <p><strong>Expires:</strong> {licenseExpiration}</p>
+                    </div>
+                  </div>
+
+                  {/* Employment Preferences Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2">Employment Preferences</h4>
+                    <div className="text-sm space-y-1">
+                      <p><strong>Availability:</strong> {availabilityTypes.join(', ')}</p>
+                      <p><strong>Preferred Shifts:</strong> {preferredShifts.join(', ')}</p>
+                      <p><strong>Travel Radius:</strong> {travelRadius} miles</p>
+                      <p><strong>Desired Rate:</strong> ${desiredHourlyRate}/hour</p>
+                    </div>
+                  </div>
+
+                  {/* Terms and Conditions */}
+                  <div className="border-t pt-6">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="agreement"
+                        checked={agreementAccepted}
+                        onCheckedChange={setAgreementAccepted}
+                      />
+                      <div className="text-sm">
+                        <Label htmlFor="agreement" className="cursor-pointer">
+                          I agree to the <a href="/terms" className="text-blue-600 hover:underline" target="_blank">Terms of Service</a> and{' '}
+                          <a href="/privacy" className="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>. 
+                          I understand that my application will be reviewed by administrators and I will be notified of the approval status.
+                        </Label>
                       </div>
                     </div>
                   </div>
-                )}
-              </CardContent>
-              
-              <CardFooter className="flex justify-between pt-6 px-8 pb-8 bg-medical-neutral-50 border-t border-medical-border">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={currentStep === 0 ? () => navigate('/dashboard') : prevStep}
-                  disabled={submitting}
-                  className="border-medical-border hover:border-medical-primary hover:bg-medical-primary/5"
-                >
-                  {currentStep === 0 ? 'Cancel' : 'Previous'}
-                </Button>
-                
-                {currentStep < ONBOARDING_STEPS.length - 1 ? (
-                  <Button 
-                    type="button" 
-                    onClick={nextStep}
-                    disabled={submitting}
-                    className="bg-gradient-to-r from-medical-primary to-medical-accent hover:shadow-medical-elevated text-white min-w-[120px]"
-                  >
-                    {submitting ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent border-white"></div>
-                        Saving...
-                      </>
-                    ) : (
-                      'Continue'
-                    )}
-                  </Button>
-                ) : (
-                  <Button 
-                    type="button" 
-                    onClick={handleSubmit}
-                    disabled={submitting || !allAgreementsAccepted}
-                    className="bg-gradient-to-r from-medical-success to-medical-accent hover:shadow-medical-elevated text-white min-w-[160px]"
-                  >
-                    {submitting ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent border-white"></div>
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Complete Profile
-                      </>
-                    )}
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
-            
-            <div className="text-center mt-8">
-              <p className="text-sm text-medical-text-secondary">
-                Need help with your profile setup? Contact our support team at{' '}
-                <a href="mailto:support@nursenest.com" className="text-medical-primary hover:text-medical-primary-dark">
-                  support@nursenest.com
-                </a>
-              </p>
-            </div>
+
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-blue-800 mb-2">What happens next?</h4>
+                    <div className="text-sm text-blue-700 space-y-1">
+                      <p>1. Your application will be reviewed by our administrators</p>
+                      <p>2. We'll verify your license and credentials</p>
+                      <p>3. You'll receive an email notification about your approval status</p>
+                      <p>4. Once approved, you can start browsing and applying for jobs</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </Button>
+
+            <Button
+              type="button"
+              onClick={nextStep}
+              disabled={submitting}
+              className="flex items-center gap-2"
+            >
+              {submitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  {currentStep === ONBOARDING_STEPS.length - 1 ? 'Submit Application' : 'Next'}
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
