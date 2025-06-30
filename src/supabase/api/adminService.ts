@@ -5,7 +5,6 @@ import { PostgrestError } from '@supabase/supabase-js';
 import axios from 'axios';
 
 const servicekey = import.meta.env.VITE_SUPABASE_SERVICE_KEY;
-
 /**
  * Admin profile interface
  */
@@ -688,79 +687,5 @@ export async function checkAdminStatus() {
   } catch (error: any) {
     console.error('Error checking admin status:', error);
     return { isAdmin: false, error: error.message };
-  }
-}
-
-/**
- * Create admin task
- */
-export async function createAdminTask(task: Omit<AdminTask, 'id' | 'created_at' | 'updated_at'>) {
-  try {
-    const { data, error } = await supabase
-      .from('admin_tasks')
-      .insert(task)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error creating admin task:', error);
-    return { data: null, error: error as PostgrestError };
-  }
-}
-
-/**
- * Get admin tasks
- */
-export async function getAdminTasks(
-  status?: 'pending' | 'in_progress' | 'completed',
-  limit: number = 20,
-  offset: number = 0
-) {
-  try {
-    let query = supabase
-      .from('admin_tasks')
-      .select('*')
-      .range(offset, offset + limit - 1)
-      .order('created_at', { ascending: false });
-
-    if (status) {
-      query = query.eq('status', status);
-    }
-
-    const { data, error, count } = await query;
-
-    if (error) throw error;
-    return { data: data || [], count, error: null };
-  } catch (error) {
-    console.error('Error getting admin tasks:', error);
-    return { data: null, count: null, error: error as PostgrestError };
-  }
-}
-
-/**
- * Update admin task
- */
-export async function updateAdminTask(
-  taskId: string, 
-  updates: Partial<AdminTask>
-) {
-  try {
-    const { data, error } = await supabase
-      .from('admin_tasks')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', taskId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error updating admin task:', error);
-    return { data: null, error: error as PostgrestError };
   }
 }
