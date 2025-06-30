@@ -50,7 +50,7 @@ export default function DashboardRouter() {
 
         console.log('Authenticated user found:', userData.user.id);
 
-        // Get user type and status - FIXED: No longer passing userId parameter
+        // Get user type and status
         const { userType: type, accountStatus: status, onboardingCompleted: completed, error: metaError } = await getUserTypeAndStatus();
         
         if (metaError) {
@@ -114,10 +114,11 @@ export default function DashboardRouter() {
           return;
         }
 
-        // If nurse with pending status, show pending approval page
+        // Special handling for nurses with pending status after onboarding completion
         if (type === 'nurse' && status === 'pending') {
           console.log('Nurse with pending status, checking profile completion');
-          // Check if nurse profile exists and onboarding is actually completed
+          
+          // Verify nurse profile exists and onboarding is actually completed
           const { data: nurseProfile, error: profileError } = await getNurseProfileByUserId(userData.user.id);
           
           if (profileError || !nurseProfile || !nurseProfile.onboarding_completed) {
@@ -130,6 +131,28 @@ export default function DashboardRouter() {
           // Show pending approval page for nurses awaiting approval
           setLoading(false);
           return; // Stay on this component to show PendingApprovalPage
+        }
+
+        // Handle suspended accounts
+        if (status === 'suspended') {
+          toast({
+            title: "Account Suspended",
+            description: "Your account has been suspended. Please contact support.",
+            variant: "destructive"
+          });
+          navigate('/auth', { replace: true });
+          return;
+        }
+
+        // Handle deactivated accounts
+        if (status === 'deactivated') {
+          toast({
+            title: "Account Deactivated",
+            description: "Your account has been deactivated. Please contact support to reactivate.",
+            variant: "destructive"
+          });
+          navigate('/auth', { replace: true });
+          return;
         }
 
         // Verify profile exists for completed onboarding
@@ -179,12 +202,12 @@ export default function DashboardRouter() {
   }
 
   // Show pending approval page for nurses with pending status
-  if (userType === 'nurse' && accountStatus === 'pending') {
+  if (userType === 'nurse' && accountStatus === 'pending' && onboardingCompleted) {
     return <PendingApprovalPage />;
   }
 
   // Show appropriate dashboard based on user type
-  if (userType === 'nurse') {
+  if (userType === 'nurse' && accountStatus === 'active') {
     return <NurseDashboard />;
   } else if (userType === 'client') {
     return <ClientDashboard />;

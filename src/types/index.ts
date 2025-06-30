@@ -1,9 +1,63 @@
 // src/types/index.ts
-// Updated types with proper React imports and enhanced admin types
+// Fixed types with consistent interfaces and proper account status
 
 import React, { ReactNode } from 'react';
 
-// Export common types
+// Export common types with proper AccountStatus including 'pending'
+export type UserType = 'nurse' | 'client' | 'admin';
+export type AccountStatus = 'active' | 'pending' | 'suspended' | 'deactivated' | 'dormant';
+
+// User authentication types - FIXED to include 'pending'
+export interface UserProfile {
+  id: string;
+  email: string;
+  user_type: UserType;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  created_at: string;
+  last_login?: string;
+  account_status: AccountStatus; // Now properly includes 'pending'
+}
+
+// FIXED AdminUser interface - made properties consistent and required
+export interface AdminUser {
+  user_id: string;
+  email: string;
+  user_type: UserType;
+  account_status: AccountStatus; // Properly includes 'pending'
+  created_at?: string;
+  updated_at?: string;
+  // Made profile_data always present to avoid union type issues
+  profile_data: {
+    id?: string;
+    first_name?: string;
+    last_name?: string;
+    phone_number?: string;
+    email?: string;
+    city?: string;
+    state?: string;
+    client_type?: 'individual' | 'family';
+    profile_photo_url?: string;
+    bio?: string;
+    onboarding_completed?: boolean;
+    onboarding_completion_percentage?: number;
+    years_experience?: number;
+    specializations?: string[];
+    license_info?: {
+      license_type: string;
+      license_number: string;
+      issuing_state: string;
+      expiration_date: string;
+      verification_status: 'pending' | 'verified' | 'failed';
+    };
+    care_needs?: any;
+    care_recipients?: any[];
+    care_locations?: any[];
+  };
+}
+
+// FIXED AdminNurseProfile - made consistent with AdminUser
 export interface AdminNurseProfile {
   id: string;
   user_id: string;
@@ -11,12 +65,17 @@ export interface AdminNurseProfile {
   last_name: string;
   email: string;
   phone_number: string;
-  profile_photo_url: string;
+  profile_photo_url?: string;
+  city?: string;
+  state?: string;
+  bio?: string;
   onboarding_completed: boolean;
-  onboarding_completion_percentage: number;
+  onboarding_completion_percentage?: number;
   created_at: string;
-  updated_at: string;
-  // Fixed qualifications type to include proper React types
+  updated_at?: string;
+  account_status: AccountStatus; // Made required and includes 'pending'
+  
+  // Detailed nurse-specific data
   qualifications?: {
     education_level: string;
     years_experience: number;
@@ -24,10 +83,8 @@ export interface AdminNurseProfile {
     school_name: string;
     graduation_year: number;
     resume_url: string;
-    // Add methods that React components expect
-    length: number;
-    map(callback: (qual: any, index: number) => React.ReactElement): ReactNode;
   };
+  
   licenses?: Array<{
     id: string;
     license_type: string;
@@ -36,13 +93,29 @@ export interface AdminNurseProfile {
     expiration_date: string;
     verification_status: 'pending' | 'verified' | 'failed';
   }>;
+  
+  certifications?: Array<{
+    id: string;
+    certification_name: string;
+    certification_file_url?: string;
+    is_malpractice_insurance?: boolean;
+    expiration_date?: string;
+  }>;
+  
   preferences?: {
     availability_types: string[];
     preferred_shifts: string[];
-    location_preferences: string[];
+    location_preferences?: string[];
     travel_radius: number;
     desired_hourly_rate: number;
   };
+  
+  // Performance metrics for admin view
+  totalApplications?: number;
+  acceptedApplications?: number;
+  activeContracts?: number;
+  totalEarnings?: number;
+  
   background_checks?: Array<{
     id: string;
     status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
@@ -54,6 +127,7 @@ export interface AdminNurseProfile {
   }>;
 }
 
+// FIXED AdminClientProfile - made consistent
 export interface AdminClientProfile {
   id: string;
   user_id: string;
@@ -64,9 +138,17 @@ export interface AdminClientProfile {
   client_type: 'individual' | 'family';
   relationship_to_recipient?: string;
   onboarding_completed: boolean;
-  onboarding_completion_percentage: number;
+  onboarding_completion_percentage?: number;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
+  account_status: AccountStatus; // Made required and includes 'pending'
+  
+  // Client-specific performance metrics
+  totalJobPostings?: number;
+  hiredNurses?: number;
+  totalSpent?: number;
+  averageHourlyRate?: number;
+  
   care_recipients?: Array<{
     id: string;
     first_name: string;
@@ -81,15 +163,14 @@ export interface AdminClientProfile {
     zip_code: string;
     home_environment: string;
   }>;
-  care_needs?: Array<{
-    id: string;
+  care_needs?: {
     care_types: string[];
     care_schedule: string[];
     hours_per_week: number;
     special_skills: string[];
     health_conditions: string[];
     additional_notes?: string;
-  }>;
+  };
   job_postings?: Array<{
     id: string;
     job_code: string;
@@ -100,6 +181,21 @@ export interface AdminClientProfile {
     benefits?: string;
     created_at: string;
   }>;
+}
+
+// HELPER TYPE: Combined user type for admin operations
+export interface AdminUserData {
+  user_id: string;
+  email: string;
+  user_type: UserType;
+  account_status: AccountStatus;
+  created_at?: string;
+  updated_at?: string;
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  onboarding_completed?: boolean;
+  profile_data?: AdminUser['profile_data'];
 }
 
 // Video call types
@@ -245,19 +341,6 @@ export interface NotificationData {
   data?: Record<string, any>;
 }
 
-// User authentication types
-export interface UserProfile {
-  id: string;
-  email: string;
-  user_type: 'nurse' | 'client' | 'admin';
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  created_at: string;
-  last_login?: string;
-  account_status: 'active' | 'suspended' | 'deactivated' | 'dormant';
-}
-
 // File upload types
 export interface FileUploadResult {
   url: string;
@@ -284,6 +367,41 @@ export interface DashboardMetrics {
   growth_percentage: number;
 }
 
+// Dispute and timecard types
+export interface TimecardDisputeDetails {
+  dispute: {
+    id: string;
+    timecard_id: string;
+    initiated_by_type: 'nurse' | 'client';
+    dispute_reason: string;
+    status: 'pending' | 'investigating' | 'resolved_client' | 'resolved_nurse' | 'resolved_admin';
+    created_at: string;
+    updated_at?: string;
+    nurse_evidence?: string;
+    client_evidence?: string;
+  };
+  timecard: {
+    id: string;
+    shift_date: string;
+    start_time: string;
+    end_time: string;
+    total_hours: number;
+    job_code: string;
+    status: string;
+    notes?: string;
+    hourly_rate_at_time?: number;
+    payment_amount?: number;
+  };
+  nurse: AdminNurseProfile;
+  client: AdminClientProfile;
+  conversations: Array<{
+    id: string;
+    message_content: string;
+    sender_type: 'nurse' | 'client';
+    created_at: string;
+  }>;
+}
+
 // Export utility type helpers
 export type Nullable<T> = T | null;
 export type Optional<T> = T | undefined;
@@ -295,5 +413,3 @@ export type BackgroundCheckResult = 'clear' | 'consider' | 'suspended';
 export type VideoCallStatus = 'scheduled' | 'active' | 'completed' | 'cancelled';
 export type JobPostingStatus = 'open' | 'filled' | 'expired';
 export type ApplicationStatus = 'new' | 'shortlisted' | 'hired' | 'declined';
-export type UserType = 'nurse' | 'client' | 'admin';
-export type AccountStatus = 'active' | 'suspended' | 'deactivated' | 'dormant';

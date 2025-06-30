@@ -21,7 +21,7 @@ import { toast } from '@/hooks/use-toast';
 import { getCurrentUser, completeOnboarding } from '@/supabase/auth/authService';
 import { getClientProfileByUserId, createClientProfile, updateClientProfile } from '@/supabase/api/clientProfileService';
 import { supabase } from '@/integrations/supabase/client';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/NurseNestNavbar';
 import ClickwrapAgreement from '@/components/ui/ClickwrapAgreement';
 
 // Constants for form options
@@ -556,7 +556,7 @@ export default function ClientOnboarding() {
       });
       
       // Redirect to dashboard
-      navigate('/dashboard');
+      navigate('/pending-approval');
       
     } catch (error: any) {
       console.error('Error submitting profile:', error);

@@ -1,324 +1,192 @@
-// src/supabase/auth/authService.ts
 import { supabase } from '@/integrations/supabase/client';
-import { AuthError, PostgrestError, User } from '@supabase/supabase-js';
+import type { User, AuthError, AuthResponse } from '@supabase/supabase-js';
 
-/**
- * User types supported by the application
- */
 export type UserType = 'nurse' | 'client' | 'admin';
+export type AccountStatus = 'active' | 'pending' | 'suspended' | 'deactivated' | 'dormant';
 
-/**
- * Interface for sign-up metadata
- */
-export interface SignUpMetadata {
+interface UserMetadata {
   user_type: UserType;
-  first_name?: string;
-  last_name?: string;
-  [key: string]: any;
+  account_status: AccountStatus;
+  first_name: string;
+  last_name: string;
+  onboarding_completed: boolean;
+}
+
+interface UserTypeAndStatusResult {
+  userType: UserType | null;
+  accountStatus: AccountStatus | null;
+  onboardingCompleted: boolean;
+  profileData?: any;
+  error?: any;
 }
 
 /**
- * Create initial nurse profile
+ * Get current authenticated user
  */
-async function createInitialNurseProfile(userId: string, metadata: Partial<SignUpMetadata> = {}) {
+export async function getCurrentUser(): Promise<{ data: { user: User | null } | null; error: AuthError | null }> {
   try {
-    const { data, error } = await supabase
-      .from('nurse_profiles')
-      .insert({
-        user_id: userId,
-        first_name: metadata.first_name || '',
-        last_name: metadata.last_name || '',
-        phone_number: '', // Will be filled during onboarding
-        profile_photo_url: '', // Will be filled during onboarding
-        onboarding_completed: false,
-        onboarding_completion_percentage: 0
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    
-    // Also create entry in user_metadata table
-    await supabase
-      .from('user_metadata')
-      .insert({
-        user_id: userId,
-        user_type: 'nurse',
-        account_status: 'pending'
-      });
-
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error creating initial nurse profile:', error);
-    return { data: null, error: error as PostgrestError };
+    const { data, error } = await supabase.auth.getUser();
+    return { data, error };
+  } catch (err) {
+    console.error('Error getting current user:', err);
+    return { 
+      data: null, 
+      error: { 
+        message: 'Failed to get current user',
+        name: 'GetUserError'
+      } as AuthError 
+    };
   }
 }
 
 /**
- * Create initial client profile
- */
-async function createInitialClientProfile(userId: string, metadata: Partial<SignUpMetadata> = {}) {
-  try {
-    const { data, error } = await supabase
-      .from('client_profiles')
-      .insert({
-        user_id: userId,
-        client_type: 'individual', // Default, will be updated during onboarding
-        first_name: metadata.first_name || '',
-        last_name: metadata.last_name || '',
-        phone_number: '', // Will be filled during onboarding
-        relationship_to_recipient: null,
-        onboarding_completed: false,
-        onboarding_completion_percentage: 0
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    
-    // Also create entry in user_metadata table
-    await supabase
-      .from('user_metadata')
-      .insert({
-        user_id: userId,
-        user_type: 'client',
-        account_status: 'active'
-      });
-
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error creating initial client profile:', error);
-    return { data: null, error: error as PostgrestError };
-  }
-}
-
-/**
- * Register a new user with email and password
+ * Sign up a new user
  */
 export async function signUp(
   email: string, 
   password: string, 
-  userType: 'nurse' | 'client' | 'admin', 
-  metadata: Partial<SignUpMetadata> = {}
-) {
+  userType: UserType, 
+  metadata: { first_name: string; last_name: string }
+): Promise<AuthResponse> {
   try {
-    // Combine user type with other metadata
-    const fullMetadata: SignUpMetadata = {
-      user_type: userType,
-      account_status: userType === 'nurse' ? 'pending' : 'active',
-      ...metadata
-    };
-
-    // Register the user with Supabase Auth
+    console.log('Starting signup process for:', { email, userType });
+    
+    // Set initial status - nurses start as 'pending', others as 'active'
+    const initialStatus: AccountStatus = userType === 'nurse' ? 'pending' : 'active';
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: fullMetadata,
-        emailRedirectTo: `${window.location.origin}/auth`
+        data: {
+          user_type: userType,
+          account_status: initialStatus,
+          first_name: metadata.first_name || '',
+          last_name: metadata.last_name || '',
+          onboarding_completed: false
+        }
       }
     });
 
-    if (error) throw error;
-
-    // Wait for the user to be created before proceeding
-    if (data.user && !data.session) {
-      // User created but email not confirmed yet
-      return { data, error: null };
+    if (error) {
+      console.error('Supabase auth signup error:', error);
+      return { data: null, error };
     }
 
-    if (data.user && data.session) {
-      // User created and immediately signed in (email confirmation disabled)
-      // Create initial profile based on user type
-      if (userType === 'nurse') {
-        await createInitialNurseProfile(data.user.id, metadata);
-      } else if (userType === 'client') {
-        await createInitialClientProfile(data.user.id, metadata);
+    if (data?.user) {
+      console.log('User created successfully:', data.user.id);
+      
+      // Create user metadata record in database
+      try {
+        const { error: metadataError } = await supabase
+          .from('user_metadata')
+          .insert({
+            user_id: data.user.id,
+            user_type: userType,
+            account_status: initialStatus,
+            onboarding_completed: false,
+            first_name: metadata.first_name || '',
+            last_name: metadata.last_name || ''
+          });
+
+        if (metadataError) {
+          console.error('Error creating user metadata:', metadataError);
+          // Don't fail the signup for this - metadata can be recreated
+        }
+      } catch (metaError) {
+        console.error('Error in metadata creation:', metaError);
       }
     }
 
     return { data, error: null };
-  } catch (error) {
-    console.error('Error signing up:', error);
-    return { data: null, error: error as AuthError };
+  } catch (err) {
+    console.error('Unexpected error in signUp:', err);
+    return { 
+      data: null, 
+      error: { 
+        message: 'An unexpected error occurred during signup',
+        name: 'UnexpectedError'
+      } as AuthError 
+    };
   }
 }
 
 /**
- * Sign in a user with email and password
+ * Sign in a user
  */
-export async function signIn(email: string, password: string) {
+export async function signIn(email: string, password: string): Promise<AuthResponse> {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password
     });
 
-    if (error) throw error;
-
-    // If user signs in after email verification, ensure profile exists
-    if (data.user && data.session) {
-      const userType = data.user.user_metadata?.user_type;
-      
-      if (userType === 'nurse') {
-        const { data: nurseProfile } = await supabase
-          .from('nurse_profiles')
-          .select('id')
-          .eq('user_id', data.user.id)
-          .single();
-        
-        if (!nurseProfile) {
-          await createInitialNurseProfile(data.user.id, data.user.user_metadata);
-        }
-      } else if (userType === 'client') {
-        const { data: clientProfile } = await supabase
-          .from('client_profiles')
-          .select('id')
-          .eq('user_id', data.user.id)
-          .single();
-        
-        if (!clientProfile) {
-          await createInitialClientProfile(data.user.id, data.user.user_metadata);
-        }
-      }
+    if (error) {
+      console.error('Sign in error:', error);
+      return { data: null, error };
     }
 
+    console.log('Sign in successful for user:', data?.user?.id);
     return { data, error: null };
-  } catch (error) {
-    console.error('Error signing in:', error);
-    return { data: null, error: error as AuthError };
+  } catch (err) {
+    console.error('Unexpected error in signIn:', err);
+    return { 
+      data: null, 
+      error: { 
+        message: 'An unexpected error occurred during sign in',
+        name: 'UnexpectedError'
+      } as AuthError 
+    };
   }
 }
 
 /**
  * Sign out the current user
  */
-export async function signOut() {
+export async function signOut(): Promise<{ error: AuthError | null }> {
   try {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    return { error: null };
-  } catch (error) {
-    console.error('Error signing out:', error);
-    return { error: error as AuthError };
+    return { error };
+  } catch (err) {
+    console.error('Error signing out:', err);
+    return { 
+      error: { 
+        message: 'Failed to sign out',
+        name: 'SignOutError'
+      } as AuthError 
+    };
   }
 }
 
 /**
- * Reset user's password
+ * Get user type and status from metadata
  */
-export async function resetPassword(email: string) {
+export async function getUserTypeAndStatus(): Promise<UserTypeAndStatusResult> {
   try {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth?reset=true`,
-    });
-
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error resetting password:', error);
-    return { data: null, error: error as AuthError };
-  }
-}
-
-/**
- * Update user's password
- */
-export async function updatePassword(newPassword: string) {
-  try {
-    const { data, error } = await supabase.auth.updateUser({
-      password: newPassword
-    });
-
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error updating password:', error);
-    return { data: null, error: error as AuthError };
-  }
-}
-
-/**
- * Get the currently authenticated user
- */
-export async function getCurrentUser() {
-  try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error getting current user:', error);
-    return { data: null, error: error as AuthError };
-  }
-}
-
-/**
- * Get the user role from metadata
- */
-export async function getUserRole(): Promise<UserType | null> {
-  try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) throw error;
+    const { data: userData } = await getCurrentUser();
     
-    return data.user?.user_metadata?.user_type as UserType || null;
-  } catch (error) {
-    console.error('Error getting user role:', error);
-    return null;
-  }
-}
-
-/**
- * Update user metadata
- */
-export async function updateUserMetadata(metadata: { [key: string]: any }) {
-  try {
-    const { data, error } = await supabase.auth.updateUser({
-      data: metadata
-    });
-
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error updating user metadata:', error);
-    return { data: null, error: error as AuthError };
-  }
-}
-
-/**
- * Get user type and status - Fixed version that doesn't require userId parameter
- */
-export async function getUserTypeAndStatus(): Promise<{
-  userType: UserType | null;
-  accountStatus: string | null;
-  onboardingCompleted: boolean;
-  profileData: any;
-  error: any;
-}> {
-  try {
-    // First get the current authenticated user
-    const { data: userData, error: userError } = await getCurrentUser();
-    
-    if (userError || !userData?.user) {
+    if (!userData?.user) {
       return {
         userType: null,
         accountStatus: null,
         onboardingCompleted: false,
-        profileData: null,
-        error: userError || new Error('No authenticated user')
+        error: new Error('No authenticated user')
       };
     }
 
     const userId = userData.user.id;
+    console.log('Getting user type and status for:', userId);
 
-    // Try to get user type from auth metadata first
-    const userType = userData.user.user_metadata?.user_type as UserType;
-    const accountStatus = userData.user.user_metadata?.account_status || 'active';
+    // First try to get from auth user metadata
+    const authMetadata = userData.user.user_metadata;
+    if (authMetadata?.user_type) {
+      const userType = authMetadata.user_type as UserType;
+      const accountStatus = authMetadata.account_status || 'active';
+      const onboardingCompleted = authMetadata.onboarding_completed || false;
 
-    if (userType) {
       let profileData = null;
-      let onboardingCompleted = false;
 
-      // Get profile data based on user type
+      // Get profile data based on user type to verify onboarding status
       if (userType === 'nurse') {
         const { data: nurseProfile, error: profileError } = await supabase
           .from('nurse_profiles')
@@ -331,7 +199,23 @@ export async function getUserTypeAndStatus(): Promise<{
         }
         
         profileData = nurseProfile;
-        onboardingCompleted = nurseProfile?.onboarding_completed || false;
+        // Use profile onboarding status if available, fallback to auth metadata
+        const profileOnboardingCompleted = nurseProfile?.onboarding_completed;
+        if (profileOnboardingCompleted !== undefined) {
+          // Sync auth metadata with profile data if different
+          if (profileOnboardingCompleted !== onboardingCompleted) {
+            await updateUserMetadata({
+              onboarding_completed: profileOnboardingCompleted
+            });
+          }
+          return {
+            userType,
+            accountStatus: accountStatus as AccountStatus,
+            onboardingCompleted: profileOnboardingCompleted,
+            profileData,
+            error: null
+          };
+        }
       } else if (userType === 'client') {
         const { data: clientProfile, error: profileError } = await supabase
           .from('client_profiles')
@@ -344,14 +228,36 @@ export async function getUserTypeAndStatus(): Promise<{
         }
         
         profileData = clientProfile;
-        onboardingCompleted = clientProfile?.onboarding_completed || false;
+        // Use profile onboarding status if available, fallback to auth metadata
+        const profileOnboardingCompleted = clientProfile?.onboarding_completed;
+        if (profileOnboardingCompleted !== undefined) {
+          // Sync auth metadata with profile data if different
+          if (profileOnboardingCompleted !== onboardingCompleted) {
+            await updateUserMetadata({
+              onboarding_completed: profileOnboardingCompleted
+            });
+          }
+          return {
+            userType,
+            accountStatus: accountStatus as AccountStatus,
+            onboardingCompleted: profileOnboardingCompleted,
+            profileData,
+            error: null
+          };
+        }
       } else if (userType === 'admin') {
-        onboardingCompleted = true; // Admins don't need onboarding
+        return {
+          userType,
+          accountStatus: accountStatus as AccountStatus,
+          onboardingCompleted: true, // Admins don't need onboarding
+          profileData: null,
+          error: null
+        };
       }
 
       return {
         userType,
-        accountStatus,
+        accountStatus: accountStatus as AccountStatus,
         onboardingCompleted,
         profileData,
         error: null
@@ -361,7 +267,7 @@ export async function getUserTypeAndStatus(): Promise<{
     // Fallback: Try to get from user_metadata table
     const { data: metadataFromTable, error: metadataError } = await supabase
       .from('user_metadata')
-      .select('user_type, account_status')
+      .select('user_type, account_status, onboarding_completed, first_name, last_name')
       .eq('user_id', userId)
       .single();
 
@@ -379,15 +285,18 @@ export async function getUserTypeAndStatus(): Promise<{
     if (metadataFromTable) {
       const tableUserType = metadataFromTable.user_type as UserType;
       const tableAccountStatus = metadataFromTable.account_status || 'active';
+      const tableOnboardingCompleted = metadataFromTable.onboarding_completed || false;
 
       // Update auth metadata to match table data
       await updateUserMetadata({
         user_type: tableUserType,
-        account_status: tableAccountStatus
+        account_status: tableAccountStatus,
+        onboarding_completed: tableOnboardingCompleted,
+        first_name: metadataFromTable.first_name || '',
+        last_name: metadataFromTable.last_name || ''
       });
 
       let profileData = null;
-      let onboardingCompleted = false;
 
       // Get profile data based on user type
       if (tableUserType === 'nurse') {
@@ -398,7 +307,6 @@ export async function getUserTypeAndStatus(): Promise<{
           .single();
         
         profileData = nurseProfile;
-        onboardingCompleted = nurseProfile?.onboarding_completed || false;
       } else if (tableUserType === 'client') {
         const { data: clientProfile } = await supabase
           .from('client_profiles')
@@ -407,20 +315,18 @@ export async function getUserTypeAndStatus(): Promise<{
           .single();
         
         profileData = clientProfile;
-        onboardingCompleted = clientProfile?.onboarding_completed || false;
-      } else if (tableUserType === 'admin') {
-        onboardingCompleted = true;
       }
 
       return {
         userType: tableUserType,
-        accountStatus: tableAccountStatus,
-        onboardingCompleted,
+        accountStatus: tableAccountStatus as AccountStatus,
+        onboardingCompleted: tableOnboardingCompleted,
         profileData,
         error: null
       };
     }
 
+    // No metadata found
     return {
       userType: null,
       accountStatus: null,
@@ -428,64 +334,233 @@ export async function getUserTypeAndStatus(): Promise<{
       profileData: null,
       error: new Error('No user metadata found')
     };
+
   } catch (error) {
-    console.error('Error getting user type and status:', error);
+    console.error('Error in getUserTypeAndStatus:', error);
     return {
       userType: null,
       accountStatus: null,
       onboardingCompleted: false,
       profileData: null,
-      error: error as PostgrestError
+      error
     };
   }
 }
 
 /**
- * Complete user onboarding
+ * Update user metadata in auth and database
  */
-export async function completeOnboarding(userType: UserType) {
+export async function updateUserMetadata(metadata: Partial<UserMetadata>) {
   try {
-    const { data: userData, error: userError } = await getCurrentUser();
-    
-    if (userError || !userData?.user) {
-      throw new Error('No authenticated user');
-    }
-
-    const userId = userData.user.id;
-
-    // Update profile onboarding status
-    if (userType === 'nurse') {
-      const { error: profileError } = await supabase
-        .from('nurse_profiles')
-        .update({
-          onboarding_completed: true,
-          onboarding_completion_percentage: 100,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', userId);
-
-      if (profileError) throw profileError;
-    } else if (userType === 'client') {
-      const { error: profileError } = await supabase
-        .from('client_profiles')
-        .update({
-          onboarding_completed: true,
-          onboarding_completion_percentage: 100,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', userId);
-
-      if (profileError) throw profileError;
+    const { data: userData } = await getCurrentUser();
+    if (!userData?.user) {
+      return { error: new Error('No authenticated user') };
     }
 
     // Update auth metadata
-    await updateUserMetadata({
-      onboarding_completed: true
+    const { data, error: authError } = await supabase.auth.updateUser({
+      data: metadata
     });
 
+    if (authError) {
+      console.error('Error updating auth metadata:', authError);
+      return { error: authError };
+    }
+
+    // Update database metadata
+    const { error: dbError } = await supabase
+      .from('user_metadata')
+      .upsert({
+        user_id: userData.user.id,
+        ...metadata,
+        updated_at: new Date().toISOString()
+      });
+
+    if (dbError) {
+      console.error('Error updating database metadata:', dbError);
+      // Don't fail if this doesn't work - auth is the primary source
+    }
+
+    return { data, error: null };
+  } catch (err) {
+    console.error('Error in updateUserMetadata:', err);
+    return { error: err };
+  }
+}
+
+/**
+ * Complete onboarding for a user - sets pending status for nurses, active for clients
+ */
+export async function completeOnboarding(userType: UserType) {
+  try {
+    // Set status based on user type
+    const newStatus: AccountStatus = userType === 'nurse' ? 'pending' : 'active';
+    
+    const updateData = {
+      onboarding_completed: true,
+      account_status: newStatus
+    };
+
+    console.log(`Completing onboarding for ${userType} with status: ${newStatus}`);
+
+    const { error } = await updateUserMetadata(updateData);
+    
+    if (error) {
+      console.error('Error completing onboarding:', error);
+      return { error };
+    }
+
     return { error: null };
-  } catch (error) {
-    console.error('Error completing onboarding:', error);
-    return { error: error as PostgrestError };
+  } catch (err) {
+    console.error('Error in completeOnboarding:', err);
+    return { error: err };
+  }
+}
+
+/**
+ * Admin function to approve a nurse (change status from pending to active)
+ */
+export async function approveNurse(userId: string) {
+  try {
+    console.log('Approving nurse:', userId);
+
+    // Update user metadata table
+    const { error: metadataError } = await supabase
+      .from('user_metadata')
+      .update({ 
+        account_status: 'active',
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId);
+
+    if (metadataError) {
+      console.error('Error updating user metadata:', metadataError);
+      return { error: metadataError };
+    }
+
+    // Update auth metadata using admin API
+    const { error: authError } = await supabase.auth.admin.updateUserById(
+      userId,
+      {
+        user_metadata: {
+          account_status: 'active'
+        }
+      }
+    );
+
+    if (authError) {
+      console.error('Error updating auth metadata:', authError);
+      // Don't fail if this doesn't work - the metadata table is the source of truth
+    }
+
+    return { error: null };
+  } catch (err) {
+    console.error('Error in approveNurse:', err);
+    return { error: err };
+  }
+}
+
+/**
+ * Admin function to deny a nurse (change status from pending to suspended)
+ */
+export async function denyNurse(userId: string, reason?: string) {
+  try {
+    console.log('Denying nurse:', userId, 'Reason:', reason);
+
+    // Update user metadata table
+    const { error: metadataError } = await supabase
+      .from('user_metadata')
+      .update({ 
+        account_status: 'suspended',
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId);
+
+    if (metadataError) {
+      console.error('Error updating user metadata:', metadataError);
+      return { error: metadataError };
+    }
+
+    // Update auth metadata using admin API
+    const { error: authError } = await supabase.auth.admin.updateUserById(
+      userId,
+      {
+        user_metadata: {
+          account_status: 'suspended'
+        }
+      }
+    );
+
+    if (authError) {
+      console.error('Error updating auth metadata:', authError);
+      // Don't fail if this doesn't work - the metadata table is the source of truth
+    }
+
+    // TODO: Send notification to nurse about denial
+    // You can add notification logic here
+
+    return { error: null };
+  } catch (err) {
+    console.error('Error in denyNurse:', err);
+    return { error: err };
+  }
+}
+
+/**
+ * Get pending nurses for admin approval
+ */
+export async function getPendingNurses() {
+  try {
+    const { data: pendingUsers, error } = await supabase
+      .from('user_metadata')
+      .select(`
+        user_id,
+        user_type,
+        account_status,
+        onboarding_completed,
+        first_name,
+        last_name,
+        updated_at
+      `)
+      .eq('user_type', 'nurse')
+      .eq('account_status', 'pending')
+      .eq('onboarding_completed', true)
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching pending nurses:', error);
+      return { data: [], error };
+    }
+
+    return { data: pendingUsers || [], error: null };
+  } catch (err) {
+    console.error('Error in getPendingNurses:', err);
+    return { data: [], error: err };
+  }
+}
+
+/**
+ * Password reset
+ */
+export async function resetPassword(email: string) {
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+
+    if (error) {
+      console.error('Password reset error:', error);
+      return { error };
+    }
+
+    return { error: null };
+  } catch (err) {
+    console.error('Unexpected error in resetPassword:', err);
+    return { 
+      error: { 
+        message: 'An unexpected error occurred during password reset',
+        name: 'PasswordResetError'
+      } as AuthError 
+    };
   }
 }
